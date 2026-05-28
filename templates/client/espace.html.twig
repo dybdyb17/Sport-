@@ -1,0 +1,106 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mon espace — SPORT+{% endblock %}
+
+{% block body %}
+<div class="form-page">
+
+    {# ── En-tête ── #}
+    <div class="form-page-title">Mon <span>espace</span></div>
+    <p class="page-welcome">{{ app.user.nomComplet }}</p>
+
+    <div class="divider"><div class="div-line"></div><div class="div-diamond"></div><div class="div-line"></div></div>
+
+    {# ── Stat cards ── #}
+    <div class="stat-cards">
+        <div class="stat-card">
+            <span class="stat-card-num">{{ total }}</span>
+            <span class="stat-card-label">Total</span>
+        </div>
+        <div class="stat-card stat-card--green">
+            <span class="stat-card-num">{{ nbConfirmees }}</span>
+            <span class="stat-card-label">Confirmées</span>
+        </div>
+        <div class="stat-card stat-card--gold">
+            <span class="stat-card-num">{{ nbEnAttente }}</span>
+            <span class="stat-card-label">En attente</span>
+        </div>
+    </div>
+
+    <div class="divider"><div class="div-line"></div><div class="div-diamond"></div><div class="div-line"></div></div>
+
+    {% if total == 0 %}
+
+        {# ── État vide global ── #}
+        <div class="empty-state">
+            <span class="empty-state-icon">🏋️</span>
+            <span class="empty-state-text">Aucune séance pour l'instant.<br>Réserve ton premier créneau et commence l'aventure.</span>
+            <a href="{{ path('app_booking_new') }}" class="btn-primary">
+                <span class="btn-primary-text">Réserver ma première séance</span>
+            </a>
+        </div>
+
+    {% else %}
+
+        {# ── Séances à venir ── #}
+        <div class="section-label">Mes séances à venir</div>
+
+        {% if reservationsAVenir is empty %}
+            <p class="muted-note">Aucune séance à venir. <a href="{{ path('app_booking_new') }}" class="link-gold">Réserver un créneau →</a></p>
+        {% else %}
+            {% for booking in reservationsAVenir %}
+                <div class="coach-card">
+                    <div class="booking-card-head">
+                        <strong class="coach-name">{{ booking.serviceTypeLabel }}</strong>
+                        <span class="status-badge {{ booking.status }}">{{ booking.statutLabel }}</span>
+                    </div>
+                    <p class="booking-card-meta">
+                        📅 {{ booking.startAt|date('d/m/Y à H:i') }}<br>
+                        🧑‍🏫 {{ booking.coach.nomComplet }}<br>
+                        💰 {{ booking.prixFormatted }}
+                    </p>
+                    <div class="booking-card-actions">
+                        {% if booking.canBeCancelled %}
+                            <form
+                                action="{{ path('app_booking_cancel', {ref: booking.reference}) }}"
+                                method="post"
+                                style="display:inline;"
+                                onsubmit="return confirm('Confirmer l\'annulation de cette séance ?')"
+                            >
+                                <input type="hidden" name="_token" value="{{ csrf_token('cancel' ~ booking.id) }}">
+                                <button type="submit" class="action-btn action-btn--danger">✕ Annuler</button>
+                            </form>
+                        {% endif %}
+                        {# TODO lot 5 : href="{{ path('app_conversation_show', {id: booking.conversation.id}) }}" #}
+                        {% if booking.conversation %}
+                            <a href="#" class="action-btn">💬 Messagerie</a>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <div class="divider"><div class="div-line"></div><div class="div-diamond"></div><div class="div-line"></div></div>
+
+        {# ── Historique ── #}
+        {% if reservationsPassees is not empty %}
+            <div class="section-label">Historique</div>
+            {% for booking in reservationsPassees %}
+                <div class="coach-card booking-history">
+                    <div class="booking-card-head">
+                        <strong class="coach-name">{{ booking.serviceTypeLabel }}</strong>
+                        <span class="status-badge {{ booking.status }}">{{ booking.statutLabel }}</span>
+                    </div>
+                    <p class="booking-card-meta">
+                        📅 {{ booking.startAt|date('d/m/Y à H:i') }}<br>
+                        🧑‍🏫 {{ booking.coach.nomComplet }}<br>
+                        💰 {{ booking.prixFormatted }}
+                    </p>
+                </div>
+            {% endfor %}
+        {% endif %}
+
+    {% endif %}
+
+</div>
+{% endblock %}

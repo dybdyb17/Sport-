@@ -645,6 +645,129 @@ details[open] .faq-icon { transform: rotate(45deg); }
   text-shadow: 0 0 8px rgba(61,255,20,0.4);
 }
 
+/* ─── STAT CARDS ─── */
+.stat-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.stat-card {
+  background: var(--panel);
+  border: 1px solid #1e1b10;
+  padding: 16px 12px;
+  text-align: center;
+  position: relative; overflow: hidden;
+}
+
+.stat-card::before {
+  content: '';
+  position: absolute; left: 0; top: 0; bottom: 0;
+  width: 2px; background: var(--gold-dim);
+}
+
+.stat-card--green::before { background: var(--green); }
+.stat-card--gold::before  { background: var(--gold); }
+
+.stat-card-num {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 32px; font-weight: 900;
+  color: var(--gold); display: block; line-height: 1;
+  margin-bottom: 4px;
+}
+
+.stat-card-label {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 8px; font-weight: 700;
+  letter-spacing: 3px; color: var(--muted);
+  text-transform: uppercase; display: block;
+}
+
+/* ─── BOOKING CARDS (espace client) ─── */
+.booking-card-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 10px;
+  gap: 8px;
+}
+
+.booking-card-meta {
+  color: var(--muted);
+  font-size: 0.9rem;
+  line-height: 1.8;
+  margin-bottom: 12px;
+}
+
+.booking-card-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.action-btn--danger {
+  border-color: rgba(255,68,68,0.35);
+  color: #ff6666;
+}
+
+.action-btn--danger:hover {
+  background: rgba(255,68,68,0.15);
+  color: #ff4444;
+  border-color: #ff4444;
+  transform: translateY(-1px);
+}
+
+.booking-history { opacity: 0.6; }
+
+/* ─── EMPTY STATE ─── */
+.empty-state {
+  text-align: center;
+  padding: 32px 16px;
+}
+
+.empty-state-icon {
+  font-size: 44px;
+  display: block;
+  margin-bottom: 14px;
+}
+
+.empty-state-text {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  color: var(--muted);
+  font-size: 15px;
+  line-height: 1.7;
+  display: block;
+  margin-bottom: 24px;
+}
+
+/* ─── MISC HELPERS ─── */
+.page-welcome {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 16px;
+  color: var(--muted);
+  letter-spacing: 1px;
+  text-align: center;
+  margin-top: 4px;
+}
+
+.muted-note {
+  text-align: center;
+  color: var(--muted);
+  font-size: 0.9rem;
+  padding: 16px 0;
+}
+
+.link-gold {
+  color: var(--gold);
+  text-decoration: none;
+}
+
+.link-gold:hover { text-decoration: underline; }
+
 /* ─── FORM PAGE WRAPPER ─── */
 .form-page { padding: 8px 0 32px; }
 

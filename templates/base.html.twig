@@ -34,6 +34,7 @@
                 {% if is_granted('ROLE_COACH') %}
                     <a href="{{ path('app_coach_dashboard') }}">Espace coach</a>
                 {% else %}
+                    <a href="{{ path('app_espace_client') }}">Mon espace</a>
                     <a href="{{ path('app_booking_new') }}">Réserver</a>
                 {% endif %}
                 <a href="{{ path('app_logout') }}">Déconnexion</a>
