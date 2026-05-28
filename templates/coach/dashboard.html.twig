@@ -1,0 +1,69 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Espace Coach — SPORT+{% endblock %}
+
+{% block body %}
+    <div class="form-page">
+
+        <div class="form-page-title">Espace <span>Coach</span></div>
+
+        <div class="divider"><div class="div-line"></div><div class="div-diamond"></div><div class="div-line"></div></div>
+
+        <div class="section-label">Tes réservations</div>
+
+        {% for booking in bookings %}
+            <div class="coach-card">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+                    <strong style="font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:900;text-transform:uppercase;letter-spacing:1px;">{{ booking.serviceTypeLabel }}</strong>
+                    <span class="status-badge {{ booking.status }}">{{ booking.statutLabel }}</span>
+                </div>
+
+                <p style="color:var(--muted);font-size:0.9rem;line-height:1.8;">
+                    📅 {{ booking.startAt|date('d/m/Y à H:i') }}<br>
+                    👤 {{ booking.client.nomComplet }}<br>
+                    💰 {{ booking.prixFormatted }}<br>
+                    📝 {{ booking.message ?: 'Aucun message' }}
+                </p>
+
+                {% if booking.status == 'pending' %}
+                    <div style="margin-top:14px;display:flex;gap:10px;">
+                        <form action="{{ path('app_coach_accept', {id: booking.id}) }}" method="post" style="display:inline;">
+                            <input type="hidden" name="_token" value="{{ csrf_token('accept' ~ booking.id) }}">
+                            <button type="submit" class="action-btn">✅ Accepter</button>
+                        </form>
+                        <form action="{{ path('app_coach_refuse', {id: booking.id}) }}" method="post" style="display:inline;">
+                            <input type="hidden" name="_token" value="{{ csrf_token('refuse' ~ booking.id) }}">
+                            <button type="submit" class="action-btn">❌ Refuser</button>
+                        </form>
+                    </div>
+                {% endif %}
+            </div>
+        {% else %}
+            <p style="text-align:center;color:var(--muted);padding:20px;font-family:'Cormorant Garamond',serif;font-style:italic;">
+                Aucune réservation pour le moment.
+            </p>
+        {% endfor %}
+
+    </div>
+{% endblock %}
+
+{% block mercure %}
+    <script>
+        const topic = 'coach/{{ app.user.id }}/stream';
+        const es = new EventSource(
+            "{{ mercure(topic)|escape('js') }}",
+            { withCredentials: false }
+        );
+
+        es.onmessage = (e) => {
+            const data = JSON.parse(e.data);
+            if (data.type === 'new_booking') {
+                if (data.sound) {
+                    new Audio('/sounds/notification.mp3').play().catch(() => {});
+                }
+                alert(`🔔 Nouvelle demande de ${data.client} pour le ${data.start}`);
+                location.reload();
+            }
+        };
+    </script>
+{% endblock %}

@@ -1,0 +1,27 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Inscription — SPORT+{% endblock %}
+
+{% block body %}
+    <div class="form-page">
+
+        <div class="form-page-title">Créer mon <span>compte</span></div>
+
+        <div class="divider"><div class="div-line"></div><div class="div-diamond"></div><div class="div-line"></div></div>
+
+        {{ form_start(registrationForm) }}
+            {{ form_row(registrationForm.nomComplet) }}
+            {{ form_row(registrationForm.email) }}
+            {{ form_row(registrationForm.phone) }}
+            {{ form_row(registrationForm.plainPassword) }}
+
+            <button class="btn-primary" type="submit">M'inscrire</button>
+        {{ form_end(registrationForm) }}
+
+        <p class="form-link">
+            Déjà inscrit ?
+            <a href="{{ path('app_login') }}">Connexion</a>
+        </p>
+
+    </div>
+{% endblock %}

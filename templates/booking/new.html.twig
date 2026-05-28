@@ -1,0 +1,37 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Réserver un coach — SPORT+{% endblock %}
+
+{% block body %}
+    <div class="form-page">
+
+        <div class="form-page-title">Réserver <span>ton coach</span></div>
+
+        <div class="divider"><div class="div-line"></div><div class="div-diamond"></div><div class="div-line"></div></div>
+
+        {{ form_start(form, {'attr': {'class': 'booking-form'}}) }}
+            {{ form_row(form.coach) }}
+            {{ form_row(form.serviceType) }}
+            {{ form_row(form.startAt) }}
+            {{ form_row(form.message) }}
+
+            <div class="price-summary">
+                <small style="color:var(--muted);display:block;">
+                    Le prix dépend de la prestation choisie. Paiement sécurisé, uniquement si le coach accepte.
+                </small>
+            </div>
+
+            <button type="submit" class="btn-primary">
+                Envoyer la demande
+            </button>
+        {{ form_end(form) }}
+
+        <div class="booking-info">
+            <p>🔹 Ta demande sera envoyée au coach</p>
+            <p>🔹 Tu recevras une notification dès sa réponse</p>
+            <p>🔹 Paiement uniquement si le coach accepte</p>
+            <p>🔹 Annulation gratuite jusqu'à 2h avant la séance</p>
+        </div>
+
+    </div>
+{% endblock %}

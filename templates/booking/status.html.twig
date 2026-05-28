@@ -1,0 +1,55 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Suivi réservation {{ booking.reference }} — SPORT+{% endblock %}
+
+{% block body %}
+    <div class="form-page">
+
+        <div class="form-page-title">Suivi de <span>ta demande</span></div>
+
+        <div class="divider"><div class="div-line"></div><div class="div-diamond"></div><div class="div-line"></div></div>
+
+        <p style="text-align:center;margin-bottom:20px;font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);">
+            Référence&nbsp;: <strong style="color:var(--gold);">{{ booking.reference }}</strong>
+        </p>
+
+        <div class="coach-card">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+                <strong style="font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:900;text-transform:uppercase;letter-spacing:1px;">{{ booking.serviceTypeLabel }}</strong>
+                <span class="status-badge {{ booking.status }}" id="status-badge">{{ booking.statutLabel }}</span>
+            </div>
+            <p style="color:var(--muted);font-size:0.9rem;line-height:1.8;">
+                📅 {{ booking.startAt|date('d/m/Y à H:i') }}<br>
+                🧑‍🏫 {{ booking.coach.nomComplet }}<br>
+                💰 {{ booking.prixFormatted }}
+            </p>
+        </div>
+
+        <div class="booking-info">
+            <p>🔹 Le coach a reçu ta demande</p>
+            <p>🔹 Cette page se met à jour automatiquement dès sa réponse</p>
+            <p>🔹 Paiement uniquement si le coach accepte</p>
+        </div>
+
+    </div>
+{% endblock %}
+
+{% block mercure %}
+    <script>
+        const topic = 'client/{{ app.user.id }}/stream';
+        const es = new EventSource(
+            "{{ mercure(topic)|escape('js') }}",
+            { withCredentials: false }
+        );
+
+        es.onmessage = (e) => {
+            const data = JSON.parse(e.data);
+            if (data.type === 'booking_confirmed' && data.ref === '{{ booking.reference }}') {
+                const badge = document.getElementById('status-badge');
+                badge.textContent = '✅ Confirmée';
+                badge.className = 'status-badge confirmed';
+                location.reload();
+            }
+        };
+    </script>
+{% endblock %}

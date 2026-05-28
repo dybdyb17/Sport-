@@ -1,0 +1,154 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}SPORT+ — Coaching Premium Marseille{% endblock %}
+
+{% block body %}
+
+    {# Offre lancement #}
+    <div class="fire-badge">
+        <div class="fire-icon">🔥</div>
+        <div class="fire-content">
+            <span class="fire-label">Offre lancement exclusive</span>
+            <span class="fire-title">3 séances <span>99€</span></span>
+            <span class="fire-sub">+ Bilan forme offert — valeur 175€</span>
+        </div>
+        <div class="fire-count">
+            <span class="fire-num">50</span>
+            <span class="fire-places">places</span>
+        </div>
+    </div>
+
+    {# CTA principal — route Symfony selon état de session #}
+    <a href="{{ app.user ? path('app_booking_new') : path('app_login') }}" class="btn-primary">
+        <span class="btn-primary-icon">🏋️</span>
+        <span class="btn-primary-text">Réserver ma place</span>
+    </a>
+
+    <div class="divider"><div class="div-line"></div><div class="div-diamond"></div><div class="div-line"></div></div>
+
+    {# Nos offres coaching #}
+    <div class="section-label">Nos offres coaching</div>
+
+    <a href="{{ app.user ? path('app_booking_new') : path('app_login') }}" class="btn">
+        <div class="btn-icon">🌙</div>
+        <div class="btn-body">
+            <span class="btn-title">Night Coach</span>
+            <span class="btn-sub">Coaching privé dès 21h — Solo, duo ou groupe</span>
+        </div>
+        <div class="btn-arrow">›</div>
+    </a>
+
+    <a href="{{ app.user ? path('app_booking_new') : path('app_login') }}" class="btn">
+        <div class="btn-icon">👥</div>
+        <div class="btn-body">
+            <span class="btn-title">Small Group</span>
+            <span class="btn-sub">2 à 6 personnes — dès 22€/pers/séance</span>
+        </div>
+        <div class="btn-arrow">›</div>
+    </a>
+
+    <a href="{{ app.user ? path('app_booking_new') : path('app_login') }}" class="btn btn-green">
+        <div class="btn-icon">⚡</div>
+        <div class="btn-body">
+            <span class="btn-title">Accès salle 24h/24</span>
+            <span class="btn-sub">Sans engagement — disponible maintenant</span>
+        </div>
+        <div class="btn-arrow">›</div>
+    </a>
+
+    <div class="divider"><div class="div-line"></div><div class="div-diamond"></div><div class="div-line"></div></div>
+
+    {# Tarifs rapides #}
+    <div class="section-label">Tarifs en un coup d'œil</div>
+    <div class="tarifs-grid">
+        <div class="tarif-box">
+            <span class="tarif-name">Solo — 4 séances</span>
+            <span class="tarif-price">150€</span>
+            <span class="tarif-unit">/ mois · journée</span>
+        </div>
+        <div class="tarif-box">
+            <span class="tarif-name">Night — 4 séances</span>
+            <span class="tarif-price">210€</span>
+            <span class="tarif-unit">/ mois · dès 21h</span>
+        </div>
+        <div class="tarif-box">
+            <span class="tarif-name">Trio — séance</span>
+            <span class="tarif-price">30€</span>
+            <span class="tarif-unit">/ pers / séance</span>
+        </div>
+        <div class="tarif-box">
+            <span class="tarif-name">Groupe 6 — séance</span>
+            <span class="tarif-price">22€</span>
+            <span class="tarif-unit">/ pers / séance</span>
+        </div>
+    </div>
+
+    <div class="divider"><div class="div-line"></div><div class="div-diamond"></div><div class="div-line"></div></div>
+
+    {# Nos coachs — données réelles du controller #}
+    <div class="section-label">Nos coachs</div>
+    <div class="coaches-grid">
+        {% for coach in coaches %}
+            <div class="coach-card">
+                <span class="coach-name">{{ coach.nomComplet }}</span>
+                <span class="coach-specialty">{{ coach.specialtiesLabel }}</span>
+                <span class="coach-price">{{ coach.prixFormatted }}</span>
+            </div>
+        {% else %}
+            <p style="text-align:center;color:var(--muted);padding:16px;">
+                Aucun coach disponible pour le moment.
+            </p>
+        {% endfor %}
+    </div>
+
+    <div class="divider"><div class="div-line"></div><div class="div-diamond"></div><div class="div-line"></div></div>
+
+    {# FAQ accordéon <details> natif #}
+    <div class="section-label">Questions fréquentes</div>
+    <div class="faq">
+
+        <details class="faq-item">
+            <summary class="faq-q">
+                <span class="faq-q-text">Y a-t-il un engagement ?</span>
+                <span class="faq-icon">+</span>
+            </summary>
+            <div class="faq-a">Non. Toutes nos formules sont sans engagement. Vous réservez quand vous voulez, annulez jusqu'à 2h avant sans frais.</div>
+        </details>
+
+        <details class="faq-item">
+            <summary class="faq-q">
+                <span class="faq-q-text">Comment fonctionne le Night Coach ?</span>
+                <span class="faq-icon">+</span>
+            </summary>
+            <div class="faq-a">Vous réservez votre créneau dès 21h. Un coach dédié vous attend en salle. Solo, duo ou groupe jusqu'à 6 personnes.</div>
+        </details>
+
+        <details class="faq-item">
+            <summary class="faq-q">
+                <span class="faq-q-text">Je dois former mon groupe moi-même ?</span>
+                <span class="faq-icon">+</span>
+            </summary>
+            <div class="faq-a">Oui. Vous constituez votre groupe (amis, collègues, famille). Nous ne mixons pas des inconnus pour garantir votre confort et votre progression.</div>
+        </details>
+
+        <details class="faq-item">
+            <summary class="faq-q">
+                <span class="faq-q-text">L'offre lancement est-elle renouvelable ?</span>
+                <span class="faq-icon">+</span>
+            </summary>
+            <div class="faq-a">Non. L'offre à 99€ est réservée aux 50 premiers inscrits, non renouvelable. Elle disparaît dès que les 50 places sont prises.</div>
+        </details>
+
+    </div>
+
+    <div class="divider"><div class="div-line"></div><div class="div-diamond"></div><div class="div-line"></div></div>
+
+    {# Réseaux sociaux #}
+    <div class="section-label">Nous suivre</div>
+    <div class="socials">
+        <a href="#" class="social-btn"><span class="social-icon">📸</span> Instagram</a>
+        <a href="#" class="social-btn"><span class="social-icon">🎵</span> TikTok</a>
+        <a href="#" class="social-btn"><span class="social-icon">👤</span> Facebook</a>
+    </div>
+
+{% endblock %}

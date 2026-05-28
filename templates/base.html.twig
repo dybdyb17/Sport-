@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}SPORT+{% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800;900&family=Barlow:wght@300;400;500;600&family=Cormorant+Garamond:ital,wght@1,300;1,400&display=swap" rel="stylesheet">
+    {% block stylesheets %}
+        <link rel="stylesheet" href="{{ asset('styles/sportplus.css') }}">
+    {% endblock %}
+    {% block javascripts %}
+        {% block importmap %}{{ importmap('app') }}{% endblock %}
+    {% endblock %}
+</head>
+<body>
+<div class="page">
+
+    <header class="header">
+        <a href="{{ path('app_home') }}" class="logo-wrap">
+            <div class="logo-ring">
+                <div class="logo-text">S<span>+</span></div>
+            </div>
+            <div class="brand-name">Sport+</div>
+        </a>
+        <h1>SPORT<span>+</span></h1>
+        <div class="header-sub">Réinventé à toute heure.</div>
+        <div class="location-badge">📍 Marseille 5ème — Ouvert 24h/24</div>
+
+        <nav class="nav">
+            {% if app.user %}
+                <span class="nav-user">{{ app.user.nomComplet }}</span>
+                {% if is_granted('ROLE_COACH') %}
+                    <a href="{{ path('app_coach_dashboard') }}">Espace coach</a>
+                {% else %}
+                    <a href="{{ path('app_booking_new') }}">Réserver</a>
+                {% endif %}
+                <a href="{{ path('app_logout') }}">Déconnexion</a>
+            {% else %}
+                <a href="{{ path('app_login') }}">Connexion</a>
+                <a href="{{ path('app_register') }}">Inscription</a>
+            {% endif %}
+        </nav>
+    </header>
+
+    <div class="divider">
+        <div class="div-line"></div>
+        <div class="div-diamond"></div>
+        <div class="div-line"></div>
+    </div>
+
+    {% for label, messages in app.flashes %}
+        {% for message in messages %}
+            <div class="alert alert-{{ label }}">{{ message }}</div>
+        {% endfor %}
+    {% endfor %}
+
+    {% block body %}{% endblock %}
+
+    <footer class="site-footer">
+        <div class="footer-logo">SPORT<span>+</span></div>
+        <div class="slogan">Pour le meilleur & pour le <span class="green-plus">+</span></div>
+    </footer>
+
+</div>
+
+{% block mercure %}{% endblock %}
+</body>
+</html>
