@@ -177,4 +177,21 @@ class Subscription
             $this->packType->sessionsCount()
         );
     }
+
+    public function getStatusLabel(): string
+    {
+        return match ($this->status) {
+            self::STATUS_ACTIVE    => 'Actif',
+            self::STATUS_EXPIRED   => 'Expiré',
+            self::STATUS_CANCELLED => 'Annulé',
+            default                => 'Inconnu',
+        };
+    }
+
+    public function getMonthlyPriceFormatted(): string
+    {
+        return $this->monthlyPrice !== null
+            ? number_format((float) $this->monthlyPrice, 2, ',', "\u{202F}") . ' € / mois'
+            : '—';
+    }
 }

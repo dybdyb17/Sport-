@@ -9,6 +9,9 @@
     <h1><span style="color:var(--gold)">Utilisateurs</span></h1>
     <p class="page-subtitle">{{ users|length }} compte{% if users|length > 1 %}s{% endif %} inscrits</p>
   </div>
+  <a href="{{ path('app_admin_export_users') }}" class="btn btn-secondary btn-sm">
+    <i class="ti ti-download"></i> Export CSV
+  </a>
 </div>
 
 <div class="data-table-card">

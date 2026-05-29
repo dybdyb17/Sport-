@@ -9,6 +9,10 @@
     <h1>Tableau de <span style="color:var(--gold)">Bord</span></h1>
     <p class="page-subtitle">Vue d'ensemble de la plateforme</p>
   </div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;">
+    <a href="{{ path('app_admin_export_bookings') }}" class="btn btn-secondary btn-sm"><i class="ti ti-download"></i> Réservations CSV</a>
+    <a href="{{ path('app_admin_export_users') }}" class="btn btn-secondary btn-sm"><i class="ti ti-download"></i> Utilisateurs CSV</a>
+  </div>
 </div>
 
 {# ── Vue d'ensemble ── #}
@@ -29,6 +33,14 @@
   <div class="stat-card warning">
     <span class="stat-label">Revenus totaux</span>
     <span class="stat-value" style="font-size:28px;">{{ revenueAllTime|number_format(2, ',', ' ') }} €</span>
+  </div>
+  <div class="stat-card success">
+    <span class="stat-label">Abonnements actifs</span>
+    <span class="stat-value">{{ subscriptionCounts['active'] }}</span>
+  </div>
+  <div class="stat-card warning">
+    <span class="stat-label">Récurrent estimé</span>
+    <span class="stat-value" style="font-size:28px;">{{ recurringRevenueEstimated|number_format(2, ',', ' ') }} €</span>
   </div>
 </div>
 
@@ -92,6 +104,11 @@
     <div class="feature-title">Utilisateurs</div>
     <p class="feature-text">Liste des comptes inscrits</p>
   </a>
+  <a href="{{ path('app_admin_subscriptions') }}" class="feature-card" style="text-decoration:none;">
+    <div class="feature-icon"><i class="ti ti-credit-card"></i></div>
+    <div class="feature-title">Abonnements</div>
+    <p class="feature-text">Suivre les packs et séances restantes</p>
+  </a>
 </div>
 
 {# ── Dernières réservations ── #}
@@ -125,6 +142,43 @@
             <td style="color:var(--text-dim);">{{ booking.coach.nomComplet }}</td>
             <td><span class="status-badge {{ booking.status }}">{{ booking.statutLabel }}</span></td>
             <td style="color:var(--gold);font-family:'Barlow Condensed',sans-serif;font-weight:700;">{{ booking.prixFormatted }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% endif %}
+</div>
+
+
+{# ── Derniers abonnements ── #}
+<div class="data-table-card">
+  <div class="data-table-header">
+    <h3>Derniers abonnements</h3>
+    <a href="{{ path('app_admin_subscriptions') }}" class="link-gold">Voir tout →</a>
+  </div>
+  {% if recentSubscriptions is empty %}
+    <div class="empty-placeholder" style="padding:40px;">Aucun abonnement pour le moment.</div>
+  {% else %}
+    <table>
+      <thead>
+        <tr>
+          <th>Réf.</th>
+          <th>Client</th>
+          <th>Pack</th>
+          <th>Séances</th>
+          <th>Statut</th>
+          <th>Prix</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for subscription in recentSubscriptions %}
+          <tr>
+            <td style="font-family:'Barlow Condensed',sans-serif;font-size:13px;letter-spacing:2px;color:var(--text-dim);">{{ subscription.reference }}</td>
+            <td style="color:var(--text-dim);">{{ subscription.client.nomComplet }}</td>
+            <td style="font-family:'Barlow Condensed',sans-serif;font-weight:700;">{{ subscription.packType.label() }}</td>
+            <td style="color:var(--text-dim);">{{ subscription.remainingLabel }}</td>
+            <td><span class="status-badge {{ subscription.status == 'active' ? 'confirmed' : (subscription.status == 'expired' ? 'pending' : 'cancelled') }}">{{ subscription.statusLabel }}</span></td>
+            <td style="color:var(--gold);font-family:'Barlow Condensed',sans-serif;font-weight:700;">{{ subscription.monthlyPriceFormatted }}</td>
           </tr>
         {% endfor %}
       </tbody>
