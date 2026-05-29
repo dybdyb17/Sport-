@@ -28,17 +28,36 @@
       <a href="{{ path('app_admin_dashboard') }}" class="admin-nav-item {{ r == 'app_admin_dashboard' ? 'active' : '' }}">
         <i class="ti ti-chart-bar"></i> Tableau de bord
       </a>
+      <a href="{{ path('app_admin_calendar') }}" class="admin-nav-item {{ r == 'app_admin_calendar' ? 'active' : '' }}">
+        <i class="ti ti-calendar"></i> Calendrier
+      </a>
       <a href="{{ path('app_admin_coachs') }}" class="admin-nav-item {{ r starts with 'app_admin_coach' ? 'active' : '' }}">
         <i class="ti ti-users"></i> Coachs
       </a>
       <a href="{{ path('app_admin_bookings') }}" class="admin-nav-item {{ r == 'app_admin_bookings' ? 'active' : '' }}">
-        <i class="ti ti-calendar"></i> Réservations
+        <i class="ti ti-bookmarks"></i> Réservations
       </a>
       <a href="{{ path('app_admin_users') }}" class="admin-nav-item {{ r == 'app_admin_users' ? 'active' : '' }}">
-        <i class="ti ti-id"></i> Utilisateurs
+        <i class="ti ti-user"></i> Utilisateurs
+      </a>
+      <a href="{{ path('app_admin_subscriptions') }}" class="admin-nav-item {{ r starts with 'app_admin_subscription' ? 'active' : '' }}">
+        <i class="ti ti-credit-card"></i> Abonnements
+      </a>
+      <a href="{{ path('app_admin_founding_list') }}" class="admin-nav-item {{ r starts with 'app_admin_founding' ? 'active' : '' }}">
+        <i class="ti ti-medal"></i> Fondateurs
       </a>
       <a href="{{ path('app_conversation_inbox') }}" class="admin-nav-item {{ r starts with 'app_conversation' ? 'active' : '' }}">
         <i class="ti ti-message"></i> Messages
+      </a>
+      <div class="admin-nav-label" style="margin-top:8px;">Exports</div>
+      <a href="{{ path('app_admin_export_revenue') }}" class="admin-nav-item" style="font-size:12px;padding:6px 12px;">
+        <i class="ti ti-chart-bar"></i> CA mensuel
+      </a>
+      <a href="{{ path('app_admin_export_founding') }}" class="admin-nav-item" style="font-size:12px;padding:6px 12px;">
+        <i class="ti ti-medal"></i> Fondateurs
+      </a>
+      <a href="{{ path('app_admin_export_subscriptions') }}" class="admin-nav-item" style="font-size:12px;padding:6px 12px;">
+        <i class="ti ti-credit-card"></i> Abonnements
       </a>
     </nav>
 

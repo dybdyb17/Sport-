@@ -7,91 +7,237 @@
 <div class="page-header">
   <div>
     <h1>Tableau de <span style="color:var(--gold)">Bord</span></h1>
-    <p class="page-subtitle">Vue d'ensemble de la plateforme</p>
+    <p class="page-subtitle">{{ periodLabel }} — pilotage business du club</p>
+  </div>
+  <div class="admin-toolbar">
+    <a href="{{ path('app_admin_export_revenue') }}" class="btn btn-secondary btn-sm">
+      <i class="ti ti-chart-bar"></i> Export CA mensuel (CSV)
+    </a>
+    <a href="{{ path('app_admin_export_founding') }}" class="btn btn-secondary btn-sm">
+      <i class="ti ti-users"></i> Liste fondateurs (CSV)
+    </a>
   </div>
 </div>
 
-{# ── Vue d'ensemble ── #}
-<div class="section-label">Vue d'ensemble</div>
-<div class="stats-grid">
-  <div class="stat-card warning">
-    <span class="stat-label">Utilisateurs</span>
-    <span class="stat-value">{{ totalUsers }}</span>
-  </div>
-  <div class="stat-card warning">
-    <span class="stat-label">Coachs actifs</span>
-    <span class="stat-value">{{ totalCoaches }}</span>
-  </div>
-  <div class="stat-card warning">
-    <span class="stat-label">Revenus du mois</span>
-    <span class="stat-value" style="font-size:28px;">{{ revenueThisMonth|number_format(2, ',', ' ') }} €</span>
-  </div>
-  <div class="stat-card warning">
-    <span class="stat-label">Revenus totaux</span>
-    <span class="stat-value" style="font-size:28px;">{{ revenueAllTime|number_format(2, ',', ' ') }} €</span>
-  </div>
-</div>
+{# ── Vue d'ensemble du mois ── #}
+<div class="section-label">Vue d'ensemble du mois</div>
+<div class="stats-grid" style="grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));">
 
-{# ── Réservations par statut ── #}
-<div class="section-label">Réservations par statut</div>
-<div class="stats-grid">
-  <div class="stat-card {{ bookingCounts['pending'] > 0 ? 'success' : '' }}">
-    <span class="stat-label">En attente</span>
-    <span class="stat-value" style="{{ bookingCounts['pending'] > 0 ? 'color:var(--green)' : '' }}">{{ bookingCounts['pending'] }}</span>
+  {# CA du mois #}
+  <div class="stat-card" style="border-top: 2px solid var(--gold);">
+    <span class="stat-label">CA du mois</span>
+    <span class="stat-value" style="color:var(--gold);">
+      {{ breakdown.total|number_format(2, ',', ' ') }} €
+    </span>
+    <span style="font-size:12px;color:var(--text-dim);font-style:italic;font-family:'Cormorant Garamond',serif;margin-top:4px;display:block;">
+      Part structure : {{ breakdown.structure|number_format(2, ',', ' ') }} € ·
+      Part coach : {{ breakdown.coach|number_format(2, ',', ' ') }} €
+    </span>
   </div>
-  <div class="stat-card success">
-    <span class="stat-label">Confirmées</span>
+
+  {# Marge structure #}
+  <div class="stat-card" style="border-top: 2px solid #7AB85A;">
+    <span class="stat-label">Marge structure</span>
+    <span class="stat-value" style="color:#7AB85A;">
+      {{ breakdown.structure|number_format(2, ',', ' ') }} €
+    </span>
+    {% if breakdown.total|number_format(2, '.', '') > 0 %}
+      <span style="font-size:12px;color:var(--text-dim);margin-top:4px;display:block;">
+        {{ ((breakdown.structure / breakdown.total) * 100)|round }}% du CA total
+      </span>
+    {% endif %}
+  </div>
+
+  {# Séances confirmées #}
+  <div class="stat-card" style="border-top: 2px solid var(--border);">
+    <span class="stat-label">Séances confirmées</span>
     <span class="stat-value">{{ bookingCounts['confirmed'] }}</span>
+    <span style="font-size:12px;color:var(--text-dim);margin-top:4px;display:block;">
+      En attente : {{ bookingCounts['pending'] }} · Refusées : {{ bookingCounts['refused'] }}
+    </span>
   </div>
-  <div class="stat-card danger">
-    <span class="stat-label">Refusées</span>
-    <span class="stat-value">{{ bookingCounts['refused'] }}</span>
-  </div>
-  <div class="stat-card">
-    <span class="stat-label">Annulées</span>
-    <span class="stat-value" style="color:var(--muted);">{{ bookingCounts['cancelled'] }}</span>
-  </div>
+
+  {# Membres fondateurs #}
+  {% if foundingOffer and foundingStats %}
+    {% set foColor = foundingOffer.placesRemaining <= 5 ? 'var(--danger)' : (foundingOffer.placesRemaining <= 25 ? 'var(--gold)' : '#7AB85A') %}
+    <div class="stat-card" style="border-top: 2px solid {{ foColor }};">
+      <span class="stat-label">Membres fondateurs</span>
+      <span class="stat-value" style="color:{{ foColor }};">
+        {{ foundingStats.total }} / {{ foundingOffer.totalPlaces }}
+      </span>
+      <div style="margin-top:8px;">
+        <div style="background:var(--bg-3);border-radius:3px;height:4px;overflow:hidden;">
+          <div style="background:{{ foColor }};height:100%;width:{{ foundingOffer.progressPercent }}%;transition:width .4s;"></div>
+        </div>
+        <span style="font-size:12px;color:var(--text-dim);margin-top:4px;display:block;">
+          {{ foundingOffer.placesRemaining }} place{{ foundingOffer.placesRemaining != 1 ? 's' : '' }} restante{{ foundingOffer.placesRemaining != 1 ? 's' : '' }}
+        </span>
+      </div>
+    </div>
+  {% else %}
+    <div class="stat-card">
+      <span class="stat-label">Membres fondateurs</span>
+      <span class="stat-value" style="color:var(--text-dim);">—</span>
+      <span style="font-size:12px;color:var(--text-dim);margin-top:4px;display:block;">Aucune offre active</span>
+    </div>
+  {% endif %}
 </div>
 
-{# ── Offre Founding ── #}
-{% set fo = current_founding_offer() %}
-{% if fo %}
-  <div class="section-label">Offre Lancement</div>
-  <div class="stats-grid">
-    {% set foColor = fo.placesRemaining <= 5 ? 'danger' : (fo.placesRemaining <= 25 ? 'warning' : 'success') %}
-    <div class="stat-card {{ foColor }}">
-      <span class="stat-label">Places prises</span>
-      <span class="stat-value">{{ fo.placesTaken }}/{{ fo.totalPlaces }}</span>
-      <span style="font-size:13px;color:var(--text-dim);">{{ fo.placesRemaining }} places restantes</span>
-    </div>
-    <div class="stat-card">
-      <span class="stat-label">Progression</span>
-      <div class="founding-progress-bar" style="margin-top:8px;">
-        <div class="founding-progress-fill" style="width:{{ fo.progressPercent }}%;"></div>
+{# ── Répartition par créneau ── #}
+<div class="section-label">Répartition par créneau — {{ periodLabel }}</div>
+<div class="data-card" style="margin-bottom:32px;">
+  {% set slotMax = slotStats['day'].count %}
+  {% if slotStats['night'].count > slotMax %}{% set slotMax = slotStats['night'].count %}{% endif %}
+  {% if slotStats['astreinte'].count > slotMax %}{% set slotMax = slotStats['astreinte'].count %}{% endif %}
+  {% set slotMax = slotMax > 0 ? slotMax : 1 %}
+
+  {% for slot, info in {
+    'day': {label: 'Journée', hours: '6h — 21h', icon: 'ti-sun', data: slotStats['day']},
+    'night': {label: 'Night Coach', hours: '21h — minuit', icon: 'ti-moon', data: slotStats['night']},
+    'astreinte': {label: 'Astreinte', hours: 'minuit — 6h', icon: 'ti-moon-stars', data: slotStats['astreinte']}
+  } %}
+    {% set barWidth = (info.data.count / slotMax * 100)|round %}
+    <div style="display:flex;align-items:center;gap:16px;padding:14px 0;border-bottom:1px solid var(--border);{% if loop.last %}border-bottom:none;{% endif %}">
+      <div style="width:32px;text-align:center;color:var(--gold-dim);font-size:18px;">
+        <i class="ti {{ info.icon }}"></i>
       </div>
-      <span style="font-size:13px;color:var(--text-dim);">{{ fo.progressPercent }}% complet</span>
+      <div style="width:140px;min-width:100px;">
+        <div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;letter-spacing:1px;text-transform:uppercase;">{{ info.label }}</div>
+        <div style="font-size:11px;color:var(--text-dim);">{{ info.hours }}</div>
+      </div>
+      <div style="width:60px;text-align:right;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:24px;color:var(--gold);">
+        {{ info.data.count }}
+      </div>
+      <div style="flex:1;padding:0 16px;">
+        <div style="background:var(--bg-3);border-radius:3px;height:6px;overflow:hidden;">
+          <div style="background:var(--gold);height:100%;width:{{ barWidth }}%;border-radius:3px;"></div>
+        </div>
+      </div>
+      <div style="width:110px;text-align:right;font-family:'Barlow Condensed',sans-serif;font-size:14px;color:var(--text-dim);">
+        {{ info.data.revenue|number_format(2, ',', ' ') }} €
+      </div>
     </div>
+  {% endfor %}
+</div>
+
+{# ── Calendrier semaine en cours (encart) ── #}
+<div class="section-label">
+  Calendrier — semaine du {{ weekMonday|date('d/m/Y') }}
+  <a href="{{ path('app_admin_calendar') }}" style="font-size:12px;color:var(--gold);margin-left:16px;text-decoration:none;">Voir plein écran →</a>
+</div>
+
+{% set dayLabels = {1: 'LUN', 2: 'MAR', 3: 'MER', 4: 'JEU', 5: 'VEN', 6: 'SAM', 7: 'DIM'} %}
+{% set slotLabels = {day: {label: 'DAY', color: 'var(--gold)'}, night: {label: 'NIGHT', color: '#7AB85A'}, astreinte: {label: 'ASTR.', color: '#ff8a4d'}} %}
+
+<div class="calendar-grid" style="margin-bottom:32px;">
+  {# Cellule vide coin #}
+  <div class="calendar-cell header"></div>
+  {# En-têtes jours #}
+  {% for i in 1..7 %}
+    <div class="calendar-cell header">
+      {{ dayLabels[i] }}<br>
+      <span style="font-size:10px;font-weight:400;color:var(--text-dim);">{{ weekMonday|date_modify('+' ~ (i - 1) ~ ' days')|date('d/m') }}</span>
+    </div>
+  {% endfor %}
+  {# Lignes créneaux #}
+  {% for slotKey, slotInfo in slotLabels %}
+    <div class="calendar-cell slot-label" style="color:{{ slotInfo.color }};">{{ slotInfo.label }}</div>
+    {% for i in 1..7 %}
+      <div class="calendar-cell">
+        {% for booking in weekGrid[i][slotKey] %}
+          <div class="calendar-event {{ slotKey != 'day' ? slotKey : '' }}">
+            <span class="calendar-event-time">{{ booking.startAt|date('H:i') }}</span>
+            <span class="calendar-event-meta">{{ booking.client.nomComplet|split(' ')|first }} · {{ booking.format.value|upper }}</span>
+          </div>
+        {% else %}
+          <span></span>
+        {% endfor %}
+      </div>
+    {% endfor %}
+  {% endfor %}
+</div>
+
+{# ── Top coachs du mois ── #}
+{% if topCoaches is not empty %}
+  <div class="section-label">Top coachs — {{ periodLabel }}</div>
+  <div class="data-table-card" style="margin-bottom:32px;">
+    <table>
+      <thead>
+        <tr>
+          <th style="width:40px;">Rang</th>
+          <th>Coach</th>
+          <th style="text-align:center;">Séances</th>
+          <th style="text-align:right;">CA généré</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for entry in topCoaches %}
+          <tr>
+            <td style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:18px;color:var(--text-dim);">#{{ loop.index }}</td>
+            <td style="font-weight:600;">{{ entry.coach.nomComplet }}</td>
+            <td style="text-align:center;font-family:'Barlow Condensed',sans-serif;font-size:18px;color:var(--gold);">{{ entry.sessions }}</td>
+            <td style="text-align:right;font-family:'Barlow Condensed',sans-serif;font-weight:700;color:var(--gold);">{{ entry.revenue|number_format(2, ',', ' ') }} €</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
   </div>
 {% endif %}
 
-{# ── Raccourcis ── #}
-<div class="section-label">Raccourcis</div>
-<div class="cards-grid" style="margin-bottom:40px;">
-  <a href="{{ path('app_admin_coachs') }}" class="feature-card" style="text-decoration:none;">
-    <div class="feature-icon"><i class="ti ti-users"></i></div>
-    <div class="feature-title">Coachs</div>
-    <p class="feature-text">Gérer les profils coachs</p>
-  </a>
-  <a href="{{ path('app_admin_bookings') }}" class="feature-card" style="text-decoration:none;">
-    <div class="feature-icon"><i class="ti ti-calendar"></i></div>
-    <div class="feature-title">Réservations</div>
-    <p class="feature-text">Consulter toutes les réservations</p>
-  </a>
-  <a href="{{ path('app_admin_users') }}" class="feature-card" style="text-decoration:none;">
-    <div class="feature-icon"><i class="ti ti-id"></i></div>
-    <div class="feature-title">Utilisateurs</div>
-    <p class="feature-text">Liste des comptes inscrits</p>
-  </a>
+{# ── Abonnements actifs ── #}
+<div class="section-label">Abonnements actifs</div>
+<div class="data-card" style="margin-bottom:32px;">
+  <div style="display:flex;align-items:center;gap:32px;flex-wrap:wrap;margin-bottom:20px;">
+    <div>
+      <div style="font-family:'Barlow Condensed',sans-serif;font-size:40px;font-weight:700;color:var(--gold);line-height:1;">{{ subStats.active }}</div>
+      <div style="font-size:13px;color:var(--text-dim);margin-top:2px;">abonnements actifs</div>
+    </div>
+    <div style="border-left:1px solid var(--border);padding-left:32px;">
+      <div style="font-family:'Barlow Condensed',sans-serif;font-size:36px;font-weight:700;color:#7AB85A;line-height:1;">
+        {{ subStats.monthlyRecurring|number_format(2, ',', ' ') }} €
+      </div>
+      <div style="font-size:13px;color:var(--text-dim);margin-top:2px;">CA récurrent mensuel</div>
+    </div>
+  </div>
+
+  {% if subStats.byPack is not empty %}
+    <div style="display:flex;gap:16px;flex-wrap:wrap;">
+      {% for packKey, packCount in subStats.byPack %}
+        <div style="background:var(--bg-3);border-radius:var(--radius);padding:8px 16px;font-size:13px;">
+          <span style="font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;color:var(--gold);">{{ packCount }}</span>
+          <span style="color:var(--text-dim);margin-left:6px;">× {{ packKey|upper|replace({'_': ' '}) }}</span>
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  {% if expiringSubs is not empty %}
+    <div style="margin-top:16px;padding:12px 16px;background:rgba(255,138,77,0.1);border-left:3px solid #ff8a4d;border-radius:4px;display:flex;align-items:center;justify-content:space-between;gap:16px;">
+      <span style="font-size:13px;">
+        <i class="ti ti-alert-triangle" style="color:#ff8a4d;"></i>
+        <strong>{{ expiringSubs|length }} abonnement{{ expiringSubs|length > 1 ? 's' : '' }}</strong> expire{{ expiringSubs|length > 1 ? 'nt' : '' }} dans les 7 prochains jours
+      </span>
+      <a href="{{ path('app_admin_subscriptions', {expiring: 1}) }}" class="btn btn-sm" style="background:#ff8a4d;color:#000;white-space:nowrap;">Voir détails</a>
+    </div>
+  {% endif %}
+</div>
+
+{# ── CA total toutes périodes ── #}
+<div class="section-label">CA cumulé depuis l'ouverture</div>
+<div class="stats-grid" style="margin-bottom:32px;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));">
+  <div class="stat-card" style="border-top:2px solid var(--gold);">
+    <span class="stat-label">CA total</span>
+    <span class="stat-value" style="color:var(--gold);">{{ breakdownAllTime.total|number_format(2, ',', ' ') }} €</span>
+  </div>
+  <div class="stat-card" style="border-top:2px solid #7AB85A;">
+    <span class="stat-label">Part structure (total)</span>
+    <span class="stat-value" style="color:#7AB85A;font-size:26px;">{{ breakdownAllTime.structure|number_format(2, ',', ' ') }} €</span>
+  </div>
+  <div class="stat-card">
+    <span class="stat-label">Membres inscrits</span>
+    <span class="stat-value">{{ totalUsers }}</span>
+    <span style="font-size:12px;color:var(--text-dim);margin-top:4px;display:block;">dont {{ totalCoaches }} coach{{ totalCoaches > 1 ? 's' : '' }}</span>
+  </div>
 </div>
 
 {# ── Dernières réservations ── #}

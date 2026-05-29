@@ -217,4 +217,176 @@ class BookingRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+
+    // ── Méthodes admin A3 (lot A3) ───────────────────────────────────────────
+
+    /**
+     * Décompose le CA confirmé en parts structure/coach via les marges TimeSlot.
+     *
+     * @return array{total:string,structure:string,coach:string}
+     */
+    public function getRevenueBreakdown(\DateTimeImmutable $since, ?\DateTimeImmutable $until = null): array
+    {
+        $qb = $this->createQueryBuilder('b')
+            ->select('b.timeSlot AS slot', 'COALESCE(SUM(b.price), 0) AS total')
+            ->where('b.status = :status')
+            ->andWhere('b.startAt >= :since')
+            ->setParameter('status', Booking::STATUS_CONFIRMED)
+            ->setParameter('since', $since)
+            ->groupBy('b.timeSlot');
+
+        if ($until !== null) {
+            $qb->andWhere('b.startAt < :until')->setParameter('until', $until);
+        }
+
+        $rows = $qb->getQuery()->getResult();
+
+        $grandTotal = 0.0;
+        $structureTotal = 0.0;
+        $coachTotal = 0.0;
+
+        foreach ($rows as $row) {
+            $slot = $row['slot'];
+            $amount = (float) $row['total'];
+            $grandTotal += $amount;
+
+            if (is_string($slot)) {
+                $slot = \App\Entity\Enum\TimeSlot::from($slot);
+            }
+
+            $rate = $slot->structureMarginRate();
+            $structureTotal += $amount * $rate;
+            $coachTotal += $amount * (1 - $rate);
+        }
+
+        return [
+            'total'     => number_format($grandTotal, 2, '.', ''),
+            'structure' => number_format($structureTotal, 2, '.', ''),
+            'coach'     => number_format($coachTotal, 2, '.', ''),
+        ];
+    }
+
+    /**
+     * Nb séances confirmées + CA par créneau TimeSlot. Les 3 clés sont toujours présentes.
+     *
+     * @return array{day:array{count:int,revenue:string},night:array{count:int,revenue:string},astreinte:array{count:int,revenue:string}}
+     */
+    public function countAndRevenueBySlot(\DateTimeImmutable $since, ?\DateTimeImmutable $until = null): array
+    {
+        $result = [
+            'day'       => ['count' => 0, 'revenue' => '0.00'],
+            'night'     => ['count' => 0, 'revenue' => '0.00'],
+            'astreinte' => ['count' => 0, 'revenue' => '0.00'],
+        ];
+
+        $qb = $this->createQueryBuilder('b')
+            ->select('b.timeSlot AS slot', 'COUNT(b.id) AS cnt', 'COALESCE(SUM(b.price), 0) AS revenue')
+            ->where('b.status = :status')
+            ->andWhere('b.startAt >= :since')
+            ->setParameter('status', Booking::STATUS_CONFIRMED)
+            ->setParameter('since', $since)
+            ->groupBy('b.timeSlot');
+
+        if ($until !== null) {
+            $qb->andWhere('b.startAt < :until')->setParameter('until', $until);
+        }
+
+        $rows = $qb->getQuery()->getResult();
+
+        foreach ($rows as $row) {
+            $slot = $row['slot'];
+            $key = $slot instanceof \App\Entity\Enum\TimeSlot ? $slot->value : (string) $slot;
+            if (isset($result[$key])) {
+                $result[$key] = [
+                    'count'   => (int) $row['cnt'],
+                    'revenue' => number_format((float) $row['revenue'], 2, '.', ''),
+                ];
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * Réservations confirmées dans une fenêtre temporelle, avec jointures client+coach.
+     *
+     * @return Booking[]
+     */
+    public function findConfirmedInWindow(\DateTimeImmutable $from, \DateTimeImmutable $to): array
+    {
+        return $this->createQueryBuilder('b')
+            ->join('b.client', 'client')
+            ->addSelect('client')
+            ->join('b.coach', 'coach')
+            ->addSelect('coach')
+            ->join('coach.user', 'coachUser')
+            ->addSelect('coachUser')
+            ->where('b.status = :status')
+            ->andWhere('b.startAt >= :from')
+            ->andWhere('b.startAt <= :to')
+            ->setParameter('status', Booking::STATUS_CONFIRMED)
+            ->setParameter('from', $from)
+            ->setParameter('to', $to)
+            ->orderBy('b.startAt', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
+     * Top coachs par CA confirmé sur la période.
+     *
+     * @return array<array{coach:\App\Entity\Coach,revenue:string,sessions:int}>
+     */
+    public function topCoachesByRevenue(\DateTimeImmutable $since, int $limit = 5): array
+    {
+        $rows = $this->createQueryBuilder('b')
+            ->select(
+                'IDENTITY(b.coach) AS coachId',
+                'SUM(b.price) AS revenue',
+                'COUNT(b.id) AS sessions',
+            )
+            ->where('b.status = :status')
+            ->andWhere('b.startAt >= :since')
+            ->setParameter('status', Booking::STATUS_CONFIRMED)
+            ->setParameter('since', $since)
+            ->groupBy('b.coach')
+            ->orderBy('revenue', 'DESC')
+            ->setMaxResults($limit)
+            ->getQuery()
+            ->getResult();
+
+        if (empty($rows)) {
+            return [];
+        }
+
+        $coachIds = array_column($rows, 'coachId');
+        $coaches = $this->getEntityManager()->createQueryBuilder()
+            ->select('c', 'u')
+            ->from(\App\Entity\Coach::class, 'c')
+            ->join('c.user', 'u')
+            ->where('c.id IN (:ids)')
+            ->setParameter('ids', $coachIds)
+            ->getQuery()
+            ->getResult();
+
+        $coachesById = [];
+        foreach ($coaches as $coach) {
+            $coachesById[$coach->getId()] = $coach;
+        }
+
+        $result = [];
+        foreach ($rows as $row) {
+            $coach = $coachesById[(int) $row['coachId']] ?? null;
+            if ($coach === null) {
+                continue;
+            }
+            $result[] = [
+                'coach'    => $coach,
+                'revenue'  => number_format((float) $row['revenue'], 2, '.', ''),
+                'sessions' => (int) $row['sessions'],
+            ];
+        }
+
+        return $result;
+    }
 }

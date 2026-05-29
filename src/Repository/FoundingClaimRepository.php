@@ -41,4 +41,48 @@ class FoundingClaimRepository extends ServiceEntityRepository
             ->getSingleScalarResult();
         return ($max ?? 0) + 1;
     }
+
+    /** @return FoundingClaim[] */
+    public function findAllWithUser(): array
+    {
+        return $this->createQueryBuilder('fc')
+            ->join('fc.user', 'u')
+            ->addSelect('u')
+            ->orderBy('fc.claimNumber', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
+
+    /** @return array{total:int,bilanDone:int,sessionsConsumed:int,sessionsTotal:int} */
+    public function getStats(FoundingOffer $offer): array
+    {
+        $total = (int) $this->createQueryBuilder('fc')
+            ->select('COUNT(fc.id)')
+            ->where('fc.offer = :offer')
+            ->setParameter('offer', $offer)
+            ->getQuery()
+            ->getSingleScalarResult();
+
+        $bilanDone = (int) $this->createQueryBuilder('fc')
+            ->select('COUNT(fc.id)')
+            ->where('fc.offer = :offer')
+            ->andWhere('fc.bilanDoneAt IS NOT NULL')
+            ->setParameter('offer', $offer)
+            ->getQuery()
+            ->getSingleScalarResult();
+
+        $sessionsConsumed = (int) ($this->createQueryBuilder('fc')
+            ->select('COALESCE(SUM(fc.sessionsUsed), 0)')
+            ->where('fc.offer = :offer')
+            ->setParameter('offer', $offer)
+            ->getQuery()
+            ->getSingleScalarResult() ?? 0);
+
+        return [
+            'total'            => $total,
+            'bilanDone'        => $bilanDone,
+            'sessionsConsumed' => $sessionsConsumed,
+            'sessionsTotal'    => $total * $offer->getSessionsIncluded(),
+        ];
+    }
 }

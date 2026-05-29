@@ -2070,3 +2070,146 @@ input[type="radio"] {
   line-height: 1.6;
   margin: 0;
 }
+
+/* ── Calendrier admin (Lot A3) ──────────────────────────────────────────── */
+
+.calendar-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: 80px repeat(7, 1fr);
+  gap: 1px;
+  background: var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  border: 1px solid var(--border);
+  margin-bottom: 4px;
+}
+
+.calendar-cell {
+  background: var(--bg-card);
+  padding: 8px 6px;
+  min-height: 80px;
+  font-size: 13px;
+}
+
+.calendar-cell.header {
+  background: var(--bg-3);
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  text-align: center;
+  padding: 12px 6px;
+  font-size: 12px;
+  min-height: auto;
+}
+
+.calendar-cell.slot-label {
+  background: var(--bg-3);
+  text-align: center;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  color: var(--gold-dim);
+  min-height: 80px;
+}
+
+.calendar-event {
+  display: block;
+  background: rgba(200, 169, 81, 0.12);
+  border-left: 2px solid var(--gold);
+  padding: 4px 6px;
+  border-radius: 4px;
+  margin-bottom: 4px;
+  font-size: 12px;
+  line-height: 1.4;
+  text-decoration: none;
+  color: var(--text);
+  transition: background .15s;
+}
+
+.calendar-event:hover {
+  background: rgba(200, 169, 81, 0.22);
+}
+
+.calendar-event.night {
+  border-left-color: #7AB85A;
+  background: rgba(61, 255, 20, 0.08);
+}
+
+.calendar-event.night:hover {
+  background: rgba(61, 255, 20, 0.15);
+}
+
+.calendar-event.astreinte {
+  border-left-color: #ff8a4d;
+  background: rgba(255, 138, 77, 0.1);
+}
+
+.calendar-event.astreinte:hover {
+  background: rgba(255, 138, 77, 0.18);
+}
+
+.calendar-event-time {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  letter-spacing: 1px;
+  display: block;
+}
+
+.calendar-event-meta {
+  display: block;
+  color: var(--muted-readable);
+  font-size: 11px;
+  margin-top: 2px;
+}
+
+/* Admin toolbar */
+.admin-toolbar {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+/* Data card générique */
+.data-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px 24px;
+  margin-bottom: 0;
+}
+
+@media (max-width: 900px) {
+  .calendar-grid {
+    display: block;
+  }
+
+  .calendar-cell {
+    display: block;
+    min-height: auto;
+  }
+
+  .calendar-cell.header,
+  .calendar-cell.slot-label {
+    display: none;
+  }
+
+  .calendar-event {
+    margin-bottom: 6px;
+  }
+}

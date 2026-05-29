@@ -1,0 +1,100 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Abonnements actifs — Admin SPORT+{% endblock %}
+
+{% block admin_body %}
+
+<div class="page-header">
+  <div>
+    <h1>Abonnements <span style="color:var(--gold)">Actifs</span></h1>
+    <p class="page-subtitle">Packs mensuels en cours — {{ subscriptions|length }} abonnement{{ subscriptions|length != 1 ? 's' : '' }}</p>
+  </div>
+  <div class="admin-toolbar">
+    <a href="{{ path('app_admin_export_subscriptions') }}" class="btn btn-secondary btn-sm">
+      <i class="ti ti-download"></i> Export CSV
+    </a>
+  </div>
+</div>
+
+{# Barre de filtres #}
+<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:24px;">
+  <a href="{{ path('app_admin_subscriptions') }}" class="btn btn-sm {{ (filterExpiring is same as false and filterPack is null) ? 'btn-primary' : 'btn-secondary' }}">
+    Tous ({{ stats.active }})
+  </a>
+  <a href="{{ path('app_admin_subscriptions', {expiring: 1}) }}" class="btn btn-sm {{ filterExpiring ? 'btn-primary' : 'btn-secondary' }}" style="{{ filterExpiring ? '' : '' }}">
+    <i class="ti ti-alert-triangle"></i> Expire bientôt
+  </a>
+  {% for pack in ['pack_4', 'pack_8', 'pack_12'] %}
+    <a href="{{ path('app_admin_subscriptions', {pack: pack}) }}" class="btn btn-sm {{ filterPack == pack ? 'btn-primary' : 'btn-secondary' }}">
+      {{ pack|upper|replace({'_': ' '}) }} ({{ stats.byPack[pack] ?? 0 }})
+    </a>
+  {% endfor %}
+</div>
+
+{% if filterExpiring %}
+  <div style="margin-bottom:20px;padding:10px 16px;background:rgba(255,138,77,0.1);border-left:3px solid #ff8a4d;border-radius:4px;font-size:13px;">
+    <i class="ti ti-alert-triangle" style="color:#ff8a4d;"></i>
+    Affichage des abonnements expirant dans les 7 prochains jours.
+  </div>
+{% endif %}
+
+{# Table abonnements #}
+<div class="data-table-card">
+  {% if subscriptions is empty %}
+    <div class="empty-placeholder" style="padding:48px;text-align:center;">
+      <i class="ti ti-credit-card" style="font-size:40px;color:var(--text-dim);display:block;margin-bottom:12px;"></i>
+      Aucun abonnement
+      {% if filterExpiring %} expirant prochainement{% elseif filterPack %} pour ce pack{% endif %}
+      pour le moment.
+    </div>
+  {% else %}
+    <table>
+      <thead>
+        <tr>
+          <th>Réf.</th>
+          <th>Client</th>
+          <th>Coach</th>
+          <th>Format</th>
+          <th>Créneau</th>
+          <th>Pack</th>
+          <th style="text-align:center;">Séances restantes</th>
+          <th style="text-align:right;">Prix / mois</th>
+          <th>Expire le</th>
+          <th>Statut</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for sub in subscriptions %}
+          {% set daysLeft = ((sub.endsAt.timestamp - 'now'|date('U'))|abs / 86400)|round(0, 'ceil') %}
+          {% set isExpiringSoon = sub.endsAt.timestamp < ('now'|date('U') + 7 * 86400) %}
+          <tr {% if isExpiringSoon %}style="background:rgba(255,138,77,0.05);"{% endif %}>
+            <td style="font-family:'Barlow Condensed',sans-serif;font-size:12px;letter-spacing:1px;color:var(--text-dim);">{{ sub.reference }}</td>
+            <td style="font-weight:600;">{{ sub.client.nomComplet }}</td>
+            <td style="color:var(--text-dim);">{{ sub.coach ? sub.coach.nomComplet : '—' }}</td>
+            <td>{{ sub.format.label }}</td>
+            <td style="font-size:13px;">{{ sub.timeSlot.label }}</td>
+            <td>
+              <span style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;letter-spacing:1px;">
+                {{ sub.packType.label }}
+              </span>
+            </td>
+            <td style="text-align:center;">
+              <span style="font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:700;color:var(--gold);">{{ sub.sessionsRemaining }}</span>
+              <span style="color:var(--text-dim);">/ {{ sub.packType.sessionsCount }}</span>
+            </td>
+            <td style="text-align:right;font-family:'Barlow Condensed',sans-serif;font-weight:700;color:var(--gold);">
+              {{ sub.monthlyPrice|number_format(2, ',', ' ') }} €
+            </td>
+            <td {% if isExpiringSoon %}style="color:#ff8a4d;font-weight:600;"{% else %}style="color:var(--text-dim);"{% endif %}>
+              {{ sub.endsAt|date('d/m/Y') }}
+              {% if isExpiringSoon %}<i class="ti ti-alert-triangle"></i>{% endif %}
+            </td>
+            <td><span class="status-badge {{ sub.status }}">{{ sub.status }}</span></td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% endif %}
+</div>
+
+{% endblock %}

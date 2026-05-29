@@ -1,0 +1,107 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Calendrier des séances — Admin SPORT+{% endblock %}
+
+{% block admin_body %}
+
+<div class="page-header">
+  <div>
+    <h1>Calendrier <span style="color:var(--gold)">des séances</span></h1>
+    <p class="page-subtitle">Séances confirmées · semaine du {{ from|date('d/m/Y') }} au {{ to|date('d/m/Y') }}</p>
+  </div>
+</div>
+
+{# Barre de navigation semaine #}
+<div class="calendar-toolbar">
+  <div style="display:flex;gap:8px;align-items:center;">
+    <a href="{{ path('app_admin_calendar', {week: prevWeek|date('Y-m-d')}) }}" class="btn btn-secondary btn-sm">
+      <i class="ti ti-chevron-left"></i> Semaine précédente
+    </a>
+    <a href="{{ path('app_admin_calendar') }}" class="btn btn-secondary btn-sm">
+      <i class="ti ti-calendar-today"></i> Aujourd'hui
+    </a>
+    <a href="{{ path('app_admin_calendar', {week: nextWeek|date('Y-m-d')}) }}" class="btn btn-secondary btn-sm">
+      Semaine suivante <i class="ti ti-chevron-right"></i>
+    </a>
+  </div>
+  <div style="display:flex;gap:12px;align-items:center;">
+    <span style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-dim);">
+      <span style="width:10px;height:10px;border-radius:2px;background:var(--gold);display:inline-block;"></span> Journée
+    </span>
+    <span style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-dim);">
+      <span style="width:10px;height:10px;border-radius:2px;background:#7AB85A;display:inline-block;"></span> Night Coach
+    </span>
+    <span style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-dim);">
+      <span style="width:10px;height:10px;border-radius:2px;background:#ff8a4d;display:inline-block;"></span> Astreinte
+    </span>
+  </div>
+</div>
+
+{% set dayLabels = {1: 'LUN', 2: 'MAR', 3: 'MER', 4: 'JEU', 5: 'VEN', 6: 'SAM', 7: 'DIM'} %}
+
+{# Grille calendrier #}
+<div class="calendar-grid">
+  {# Coin vide #}
+  <div class="calendar-cell header"></div>
+  {# En-têtes jours #}
+  {% for i in 1..7 %}
+    <div class="calendar-cell header">
+      {{ dayLabels[i] }}<br>
+      <span style="font-size:11px;font-weight:400;opacity:.7;">{{ from|date_modify('+' ~ (i - 1) ~ ' days')|date('d/m') }}</span>
+    </div>
+  {% endfor %}
+
+  {# Ligne DAY #}
+  <div class="calendar-cell slot-label" style="color:var(--gold);">DAY<br><span style="font-size:9px;font-weight:400;opacity:.6;">6h–21h</span></div>
+  {% for i in 1..7 %}
+    <div class="calendar-cell">
+      {% for booking in grid[i]['day'] %}
+        <a href="{{ path('app_admin_bookings') }}" class="calendar-event" title="{{ booking.client.nomComplet }} — {{ booking.coach.nomComplet }}">
+          <span class="calendar-event-time">{{ booking.startAt|date('H:i') }}</span>
+          <span class="calendar-event-meta">{{ booking.client.nomComplet|split(' ')|first }} · {{ booking.format.value|upper }}</span>
+        </a>
+      {% endfor %}
+    </div>
+  {% endfor %}
+
+  {# Ligne NIGHT #}
+  <div class="calendar-cell slot-label" style="color:#7AB85A;">NIGHT<br><span style="font-size:9px;font-weight:400;opacity:.6;">21h–0h</span></div>
+  {% for i in 1..7 %}
+    <div class="calendar-cell">
+      {% for booking in grid[i]['night'] %}
+        <a href="{{ path('app_admin_bookings') }}" class="calendar-event night" title="{{ booking.client.nomComplet }} — {{ booking.coach.nomComplet }}">
+          <span class="calendar-event-time">{{ booking.startAt|date('H:i') }}</span>
+          <span class="calendar-event-meta">{{ booking.client.nomComplet|split(' ')|first }} · {{ booking.format.value|upper }}</span>
+        </a>
+      {% endfor %}
+    </div>
+  {% endfor %}
+
+  {# Ligne ASTREINTE #}
+  <div class="calendar-cell slot-label" style="color:#ff8a4d;">ASTR.<br><span style="font-size:9px;font-weight:400;opacity:.6;">0h–6h</span></div>
+  {% for i in 1..7 %}
+    <div class="calendar-cell">
+      {% for booking in grid[i]['astreinte'] %}
+        <a href="{{ path('app_admin_bookings') }}" class="calendar-event astreinte" title="{{ booking.client.nomComplet }} — {{ booking.coach.nomComplet }}">
+          <span class="calendar-event-time">{{ booking.startAt|date('H:i') }}</span>
+          <span class="calendar-event-meta">{{ booking.client.nomComplet|split(' ')|first }} · {{ booking.format.value|upper }}</span>
+        </a>
+      {% endfor %}
+    </div>
+  {% endfor %}
+</div>
+
+{# Récap semaine #}
+<div style="display:flex;gap:32px;align-items:center;margin-top:16px;padding:16px 0;border-top:1px solid var(--border);">
+  <div style="font-family:'Barlow Condensed',sans-serif;font-size:15px;color:var(--text-dim);">
+    <i class="ti ti-calendar-stats" style="color:var(--gold);"></i>
+    <strong style="color:var(--text);">{{ totalSessions }}</strong> séance{{ totalSessions != 1 ? 's' : '' }} cette semaine
+    &nbsp;·&nbsp;
+    CA généré : <strong style="color:var(--gold);">{{ totalRevenue|number_format(2, ',', ' ') }} €</strong>
+  </div>
+  <a href="{{ path('app_admin_export_revenue', {from: from|date('Y-m-d'), to: to|date('Y-m-d')}) }}" class="btn btn-secondary btn-sm" style="margin-left:auto;">
+    <i class="ti ti-download"></i> Export CSV semaine
+  </a>
+</div>
+
+{% endblock %}
