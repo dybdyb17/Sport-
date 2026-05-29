@@ -1,0 +1,112 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Tarifs — SPORT+ Marseille{% endblock %}
+
+{% block body %}
+
+{# Mini hero #}
+<section style="padding:80px 0 60px;text-align:center;">
+  <div class="container">
+    <div class="hero-badge">Tarification</div>
+    <h1 class="section-title" style="margin-top:16px;">Nos <span style="color:var(--gold)">Tarifs</span></h1>
+    <p class="section-sub">Des formules transparentes, sans engagement, adaptées à ton budget.</p>
+  </div>
+</section>
+
+{# Pricing grid #}
+<section class="section" style="padding-top:0;">
+  <div class="container">
+    <div class="cards-grid">
+
+      <div class="service-card">
+        <div class="service-icon"><i class="ti ti-user"></i></div>
+        <div class="service-name">Solo — Journée</div>
+        <div class="service-price" style="font-size:32px;font-family:'Barlow Condensed',sans-serif;font-weight:900;">37,50 €</div>
+        <p class="service-desc">Coaching individuel en journée. Suivi personnalisé, progression garantie.</p>
+        <ul style="list-style:none;margin-bottom:20px;display:flex;flex-direction:column;gap:8px;">
+          <li style="display:flex;align-items:center;gap:8px;font-size:14px;color:var(--text-dim);">
+            <i class="ti ti-check" style="color:var(--green);"></i> 1 coach dédié
+          </li>
+          <li style="display:flex;align-items:center;gap:8px;font-size:14px;color:var(--text-dim);">
+            <i class="ti ti-check" style="color:var(--green);"></i> Programme personnalisé
+          </li>
+          <li style="display:flex;align-items:center;gap:8px;font-size:14px;color:var(--text-dim);">
+            <i class="ti ti-check" style="color:var(--green);"></i> Accès messagerie
+          </li>
+        </ul>
+        <a href="{{ app.user ? path('app_booking_new') : path('app_register') }}" class="btn btn-primary btn-full">Réserver</a>
+      </div>
+
+      <div class="service-card" style="border-color:var(--gold-dim);position:relative;">
+        <div style="position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:var(--gold);color:var(--black);font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:2px;padding:4px 14px;border-radius:100px;white-space:nowrap;">POPULAIRE</div>
+        <div class="service-icon"><i class="ti ti-moon"></i></div>
+        <div class="service-name">Night Coach</div>
+        <div class="service-price" style="font-size:32px;font-family:'Barlow Condensed',sans-serif;font-weight:900;">52,50 €</div>
+        <p class="service-desc">Coaching privé dès 21h. Solo, duo ou groupe jusqu'à 6. L'expérience premium nocturne.</p>
+        <ul style="list-style:none;margin-bottom:20px;display:flex;flex-direction:column;gap:8px;">
+          <li style="display:flex;align-items:center;gap:8px;font-size:14px;color:var(--text-dim);">
+            <i class="ti ti-check" style="color:var(--green);"></i> Dès 21h jusqu'à l'aube
+          </li>
+          <li style="display:flex;align-items:center;gap:8px;font-size:14px;color:var(--text-dim);">
+            <i class="ti ti-check" style="color:var(--green);"></i> Ambiance exclusive
+          </li>
+          <li style="display:flex;align-items:center;gap:8px;font-size:14px;color:var(--text-dim);">
+            <i class="ti ti-check" style="color:var(--green);"></i> Accès messagerie
+          </li>
+        </ul>
+        <a href="{{ app.user ? path('app_booking_new') : path('app_register') }}" class="btn btn-primary btn-full">Réserver</a>
+      </div>
+
+      <div class="service-card">
+        <div class="service-icon"><i class="ti ti-users"></i></div>
+        <div class="service-name">Trio — 3 pers</div>
+        <div class="service-price" style="font-size:32px;font-family:'Barlow Condensed',sans-serif;font-weight:900;">30 € <span style="font-size:16px;color:var(--text-dim);">/ pers</span></div>
+        <p class="service-desc">Partagez l'expérience à trois. Le bon équilibre entre suivi et dynamique de groupe.</p>
+        <ul style="list-style:none;margin-bottom:20px;display:flex;flex-direction:column;gap:8px;">
+          <li style="display:flex;align-items:center;gap:8px;font-size:14px;color:var(--text-dim);">
+            <i class="ti ti-check" style="color:var(--green);"></i> 3 participants max
+          </li>
+          <li style="display:flex;align-items:center;gap:8px;font-size:14px;color:var(--text-dim);">
+            <i class="ti ti-check" style="color:var(--green);"></i> Séance 60 min
+          </li>
+          <li style="display:flex;align-items:center;gap:8px;font-size:14px;color:var(--text-dim);">
+            <i class="ti ti-check" style="color:var(--green);"></i> Groupe privé
+          </li>
+        </ul>
+        <a href="{{ app.user ? path('app_booking_new') : path('app_register') }}" class="btn btn-outline btn-full">Réserver</a>
+      </div>
+
+      <div class="service-card">
+        <div class="service-icon"><i class="ti ti-bolt"></i></div>
+        <div class="service-name">Groupe 6</div>
+        <div class="service-price" style="font-size:32px;font-family:'Barlow Condensed',sans-serif;font-weight:900;">22 € <span style="font-size:16px;color:var(--text-dim);">/ pers</span></div>
+        <p class="service-desc">Le meilleur rapport qualité-prix. Six personnes, une énergie collective, un coach expert.</p>
+        <ul style="list-style:none;margin-bottom:20px;display:flex;flex-direction:column;gap:8px;">
+          <li style="display:flex;align-items:center;gap:8px;font-size:14px;color:var(--text-dim);">
+            <i class="ti ti-check" style="color:var(--green);"></i> 6 participants max
+          </li>
+          <li style="display:flex;align-items:center;gap:8px;font-size:14px;color:var(--text-dim);">
+            <i class="ti ti-check" style="color:var(--green);"></i> Format 75 min
+          </li>
+          <li style="display:flex;align-items:center;gap:8px;font-size:14px;color:var(--text-dim);">
+            <i class="ti ti-check" style="color:var(--green);"></i> Tarif le plus bas
+          </li>
+        </ul>
+        <a href="{{ app.user ? path('app_booking_new') : path('app_register') }}" class="btn btn-outline btn-full">Réserver</a>
+      </div>
+
+    </div>
+
+    {# Note bas de page #}
+    <div style="max-width:640px;margin:48px auto 0;text-align:center;padding:24px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);">
+      <i class="ti ti-shield-check" style="font-size:24px;color:var(--gold);display:block;margin-bottom:12px;"></i>
+      <p style="font-size:14px;color:var(--text-dim);line-height:1.7;">
+        <strong style="color:var(--white);">Sans engagement.</strong>
+        Annulation gratuite jusqu'à 2h avant la séance.
+        Paiement uniquement après confirmation du coach.
+      </p>
+    </div>
+  </div>
+</section>
+
+{% endblock %}

@@ -1,0 +1,114 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Tableau de bord — Admin SPORT+{% endblock %}
+
+{% block admin_body %}
+
+<div class="page-header">
+  <div>
+    <h1>Tableau de <span style="color:var(--gold)">Bord</span></h1>
+    <p class="page-subtitle">Vue d'ensemble de la plateforme</p>
+  </div>
+</div>
+
+{# ── Vue d'ensemble ── #}
+<div class="section-label">Vue d'ensemble</div>
+<div class="stats-grid">
+  <div class="stat-card warning">
+    <span class="stat-label">Utilisateurs</span>
+    <span class="stat-value">{{ totalUsers }}</span>
+  </div>
+  <div class="stat-card warning">
+    <span class="stat-label">Coachs actifs</span>
+    <span class="stat-value">{{ totalCoaches }}</span>
+  </div>
+  <div class="stat-card warning">
+    <span class="stat-label">Revenus du mois</span>
+    <span class="stat-value" style="font-size:28px;">{{ revenueThisMonth|number_format(2, ',', ' ') }} €</span>
+  </div>
+  <div class="stat-card warning">
+    <span class="stat-label">Revenus totaux</span>
+    <span class="stat-value" style="font-size:28px;">{{ revenueAllTime|number_format(2, ',', ' ') }} €</span>
+  </div>
+</div>
+
+{# ── Réservations par statut ── #}
+<div class="section-label">Réservations par statut</div>
+<div class="stats-grid">
+  <div class="stat-card {{ bookingCounts['pending'] > 0 ? 'success' : '' }}">
+    <span class="stat-label">En attente</span>
+    <span class="stat-value" style="{{ bookingCounts['pending'] > 0 ? 'color:var(--green)' : '' }}">{{ bookingCounts['pending'] }}</span>
+  </div>
+  <div class="stat-card success">
+    <span class="stat-label">Confirmées</span>
+    <span class="stat-value">{{ bookingCounts['confirmed'] }}</span>
+  </div>
+  <div class="stat-card danger">
+    <span class="stat-label">Refusées</span>
+    <span class="stat-value">{{ bookingCounts['refused'] }}</span>
+  </div>
+  <div class="stat-card">
+    <span class="stat-label">Annulées</span>
+    <span class="stat-value" style="color:var(--muted);">{{ bookingCounts['cancelled'] }}</span>
+  </div>
+</div>
+
+{# ── Raccourcis ── #}
+<div class="section-label">Raccourcis</div>
+<div class="cards-grid" style="margin-bottom:40px;">
+  <a href="{{ path('app_admin_coachs') }}" class="feature-card" style="text-decoration:none;">
+    <div class="feature-icon"><i class="ti ti-users"></i></div>
+    <div class="feature-title">Coachs</div>
+    <p class="feature-text">Gérer les profils coachs</p>
+  </a>
+  <a href="{{ path('app_admin_bookings') }}" class="feature-card" style="text-decoration:none;">
+    <div class="feature-icon"><i class="ti ti-calendar"></i></div>
+    <div class="feature-title">Réservations</div>
+    <p class="feature-text">Consulter toutes les réservations</p>
+  </a>
+  <a href="{{ path('app_admin_users') }}" class="feature-card" style="text-decoration:none;">
+    <div class="feature-icon"><i class="ti ti-id"></i></div>
+    <div class="feature-title">Utilisateurs</div>
+    <p class="feature-text">Liste des comptes inscrits</p>
+  </a>
+</div>
+
+{# ── Dernières réservations ── #}
+<div class="data-table-card">
+  <div class="data-table-header">
+    <h3>Dernières réservations</h3>
+    <a href="{{ path('app_admin_bookings') }}" class="link-gold">Voir tout →</a>
+  </div>
+  {% if recentBookings is empty %}
+    <div class="empty-placeholder" style="padding:40px;">Aucune réservation pour le moment.</div>
+  {% else %}
+    <table>
+      <thead>
+        <tr>
+          <th>Réf.</th>
+          <th>Prestation</th>
+          <th>Date</th>
+          <th>Client</th>
+          <th>Coach</th>
+          <th>Statut</th>
+          <th>Prix</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for booking in recentBookings %}
+          <tr>
+            <td style="font-family:'Barlow Condensed',sans-serif;font-size:13px;letter-spacing:2px;color:var(--text-dim);">{{ booking.reference }}</td>
+            <td style="font-family:'Barlow Condensed',sans-serif;font-weight:700;">{{ booking.serviceTypeLabel }}</td>
+            <td style="color:var(--text-dim);">{{ booking.startAt|date('d/m/Y') }}</td>
+            <td style="color:var(--text-dim);">{{ booking.client.nomComplet }}</td>
+            <td style="color:var(--text-dim);">{{ booking.coach.nomComplet }}</td>
+            <td><span class="status-badge {{ booking.status }}">{{ booking.statutLabel }}</span></td>
+            <td style="color:var(--gold);font-family:'Barlow Condensed',sans-serif;font-weight:700;">{{ booking.prixFormatted }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% endif %}
+</div>
+
+{% endblock %}

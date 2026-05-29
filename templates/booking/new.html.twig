@@ -3,35 +3,61 @@
 {% block title %}Réserver un coach — SPORT+{% endblock %}
 
 {% block body %}
-    <div class="form-page">
+<div class="container" style="padding-top:40px;padding-bottom:60px;">
 
-        <div class="form-page-title">Réserver <span>ton coach</span></div>
+  <div class="page-header">
+    <div>
+      <h1>Réserver <span style="color:var(--gold)">ton coach</span></h1>
+      <p class="page-subtitle">Choisis ta prestation et ton créneau</p>
+    </div>
+  </div>
 
-        <div class="divider"><div class="div-line"></div><div class="div-diamond"></div><div class="div-line"></div></div>
+  <div class="booking-form-layout">
 
-        {{ form_start(form, {'attr': {'class': 'booking-form'}}) }}
-            {{ form_row(form.coach) }}
-            {{ form_row(form.serviceType) }}
-            {{ form_row(form.startAt) }}
-            {{ form_row(form.message) }}
+    <!-- Form -->
+    <div>
+      {{ form_start(form, {'attr': {'class': 'booking-form'}}) }}
+        <div class="form-field">{{ form_row(form.coach) }}</div>
+        <div class="form-field">{{ form_row(form.serviceType) }}</div>
+        <div class="form-field">{{ form_row(form.startAt) }}</div>
+        <div class="form-field">{{ form_row(form.message) }}</div>
 
-            <div class="price-summary">
-                <small style="color:var(--muted);display:block;">
-                    Le prix dépend de la prestation choisie. Paiement sécurisé, uniquement si le coach accepte.
-                </small>
-            </div>
-
-            <button type="submit" class="btn-primary">
-                Envoyer la demande
-            </button>
-        {{ form_end(form) }}
-
-        <div class="booking-info">
-            <p>🔹 Ta demande sera envoyée au coach</p>
-            <p>🔹 Tu recevras une notification dès sa réponse</p>
-            <p>🔹 Paiement uniquement si le coach accepte</p>
-            <p>🔹 Annulation gratuite jusqu'à 2h avant la séance</p>
+        <div class="price-summary">
+          Le prix dépend de la prestation choisie. Paiement sécurisé, uniquement si le coach accepte.
         </div>
 
+        <button type="submit" class="btn btn-primary btn-lg btn-full" style="margin-top:24px;">
+          <i class="ti ti-send"></i> Envoyer la demande
+        </button>
+      {{ form_end(form) }}
     </div>
+
+    <!-- Info panel -->
+    <div class="booking-info-panel">
+      <h3><i class="ti ti-info-circle" style="color:var(--gold-dim);margin-right:8px;"></i>Comment ça marche ?</h3>
+      <div class="booking-info-item">
+        <i class="ti ti-send"></i>
+        <span>Ta demande est envoyée au coach immédiatement</span>
+      </div>
+      <div class="booking-info-item">
+        <i class="ti ti-bell"></i>
+        <span>Tu reçois une notification dès sa réponse</span>
+      </div>
+      <div class="booking-info-item">
+        <i class="ti ti-coins"></i>
+        <span>Paiement uniquement si le coach confirme</span>
+      </div>
+      <div class="booking-info-item">
+        <i class="ti ti-x"></i>
+        <span>Annulation gratuite jusqu'à 2h avant la séance</span>
+      </div>
+      <div style="margin-top:20px;padding:16px;background:rgba(200,169,81,.06);border:1px solid rgba(200,169,81,.15);border-radius:var(--radius);font-size:13px;color:var(--text-dim);">
+        <i class="ti ti-shield-check" style="color:var(--gold);margin-right:6px;"></i>
+        <strong style="color:var(--gold);">Sans engagement</strong> — Réserve, teste, avance.
+      </div>
+    </div>
+
+  </div>
+
+</div>
 {% endblock %}

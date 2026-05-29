@@ -1,71 +1,166 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{% block title %}SPORT+{% endblock %}</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800;900&family=Barlow:wght@300;400;500;600&family=Cormorant+Garamond:ital,wght@1,300;1,400&display=swap" rel="stylesheet">
-    {% block stylesheets %}
-        <link rel="stylesheet" href="{{ asset('styles/sportplus.css') }}">
-    {% endblock %}
-    {% block javascripts %}
-        {% block importmap %}{{ importmap('app') }}{% endblock %}
-    {% endblock %}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}SPORT+ — Coaching Premium Marseille{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800;900&family=Barlow:wght@300;400;500;600&family=Cormorant+Garamond:ital,wght@1,300;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.11.0/dist/tabler-icons.min.css">
+  {% block stylesheets %}<link rel="stylesheet" href="{{ asset('styles/sportplus.css') }}">{% endblock %}
+  {% block javascripts %}{% block importmap %}{{ importmap('app') }}{% endblock %}{% endblock %}
 </head>
 <body>
-<div class="page">
 
-    <header class="header">
-        <a href="{{ path('app_home') }}" class="logo-wrap">
-            <div class="logo-ring">
-                <div class="logo-text">S<span>+</span></div>
+<header class="site-header">
+  <div class="header-inner">
+    <!-- Logo -->
+    <a href="{{ path('app_home') }}" class="logo">
+      <div class="logo-mark">S<span style="color:var(--gold)">+</span></div>
+      <span class="logo-name">SPORT<span>+</span></span>
+    </a>
+
+    <!-- Nav desktop -->
+    <nav class="main-nav" aria-label="Navigation principale">
+      <a href="{{ path('app_home') }}" class="nav-link {% if app.request.attributes.get('_route') == 'app_home' %}active{% endif %}">Accueil</a>
+      <a href="{{ path('app_coachs_list') }}" class="nav-link {% if app.request.attributes.get('_route') == 'app_coachs_list' %}active{% endif %}">Coachs</a>
+      <a href="{{ path('app_tarifs') }}" class="nav-link {% if app.request.attributes.get('_route') == 'app_tarifs' %}active{% endif %}">Tarifs</a>
+      <a href="{{ path('app_faq') }}" class="nav-link {% if app.request.attributes.get('_route') == 'app_faq' %}active{% endif %}">FAQ</a>
+      <a href="{{ path('app_contact') }}" class="nav-link {% if app.request.attributes.get('_route') == 'app_contact' %}active{% endif %}">Contact</a>
+    </nav>
+
+    <!-- Actions -->
+    <div class="header-actions">
+      {% if app.user %}
+        <!-- CTA Réserver (pour non-coachs/non-admins) -->
+        {% if not is_granted('ROLE_COACH') and not is_granted('ROLE_ADMIN') %}
+          <a href="{{ path('app_booking_new') }}" class="btn btn-primary btn-sm">
+            <i class="ti ti-calendar-plus"></i> Réserver
+          </a>
+        {% endif %}
+        <!-- Avatar + dropdown -->
+        <div style="position:relative;">
+          {% set initials %}
+            {%- set words = app.user.nomComplet|split(' ') -%}
+            {{- words[0]|first|upper -}}{%- if words|length > 1 -%}{{- words[1]|first|upper -}}{%- endif -%}
+          {% endset %}
+          <button class="user-avatar" aria-haspopup="true" aria-expanded="false" title="{{ app.user.nomComplet }}">
+            {{- initials -}}
+          </button>
+          <div class="user-dropdown" role="menu">
+            <div class="dropdown-header">
+              <div style="font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;color:var(--white);">{{ app.user.nomComplet }}</div>
+              <div style="font-size:13px;color:var(--text-dim);margin-top:2px;">{{ app.user.email }}</div>
             </div>
-            <div class="brand-name">Sport+</div>
-        </a>
-        <h1>SPORT<span>+</span></h1>
-        <div class="header-sub">Réinventé à toute heure.</div>
-        <div class="location-badge">📍 Marseille 5ème — Ouvert 24h/24</div>
-
-        <nav class="nav">
-            {% if app.user %}
-                <span class="nav-user">{{ app.user.nomComplet }}</span>
-                {% if is_granted('ROLE_COACH') %}
-                    <a href="{{ path('app_coach_dashboard') }}">Espace coach</a>
-                {% else %}
-                    <a href="{{ path('app_espace_client') }}">Mon espace</a>
-                    <a href="{{ path('app_booking_new') }}">Réserver</a>
-                {% endif %}
-                <a href="{{ path('app_logout') }}">Déconnexion</a>
-            {% else %}
-                <a href="{{ path('app_login') }}">Connexion</a>
-                <a href="{{ path('app_register') }}">Inscription</a>
+            {% if is_granted('ROLE_ADMIN') %}
+              <a href="{{ path('app_admin_dashboard') }}" class="dropdown-item" role="menuitem"><i class="ti ti-shield"></i> Administration</a>
             {% endif %}
-        </nav>
-    </header>
-
-    <div class="divider">
-        <div class="div-line"></div>
-        <div class="div-diamond"></div>
-        <div class="div-line"></div>
+            {% if is_granted('ROLE_COACH') %}
+              <a href="{{ path('app_coach_dashboard') }}" class="dropdown-item" role="menuitem"><i class="ti ti-users"></i> Espace coach</a>
+            {% else %}
+              <a href="{{ path('app_espace_client') }}" class="dropdown-item" role="menuitem"><i class="ti ti-user"></i> Mon espace</a>
+            {% endif %}
+            <a href="{{ path('app_conversation_inbox') }}" class="dropdown-item" role="menuitem"><i class="ti ti-message"></i> Messagerie</a>
+            <div class="dropdown-divider"></div>
+            <a href="{{ path('app_logout') }}" class="dropdown-item danger" role="menuitem"><i class="ti ti-logout"></i> Déconnexion</a>
+          </div>
+        </div>
+      {% else %}
+        <a href="{{ path('app_login') }}" class="btn btn-ghost btn-sm">Connexion</a>
+        <a href="{{ path('app_register') }}" class="btn btn-primary btn-sm">Commencer</a>
+      {% endif %}
+      <!-- Burger mobile -->
+      <button class="mobile-toggle" aria-label="Menu" aria-expanded="false" aria-controls="mobileMenu">
+        <span></span><span></span><span></span>
+      </button>
     </div>
+  </div>
+</header>
 
-    {% for label, messages in app.flashes %}
-        {% for message in messages %}
-            <div class="alert alert-{{ label }}">{{ message }}</div>
-        {% endfor %}
-    {% endfor %}
-
-    {% block body %}{% endblock %}
-
-    <footer class="site-footer">
-        <div class="footer-logo">SPORT<span>+</span></div>
-        <div class="slogan">Pour le meilleur & pour le <span class="green-plus">+</span></div>
-    </footer>
-
+<!-- Mobile menu -->
+<div class="mobile-menu" id="mobileMenu" aria-hidden="true">
+  <nav class="mobile-nav">
+    <a href="{{ path('app_home') }}" class="nav-link">Accueil</a>
+    <a href="{{ path('app_coachs_list') }}" class="nav-link">Coachs</a>
+    <a href="{{ path('app_tarifs') }}" class="nav-link">Tarifs</a>
+    <a href="{{ path('app_faq') }}" class="nav-link">FAQ</a>
+    <a href="{{ path('app_contact') }}" class="nav-link">Contact</a>
+  </nav>
+  <div class="mobile-actions">
+    {% if app.user %}
+      {% if not is_granted('ROLE_COACH') and not is_granted('ROLE_ADMIN') %}
+        <a href="{{ path('app_booking_new') }}" class="btn btn-primary btn-full">Réserver</a>
+      {% endif %}
+      {% if is_granted('ROLE_ADMIN') %}
+        <a href="{{ path('app_admin_dashboard') }}" class="btn btn-secondary btn-full">Administration</a>
+      {% elseif is_granted('ROLE_COACH') %}
+        <a href="{{ path('app_coach_dashboard') }}" class="btn btn-secondary btn-full">Espace coach</a>
+      {% else %}
+        <a href="{{ path('app_espace_client') }}" class="btn btn-secondary btn-full">Mon espace</a>
+      {% endif %}
+      <a href="{{ path('app_logout') }}" class="btn btn-ghost btn-full">Déconnexion</a>
+    {% else %}
+      <a href="{{ path('app_login') }}" class="btn btn-ghost btn-full">Connexion</a>
+      <a href="{{ path('app_register') }}" class="btn btn-primary btn-full">Commencer</a>
+    {% endif %}
+  </div>
 </div>
 
+<!-- Flash messages -->
+{% for label, messages in app.flashes %}
+  {% for message in messages %}
+    <div class="container" style="margin-top:12px;">
+      <div class="alert alert-{{ label }}">
+        <i class="ti ti-{% if label == 'success' %}circle-check{% elseif label == 'error' %}alert-circle{% else %}info-circle{% endif %}"></i>
+        {{ message }}
+      </div>
+    </div>
+  {% endfor %}
+{% endfor %}
+
+<main>{% block body %}{% endblock %}</main>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a href="{{ path('app_home') }}" class="logo" style="margin-bottom:16px;display:inline-flex;">
+          <div class="logo-mark">S<span style="color:var(--gold)">+</span></div>
+          <span class="logo-name">SPORT<span>+</span></span>
+        </a>
+        <p style="font-size:14px;color:var(--text-dim);line-height:1.7;margin-top:12px;">Coaching premium à Marseille. Ton coach, quand tu veux, même à 4h du mat'.</p>
+      </div>
+      <div>
+        <div class="footer-col-title">Services</div>
+        <a href="{{ path('app_booking_new') }}" class="footer-link"><i class="ti ti-moon"></i> Night Coach</a>
+        <a href="{{ path('app_booking_new') }}" class="footer-link"><i class="ti ti-users"></i> Small Group</a>
+        <a href="{{ path('app_booking_new') }}" class="footer-link"><i class="ti ti-bolt"></i> Accès salle 24h</a>
+        <a href="{{ path('app_tarifs') }}" class="footer-link"><i class="ti ti-coins"></i> Tarifs</a>
+      </div>
+      <div>
+        <div class="footer-col-title">Contact</div>
+        <div class="footer-link"><i class="ti ti-map-pin"></i> Marseille 5ème</div>
+        <div class="footer-link"><i class="ti ti-clock-24"></i> Ouvert 24h/24</div>
+        <a href="{{ path('app_contact') }}" class="footer-link"><i class="ti ti-mail"></i> Nous contacter</a>
+      </div>
+      <div>
+        <div class="footer-col-title">Légal</div>
+        <a href="#" class="footer-link">Mentions légales</a>
+        <a href="#" class="footer-link">CGV</a>
+        <a href="#" class="footer-link">Confidentialité</a>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div class="footer-bottom-inner container">
+      <span>© {{ "now"|date("Y") }} SPORT+ Marseille — Coaching Premium</span>
+      <span style="color:var(--gold);font-family:'Barlow Condensed',sans-serif;font-weight:700;letter-spacing:2px;">POUR LE MEILLEUR <span style="color:var(--green)">+</span></span>
+    </div>
+  </div>
+</footer>
+
+<script src="{{ asset('js/app.js') }}" defer></script>
 {% block mercure %}{% endblock %}
 </body>
 </html>

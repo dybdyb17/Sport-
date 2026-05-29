@@ -1,0 +1,55 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Coachs — Admin SPORT+{% endblock %}
+
+{% block admin_body %}
+
+<div class="page-header">
+  <div>
+    <h1>Gestion des <span style="color:var(--gold)">Coachs</span></h1>
+    <p class="page-subtitle">{{ coaches|length }} coach{% if coaches|length > 1 %}s{% endif %} enregistré{% if coaches|length > 1 %}s{% endif %}</p>
+  </div>
+  <a href="{{ path('app_admin_coach_new') }}" class="btn btn-primary">
+    <i class="ti ti-plus"></i> Créer un coach
+  </a>
+</div>
+
+<div class="data-table-card">
+  <div class="data-table-header">
+    <h3>Liste des coachs</h3>
+  </div>
+  {% if coaches is empty %}
+    <div class="empty-placeholder" style="padding:60px;">Aucun coach enregistré. Créez le premier profil coach.</div>
+  {% else %}
+    <table>
+      <thead>
+        <tr>
+          <th>Nom</th>
+          <th>Email</th>
+          <th>Spécialités</th>
+          <th>Tarif/h</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for coach in coaches %}
+          <tr>
+            <td>
+              <div style="display:flex;align-items:center;gap:10px;">
+                <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,rgba(200,169,81,.2),rgba(200,169,81,.05));border:1px solid var(--gold-dim);display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;color:var(--gold);flex-shrink:0;">
+                  {%- set words = coach.nomComplet|split(' ') -%}
+                  {{- words[0]|first|upper -}}{%- if words|length > 1 -%}{{- words[1]|first|upper -}}{%- endif -%}
+                </div>
+                <span style="font-family:'Barlow Condensed',sans-serif;font-weight:700;">{{ coach.nomComplet }}</span>
+              </div>
+            </td>
+            <td style="color:var(--text-dim);">{{ coach.user.email }}</td>
+            <td style="color:var(--text-dim);font-style:italic;">{{ coach.specialtiesLabel }}</td>
+            <td style="color:var(--gold);font-family:'Barlow Condensed',sans-serif;font-weight:700;">{{ coach.prixFormatted }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% endif %}
+</div>
+
+{% endblock %}

@@ -10,9 +10,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Security\Http\Authentication\UserAuthenticatorInterface;
-use Symfony\Component\Security\Http\Authenticator\FormLoginAuthenticator;
 
 class RegistrationController extends AbstractController
 {
@@ -21,8 +20,7 @@ class RegistrationController extends AbstractController
         Request $request,
         UserPasswordHasherInterface $passwordHasher,
         EntityManagerInterface $em,
-        UserAuthenticatorInterface $authenticator,
-        FormLoginAuthenticator $formAuthenticator,
+        Security $security,
     ): Response {
         if ($this->getUser()) {
             return $this->redirectToRoute('app_home');
@@ -41,8 +39,11 @@ class RegistrationController extends AbstractController
             $em->persist($user);
             $em->flush();
 
-            // Connexion automatique après inscription.
-            return $authenticator->authenticateUser($user, $formAuthenticator, $request);
+            // Connexion automatique après inscription (Security::login = Symfony 6.2+).
+            // LoginRedirectHandler retourne une Response ; fallback sur app_espace_client.
+            $response = $security->login($user, 'form_login', 'main');
+
+            return $response ?? $this->redirectToRoute('app_espace_client');
         }
 
         return $this->render('security/register.html.twig', [

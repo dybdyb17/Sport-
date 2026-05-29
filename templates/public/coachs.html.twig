@@ -1,0 +1,53 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nos Coachs — SPORT+ Marseille{% endblock %}
+
+{% block body %}
+
+{# Mini hero #}
+<section style="padding:80px 0 60px;text-align:center;position:relative;">
+  <div class="container">
+    <div class="hero-badge">L'équipe</div>
+    <h1 class="section-title" style="margin-top:16px;">Nos <span style="color:var(--gold)">Coachs</span></h1>
+    <p class="section-sub">Des professionnels certifiés, disponibles 24h/24 pour t'accompagner.</p>
+  </div>
+</section>
+
+{# Coaches grid #}
+<section class="section" style="padding-top:0;">
+  <div class="container">
+    {% if coaches is empty %}
+      <div class="empty-placeholder">
+        <i class="ti ti-users" style="font-size:48px;display:block;margin-bottom:16px;opacity:.3;"></i>
+        Aucun coach disponible pour le moment.
+      </div>
+    {% else %}
+      <div class="cards-grid">
+        {% for coach in coaches %}
+          <div class="coach-card">
+            <div class="coach-avatar">
+              {%- set words = coach.nomComplet|split(' ') -%}
+              {{- words[0]|first|upper -}}{%- if words|length > 1 -%}{{- words[1]|first|upper -}}{%- endif -%}
+            </div>
+            <div class="coach-name">{{ coach.nomComplet }}</div>
+            <div class="coach-specialty">{{ coach.specialtiesLabel }}</div>
+            <div class="coach-price">{{ coach.prixFormatted }}</div>
+            {% if coach.specialties is not empty %}
+              <div style="display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-bottom:20px;">
+                {% for specialty in coach.specialties %}
+                  <span class="badge">{{ specialty }}</span>
+                {% endfor %}
+              </div>
+            {% endif %}
+            <a href="{{ app.user ? path('app_booking_new') : path('app_login') }}"
+               class="btn btn-secondary btn-full coach-action">
+              <i class="ti ti-calendar-plus"></i> Réserver ce coach
+            </a>
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  </div>
+</section>
+
+{% endblock %}

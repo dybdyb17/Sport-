@@ -1,0 +1,57 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Utilisateurs — Admin SPORT+{% endblock %}
+
+{% block admin_body %}
+
+<div class="page-header">
+  <div>
+    <h1><span style="color:var(--gold)">Utilisateurs</span></h1>
+    <p class="page-subtitle">{{ users|length }} compte{% if users|length > 1 %}s{% endif %} inscrits</p>
+  </div>
+</div>
+
+<div class="data-table-card">
+  <div class="data-table-header">
+    <h3>Liste des utilisateurs</h3>
+  </div>
+  {% if users is empty %}
+    <div class="empty-placeholder" style="padding:60px;">Aucun utilisateur inscrit.</div>
+  {% else %}
+    <table>
+      <thead>
+        <tr>
+          <th>Nom</th>
+          <th>Email</th>
+          <th>Rôle</th>
+          <th>Inscription</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for user in users %}
+          <tr>
+            <td>
+              <div style="display:flex;align-items:center;gap:10px;">
+                <div style="width:32px;height:32px;border-radius:50%;background:var(--bg-3);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;color:var(--gold-dim);flex-shrink:0;">
+                  {%- set words = user.nomComplet|split(' ') -%}
+                  {{- words[0]|first|upper -}}{%- if words|length > 1 -%}{{- words[1]|first|upper -}}{%- endif -%}
+                </div>
+                <span style="font-family:'Barlow Condensed',sans-serif;font-weight:700;">{{ user.nomComplet }}</span>
+              </div>
+            </td>
+            <td style="color:var(--text-dim);">{{ user.email }}</td>
+            <td>
+              {% set roleVal = user.role.value %}
+              <span class="status-badge {% if roleVal == 'admin' %}confirmed{% elseif roleVal == 'coach' %}pending{% else %}cancelled{% endif %}">
+                {{ user.role.label }}
+              </span>
+            </td>
+            <td style="color:var(--text-dim);">{{ user.createdAt|date('d/m/Y') }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% endif %}
+</div>
+
+{% endblock %}

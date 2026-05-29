@@ -15,4 +15,21 @@ class CoachRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Coach::class);
     }
+
+    // ── Méthodes admin (lot 4) ────────────────────────────────────────────────
+
+    /**
+     * Tous les coachs avec leur User joint (évite les N+1), triés par nom.
+     *
+     * @return Coach[]
+     */
+    public function findAllWithUser(): array
+    {
+        return $this->createQueryBuilder('c')
+            ->leftJoin('c.user', 'u')
+            ->addSelect('u')
+            ->orderBy('u.nomComplet', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
 }

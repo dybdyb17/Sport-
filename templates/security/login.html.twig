@@ -3,40 +3,57 @@
 {% block title %}Connexion — SPORT+{% endblock %}
 
 {% block body %}
-    <div class="form-page">
+<div class="auth-layout">
+  <!-- Form panel -->
+  <div class="auth-panel">
+    <div class="auth-form-box">
+      <div class="auth-title">Connexion</div>
+      <p class="auth-sub">Accède à ton espace coaching</p>
 
-        <div class="form-page-title">Con<span>nexion</span></div>
+      {% if error %}
+        <div class="alert alert-error">
+          <i class="ti ti-alert-circle"></i>
+          {{ error.messageKey|trans(error.messageData, 'security') }}
+        </div>
+      {% endif %}
 
-        <div class="divider"><div class="div-line"></div><div class="div-diamond"></div><div class="div-line"></div></div>
+      <form method="post">
+        <div class="form-field">
+          <label for="inputEmail">Email</label>
+          <input type="email" value="{{ last_username }}" name="_username" id="inputEmail" autocomplete="email" required autofocus placeholder="ton@email.com">
+        </div>
 
-        {% if error %}
-            <div class="alert alert-error">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
-        {% endif %}
+        <div class="form-field">
+          <label for="inputPassword">Mot de passe</label>
+          <input type="password" name="_password" id="inputPassword" autocomplete="current-password" required placeholder="••••••••">
+        </div>
 
-        <form method="post">
-            <div class="form-group">
-                <label class="form-label" for="inputEmail">Email</label>
-                <input type="email" value="{{ last_username }}" name="_username" id="inputEmail" class="form-control" autocomplete="email" required autofocus>
-            </div>
+        <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
 
-            <div class="form-group">
-                <label class="form-label" for="inputPassword">Mot de passe</label>
-                <input type="password" name="_password" id="inputPassword" class="form-control" autocomplete="current-password" required>
-            </div>
+        <label style="display:flex;align-items:center;gap:8px;margin-bottom:24px;color:var(--text-dim);font-size:13px;text-transform:none;letter-spacing:0;font-family:'Barlow',sans-serif;">
+          <input type="checkbox" name="_remember_me"> Se souvenir de moi
+        </label>
 
-            <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+        <button class="btn btn-primary btn-full btn-lg" type="submit">
+          <i class="ti ti-login"></i> Se connecter
+        </button>
+      </form>
 
-            <label style="display:flex;align-items:center;gap:8px;margin-bottom:20px;color:var(--muted);font-size:0.85rem;">
-                <input type="checkbox" name="_remember_me"> Se souvenir de moi
-            </label>
-
-            <button class="btn-primary" type="submit">Se connecter</button>
-        </form>
-
-        <p class="form-link">
-            Pas encore de compte ?
-            <a href="{{ path('app_register') }}">Inscription</a>
-        </p>
-
+      <div class="auth-link">
+        Pas encore de compte ? <a href="{{ path('app_register') }}">Inscription gratuite</a>
+      </div>
     </div>
+  </div>
+
+  <!-- Visual panel -->
+  <div class="auth-visual">
+    <div class="auth-quote">
+      <blockquote>"Le seul mauvais entraînement est celui qu'on n'a pas fait."</blockquote>
+      <cite>— SPORT+ Marseille</cite>
+      <div style="margin-top:40px;">
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:60px;font-weight:900;color:var(--gold);opacity:.15;line-height:1;">SPORT+</div>
+      </div>
+    </div>
+  </div>
+</div>
 {% endblock %}

@@ -3,52 +3,189 @@
 {% block title %}Espace Coach — SPORT+{% endblock %}
 
 {% block body %}
-    <div class="form-page">
+<div class="container">
 
-        <div class="form-page-title">Espace <span>Coach</span></div>
-
-        <div class="divider"><div class="div-line"></div><div class="div-diamond"></div><div class="div-line"></div></div>
-
-        <div class="section-label">Tes réservations</div>
-
-        {% for booking in bookings %}
-            <div class="coach-card">
-                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
-                    <strong style="font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:900;text-transform:uppercase;letter-spacing:1px;">{{ booking.serviceTypeLabel }}</strong>
-                    <span class="status-badge {{ booking.status }}">{{ booking.statutLabel }}</span>
-                </div>
-
-                <p style="color:var(--muted);font-size:0.9rem;line-height:1.8;">
-                    📅 {{ booking.startAt|date('d/m/Y à H:i') }}<br>
-                    👤 {{ booking.client.nomComplet }}<br>
-                    💰 {{ booking.prixFormatted }}<br>
-                    📝 {{ booking.message ?: 'Aucun message' }}
-                </p>
-
-                {% if booking.status == 'pending' %}
-                    <div style="margin-top:14px;display:flex;gap:10px;">
-                        <form action="{{ path('app_coach_accept', {id: booking.id}) }}" method="post" style="display:inline;">
-                            <input type="hidden" name="_token" value="{{ csrf_token('accept' ~ booking.id) }}">
-                            <button type="submit" class="action-btn">✅ Accepter</button>
-                        </form>
-                        <form action="{{ path('app_coach_refuse', {id: booking.id}) }}" method="post" style="display:inline;">
-                            <input type="hidden" name="_token" value="{{ csrf_token('refuse' ~ booking.id) }}">
-                            <button type="submit" class="action-btn">❌ Refuser</button>
-                        </form>
-                    </div>
-                {% endif %}
-            </div>
-        {% else %}
-            <p style="text-align:center;color:var(--muted);padding:20px;font-family:'Cormorant Garamond',serif;font-style:italic;">
-                Aucune réservation pour le moment.
-            </p>
-        {% endfor %}
-
+  <div class="page-header">
+    <div>
+      <h1>Espace <span style="color:var(--gold)">Coach</span></h1>
+      <p class="page-subtitle">{{ app.user.nomComplet }}</p>
     </div>
+  </div>
+
+  {# ── Stat cards ── #}
+  <div class="stats-grid">
+    <div class="stat-card {{ nbPending > 0 ? 'success' : 'warning' }}">
+      <span class="stat-label">En attente</span>
+      <span class="stat-value">{{ nbPending }}</span>
+    </div>
+    <div class="stat-card warning">
+      <span class="stat-label">Confirmées ce mois</span>
+      <span class="stat-value">{{ nbConfirmedThisMonth }}</span>
+    </div>
+    <div class="stat-card warning">
+      <span class="stat-label">Revenus du mois</span>
+      <span class="stat-value" style="font-size:28px;">{{ revenueThisMonth|number_format(2, ',', ' ') }} €</span>
+    </div>
+    <div class="stat-card warning">
+      <span class="stat-label">Revenus totaux</span>
+      <span class="stat-value" style="font-size:28px;">{{ revenueAllTime|number_format(2, ',', ' ') }} €</span>
+    </div>
+  </div>
+
+  {# ── Demandes en attente ── #}
+  <div class="section-label">
+    <i class="ti ti-bell" style="margin-right:6px;"></i> Demandes en attente
+  </div>
+
+  {% if pendingBookings is empty %}
+    <div style="padding:32px 0;color:var(--text-dim);display:flex;align-items:center;gap:10px;margin-bottom:40px;">
+      <i class="ti ti-circle-check" style="color:var(--green);font-size:20px;"></i>
+      Aucune demande en attente.
+    </div>
+  {% else %}
+    <div class="cards-grid" style="margin-bottom:40px;">
+      {% for booking in pendingBookings %}
+        <div class="coach-card" style="align-items:flex-start;text-align:left;border-color:rgba(200,169,81,.3);">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;width:100%;margin-bottom:16px;">
+            <div class="coach-name" style="font-size:18px;">{{ booking.serviceTypeLabel }}</div>
+            <span class="status-badge pending">{{ booking.statutLabel }}</span>
+          </div>
+          <div style="width:100%;display:flex;flex-direction:column;gap:8px;margin-bottom:16px;">
+            <div style="display:flex;align-items:center;gap:8px;font-size:14px;color:var(--text-dim);">
+              <i class="ti ti-calendar" style="color:var(--gold-dim);"></i>
+              {{ booking.startAt|date('d/m/Y à H:i') }}
+              <span style="color:var(--border);">—</span>
+              {{ booking.durationMinutes }} min
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;font-size:14px;color:var(--text-dim);">
+              <i class="ti ti-user" style="color:var(--gold-dim);"></i>
+              {{ booking.client.nomComplet }}
+              {% if booking.client.phone %}
+                · {{ booking.client.phone }}
+              {% endif %}
+            </div>
+            <div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:20px;color:var(--gold);">
+              {{ booking.prixFormatted }}
+            </div>
+          </div>
+          {% if booking.message %}
+            <div style="background:var(--bg-3);border:1px solid var(--border);border-radius:var(--radius);padding:12px 16px;margin-bottom:16px;width:100%;font-size:14px;color:var(--text-dim);font-style:italic;">
+              "{{ booking.message }}"
+            </div>
+          {% endif %}
+          <div class="booking-card-actions">
+            <form action="{{ path('app_coach_accept', {id: booking.id}) }}" method="post" style="display:inline;">
+              <input type="hidden" name="_token" value="{{ csrf_token('accept' ~ booking.id) }}">
+              <button type="submit" class="action-btn action-btn--confirm">
+                <i class="ti ti-check"></i> Accepter
+              </button>
+            </form>
+            <form action="{{ path('app_coach_refuse', {id: booking.id}) }}" method="post" style="display:inline;">
+              <input type="hidden" name="_token" value="{{ csrf_token('refuse' ~ booking.id) }}">
+              <button type="submit" class="action-btn action-btn--danger">
+                <i class="ti ti-x"></i> Refuser
+              </button>
+            </form>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  {# ── Séances à venir ── #}
+  <div class="section-label">
+    <i class="ti ti-calendar-event" style="margin-right:6px;"></i> Mes séances à venir
+  </div>
+
+  {% if upcomingBookings is empty %}
+    <p style="color:var(--text-dim);margin-bottom:40px;">Aucune séance confirmée à venir.</p>
+  {% else %}
+    <div class="data-table-card" style="margin-bottom:40px;">
+      <table>
+        <thead>
+          <tr>
+            <th>Prestation</th>
+            <th>Date</th>
+            <th>Client</th>
+            <th>Prix</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for booking in upcomingBookings %}
+            <tr>
+              <td style="font-family:'Barlow Condensed',sans-serif;font-weight:700;">{{ booking.serviceTypeLabel }}</td>
+              <td style="color:var(--text-dim);">{{ booking.startAt|date('d/m/Y à H:i') }}</td>
+              <td style="color:var(--text-dim);">{{ booking.client.nomComplet }}</td>
+              <td style="color:var(--gold);font-family:'Barlow Condensed',sans-serif;font-weight:700;">{{ booking.prixFormatted }}</td>
+              <td>
+                {% if booking.conversation %}
+                  <a href="{{ path('app_conversation_show', {id: booking.conversation.id}) }}" class="action-btn">
+                    <i class="ti ti-message"></i> Messagerie
+                  </a>
+                {% endif %}
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% endif %}
+
+  {# ── Historique récent ── #}
+  <div class="section-label">
+    <i class="ti ti-history" style="margin-right:6px;"></i> Historique récent
+  </div>
+
+  {% if historyBookings is empty %}
+    <p style="color:var(--text-dim);margin-bottom:40px;">Aucun historique pour le moment.</p>
+  {% else %}
+    <div class="data-table-card" style="margin-bottom:40px;">
+      <table>
+        <thead>
+          <tr>
+            <th>Prestation</th>
+            <th>Date</th>
+            <th>Client</th>
+            <th>Statut</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for booking in historyBookings %}
+            <tr>
+              <td style="font-family:'Barlow Condensed',sans-serif;font-weight:700;">{{ booking.serviceTypeLabel }}</td>
+              <td style="color:var(--text-dim);">{{ booking.startAt|date('d/m/Y à H:i') }}</td>
+              <td style="color:var(--text-dim);">{{ booking.client.nomComplet }}</td>
+              <td><span class="status-badge {{ booking.status }}">{{ booking.statutLabel }}</span></td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% endif %}
+
+</div>
+
+{# Zone de toasts Mercure #}
+<div class="toast-zone" id="toast-zone"></div>
+
 {% endblock %}
 
 {% block mercure %}
     <script>
+        function showToast(text) {
+            const zone = document.getElementById('toast-zone');
+            const t = document.createElement('div');
+            t.className = 'toast';
+            t.textContent = text;
+            zone.appendChild(t);
+            requestAnimationFrame(() => requestAnimationFrame(() => t.classList.add('is-visible')));
+            setTimeout(() => {
+                t.classList.remove('is-visible');
+                t.addEventListener('transitionend', () => location.reload(), { once: true });
+            }, 4000);
+        }
+
         const topic = 'coach/{{ app.user.id }}/stream';
         const es = new EventSource(
             "{{ mercure(topic)|escape('js') }}",
@@ -61,8 +198,7 @@
                 if (data.sound) {
                     new Audio('/sounds/notification.mp3').play().catch(() => {});
                 }
-                alert(`🔔 Nouvelle demande de ${data.client} pour le ${data.start}`);
-                location.reload();
+                showToast('Nouvelle demande de ' + data.client + ' pour le ' + data.start);
             }
         };
     </script>

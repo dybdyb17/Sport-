@@ -4,6 +4,7 @@ namespace App\Service;
 
 use App\Entity\Booking;
 use App\Entity\Coach;
+use App\Entity\Conversation;
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
@@ -86,6 +87,13 @@ class BookingManager
         $booking
             ->setStatus(Booking::STATUS_CONFIRMED)
             ->setConfirmedAt(new \DateTimeImmutable());
+
+        // Ouvrir la conversation dès que la réservation est confirmée
+        if ($booking->getConversation() === null) {
+            $conversation = new Conversation();
+            $conversation->setBooking($booking);
+            $this->em->persist($conversation);
+        }
 
         $this->em->flush();
         $this->notifier->notifyClient($booking);

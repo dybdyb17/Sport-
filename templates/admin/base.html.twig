@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>{% block title %}Admin — SPORT+{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800;900&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.11.0/dist/tabler-icons.min.css">
+  <link rel="stylesheet" href="{{ asset('styles/sportplus.css') }}">
+</head>
+<body>
+<div class="admin-layout">
+
+  <!-- Sidebar -->
+  <aside class="admin-sidebar">
+    <div class="sidebar-logo">
+      <a href="{{ path('app_home') }}" class="logo">
+        <div class="logo-mark">S<span style="color:var(--gold)">+</span></div>
+        <span class="logo-name">SPORT<span>+</span></span>
+      </a>
+      <div style="font-size:13px;letter-spacing:3px;color:var(--text-dim);text-transform:uppercase;margin-top:4px;">Admin</div>
+    </div>
+
+    <nav class="admin-nav">
+      {% set r = app.request.attributes.get('_route') %}
+      <a href="{{ path('app_admin_dashboard') }}" class="admin-nav-item {{ r == 'app_admin_dashboard' ? 'active' : '' }}">
+        <i class="ti ti-chart-bar"></i> Tableau de bord
+      </a>
+      <a href="{{ path('app_admin_coachs') }}" class="admin-nav-item {{ r starts with 'app_admin_coach' ? 'active' : '' }}">
+        <i class="ti ti-users"></i> Coachs
+      </a>
+      <a href="{{ path('app_admin_bookings') }}" class="admin-nav-item {{ r == 'app_admin_bookings' ? 'active' : '' }}">
+        <i class="ti ti-calendar"></i> Réservations
+      </a>
+      <a href="{{ path('app_admin_users') }}" class="admin-nav-item {{ r == 'app_admin_users' ? 'active' : '' }}">
+        <i class="ti ti-id"></i> Utilisateurs
+      </a>
+      <a href="{{ path('app_conversation_inbox') }}" class="admin-nav-item {{ r starts with 'app_conversation' ? 'active' : '' }}">
+        <i class="ti ti-message"></i> Messages
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <a href="{{ path('app_home') }}" class="admin-nav-item">
+        <i class="ti ti-arrow-left"></i> Retour au site
+      </a>
+      <a href="{{ path('app_logout') }}" class="admin-nav-item" style="color:#ff6666;">
+        <i class="ti ti-logout"></i> Déconnexion
+      </a>
+    </div>
+  </aside>
+
+  <!-- Main content -->
+  <div class="admin-main">
+    <div class="admin-topbar">
+      {% for label, messages in app.flashes %}
+        {% for message in messages %}
+          <div class="alert alert-{{ label }}" style="margin:0;padding:8px 16px;font-size:13px;">{{ message }}</div>
+        {% endfor %}
+      {% endfor %}
+      {% if app.user %}
+        <span style="font-family:'Barlow Condensed',sans-serif;font-size:13px;color:var(--text-dim);">{{ app.user.nomComplet }}</span>
+      {% endif %}
+    </div>
+    <div class="admin-body">
+      {% block admin_body %}{% endblock %}
+    </div>
+  </div>
+
+</div>
+{% block mercure %}{% endblock %}
+<script src="{{ asset('js/app.js') }}" defer></script>
+</body>
+</html>

@@ -1,0 +1,82 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Contact — SPORT+ Marseille{% endblock %}
+
+{% block body %}
+
+{# Mini hero #}
+<section style="padding:80px 0 60px;text-align:center;">
+  <div class="container">
+    <div class="hero-badge">Nous contacter</div>
+    <h1 class="section-title" style="margin-top:16px;">Prenons <span style="color:var(--gold)">contact</span></h1>
+    <p class="section-sub">Une question ? Une demande particulière ? On est là.</p>
+  </div>
+</section>
+
+<section class="section" style="padding-top:0;">
+  <div class="container">
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:48px;align-items:start;max-width:900px;margin:0 auto;">
+
+      <!-- Infos -->
+      <div>
+        <div class="section-label" style="margin-top:0;margin-bottom:20px;">Informations</div>
+        <div class="feature-card" style="margin-bottom:16px;">
+          <div class="feature-icon"><i class="ti ti-map-pin"></i></div>
+          <div class="feature-title">Adresse</div>
+          <p class="feature-text">Marseille 5ème arrondissement<br>Proche du Vieux-Port</p>
+        </div>
+        <div class="feature-card" style="margin-bottom:16px;">
+          <div class="feature-icon"><i class="ti ti-clock-24"></i></div>
+          <div class="feature-title">Horaires</div>
+          <p class="feature-text">Ouvert 24h/24 — 7j/7<br>Night Coach disponible dès 21h</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon"><i class="ti ti-mail"></i></div>
+          <div class="feature-title">Email</div>
+          <p class="feature-text">contact@sportplus-marseille.fr<br>Réponse sous 24h</p>
+        </div>
+      </div>
+
+      <!-- Map placeholder + social -->
+      <div>
+        <div class="section-label" style="margin-top:0;margin-bottom:20px;">Nous trouver</div>
+
+        {# Map placeholder #}
+        <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);height:240px;display:flex;align-items:center;justify-content:center;margin-bottom:24px;position:relative;overflow:hidden;">
+          <div style="position:absolute;inset:0;background:radial-gradient(ellipse 60% 60% at 50% 50%, rgba(200,169,81,.06) 0%, transparent 70%);"></div>
+          <div style="text-align:center;z-index:1;">
+            <i class="ti ti-map-pin" style="font-size:40px;color:var(--gold);display:block;margin-bottom:12px;"></i>
+            <div style="font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--text-dim);">Marseille 5ème</div>
+          </div>
+        </div>
+
+        <div class="section-label" style="margin-bottom:16px;">Réseaux sociaux</div>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <a href="#" class="feature-card" style="flex-direction:row;align-items:center;gap:16px;padding:16px 20px;text-decoration:none;">
+            <div style="width:40px;height:40px;border-radius:50%;background:rgba(200,169,81,.1);border:1px solid rgba(200,169,81,.2);display:flex;align-items:center;justify-content:center;color:var(--gold);font-size:18px;flex-shrink:0;">
+              <i class="ti ti-brand-instagram"></i>
+            </div>
+            <span style="font-family:'Barlow Condensed',sans-serif;font-weight:700;color:var(--white);">@sportplus_marseille</span>
+          </a>
+          <a href="#" class="feature-card" style="flex-direction:row;align-items:center;gap:16px;padding:16px 20px;text-decoration:none;">
+            <div style="width:40px;height:40px;border-radius:50%;background:rgba(200,169,81,.1);border:1px solid rgba(200,169,81,.2);display:flex;align-items:center;justify-content:center;color:var(--gold);font-size:18px;flex-shrink:0;">
+              <i class="ti ti-brand-tiktok"></i>
+            </div>
+            <span style="font-family:'Barlow Condensed',sans-serif;font-weight:700;color:var(--white);">@sportplus</span>
+          </a>
+        </div>
+      </div>
+
+    </div>
+
+    {# CTA #}
+    <div style="text-align:center;margin-top:64px;">
+      <a href="{{ path('app_booking_new') }}" class="btn btn-primary btn-lg">
+        <i class="ti ti-calendar-plus"></i> Réserver une séance
+      </a>
+    </div>
+
+  </div>
+</section>
+
+{% endblock %}

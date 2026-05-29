@@ -1,0 +1,149 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    Conversation avec {{ interlocuteur ? interlocuteur.nomComplet : 'Coach' }} — SPORT+
+{% endblock %}
+
+{% block body %}
+<div class="conversation-layout">
+
+  <!-- Sidebar -->
+  <div class="conv-sidebar">
+    {% if sidebarItems is defined and sidebarItems is not empty %}
+      {% for item in sidebarItems %}
+        {% set conv  = item.conversation %}
+        {% set inter = item.interlocuteur %}
+        {% set last  = item.lastMessage %}
+        <a href="{{ path('app_conversation_show', {id: conv.id}) }}"
+           class="conv-list-item {{ item.isUnread ? 'is-unread' : '' }} {{ conv.id == conversation.id ? 'is-active' : '' }}">
+          <div class="conv-avatar-sm">
+            {% if inter %}
+              {%- set words = inter.nomComplet|split(' ') -%}
+              {{- words[0]|first|upper -}}{%- if words|length > 1 -%}{{- words[1]|first|upper -}}{%- endif -%}
+            {% else %}?{% endif %}
+          </div>
+          <div class="conv-body">
+            <span class="conv-name">{{ inter ? inter.nomComplet : 'Inconnu' }}</span>
+            <span class="conv-preview">
+              {% if last %}{{ last.content }}{% else %}{{ conv.booking.serviceTypeLabel }}{% endif %}
+            </span>
+          </div>
+          <div class="conv-meta">
+            {% if last %}<span class="conv-time">{{ last.createdAt|date('H:i') }}</span>{% endif %}
+            {% if item.isUnread %}<span class="unread-dot"></span>{% endif %}
+          </div>
+        </a>
+      {% endfor %}
+    {% else %}
+      <div style="padding:24px 20px;color:var(--text-dim);font-size:14px;">
+        <a href="{{ path('app_conversation_inbox') }}" class="link-gold">← Messagerie</a>
+      </div>
+    {% endif %}
+  </div>
+
+  <!-- Chat area -->
+  <div class="chat-area">
+    <!-- Header -->
+    <div class="chat-header">
+      <div style="width:40px;height:40px;border-radius:50%;background:var(--bg-3);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;color:var(--gold);flex-shrink:0;">
+        {% if interlocuteur %}
+          {%- set words = interlocuteur.nomComplet|split(' ') -%}
+          {{- words[0]|first|upper -}}{%- if words|length > 1 -%}{{- words[1]|first|upper -}}{%- endif -%}
+        {% else %}?{% endif %}
+      </div>
+      <div>
+        <div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:16px;">
+          {{ interlocuteur ? interlocuteur.nomComplet : 'Coach' }}
+        </div>
+        <div style="font-size:13px;color:var(--text-dim);">
+          {{ conversation.booking.reference }} — {{ conversation.booking.serviceTypeLabel }}
+        </div>
+      </div>
+      <a href="{{ path('app_conversation_inbox') }}" class="btn btn-ghost btn-sm" style="margin-left:auto;">
+        <i class="ti ti-arrow-left"></i> Retour
+      </a>
+    </div>
+
+    <!-- Messages -->
+    <div class="chat-messages" id="chat-stream">
+      {% if messages is empty %}
+        <div style="text-align:center;padding:40px;color:var(--text-dim);font-style:italic;font-family:'Cormorant Garamond',serif;font-size:18px;">
+          Aucun message pour l'instant. Soyez le premier à écrire !
+        </div>
+      {% else %}
+        {% for message in messages %}
+          {% set isMine = (message.author == app.user) %}
+          <div class="msg {{ isMine ? 'msg--mine' : 'msg--theirs' }}">
+            <div class="msg-bubble">
+              {{- message.content|nl2br -}}
+              <span class="msg-time">{{ message.createdAt|date('H:i') }}</span>
+            </div>
+          </div>
+        {% endfor %}
+      {% endif %}
+    </div>
+
+    <!-- Input -->
+    <form class="chat-input"
+          method="post"
+          action="{{ path('app_conversation_send', {id: conversation.id}) }}">
+      <textarea
+          name="content"
+          maxlength="2000"
+          rows="1"
+          placeholder="Votre message…"
+          required></textarea>
+      <input type="hidden" name="_token" value="{{ csrf_token('msg' ~ conversation.id) }}">
+      <button type="submit" class="btn btn-primary">
+        <i class="ti ti-send"></i>
+      </button>
+    </form>
+  </div>
+
+</div>
+
+{# Scroll to bottom #}
+<script>
+  const stream = document.getElementById('chat-stream');
+  if (stream) stream.scrollTop = stream.scrollHeight;
+</script>
+{% endblock %}
+
+{% block mercure %}
+    <script>
+        const currentUserId = {{ app.user.id }};
+        const chatStream = document.getElementById('chat-stream');
+
+        const es = new EventSource(
+            "{{ mercure('conversation/' ~ conversation.id)|escape('js') }}",
+            { withCredentials: false }
+        );
+
+        es.onmessage = (e) => {
+            const data = JSON.parse(e.data);
+            if (data.type !== 'new_message' || data.author_id === currentUserId) {
+                return;
+            }
+
+            const msg = document.createElement('div');
+            msg.className = 'msg msg--theirs';
+
+            const bubble = document.createElement('div');
+            bubble.className = 'msg-bubble';
+
+            const content = document.createElement('span');
+            content.textContent = data.content;
+
+            const time = document.createElement('span');
+            time.className = 'msg-time';
+            time.textContent = data.created_at;
+
+            bubble.appendChild(content);
+            bubble.appendChild(time);
+            msg.appendChild(bubble);
+            chatStream.appendChild(msg);
+
+            chatStream.scrollTop = chatStream.scrollHeight;
+        };
+    </script>
+{% endblock %}

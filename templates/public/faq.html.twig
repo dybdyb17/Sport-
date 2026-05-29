@@ -1,0 +1,88 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}FAQ — SPORT+ Marseille{% endblock %}
+
+{% block body %}
+
+{# Mini hero #}
+<section style="padding:80px 0 60px;text-align:center;">
+  <div class="container">
+    <div class="hero-badge">Questions fréquentes</div>
+    <h1 class="section-title" style="margin-top:16px;">Tout ce que tu veux <span style="color:var(--gold)">savoir</span></h1>
+    <p class="section-sub">Les réponses à toutes tes questions sur SPORT+ et nos services.</p>
+  </div>
+</section>
+
+{# FAQ 2-column layout #}
+<section class="section" style="padding-top:0;">
+  <div class="container">
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:32px;align-items:start;">
+
+      <div>
+        <div class="section-label" style="margin-top:0;margin-bottom:20px;">Réservations & Paiement</div>
+        <div class="faq-list">
+          <details class="faq-item">
+            <summary>Y a-t-il un engagement ?</summary>
+            <div class="faq-answer">Non. Toutes nos formules sont sans engagement. Vous réservez quand vous voulez, annulez jusqu'à 2h avant sans frais.</div>
+          </details>
+          <details class="faq-item">
+            <summary>Quand est-ce que je paye ?</summary>
+            <div class="faq-answer">Uniquement si le coach confirme votre réservation. Aucun prélèvement tant que la séance n'est pas validée.</div>
+          </details>
+          <details class="faq-item">
+            <summary>Comment annuler une réservation ?</summary>
+            <div class="faq-answer">Depuis votre espace client, cliquez sur "Annuler" sur la réservation concernée. L'annulation est gratuite jusqu'à 2h avant la séance.</div>
+          </details>
+          <details class="faq-item">
+            <summary>Puis-je changer de coach ?</summary>
+            <div class="faq-answer">Absolument. Chaque réservation est indépendante, vous choisissez votre coach à chaque séance selon vos besoins.</div>
+          </details>
+          <details class="faq-item">
+            <summary>Y a-t-il des frais cachés ?</summary>
+            <div class="faq-answer">Aucun. Le prix affiché est le prix final. Pas d'abonnement, pas de frais d'inscription, pas de surprises.</div>
+          </details>
+        </div>
+      </div>
+
+      <div>
+        <div class="section-label" style="margin-top:0;margin-bottom:20px;">Coaching & Services</div>
+        <div class="faq-list">
+          <details class="faq-item">
+            <summary>Comment fonctionne le Night Coach ?</summary>
+            <div class="faq-answer">Vous réservez votre créneau dès 21h. Un coach dédié vous attend en salle. Solo, duo ou groupe jusqu'à 6 personnes.</div>
+          </details>
+          <details class="faq-item">
+            <summary>Je dois former mon groupe moi-même ?</summary>
+            <div class="faq-answer">Oui. Vous constituez votre groupe (amis, collègues, famille). Nous ne mixons pas des inconnus pour garantir votre confort.</div>
+          </details>
+          <details class="faq-item">
+            <summary>Les coachs sont-ils certifiés ?</summary>
+            <div class="faq-answer">Oui, tous nos coachs sont certifiés et régulièrement évalués. Leur profil inclut leurs spécialités et leur tarif horaire.</div>
+          </details>
+          <details class="faq-item">
+            <summary>Quelle est la durée d'une séance ?</summary>
+            <div class="faq-answer">Les séances durent entre 45 et 90 minutes selon la prestation choisie. La durée est indiquée lors de la réservation.</div>
+          </details>
+          <details class="faq-item">
+            <summary>Puis-je contacter mon coach avant la séance ?</summary>
+            <div class="faq-answer">Oui. Une messagerie privée s'ouvre automatiquement dès que le coach confirme votre réservation.</div>
+          </details>
+        </div>
+      </div>
+
+    </div>
+
+    {# CTA #}
+    <div style="text-align:center;margin-top:64px;padding:40px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);">
+      <h3 style="font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:900;text-transform:uppercase;margin-bottom:12px;">
+        Pas trouvé ta réponse ?
+      </h3>
+      <p style="color:var(--text-dim);margin-bottom:24px;">Notre équipe répond dans les 24h.</p>
+      <a href="{{ path('app_contact') }}" class="btn btn-primary">
+        <i class="ti ti-mail"></i> Nous contacter
+      </a>
+    </div>
+  </div>
+</section>
+
+{% endblock %}

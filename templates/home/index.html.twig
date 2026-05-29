@@ -4,151 +4,215 @@
 
 {% block body %}
 
-    {# Offre lancement #}
-    <div class="fire-badge">
-        <div class="fire-icon">🔥</div>
-        <div class="fire-content">
-            <span class="fire-label">Offre lancement exclusive</span>
-            <span class="fire-title">3 séances <span>99€</span></span>
-            <span class="fire-sub">+ Bilan forme offert — valeur 175€</span>
-        </div>
-        <div class="fire-count">
-            <span class="fire-num">50</span>
-            <span class="fire-places">places</span>
-        </div>
-    </div>
-
-    {# CTA principal — route Symfony selon état de session #}
-    <a href="{{ app.user ? path('app_booking_new') : path('app_login') }}" class="btn-primary">
-        <span class="btn-primary-icon">🏋️</span>
-        <span class="btn-primary-text">Réserver ma place</span>
-    </a>
-
-    <div class="divider"><div class="div-line"></div><div class="div-diamond"></div><div class="div-line"></div></div>
-
-    {# Nos offres coaching #}
-    <div class="section-label">Nos offres coaching</div>
-
-    <a href="{{ app.user ? path('app_booking_new') : path('app_login') }}" class="btn">
-        <div class="btn-icon">🌙</div>
-        <div class="btn-body">
-            <span class="btn-title">Night Coach</span>
-            <span class="btn-sub">Coaching privé dès 21h — Solo, duo ou groupe</span>
-        </div>
-        <div class="btn-arrow">›</div>
-    </a>
-
-    <a href="{{ app.user ? path('app_booking_new') : path('app_login') }}" class="btn">
-        <div class="btn-icon">👥</div>
-        <div class="btn-body">
-            <span class="btn-title">Small Group</span>
-            <span class="btn-sub">2 à 6 personnes — dès 22€/pers/séance</span>
-        </div>
-        <div class="btn-arrow">›</div>
-    </a>
-
-    <a href="{{ app.user ? path('app_booking_new') : path('app_login') }}" class="btn btn-green">
-        <div class="btn-icon">⚡</div>
-        <div class="btn-body">
-            <span class="btn-title">Accès salle 24h/24</span>
-            <span class="btn-sub">Sans engagement — disponible maintenant</span>
-        </div>
-        <div class="btn-arrow">›</div>
-    </a>
-
-    <div class="divider"><div class="div-line"></div><div class="div-diamond"></div><div class="div-line"></div></div>
-
-    {# Tarifs rapides #}
-    <div class="section-label">Tarifs en un coup d'œil</div>
-    <div class="tarifs-grid">
-        <div class="tarif-box">
-            <span class="tarif-name">Solo — 4 séances</span>
-            <span class="tarif-price">150€</span>
-            <span class="tarif-unit">/ mois · journée</span>
-        </div>
-        <div class="tarif-box">
-            <span class="tarif-name">Night — 4 séances</span>
-            <span class="tarif-price">210€</span>
-            <span class="tarif-unit">/ mois · dès 21h</span>
-        </div>
-        <div class="tarif-box">
-            <span class="tarif-name">Trio — séance</span>
-            <span class="tarif-price">30€</span>
-            <span class="tarif-unit">/ pers / séance</span>
-        </div>
-        <div class="tarif-box">
-            <span class="tarif-name">Groupe 6 — séance</span>
-            <span class="tarif-price">22€</span>
-            <span class="tarif-unit">/ pers / séance</span>
-        </div>
-    </div>
-
-    <div class="divider"><div class="div-line"></div><div class="div-diamond"></div><div class="div-line"></div></div>
-
-    {# Nos coachs — données réelles du controller #}
-    <div class="section-label">Nos coachs</div>
-    <div class="coaches-grid">
-        {% for coach in coaches %}
-            <div class="coach-card">
-                <span class="coach-name">{{ coach.nomComplet }}</span>
-                <span class="coach-specialty">{{ coach.specialtiesLabel }}</span>
-                <span class="coach-price">{{ coach.prixFormatted }}</span>
-            </div>
+{# ── HERO ── #}
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-content">
+      <div class="hero-badge">Marseille — Ouvert 24h/24</div>
+      <h1 class="hero-title">
+        Ton coach<br><span class="gold">premium</span><br>t'attend
+      </h1>
+      <p class="hero-sub">
+        Coaching privé, small group ou accès salle. Sans engagement, sans compromis.
+        Disponible même à 4h du matin.
+      </p>
+      <div class="hero-actions">
+        {% if app.user %}
+          <a href="{{ path('app_booking_new') }}" class="btn btn-primary btn-lg">
+            <i class="ti ti-calendar-plus"></i> Réserver une séance
+          </a>
+          <a href="{{ path('app_coachs_list') }}" class="btn btn-secondary btn-lg">
+            Voir les coachs
+          </a>
         {% else %}
-            <p style="text-align:center;color:var(--muted);padding:16px;">
-                Aucun coach disponible pour le moment.
-            </p>
+          <a href="{{ path('app_register') }}" class="btn btn-primary btn-lg">
+            <i class="ti ti-bolt"></i> Commencer maintenant
+          </a>
+          <a href="{{ path('app_coachs_list') }}" class="btn btn-secondary btn-lg">
+            Voir les coachs
+          </a>
+        {% endif %}
+      </div>
+      <div class="hero-stats">
+        <div class="stat-item">
+          <span class="stat-value">{{ coaches|length > 0 ? coaches|length : '10+' }}</span>
+          <span class="stat-label">Coachs certifiés</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-value">24/7</span>
+          <span class="stat-label">Disponibilité</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-value">0€</span>
+          <span class="stat-label">Engagement</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{# ── POURQUOI SPORT+ ── #}
+<section class="section" style="background:var(--bg-2);">
+  <div class="container">
+    <div style="text-align:center;">
+      <div class="section-badge">Notre différence</div>
+    </div>
+    <h2 class="section-title">Pourquoi <span style="color:var(--gold)">SPORT+</span></h2>
+    <p class="section-sub">Une approche premium du coaching sportif, pensée pour les exigeants.</p>
+    <div class="cards-grid">
+      <div class="feature-card">
+        <div class="feature-icon"><i class="ti ti-bolt"></i></div>
+        <div class="feature-title">Performance sans compromis</div>
+        <p class="feature-text">Des coachs certifiés, des programmes sur-mesure, des résultats mesurables. Chaque séance est conçue pour te faire progresser.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><i class="ti ti-clock"></i></div>
+        <div class="feature-title">Disponible 24h/24</div>
+        <p class="feature-text">Night Coach dès 21h, accès salle à toute heure. Ton emploi du temps ne dicte plus ta progression.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><i class="ti ti-shield-check"></i></div>
+        <div class="feature-title">Zéro engagement</div>
+        <p class="feature-text">Réserve quand tu veux, annule jusqu'à 2h avant sans frais. Tu paies uniquement si le coach confirme.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+{# ── NOS PRESTATIONS ── #}
+<section class="section">
+  <div class="container">
+    <div style="text-align:center;">
+      <div class="section-badge">Nos offres</div>
+    </div>
+    <h2 class="section-title">Nos <span style="color:var(--gold)">Prestations</span></h2>
+    <p class="section-sub">Des formules adaptées à tous les objectifs et tous les emplois du temps.</p>
+    <div class="cards-grid">
+      <div class="service-card">
+        <div class="service-icon"><i class="ti ti-moon"></i></div>
+        <div class="service-name">Night Coach</div>
+        <div class="service-price">dès 52,50 € / séance</div>
+        <p class="service-desc">Coaching privé dès 21h. Solo, duo ou groupe. Ton coach t'attend en salle, quelle que soit l'heure.</p>
+        <a href="{{ app.user ? path('app_booking_new') : path('app_register') }}" class="btn btn-outline">Réserver</a>
+      </div>
+      <div class="service-card">
+        <div class="service-icon"><i class="ti ti-users"></i></div>
+        <div class="service-name">Small Group</div>
+        <div class="service-price">dès 22 € / pers / séance</div>
+        <p class="service-desc">2 à 6 personnes. Partagez l'expérience avec vos proches et bénéficiez d'un coaching à prix réduit.</p>
+        <a href="{{ app.user ? path('app_booking_new') : path('app_register') }}" class="btn btn-outline">Réserver</a>
+      </div>
+      <div class="service-card">
+        <div class="service-icon"><i class="ti ti-user"></i></div>
+        <div class="service-name">Solo Journée</div>
+        <div class="service-price">37,50 € / séance</div>
+        <p class="service-desc">Coaching individuel en journée. Un suivi personnalisé pour atteindre tes objectifs plus vite.</p>
+        <a href="{{ app.user ? path('app_booking_new') : path('app_register') }}" class="btn btn-outline">Réserver</a>
+      </div>
+      <div class="service-card">
+        <div class="service-icon"><i class="ti ti-bolt"></i></div>
+        <div class="service-name">Groupe 6</div>
+        <div class="service-price">22 € / pers / séance</div>
+        <p class="service-desc">Le meilleur rapport qualité-prix. Six personnes, une énergie collective, un coach dédié.</p>
+        <a href="{{ app.user ? path('app_booking_new') : path('app_register') }}" class="btn btn-outline">Réserver</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+{# ── NOS COACHS ── #}
+<section class="section" style="background:var(--bg-2);">
+  <div class="container">
+    <div style="text-align:center;">
+      <div class="section-badge">L'équipe</div>
+    </div>
+    <h2 class="section-title">Nos <span style="color:var(--gold)">Coachs</span></h2>
+    <p class="section-sub">Des professionnels certifiés, passionnés, disponibles pour toi.</p>
+    {% if coaches is empty %}
+      <div class="empty-placeholder">Nos coachs arrivent bientôt.</div>
+    {% else %}
+      <div class="cards-grid">
+        {% for coach in coaches %}
+          <div class="coach-card">
+            <div class="coach-avatar">
+              {%- set words = coach.nomComplet|split(' ') -%}
+              {{- words[0]|first|upper -}}{%- if words|length > 1 -%}{{- words[1]|first|upper -}}{%- endif -%}
+            </div>
+            <div class="coach-name">{{ coach.nomComplet }}</div>
+            <div class="coach-specialty">{{ coach.specialtiesLabel }}</div>
+            <div class="coach-price">{{ coach.prixFormatted }}</div>
+            <a href="{{ app.user ? path('app_booking_new') : path('app_login') }}" class="btn btn-secondary btn-full coach-action">
+              <i class="ti ti-calendar-plus"></i> Réserver
+            </a>
+          </div>
         {% endfor %}
+      </div>
+      <div style="text-align:center;margin-top:40px;">
+        <a href="{{ path('app_coachs_list') }}" class="btn btn-outline">Voir tous les coachs</a>
+      </div>
+    {% endif %}
+  </div>
+</section>
+
+{# ── FAQ ── #}
+<section class="section">
+  <div class="container">
+    <div style="text-align:center;">
+      <div class="section-badge">Questions fréquentes</div>
     </div>
-
-    <div class="divider"><div class="div-line"></div><div class="div-diamond"></div><div class="div-line"></div></div>
-
-    {# FAQ accordéon <details> natif #}
-    <div class="section-label">Questions fréquentes</div>
-    <div class="faq">
-
+    <h2 class="section-title">Tout ce que tu veux <span style="color:var(--gold)">savoir</span></h2>
+    <p class="section-sub">Les réponses aux questions qu'on nous pose le plus souvent.</p>
+    <div style="max-width:720px;margin:0 auto;">
+      <div class="faq-list">
         <details class="faq-item">
-            <summary class="faq-q">
-                <span class="faq-q-text">Y a-t-il un engagement ?</span>
-                <span class="faq-icon">+</span>
-            </summary>
-            <div class="faq-a">Non. Toutes nos formules sont sans engagement. Vous réservez quand vous voulez, annulez jusqu'à 2h avant sans frais.</div>
+          <summary>Y a-t-il un engagement ?</summary>
+          <div class="faq-answer">Non. Toutes nos formules sont sans engagement. Vous réservez quand vous voulez, annulez jusqu'à 2h avant sans frais.</div>
         </details>
-
         <details class="faq-item">
-            <summary class="faq-q">
-                <span class="faq-q-text">Comment fonctionne le Night Coach ?</span>
-                <span class="faq-icon">+</span>
-            </summary>
-            <div class="faq-a">Vous réservez votre créneau dès 21h. Un coach dédié vous attend en salle. Solo, duo ou groupe jusqu'à 6 personnes.</div>
+          <summary>Comment fonctionne le Night Coach ?</summary>
+          <div class="faq-answer">Vous réservez votre créneau dès 21h. Un coach dédié vous attend en salle. Solo, duo ou groupe jusqu'à 6 personnes.</div>
         </details>
-
         <details class="faq-item">
-            <summary class="faq-q">
-                <span class="faq-q-text">Je dois former mon groupe moi-même ?</span>
-                <span class="faq-icon">+</span>
-            </summary>
-            <div class="faq-a">Oui. Vous constituez votre groupe (amis, collègues, famille). Nous ne mixons pas des inconnus pour garantir votre confort et votre progression.</div>
+          <summary>Je dois former mon groupe moi-même ?</summary>
+          <div class="faq-answer">Oui. Vous constituez votre groupe (amis, collègues, famille). Nous ne mixons pas des inconnus pour garantir votre confort et votre progression.</div>
         </details>
-
         <details class="faq-item">
-            <summary class="faq-q">
-                <span class="faq-q-text">L'offre lancement est-elle renouvelable ?</span>
-                <span class="faq-icon">+</span>
-            </summary>
-            <div class="faq-a">Non. L'offre à 99€ est réservée aux 50 premiers inscrits, non renouvelable. Elle disparaît dès que les 50 places sont prises.</div>
+          <summary>Quand est-ce que je paye ?</summary>
+          <div class="faq-answer">Uniquement si le coach confirme votre réservation. Aucun prélèvement tant que la séance n'est pas validée.</div>
         </details>
-
+        <details class="faq-item">
+          <summary>Puis-je changer de coach ?</summary>
+          <div class="faq-answer">Absolument. Chaque réservation est indépendante, vous choisissez votre coach à chaque séance.</div>
+        </details>
+      </div>
+      <div style="text-align:center;margin-top:32px;">
+        <a href="{{ path('app_faq') }}" class="link-gold">Voir toutes les FAQ →</a>
+      </div>
     </div>
+  </div>
+</section>
 
-    <div class="divider"><div class="div-line"></div><div class="div-diamond"></div><div class="div-line"></div></div>
-
-    {# Réseaux sociaux #}
-    <div class="section-label">Nous suivre</div>
-    <div class="socials">
-        <a href="#" class="social-btn"><span class="social-icon">📸</span> Instagram</a>
-        <a href="#" class="social-btn"><span class="social-icon">🎵</span> TikTok</a>
-        <a href="#" class="social-btn"><span class="social-icon">👤</span> Facebook</a>
+{# ── CTA BOTTOM ── #}
+<section class="section" style="background:var(--bg-2);text-align:center;">
+  <div class="container">
+    <div class="hero-badge" style="margin-bottom:24px;">Prêt à commencer ?</div>
+    <h2 class="section-title">Réserve ta<br><span style="color:var(--gold)">première séance</span></h2>
+    <p class="section-sub">Sans engagement, sans risque. Juste toi et ton coach.</p>
+    <div class="hero-actions">
+      {% if app.user %}
+        <a href="{{ path('app_booking_new') }}" class="btn btn-primary btn-lg">
+          <i class="ti ti-calendar-plus"></i> Réserver maintenant
+        </a>
+      {% else %}
+        <a href="{{ path('app_register') }}" class="btn btn-primary btn-lg">
+          <i class="ti ti-bolt"></i> Créer mon compte
+        </a>
+        <a href="{{ path('app_login') }}" class="btn btn-secondary btn-lg">
+          Se connecter
+        </a>
+      {% endif %}
     </div>
+  </div>
+</section>
 
 {% endblock %}

@@ -3,35 +3,58 @@
 {% block title %}Suivi réservation {{ booking.reference }} — SPORT+{% endblock %}
 
 {% block body %}
-    <div class="form-page">
+<div class="container" style="padding-top:40px;padding-bottom:60px;max-width:640px;">
 
-        <div class="form-page-title">Suivi de <span>ta demande</span></div>
-
-        <div class="divider"><div class="div-line"></div><div class="div-diamond"></div><div class="div-line"></div></div>
-
-        <p style="text-align:center;margin-bottom:20px;font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);">
-            Référence&nbsp;: <strong style="color:var(--gold);">{{ booking.reference }}</strong>
-        </p>
-
-        <div class="coach-card">
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
-                <strong style="font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:900;text-transform:uppercase;letter-spacing:1px;">{{ booking.serviceTypeLabel }}</strong>
-                <span class="status-badge {{ booking.status }}" id="status-badge">{{ booking.statutLabel }}</span>
-            </div>
-            <p style="color:var(--muted);font-size:0.9rem;line-height:1.8;">
-                📅 {{ booking.startAt|date('d/m/Y à H:i') }}<br>
-                🧑‍🏫 {{ booking.coach.nomComplet }}<br>
-                💰 {{ booking.prixFormatted }}
-            </p>
-        </div>
-
-        <div class="booking-info">
-            <p>🔹 Le coach a reçu ta demande</p>
-            <p>🔹 Cette page se met à jour automatiquement dès sa réponse</p>
-            <p>🔹 Paiement uniquement si le coach accepte</p>
-        </div>
-
+  <div class="page-header">
+    <div>
+      <h1>Suivi de <span style="color:var(--gold)">ta demande</span></h1>
+      <p class="page-subtitle">Référence : <span style="color:var(--gold);">{{ booking.reference }}</span></p>
     </div>
+  </div>
+
+  <div class="coach-card" style="align-items:flex-start;text-align:left;">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;width:100%;margin-bottom:16px;">
+      <div class="coach-name" style="font-size:20px;">{{ booking.serviceTypeLabel }}</div>
+      <span class="status-badge {{ booking.status }}" id="status-badge">{{ booking.statutLabel }}</span>
+    </div>
+    <div style="width:100%;display:flex;flex-direction:column;gap:8px;">
+      <div style="display:flex;align-items:center;gap:8px;font-size:14px;color:var(--text-dim);">
+        <i class="ti ti-calendar" style="color:var(--gold-dim);"></i>
+        {{ booking.startAt|date('d/m/Y à H:i') }}
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;font-size:14px;color:var(--text-dim);">
+        <i class="ti ti-user" style="color:var(--gold-dim);"></i>
+        {{ booking.coach.nomComplet }}
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;font-size:18px;color:var(--gold);font-family:'Barlow Condensed',sans-serif;font-weight:700;">
+        <i class="ti ti-coins" style="color:var(--gold-dim);font-size:14px;"></i>
+        {{ booking.prixFormatted }}
+      </div>
+    </div>
+  </div>
+
+  <div style="margin-top:24px;display:flex;flex-direction:column;gap:12px;">
+    <div style="display:flex;align-items:center;gap:10px;font-size:14px;color:var(--text-dim);">
+      <i class="ti ti-send" style="color:var(--gold-dim);"></i>
+      Le coach a reçu ta demande
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;font-size:14px;color:var(--text-dim);">
+      <i class="ti ti-refresh" style="color:var(--gold-dim);"></i>
+      Cette page se met à jour automatiquement dès sa réponse
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;font-size:14px;color:var(--text-dim);">
+      <i class="ti ti-coins" style="color:var(--gold-dim);"></i>
+      Paiement uniquement si le coach accepte
+    </div>
+  </div>
+
+  <div style="margin-top:32px;">
+    <a href="{{ path('app_espace_client') }}" class="btn btn-secondary">
+      <i class="ti ti-arrow-left"></i> Retour à mon espace
+    </a>
+  </div>
+
+</div>
 {% endblock %}
 
 {% block mercure %}
@@ -46,7 +69,7 @@
             const data = JSON.parse(e.data);
             if (data.type === 'booking_confirmed' && data.ref === '{{ booking.reference }}') {
                 const badge = document.getElementById('status-badge');
-                badge.textContent = '✅ Confirmée';
+                badge.textContent = 'Confirmée';
                 badge.className = 'status-badge confirmed';
                 location.reload();
             }

@@ -3,25 +3,50 @@
 {% block title %}Inscription — SPORT+{% endblock %}
 
 {% block body %}
-    <div class="form-page">
+<div class="auth-layout">
+  <!-- Form panel -->
+  <div class="auth-panel">
+    <div class="auth-form-box">
+      <div class="auth-title">Créer mon compte</div>
+      <p class="auth-sub">Rejoins la communauté SPORT+ Marseille</p>
 
-        <div class="form-page-title">Créer mon <span>compte</span></div>
+      {{ form_start(registrationForm) }}
+        {{ form_row(registrationForm.nomComplet) }}
+        {{ form_row(registrationForm.email) }}
+        {{ form_row(registrationForm.phone) }}
+        {{ form_row(registrationForm.plainPassword) }}
 
-        <div class="divider"><div class="div-line"></div><div class="div-diamond"></div><div class="div-line"></div></div>
+        <button class="btn btn-primary btn-full btn-lg" type="submit">
+          <i class="ti ti-user-plus"></i> M'inscrire gratuitement
+        </button>
+      {{ form_end(registrationForm) }}
 
-        {{ form_start(registrationForm) }}
-            {{ form_row(registrationForm.nomComplet) }}
-            {{ form_row(registrationForm.email) }}
-            {{ form_row(registrationForm.phone) }}
-            {{ form_row(registrationForm.plainPassword) }}
-
-            <button class="btn-primary" type="submit">M'inscrire</button>
-        {{ form_end(registrationForm) }}
-
-        <p class="form-link">
-            Déjà inscrit ?
-            <a href="{{ path('app_login') }}">Connexion</a>
-        </p>
-
+      <div class="auth-link">
+        Déjà inscrit ? <a href="{{ path('app_login') }}">Connexion</a>
+      </div>
     </div>
+  </div>
+
+  <!-- Visual panel -->
+  <div class="auth-visual">
+    <div class="auth-quote">
+      <blockquote>"Chaque séance est un pas vers la meilleure version de toi-même."</blockquote>
+      <cite>— L'équipe SPORT+</cite>
+      <div style="margin-top:32px;display:flex;flex-direction:column;gap:12px;text-align:left;">
+        <div style="display:flex;align-items:center;gap:10px;font-size:14px;color:var(--text-dim);">
+          <i class="ti ti-circle-check" style="color:var(--green);font-size:18px;"></i>
+          Sans engagement, annulation gratuite
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;font-size:14px;color:var(--text-dim);">
+          <i class="ti ti-circle-check" style="color:var(--green);font-size:18px;"></i>
+          Coachs certifiés disponibles 24h/24
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;font-size:14px;color:var(--text-dim);">
+          <i class="ti ti-circle-check" style="color:var(--green);font-size:18px;"></i>
+          Paiement uniquement si confirmé
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 {% endblock %}

@@ -19,15 +19,27 @@ class CoachController extends AbstractController
     public function dashboard(BookingRepository $bookingRepository): Response
     {
         /** @var \App\Entity\User $user */
-        $user = $this->getUser();
+        $user  = $this->getUser();
         $coach = $user->getCoach();
 
         if (!$coach) {
             throw $this->createAccessDeniedException('Aucun profil coach associé à ce compte.');
         }
 
+        $pendingBookings  = $bookingRepository->findPendingForCoach($coach);
+        $upcomingBookings = $bookingRepository->findConfirmedUpcomingForCoach($coach);
+        $historyBookings  = $bookingRepository->findHistoryForCoach($coach);
+
+        $since = new \DateTimeImmutable('first day of this month 00:00');
+
         return $this->render('coach/dashboard.html.twig', [
-            'bookings' => $bookingRepository->findForCoach($coach),
+            'pendingBookings'      => $pendingBookings,
+            'upcomingBookings'     => $upcomingBookings,
+            'historyBookings'      => $historyBookings,
+            'nbPending'            => count($pendingBookings),
+            'nbConfirmedThisMonth' => $bookingRepository->countConfirmedThisMonthForCoach($coach),
+            'revenueThisMonth'     => $bookingRepository->sumRevenueForCoach($coach, $since),
+            'revenueAllTime'       => $bookingRepository->sumRevenueForCoach($coach, new \DateTimeImmutable('2020-01-01')),
         ]);
     }
 
