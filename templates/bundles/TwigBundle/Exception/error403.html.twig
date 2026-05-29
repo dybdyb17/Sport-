@@ -1,0 +1,71 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Accès refusé — SPORT+{% endblock %}
+
+{% block body %}
+<div class="container">
+  <div class="error-page">
+
+    <div class="error-icon">
+      <i class="ti ti-lock"></i>
+    </div>
+
+    <h1 style="font-family:'Barlow Condensed',sans-serif;font-size:clamp(36px,6vw,56px);font-weight:900;text-transform:uppercase;letter-spacing:-1px;margin-bottom:12px;">
+      Accès <span style="color:var(--gold)">refusé</span>
+    </h1>
+
+    <p style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:20px;color:var(--muted-readable);margin-bottom:8px;">
+      Cette page n'est pas accessible avec votre compte.
+    </p>
+
+    <p style="font-size:15px;color:var(--text-dim);margin-bottom:32px;max-width:400px;">
+      Si vous pensez que c'est une erreur, n'hésitez pas à nous contacter.
+    </p>
+
+    <div class="error-actions">
+      {% if app.user is null %}
+        {# Utilisateur anonyme — ne devrait pas arriver ici (subscriber laisse Symfony gérer) #}
+        <a href="{{ path('app_login') }}" class="btn btn-primary">
+          <i class="ti ti-login"></i> Se connecter
+        </a>
+        <a href="{{ path('app_register') }}" class="btn btn-outline">
+          Créer un compte
+        </a>
+
+      {% elseif is_granted('ROLE_ADMIN') %}
+        <a href="{{ path('app_admin_dashboard') }}" class="btn btn-primary">
+          <i class="ti ti-shield"></i> Espace Administration
+        </a>
+        <a href="{{ path('app_home') }}" class="btn btn-outline">
+          Retour à l'accueil
+        </a>
+
+      {% elseif is_granted('ROLE_COACH') %}
+        <a href="{{ path('app_coach_dashboard') }}" class="btn btn-primary">
+          <i class="ti ti-users"></i> Mon Dashboard Coach
+        </a>
+        <a href="{{ path('app_home') }}" class="btn btn-outline">
+          Retour à l'accueil
+        </a>
+
+      {% else %}
+        {# Client connecté #}
+        <a href="{{ path('app_espace_client') }}" class="btn btn-primary">
+          <i class="ti ti-user"></i> Mon Espace
+        </a>
+        <a href="{{ path('app_home') }}" class="btn btn-outline">
+          Retour à l'accueil
+        </a>
+      {% endif %}
+    </div>
+
+    <div style="margin-top:32px;">
+      <a href="{{ path('app_contact') }}" style="font-size:14px;color:var(--text-dim);text-decoration:none;transition:color .2s;">
+        <i class="ti ti-help" style="font-size:14px;vertical-align:middle;margin-right:4px;"></i>
+        Besoin d'aide ? Contactez-nous
+      </a>
+    </div>
+
+  </div>
+</div>
+{% endblock %}

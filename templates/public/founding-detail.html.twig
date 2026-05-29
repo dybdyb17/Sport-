@@ -1,0 +1,194 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Offre Founding Member — SPORT+ Marseille{% endblock %}
+
+{% block body %}
+
+{# ── Hero compact ── #}
+<section style="padding:80px 0 60px;text-align:center;position:relative;overflow:hidden;">
+  <div style="position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse 60% 50% at 50% 0%, rgba(200,169,81,.08) 0%, transparent 70%);"></div>
+  <div class="container" style="position:relative;z-index:1;">
+    <div class="hero-badge">OFFRE LANCEMENT EXCLUSIVE</div>
+    <h1 style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:clamp(42px,6vw,80px);text-transform:uppercase;letter-spacing:-2px;color:var(--white);margin:16px 0 12px;line-height:.95;">
+      Devenez <span style="color:var(--gold);">Membre Fondateur</span><br>SPORT<span style="color:var(--gold);">+</span>
+    </h1>
+    <p style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:20px;color:var(--text-dim);max-width:560px;margin:0 auto 32px;line-height:1.6;">
+      Rejoignez les 50 premiers à façonner l'expérience SPORT+ et conservez votre badge à vie.
+    </p>
+
+    {% if offer is null %}
+      <div class="alert alert-info" style="max-width:480px;margin:0 auto;">Aucune offre Founding active pour le moment.</div>
+    {% else %}
+      <div style="display:flex;justify-content:center;gap:24px;flex-wrap:wrap;margin-bottom:8px;">
+        <div style="display:flex;align-items:center;gap:8px;font-size:14px;color:var(--text-dim);">
+          <i class="ti ti-check" style="color:var(--green);"></i> {{ offer.placesTaken }} fondateurs déjà inscrits
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;font-size:14px;color:var(--gold);">
+          <i class="ti ti-flame"></i> {{ offer.placesRemaining }} place{{ offer.placesRemaining > 1 ? 's' : '' }} restante{{ offer.placesRemaining > 1 ? 's' : '' }}
+        </div>
+      </div>
+      <div style="max-width:480px;margin:0 auto 8px;">
+        <div class="founding-progress-bar">
+          <div class="founding-progress-fill" style="width:{{ offer.progressPercent }}%;"></div>
+        </div>
+        <div class="founding-progress-label">{{ offer.placesTaken }} / {{ offer.totalPlaces }} membres fondateurs</div>
+      </div>
+    {% endif %}
+  </div>
+</section>
+
+{% if offer is not null %}
+
+{# ── 4 feature cards ── #}
+<section class="section" style="padding-top:0;padding-bottom:60px;">
+  <div class="container">
+    <div class="cards-grid">
+      <div class="feature-card">
+        <div class="feature-icon"><i class="ti ti-calendar-check"></i></div>
+        <div class="feature-title">3 Séances incluses</div>
+        <p class="feature-text">Night Coach ou Small Group au choix. Planifiez-les quand vous voulez, sans contrainte de dates.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><i class="ti ti-heartbeat"></i></div>
+        <div class="feature-title">Bilan forme offert</div>
+        <p class="feature-text">Évaluation complète de votre condition physique dès la première séance. Offert, sans supplément.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><i class="ti ti-moon-stars"></i></div>
+        <div class="feature-title">Accès prioritaire Night</div>
+        <p class="feature-text">Priorité de réservation sur les créneaux Night Coach dès 21h. Les meilleurs créneaux vous sont réservés en premier.</p>
+      </div>
+      <div class="feature-card" style="border-left:3px solid var(--green);">
+        <div class="feature-icon" style="background:rgba(61,255,20,.08);border-color:rgba(61,255,20,.2);color:var(--green);"><i class="ti ti-award"></i></div>
+        <div class="feature-title">Badge à vie</div>
+        <p class="feature-text">Votre statut <strong style="color:var(--gold);">Membre Fondateur</strong> est permanent. Affiché sur votre profil, il vous identifie parmi les premiers.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+{# ── Club images ── #}
+<section style="padding:0 0 60px;">
+  <div class="container">
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;">
+      <div style="border-radius:var(--radius-lg);overflow:hidden;background:var(--bg-card);border:1px solid var(--border);min-height:200px;display:flex;align-items:center;justify-content:center;">
+        <img src="{{ asset('img/club/club-1.jpg') }}" alt="Salle SPORT+ Marseille" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentElement.innerHTML='<div style=\'text-align:center;padding:40px;color:var(--text-dim);\'><i class=\'ti ti-building\' style=\'font-size:48px;display:block;margin-bottom:12px;opacity:.3;\'></i>Salle SPORT+</div>'">
+      </div>
+      <div style="border-radius:var(--radius-lg);overflow:hidden;background:var(--bg-card);border:1px solid var(--border);min-height:200px;display:flex;align-items:center;justify-content:center;">
+        <img src="{{ asset('img/club/club-2.jpg') }}" alt="Équipements SPORT+ Marseille" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentElement.innerHTML='<div style=\'text-align:center;padding:40px;color:var(--text-dim);\'><i class=\'ti ti-barbell\' style=\'font-size:48px;display:block;margin-bottom:12px;opacity:.3;\'></i>Équipements premium</div>'">
+      </div>
+    </div>
+  </div>
+</section>
+
+{# ── Pricing card + CTA ── #}
+<section style="padding:0 0 80px;">
+  <div class="container">
+    <div class="founding-pricing-card">
+      <div style="font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:8px;">Offre Founding Member</div>
+      <div style="font-family:'Barlow Condensed',sans-serif;font-size:72px;font-weight:900;color:var(--white);line-height:1;margin-bottom:4px;">{{ offer.price }}<span style="font-size:28px;color:var(--text-dim);">€</span></div>
+      {% if offer.regularPrice %}
+        <div style="font-size:15px;color:var(--text-dim);margin-bottom:4px;">au lieu de <s>{{ offer.regularPrice }}€</s></div>
+        <div style="font-size:13px;color:var(--green);font-family:'Barlow Condensed',sans-serif;font-weight:700;letter-spacing:1px;margin-bottom:24px;">
+          Économie de {{ (offer.regularPrice - offer.price)|number_format(0, ',', ' ') }}€
+        </div>
+      {% else %}
+        <div style="margin-bottom:24px;"></div>
+      {% endif %}
+
+      <ul style="list-style:none;text-align:left;margin-bottom:32px;display:flex;flex-direction:column;gap:10px;">
+        <li style="display:flex;align-items:center;gap:10px;font-size:15px;color:var(--text-dim);">
+          <i class="ti ti-check" style="color:var(--green);flex-shrink:0;"></i> {{ offer.sessionsIncluded }} séances Night Coach ou Small Group
+        </li>
+        <li style="display:flex;align-items:center;gap:10px;font-size:15px;color:var(--text-dim);">
+          <i class="ti ti-check" style="color:var(--green);flex-shrink:0;"></i> Bilan forme offert (valeur 30€)
+        </li>
+        <li style="display:flex;align-items:center;gap:10px;font-size:15px;color:var(--text-dim);">
+          <i class="ti ti-check" style="color:var(--green);flex-shrink:0;"></i> Accès prioritaire créneaux Night
+        </li>
+        <li style="display:flex;align-items:center;gap:10px;font-size:15px;color:var(--text-dim);">
+          <i class="ti ti-check" style="color:var(--green);flex-shrink:0;"></i> Badge <strong style="color:var(--gold);">Membre Fondateur</strong> à vie
+        </li>
+        <li style="display:flex;align-items:center;gap:10px;font-size:15px;color:var(--text-dim);">
+          <i class="ti ti-check" style="color:var(--green);flex-shrink:0;"></i> Sans engagement
+        </li>
+      </ul>
+
+      {% if not app.user %}
+        <div style="display:flex;flex-direction:column;gap:12px;">
+          <a href="{{ path('app_register') }}" class="btn btn-primary btn-lg" style="justify-content:center;">Créer mon compte</a>
+          <a href="{{ path('app_login') }}" class="btn btn-outline" style="justify-content:center;">J'ai déjà un compte</a>
+        </div>
+      {% elseif app.user.foundingClaim %}
+        <div style="color:var(--green);font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:8px;">
+          <i class="ti ti-circle-check"></i> Vous êtes déjà {{ app.user.foundingClaim.foundingLabel }}
+        </div>
+        <a href="{{ path('app_espace_client') }}" class="btn btn-secondary" style="margin-top:16px;justify-content:center;">Voir mon espace →</a>
+      {% elseif offer.hasPlacesLeft %}
+        <form method="post" action="{{ path('app_founding_claim') }}">
+          <input type="hidden" name="_token" value="{{ csrf_token('founding-claim') }}">
+          <button type="submit" class="btn btn-primary btn-lg" style="width:100%;justify-content:center;">
+            <i class="ti ti-bolt"></i> Réclamer ma place — {{ offer.price }}€
+          </button>
+        </form>
+        <div style="font-size:13px;color:var(--text-dim);margin-top:12px;">{{ offer.placesRemaining }} place{{ offer.placesRemaining > 1 ? 's' : '' }} restante{{ offer.placesRemaining > 1 ? 's' : '' }} · Non renouvelable</div>
+      {% else %}
+        <div style="color:var(--text-dim);font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;">Offre complète — Merci aux {{ offer.totalPlaces }} fondateurs.</div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+{# ── Règles et conditions ── #}
+<section class="section" style="padding-top:0;padding-bottom:80px;background:var(--bg-2);">
+  <div class="container" style="max-width:720px;">
+    <h2 style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:32px;text-transform:uppercase;text-align:center;margin-bottom:32px;color:var(--white);">Conditions de l'offre</h2>
+    <ul class="founding-rules">
+      <li>Offre réservée aux {{ offer.totalPlaces }} premiers inscrits uniquement</li>
+      <li>Non renouvelable — valable une seule fois par personne</li>
+      <li>Les 3 séances sont utilisables sans limite de durée</li>
+      <li>Séances au choix : Night Coach (à partir de 21h) ou Small Group</li>
+      <li>Le bilan forme est effectué lors de la première séance, sans frais supplémentaires</li>
+      <li>Le badge <strong style="color:var(--gold);">Membre Fondateur</strong> est attribué définitivement</li>
+      <li>Offre non remboursable après activation</li>
+    </ul>
+  </div>
+</section>
+
+{# ── FAQ ── #}
+<section class="section" style="padding-top:60px;padding-bottom:80px;">
+  <div class="container" style="max-width:720px;">
+    <h2 style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:32px;text-transform:uppercase;text-align:center;margin-bottom:32px;color:var(--white);">Questions fréquentes</h2>
+    <div class="faq-list">
+      <details class="faq-item">
+        <summary>Quand est-ce que je peux utiliser mes séances ?</summary>
+        <div class="faq-answer">Vos séances sont valables sans limite de temps. Réservez-les quand vous le souhaitez via votre espace client.</div>
+      </details>
+      <details class="faq-item">
+        <summary>Puis-je choisir mon coach ?</summary>
+        <div class="faq-answer">Oui. À chaque réservation, vous choisissez librement votre coach parmi nos coachs disponibles.</div>
+      </details>
+      <details class="faq-item">
+        <summary>En quoi consiste le bilan forme ?</summary>
+        <div class="faq-answer">Le bilan forme est une évaluation complète de votre condition physique actuelle (composition corporale, mobilité, objectifs). Il est réalisé par votre coach lors de votre première séance Founding.</div>
+      </details>
+      <details class="faq-item">
+        <summary>L'offre est-elle remboursable ?</summary>
+        <div class="faq-answer">L'offre Founding Member n'est pas remboursable une fois activée. Les séances restantes sont utilisables sans limite de temps.</div>
+      </details>
+      <details class="faq-item">
+        <summary>Mon badge Membre Fondateur est-il visible par les autres ?</summary>
+        <div class="faq-answer">Votre badge est affiché sur votre profil et dans l'en-tête de l'application. Il atteste de votre statut de membre fondateur de SPORT+ Marseille.</div>
+      </details>
+    </div>
+  </div>
+</section>
+
+{% endif %}
+
+{# ── Footer slogan ── #}
+<section style="padding:32px 0;text-align:center;background:var(--bg-2);border-top:1px solid var(--border);">
+  <div class="brand-slogan">Pour le meilleur & pour le <span class="brand-plus">+</span></div>
+</section>
+
+{% endblock %}

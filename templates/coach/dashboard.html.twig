@@ -47,7 +47,7 @@
       {% for booking in pendingBookings %}
         <div class="coach-card" style="align-items:flex-start;text-align:left;border-color:rgba(200,169,81,.3);">
           <div style="display:flex;justify-content:space-between;align-items:flex-start;width:100%;margin-bottom:16px;">
-            <div class="coach-name" style="font-size:18px;">{{ booking.serviceTypeLabel }}</div>
+            <div class="coach-name" style="font-size:18px;">{{ booking.offerLabel }}</div>
             <span class="status-badge pending">{{ booking.statutLabel }}</span>
           </div>
           <div style="width:100%;display:flex;flex-direction:column;gap:8px;margin-bottom:16px;">
@@ -114,7 +114,7 @@
         <tbody>
           {% for booking in upcomingBookings %}
             <tr>
-              <td style="font-family:'Barlow Condensed',sans-serif;font-weight:700;">{{ booking.serviceTypeLabel }}</td>
+              <td style="font-family:'Barlow Condensed',sans-serif;font-weight:700;">{{ booking.offerLabel }}</td>
               <td style="color:var(--text-dim);">{{ booking.startAt|date('d/m/Y à H:i') }}</td>
               <td style="color:var(--text-dim);">{{ booking.client.nomComplet }}</td>
               <td style="color:var(--gold);font-family:'Barlow Condensed',sans-serif;font-weight:700;">{{ booking.prixFormatted }}</td>
@@ -153,7 +153,7 @@
         <tbody>
           {% for booking in historyBookings %}
             <tr>
-              <td style="font-family:'Barlow Condensed',sans-serif;font-weight:700;">{{ booking.serviceTypeLabel }}</td>
+              <td style="font-family:'Barlow Condensed',sans-serif;font-weight:700;">{{ booking.offerLabel }}</td>
               <td style="color:var(--text-dim);">{{ booking.startAt|date('d/m/Y à H:i') }}</td>
               <td style="color:var(--text-dim);">{{ booking.client.nomComplet }}</td>
               <td><span class="status-badge {{ booking.status }}">{{ booking.statutLabel }}</span></td>

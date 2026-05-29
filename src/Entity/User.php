@@ -3,7 +3,9 @@
 namespace App\Entity;
 
 use App\Entity\Enum\UserRole;
+use App\Entity\FoundingClaim;
 use App\Repository\UserRepository;
+use App\Entity\Subscription;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -62,10 +64,22 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'client', targetEntity: Booking::class)]
     private Collection $bookings;
 
+    /**
+     * Packs mensuels souscrits par cet utilisateur.
+     *
+     * @var Collection<int, Subscription>
+     */
+    #[ORM\OneToMany(mappedBy: 'client', targetEntity: Subscription::class)]
+    private Collection $subscriptions;
+
+    #[ORM\OneToOne(mappedBy: 'user', targetEntity: FoundingClaim::class)]
+    private ?FoundingClaim $foundingClaim = null;
+
     public function __construct()
     {
-        $this->createdAt = new \DateTimeImmutable();
-        $this->bookings = new ArrayCollection();
+        $this->createdAt     = new \DateTimeImmutable();
+        $this->bookings      = new ArrayCollection();
+        $this->subscriptions = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -205,6 +219,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->role === UserRole::COACH;
     }
 
+    public function getFoundingClaim(): ?FoundingClaim { return $this->foundingClaim; }
+    public function isFoundingMember(): bool { return $this->foundingClaim !== null; }
+
     /**
      * @return Collection<int, Booking>
      */
@@ -230,6 +247,31 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
                 $booking->setClient(null);
             }
         }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Subscription>
+     */
+    public function getSubscriptions(): Collection
+    {
+        return $this->subscriptions;
+    }
+
+    public function addSubscription(Subscription $subscription): static
+    {
+        if (!$this->subscriptions->contains($subscription)) {
+            $this->subscriptions->add($subscription);
+            $subscription->setClient($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSubscription(Subscription $subscription): static
+    {
+        $this->subscriptions->removeElement($subscription);
 
         return $this;
     }

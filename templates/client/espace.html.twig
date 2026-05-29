@@ -15,6 +15,31 @@
     </a>
   </div>
 
+  {# ── Founding Member card ── #}
+  {% if app.user.foundingClaim %}
+    {% set fc = app.user.foundingClaim %}
+    <div class="founding-member-card" style="margin-bottom:32px;">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;">
+        <div>
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:900;color:var(--gold);letter-spacing:-0.5px;margin-bottom:4px;">{{ fc.foundingLabel }}</div>
+          <div style="font-family:'Cormorant Garamond',serif;font-style:italic;color:var(--text-dim);font-size:15px;">Merci d'être parmi les premiers à nous faire confiance.</div>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:900;color:var(--green);">{{ fc.sessionsRemaining }}/{{ fc.offer.sessionsIncluded }}</div>
+          <div style="font-size:13px;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px;">séances restantes</div>
+        </div>
+      </div>
+      <div style="margin-top:12px;font-size:14px;color:var(--text-dim);">
+        Bilan forme :
+        {% if fc.isBilanDone %}
+          <span style="color:var(--green);">Effectué</span>
+        {% else %}
+          <span style="color:var(--gold);">À programmer lors de ta première séance</span>
+        {% endif %}
+      </div>
+    </div>
+  {% endif %}
+
   {# ── Stat cards ── #}
   <div class="stats-grid">
     <div class="stat-card">
@@ -41,6 +66,17 @@
     </div>
   {% else %}
 
+    {# ── Info messagerie (si aucune conversation) ── #}
+    {% if nbConfirmees == 0 %}
+      <div class="info-box" style="margin-bottom:28px;">
+        <i class="ti ti-message-dots"></i>
+        <p>
+          <strong style="font-family:'Barlow Condensed',sans-serif;font-weight:700;">Messagerie</strong><br>
+          La messagerie s'ouvre automatiquement dès qu'un coach accepte votre réservation. Vous pouvez alors échanger directement avec lui.
+        </p>
+      </div>
+    {% endif %}
+
     {# ── Séances à venir ── #}
     <div class="section-label">Mes séances à venir</div>
 
@@ -55,7 +91,7 @@
           <div class="coach-card" style="align-items:flex-start;text-align:left;">
             <div style="display:flex;justify-content:space-between;align-items:flex-start;width:100%;margin-bottom:16px;">
               <div>
-                <div class="coach-name" style="font-size:18px;">{{ booking.serviceTypeLabel }}</div>
+                <div class="coach-name" style="font-size:18px;">{{ booking.offerLabel }}</div>
                 <div style="font-size:13px;color:var(--text-dim);margin-top:2px;">Réf. {{ booking.reference }}</div>
               </div>
               <span class="status-badge {{ booking.status }}">{{ booking.statutLabel }}</span>
@@ -115,7 +151,7 @@
           <tbody>
             {% for booking in reservationsPassees %}
               <tr>
-                <td style="font-family:'Barlow Condensed',sans-serif;font-weight:700;">{{ booking.serviceTypeLabel }}</td>
+                <td style="font-family:'Barlow Condensed',sans-serif;font-weight:700;">{{ booking.offerLabel }}</td>
                 <td style="color:var(--text-dim);">{{ booking.startAt|date('d/m/Y') }}</td>
                 <td style="color:var(--text-dim);">{{ booking.coach.nomComplet }}</td>
                 <td style="color:var(--gold);font-family:'Barlow Condensed',sans-serif;font-weight:700;">{{ booking.prixFormatted }}</td>

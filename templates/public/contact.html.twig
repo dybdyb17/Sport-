@@ -15,7 +15,7 @@
 
 <section class="section" style="padding-top:0;">
   <div class="container">
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:48px;align-items:start;max-width:900px;margin:0 auto;">
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:48px;align-items:start;max-width:1000px;margin:0 auto;">
 
       <!-- Infos -->
       <div>
@@ -23,48 +23,77 @@
         <div class="feature-card" style="margin-bottom:16px;">
           <div class="feature-icon"><i class="ti ti-map-pin"></i></div>
           <div class="feature-title">Adresse</div>
-          <p class="feature-text">Marseille 5ème arrondissement<br>Proche du Vieux-Port</p>
+          <p class="feature-text">164 Chemin de Saint-Jean du Désert<br>13005 Marseille</p>
+        </div>
+        <div class="feature-card" style="margin-bottom:16px;">
+          <div class="feature-icon"><i class="ti ti-phone"></i></div>
+          <div class="feature-title">Téléphone</div>
+          <p class="feature-text"><a href="tel:0491422207" style="color:var(--gold);text-decoration:none;">04 91 42 22 07</a></p>
         </div>
         <div class="feature-card" style="margin-bottom:16px;">
           <div class="feature-icon"><i class="ti ti-clock-24"></i></div>
           <div class="feature-title">Horaires</div>
-          <p class="feature-text">Ouvert 24h/24 — 7j/7<br>Night Coach disponible dès 21h</p>
-        </div>
-        <div class="feature-card">
-          <div class="feature-icon"><i class="ti ti-mail"></i></div>
-          <div class="feature-title">Email</div>
-          <p class="feature-text">contact@sportplus-marseille.fr<br>Réponse sous 24h</p>
-        </div>
-      </div>
-
-      <!-- Map placeholder + social -->
-      <div>
-        <div class="section-label" style="margin-top:0;margin-bottom:20px;">Nous trouver</div>
-
-        {# Map placeholder #}
-        <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);height:240px;display:flex;align-items:center;justify-content:center;margin-bottom:24px;position:relative;overflow:hidden;">
-          <div style="position:absolute;inset:0;background:radial-gradient(ellipse 60% 60% at 50% 50%, rgba(200,169,81,.06) 0%, transparent 70%);"></div>
-          <div style="text-align:center;z-index:1;">
-            <i class="ti ti-map-pin" style="font-size:40px;color:var(--gold);display:block;margin-bottom:12px;"></i>
-            <div style="font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--text-dim);">Marseille 5ème</div>
-          </div>
+          <p class="feature-text">Ouvert 24h/24 — 7j/7<br>Night Coach disponible dès 21h<br>Sans engagement</p>
         </div>
 
-        <div class="section-label" style="margin-bottom:16px;">Réseaux sociaux</div>
+        <div class="section-label" style="margin-top:24px;margin-bottom:16px;">Réseaux sociaux</div>
         <div style="display:flex;flex-direction:column;gap:8px;">
-          <a href="#" class="feature-card" style="flex-direction:row;align-items:center;gap:16px;padding:16px 20px;text-decoration:none;">
+          <a href="https://www.facebook.com/sportplusmarseille" target="_blank" rel="noopener" class="feature-card" style="flex-direction:row;align-items:center;gap:16px;padding:16px 20px;text-decoration:none;">
+            <div style="width:40px;height:40px;border-radius:50%;background:rgba(200,169,81,.1);border:1px solid rgba(200,169,81,.2);display:flex;align-items:center;justify-content:center;color:var(--gold);font-size:18px;flex-shrink:0;">
+              <i class="ti ti-brand-facebook"></i>
+            </div>
+            <span style="font-family:'Barlow Condensed',sans-serif;font-weight:700;color:var(--white);">SPORT+ Marseille</span>
+          </a>
+          <a href="https://www.instagram.com/sportplus_marseille" target="_blank" rel="noopener" class="feature-card" style="flex-direction:row;align-items:center;gap:16px;padding:16px 20px;text-decoration:none;">
             <div style="width:40px;height:40px;border-radius:50%;background:rgba(200,169,81,.1);border:1px solid rgba(200,169,81,.2);display:flex;align-items:center;justify-content:center;color:var(--gold);font-size:18px;flex-shrink:0;">
               <i class="ti ti-brand-instagram"></i>
             </div>
             <span style="font-family:'Barlow Condensed',sans-serif;font-weight:700;color:var(--white);">@sportplus_marseille</span>
           </a>
-          <a href="#" class="feature-card" style="flex-direction:row;align-items:center;gap:16px;padding:16px 20px;text-decoration:none;">
-            <div style="width:40px;height:40px;border-radius:50%;background:rgba(200,169,81,.1);border:1px solid rgba(200,169,81,.2);display:flex;align-items:center;justify-content:center;color:var(--gold);font-size:18px;flex-shrink:0;">
-              <i class="ti ti-brand-tiktok"></i>
-            </div>
-            <span style="font-family:'Barlow Condensed',sans-serif;font-weight:700;color:var(--white);">@sportplus</span>
-          </a>
         </div>
+      </div>
+
+      <!-- Map + formulaire -->
+      <div>
+        <div class="section-label" style="margin-top:0;margin-bottom:20px;">Nous trouver</div>
+
+        {# Google Maps embed #}
+        <div style="border-radius:var(--radius-lg);overflow:hidden;margin-bottom:32px;border:1px solid var(--border);">
+          <iframe
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2903.4!2d5.4012!3d43.2965!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x12c9bf3ae2e9b9a7%3A0x0!2s164+Chemin+de+Saint-Jean+du+D%C3%A9sert%2C+13005+Marseille!5e0!3m2!1sfr!2sfr!4v1234567890"
+            width="100%"
+            height="240"
+            style="border:0;display:block;filter:grayscale(1) invert(0.9) contrast(0.85);"
+            allowfullscreen=""
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"
+            title="SPORT+ Marseille — 164 Chemin de Saint-Jean du Désert"
+          ></iframe>
+        </div>
+
+        <div class="section-label" style="margin-bottom:20px;">Envoyer un message</div>
+        <form method="post" action="{{ path('app_contact') }}" style="display:flex;flex-direction:column;gap:16px;">
+          <input type="hidden" name="_token" value="{{ csrf_token('contact-form') }}">
+          <div class="form-field" style="margin-bottom:0;">
+            <label for="contact_name">Nom complet *</label>
+            <input type="text" id="contact_name" name="name" required placeholder="Votre nom et prénom">
+          </div>
+          <div class="form-field" style="margin-bottom:0;">
+            <label for="contact_email">Email *</label>
+            <input type="email" id="contact_email" name="email" required placeholder="votre@email.fr">
+          </div>
+          <div class="form-field" style="margin-bottom:0;">
+            <label for="contact_phone">Téléphone <span style="color:var(--text-dim);font-weight:400;">(optionnel)</span></label>
+            <input type="tel" id="contact_phone" name="phone" placeholder="06 12 34 56 78">
+          </div>
+          <div class="form-field" style="margin-bottom:0;">
+            <label for="contact_message">Message *</label>
+            <textarea id="contact_message" name="message" required placeholder="Votre message..." style="min-height:140px;"></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary" style="align-self:flex-start;">
+            <i class="ti ti-send"></i> Envoyer le message
+          </button>
+        </form>
       </div>
 
     </div>

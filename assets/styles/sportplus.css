@@ -937,8 +937,9 @@ input[type="radio"] {
 }
 
 .status-badge.confirmed {
-  background: rgba(61,255,20,.1);
+  background: rgba(61,255,20,.08);
   color: var(--green);
+  border: 1px solid rgba(61,255,20,.25);
 }
 
 .status-badge.refused {
@@ -1634,7 +1635,7 @@ input[type="radio"] {
 .empty-placeholder {
   text-align: center;
   padding: 80px 24px;
-  color: var(--muted);
+  color: var(--muted-readable); /* #9A8F7A → ratio 6.5:1 sur fond noir, WCAG AA ✓ */
   font-style: italic;
   font-family: 'Cormorant Garamond', serif;
   font-size: 20px;
@@ -1886,4 +1887,186 @@ input[type="radio"] {
   outline: 2px solid var(--gold);
   outline-offset: 3px;
   border-radius: var(--radius-sm);
+}
+
+/* ── FOUNDING MEMBER ─────────────────────────────────────────────── */
+.founding-teaser {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--green);
+  border-radius: var(--radius-lg);
+  padding: 24px 28px;
+  max-width: 720px;
+  margin: 0 auto 60px;
+  position: relative;
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  transition: transform .2s, box-shadow .2s, border-color .2s;
+}
+.founding-teaser:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+  border-color: rgba(61,255,20,.4);
+}
+.badge-launch {
+  position: absolute;
+  top: -12px; right: 20px;
+  background: var(--gold);
+  color: var(--black);
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 11px; font-weight: 700;
+  letter-spacing: 2px; text-transform: uppercase;
+  padding: 4px 12px; border-radius: 100px;
+  white-space: nowrap;
+}
+.founding-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 24px; font-weight: 900;
+  color: var(--gold); text-transform: uppercase;
+  letter-spacing: -0.5px; margin-bottom: 6px;
+}
+.founding-sub {
+  font-size: 15px; color: var(--text-dim); margin-bottom: 20px;
+}
+.founding-progress-bar {
+  height: 6px; background: var(--bg-3);
+  border-radius: 100px; overflow: hidden; margin-bottom: 8px;
+}
+.founding-progress-fill {
+  height: 100%;
+  background: linear-gradient(to right, var(--gold-dim), var(--gold));
+  border-radius: 100px;
+  transition: width .4s ease;
+}
+.founding-progress-label {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 13px; letter-spacing: 2px;
+  text-transform: uppercase; color: var(--gold-dim);
+  margin-bottom: 16px;
+}
+.founding-teaser-footer {
+  font-size: 13px; color: var(--gold);
+  font-family: 'Barlow', sans-serif;
+}
+.founding-member-card {
+  background: linear-gradient(135deg, rgba(200,169,81,.08), transparent);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--green);
+  border-radius: var(--radius-lg);
+  padding: 24px 28px;
+  margin-bottom: 32px;
+}
+.founding-pricing-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 40px;
+  text-align: center;
+  max-width: 480px;
+  margin: 0 auto 60px;
+}
+.founding-rules {
+  background: var(--bg-3);
+  border-radius: var(--radius-lg);
+  padding: 32px 40px;
+  list-style: none;
+}
+.founding-rules li {
+  padding: 8px 0;
+  padding-left: 20px;
+  position: relative;
+  color: var(--text-dim);
+  font-size: 15px;
+  border-bottom: 1px solid var(--border);
+}
+.founding-rules li:last-child { border-bottom: none; }
+.founding-rules li::before {
+  content: '→';
+  position: absolute; left: 0;
+  color: var(--green);
+}
+.badge-founding-mini {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 11px; font-weight: 700;
+  color: var(--gold); letter-spacing: 1px;
+  border: 1px solid var(--gold-dim);
+  padding: 4px 10px; border-radius: 100px;
+  white-space: nowrap;
+}
+/* Slogan signature */
+.brand-slogan {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700; font-size: 14px;
+  letter-spacing: 3px; text-transform: uppercase;
+  color: var(--text-dim); text-align: center;
+  margin-top: 16px;
+}
+.brand-plus {
+  color: var(--green);
+  text-shadow: 0 0 8px rgba(61,255,20,.5);
+  font-weight: 900;
+}
+
+/* ── PAGE D'ERREUR 403 ───────────────────────────────────────── */
+.error-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 80px 20px;
+  text-align: center;
+}
+
+.error-icon {
+  font-size: 64px;
+  color: var(--gold);
+  text-shadow: 0 0 24px rgba(200,169,81,.3);
+  margin-bottom: 24px;
+  line-height: 1;
+}
+
+.error-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+/* ── UX MESSAGERIE : hints & info-box ───────────────────────── */
+.hint {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 13px;
+  color: var(--muted-readable);
+  margin-top: 12px;
+}
+
+.info-box {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  background: var(--bg-card);
+  border-left: 3px solid var(--gold);
+  border-radius: var(--radius);
+  padding: 16px 20px;
+  margin-bottom: 24px;
+}
+
+.info-box .ti {
+  color: var(--gold);
+  font-size: 20px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.info-box p {
+  font-size: 15px;
+  color: var(--white);
+  line-height: 1.6;
+  margin: 0;
 }

@@ -8,9 +8,15 @@
   <!-- Sidebar -->
   <div class="conv-sidebar">
     {% if items is empty %}
-      <div style="padding:32px 20px;color:var(--text-dim);font-size:14px;text-align:center;">
-        <i class="ti ti-message-off" style="font-size:32px;display:block;margin-bottom:12px;opacity:.4;"></i>
-        Aucune conversation
+      <div style="padding:32px 20px;text-align:center;">
+        <i class="ti ti-message-off" style="font-size:40px;display:block;margin-bottom:14px;color:var(--text-dim);opacity:.4;"></i>
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;color:var(--white);margin-bottom:8px;">Aucune conversation</div>
+        <p style="font-size:14px;color:var(--muted-readable);line-height:1.6;margin-bottom:16px;">
+          Vos échanges s'ouvrent dès qu'un coach accepte une réservation.
+        </p>
+        <a href="{{ path('app_booking_new') }}" class="btn btn-primary btn-sm">
+          <i class="ti ti-calendar-plus"></i> Réserver
+        </a>
       </div>
     {% else %}
       {% for item in items %}
@@ -28,7 +34,7 @@
           <div class="conv-body">
             <span class="conv-name">{{ inter ? inter.nomComplet : 'Inconnu' }}</span>
             <span class="conv-preview">
-              {% if last %}{{ last.content }}{% else %}{{ conv.booking.serviceTypeLabel }}{% endif %}
+              {% if last %}{{ last.content }}{% else %}{{ conv.booking.offerLabel }}{% endif %}
             </span>
           </div>
           <div class="conv-meta">

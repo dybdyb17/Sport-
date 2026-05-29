@@ -3,10 +3,14 @@
 namespace App\Controller;
 
 use App\Entity\Booking;
+use App\Entity\Enum\BookingFormat;
+use App\Entity\Enum\PackType;
 use App\Form\BookingType;
 use App\Repository\BookingRepository;
 use App\Service\BookingManager;
+use App\Service\PricingCalculator;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -29,12 +33,44 @@ class BookingController extends AbstractController
                 /** @var \App\Entity\User $client */
                 $client = $this->getUser();
 
+                // Déduire le vrai personsCount selon le format
+                $format = $booking->getFormat();
+                if ($format !== BookingFormat::GROUP) {
+                    // Pour SOLO/DUO/TRIO : personsCount est fixe et dérivé du format
+                    $personsCount = $format->personsMin();
+                } else {
+                    // Pour GROUP : valeur saisie par l'utilisateur (mapped: false → lu manuellement)
+                    $personsCount = (int) ($form->get('personsCount')->getData() ?? 4);
+                    $personsCount = max(4, min(6, $personsCount)); // borne entre 4 et 6
+                }
+                $booking->setPersonsCount($personsCount);
+
+                // Créer un abonnement si l'utilisateur a choisi un pack mensuel
+                $packType   = $form->get('packType')->getData();   // PackType enum
+                $fullAccess = (bool) $form->get('fullAccess')->getData();
+                $subscription = null;
+
+                if ($packType instanceof PackType && $packType !== PackType::SINGLE) {
+                    $subscription = $manager->createSubscription(
+                        $client,
+                        $format,
+                        $booking->getTimeSlot(),
+                        $packType,
+                        $personsCount,
+                        $fullAccess,
+                        $booking->getCoach(),
+                    );
+                }
+
                 $created = $manager->create(
                     $client,
                     $booking->getCoach(),
-                    $booking->getServiceType(),
+                    $format,
+                    $booking->getTimeSlot(),
+                    $personsCount,
                     $booking->getStartAt(),
                     $booking->getMessage(),
+                    $subscription,
                 );
 
                 $this->addFlash('success', 'Demande envoyée au coach. Tu recevras une confirmation en temps réel.');
@@ -50,6 +86,50 @@ class BookingController extends AbstractController
         ]);
     }
 
+    /**
+     * Aperçu tarifaire dynamique — appelé par JS lors du changement de sélections.
+     */
+    #[Route('/api/pricing-preview', name: 'app_pricing_preview', methods: ['GET'])]
+    public function pricingPreview(Request $request, PricingCalculator $pricing): JsonResponse
+    {
+        try {
+            $formatVal  = $request->query->get('format', 'solo');
+            $slotVal    = $request->query->get('slot', 'day');
+            $packVal    = $request->query->get('pack', 'single');
+            $personsRaw = (int) $request->query->get('persons', 1);
+            $fullAccess = (bool) $request->query->getBoolean('fullAccess', false);
+
+            $format  = BookingFormat::from($formatVal);
+            $slot    = \App\Entity\Enum\TimeSlot::from($slotVal);
+            $pack    = PackType::from($packVal);
+
+            // Borner le nombre de personnes
+            $persons = max($format->personsMin(), min($format->personsMax(), $personsRaw));
+
+            $singlePrice = $pricing->singleSessionPrice($format, $slot);
+            $totalSingle = number_format((float) $singlePrice * $persons, 2, '.', '');
+
+            $result = [
+                'format'        => $format->label(),
+                'slot'          => $slot->label(),
+                'persons'       => $persons,
+                'singlePerPers' => $pricing->formatPrice($singlePrice),
+                'singleTotal'   => $pricing->formatPrice($totalSingle),
+            ];
+
+            if ($pack !== PackType::SINGLE) {
+                $monthly = $pricing->monthlyPackPrice($format, $pack, $slot, $fullAccess);
+                $result['pack']        = $pack->label();
+                $result['monthly']     = $pricing->formatPrice($monthly);
+                $result['fullAccess']  = $fullAccess;
+            }
+
+            return $this->json($result);
+        } catch (\ValueError) {
+            return $this->json(['error' => 'Paramètres invalides'], 400);
+        }
+    }
+
     #[Route('/{ref}/suivi', name: 'app_booking_status', methods: ['GET'])]
     public function status(string $ref, BookingRepository $bookingRepository): Response
     {
@@ -59,7 +139,6 @@ class BookingController extends AbstractController
             throw $this->createNotFoundException();
         }
 
-        // Un client ne peut suivre que ses propres réservations.
         if ($booking->getClient() !== $this->getUser()) {
             throw $this->createAccessDeniedException();
         }
@@ -80,9 +159,10 @@ class BookingController extends AbstractController
 
         return $this->json([
             'status' => $booking->getStatus(),
-            'label' => $booking->getStatutLabel(),
-            'price' => $booking->getPrixFormatted(),
-            'coach' => $booking->getCoach()?->getNomComplet(),
+            'label'  => $booking->getStatutLabel(),
+            'price'  => $booking->getPrixFormatted(),
+            'coach'  => $booking->getCoach()?->getNomComplet(),
+            'offer'  => $booking->getOfferLabel(),
         ]);
     }
 }

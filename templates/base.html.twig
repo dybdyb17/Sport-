@@ -25,6 +25,7 @@
     <nav class="main-nav" aria-label="Navigation principale">
       <a href="{{ path('app_home') }}" class="nav-link {% if app.request.attributes.get('_route') == 'app_home' %}active{% endif %}">Accueil</a>
       <a href="{{ path('app_coachs_list') }}" class="nav-link {% if app.request.attributes.get('_route') == 'app_coachs_list' %}active{% endif %}">Coachs</a>
+      <a href="{{ path('app_concept') }}" class="nav-link {% if app.request.attributes.get('_route') == 'app_concept' %}active{% endif %}">Concept</a>
       <a href="{{ path('app_tarifs') }}" class="nav-link {% if app.request.attributes.get('_route') == 'app_tarifs' %}active{% endif %}">Tarifs</a>
       <a href="{{ path('app_faq') }}" class="nav-link {% if app.request.attributes.get('_route') == 'app_faq' %}active{% endif %}">FAQ</a>
       <a href="{{ path('app_contact') }}" class="nav-link {% if app.request.attributes.get('_route') == 'app_contact' %}active{% endif %}">Contact</a>
@@ -39,6 +40,9 @@
             <i class="ti ti-calendar-plus"></i> Réserver
           </a>
         {% endif %}
+        {% if app.user.foundingClaim %}
+          <span class="badge-founding-mini">{{ app.user.foundingClaim.foundingLabel }}</span>
+        {% endif %}
         <!-- Avatar + dropdown -->
         <div style="position:relative;">
           {% set initials %}
@@ -52,6 +56,9 @@
             <div class="dropdown-header">
               <div style="font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;color:var(--white);">{{ app.user.nomComplet }}</div>
               <div style="font-size:13px;color:var(--text-dim);margin-top:2px;">{{ app.user.email }}</div>
+              {% if app.user.foundingClaim %}
+                <div style="margin-top:6px;"><span class="badge-founding-mini">{{ app.user.foundingClaim.foundingLabel }}</span></div>
+              {% endif %}
             </div>
             {% if is_granted('ROLE_ADMIN') %}
               <a href="{{ path('app_admin_dashboard') }}" class="dropdown-item" role="menuitem"><i class="ti ti-shield"></i> Administration</a>
@@ -61,7 +68,13 @@
             {% else %}
               <a href="{{ path('app_espace_client') }}" class="dropdown-item" role="menuitem"><i class="ti ti-user"></i> Mon espace</a>
             {% endif %}
-            <a href="{{ path('app_conversation_inbox') }}" class="dropdown-item" role="menuitem"><i class="ti ti-message"></i> Messagerie</a>
+            <a href="{{ path('app_conversation_inbox') }}" class="dropdown-item" role="menuitem">
+              <i class="ti ti-message"></i> Messagerie
+              {% set unread = unread_messages_count() %}
+              {% if unread > 0 %}
+                <span style="margin-left:auto;background:var(--green);color:var(--black);font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;padding:2px 7px;border-radius:100px;">{{ unread }}</span>
+              {% endif %}
+            </a>
             <div class="dropdown-divider"></div>
             <a href="{{ path('app_logout') }}" class="dropdown-item danger" role="menuitem"><i class="ti ti-logout"></i> Déconnexion</a>
           </div>
@@ -83,6 +96,7 @@
   <nav class="mobile-nav">
     <a href="{{ path('app_home') }}" class="nav-link">Accueil</a>
     <a href="{{ path('app_coachs_list') }}" class="nav-link">Coachs</a>
+    <a href="{{ path('app_concept') }}" class="nav-link">Concept</a>
     <a href="{{ path('app_tarifs') }}" class="nav-link">Tarifs</a>
     <a href="{{ path('app_faq') }}" class="nav-link">FAQ</a>
     <a href="{{ path('app_contact') }}" class="nav-link">Contact</a>
@@ -140,12 +154,16 @@
       </div>
       <div>
         <div class="footer-col-title">Contact</div>
-        <div class="footer-link"><i class="ti ti-map-pin"></i> Marseille 5ème</div>
-        <div class="footer-link"><i class="ti ti-clock-24"></i> Ouvert 24h/24</div>
+        <div class="footer-link"><i class="ti ti-map-pin"></i> 164 Chemin de Saint-Jean du Désert, 13005 Marseille</div>
+        <a href="tel:0491422207" class="footer-link"><i class="ti ti-phone"></i> 04 91 42 22 07</a>
+        <div class="footer-link"><i class="ti ti-clock-24"></i> Ouvert 24h/24 — Sans engagement</div>
         <a href="{{ path('app_contact') }}" class="footer-link"><i class="ti ti-mail"></i> Nous contacter</a>
       </div>
       <div>
-        <div class="footer-col-title">Légal</div>
+        <div class="footer-col-title">Suivez-nous</div>
+        <a href="https://www.facebook.com/sportplusmarseille" target="_blank" rel="noopener" class="footer-link"><i class="ti ti-brand-facebook"></i> Facebook</a>
+        <a href="https://www.instagram.com/sportplus_marseille" target="_blank" rel="noopener" class="footer-link"><i class="ti ti-brand-instagram"></i> Instagram</a>
+        <div class="footer-col-title" style="margin-top:20px;">Légal</div>
         <a href="#" class="footer-link">Mentions légales</a>
         <a href="#" class="footer-link">CGV</a>
         <a href="#" class="footer-link">Confidentialité</a>
@@ -153,6 +171,7 @@
     </div>
   </div>
   <div class="footer-bottom">
+    <div class="brand-slogan" style="padding:12px 0 0;">Pour le meilleur & pour le <span class="brand-plus">+</span></div>
     <div class="footer-bottom-inner container">
       <span>© {{ "now"|date("Y") }} SPORT+ Marseille — Coaching Premium</span>
       <span style="color:var(--gold);font-family:'Barlow Condensed',sans-serif;font-weight:700;letter-spacing:2px;">POUR LE MEILLEUR <span style="color:var(--green)">+</span></span>

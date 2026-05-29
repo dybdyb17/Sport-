@@ -1,0 +1,147 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Notre Concept — SPORT+ Marseille{% endblock %}
+
+{% block body %}
+
+{# ── Hero ── #}
+<section style="padding:80px 0 60px;text-align:center;position:relative;overflow:hidden;">
+  <div style="position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse 60% 50% at 50% 0%, rgba(200,169,81,.07) 0%, transparent 70%);"></div>
+  <div class="container" style="position:relative;z-index:1;">
+    <div class="hero-badge">Notre concept</div>
+    <h1 style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:clamp(42px,6vw,80px);text-transform:uppercase;letter-spacing:-2px;color:var(--white);margin:16px 0 16px;line-height:.95;">
+      Première salle sur Marseille<br>ouverte <span style="color:var(--gold);">24h/24</span>
+    </h1>
+    <p style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:20px;color:var(--text-dim);max-width:560px;margin:0 auto 40px;line-height:1.6;">
+      164 Chemin de Saint-Jean du Désert, 13005 Marseille.<br>Un club premium accessible à toute heure, avec ou sans coach.
+    </p>
+    <div style="display:flex;justify-content:center;gap:32px;flex-wrap:wrap;">
+      <div style="text-align:center;">
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:40px;font-weight:900;color:var(--gold);">24/7</div>
+        <div style="font-size:13px;text-transform:uppercase;letter-spacing:2px;color:var(--text-dim);">Accès salle</div>
+      </div>
+      <div style="text-align:center;">
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:40px;font-weight:900;color:var(--gold);">0€</div>
+        <div style="font-size:13px;text-transform:uppercase;letter-spacing:2px;color:var(--text-dim);">Engagement</div>
+      </div>
+      <div style="text-align:center;">
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:40px;font-weight:900;color:var(--gold);">Matrix</div>
+        <div style="font-size:13px;text-transform:uppercase;letter-spacing:2px;color:var(--text-dim);">Équipements</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{# ── Club images ── #}
+<section style="padding:0 0 60px;">
+  <div class="container">
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;">
+      <div style="border-radius:var(--radius-lg);overflow:hidden;background:var(--bg-card);border:1px solid var(--border);min-height:240px;display:flex;align-items:center;justify-content:center;">
+        <img src="{{ asset('img/club/club-1.png') }}" alt="Salle SPORT+ Marseille" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentElement.innerHTML='<div style=\'text-align:center;padding:60px;color:var(--text-dim);\'><i class=\'ti ti-building\' style=\'font-size:48px;display:block;margin-bottom:12px;opacity:.3;\'></i>Salle SPORT+</div>'">
+      </div>
+      <div style="border-radius:var(--radius-lg);overflow:hidden;background:var(--bg-card);border:1px solid var(--border);min-height:240px;display:flex;align-items:center;justify-content:center;">
+        <img src="{{ asset('img/club/club-2.png') }}" alt="Équipements SPORT+ Marseille" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentElement.innerHTML='<div style=\'text-align:center;padding:60px;color:var(--text-dim);\'><i class=\'ti ti-barbell\' style=\'font-size:48px;display:block;margin-bottom:12px;opacity:.3;\'></i>Équipements premium</div>'">
+      </div>
+    </div>
+  </div>
+</section>
+
+{# ── Espaces du club ── #}
+<section class="section" style="background:var(--bg-2);padding-top:60px;">
+  <div class="container">
+    <div style="text-align:center;">
+      <div class="section-badge">Les espaces</div>
+    </div>
+    <h2 class="section-title">Votre club, <span style="color:var(--gold);">vos espaces</span></h2>
+    <p class="section-sub">6 espaces dédiés pour couvrir tous vos objectifs fitness, du cardio au bien-être.</p>
+    <div class="cards-grid">
+      <div class="feature-card">
+        <div class="feature-icon"><i class="ti ti-run"></i></div>
+        <div class="feature-title">Cardio</div>
+        <p class="feature-text">Tapis de course, vélos, elliptiques Matrix haut de gamme. Cardio efficace à toute heure.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><i class="ti ti-barbell"></i></div>
+        <div class="feature-title">Musculation</div>
+        <p class="feature-text">Espace libre service complet avec haltères, barres, machines guidées. Pour tous les niveaux.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><i class="ti ti-yoga"></i></div>
+        <div class="feature-title">Fitness</div>
+        <p class="feature-text">Espace dédié aux exercices de mobilité, étirements et renforcement musculaire fonctionnel.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><i class="ti ti-users"></i></div>
+        <div class="feature-title">Cours collectifs</div>
+        <p class="feature-text">Studio de cours collectifs disponible pour les séances Small Group encadrées par nos coachs.</p>
+      </div>
+      <div class="feature-card" style="border-left:3px solid var(--green);">
+        <div class="feature-icon" style="background:rgba(61,255,20,.08);border-color:rgba(61,255,20,.2);color:var(--green);"><i class="ti ti-star"></i></div>
+        <div class="feature-title">Coaching privé</div>
+        <p class="feature-text">Espace coaching privatif. Votre coach, vos objectifs, votre programme — Night Coach disponible dès 21h.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><i class="ti ti-heart"></i></div>
+        <div class="feature-title">Bien-être</div>
+        <p class="feature-text">Vestiaires premium, espace récupération. Prenez soin de vous avant et après chaque séance.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+{# ── Équipements Matrix ── #}
+<section class="section" style="padding-top:80px;padding-bottom:80px;">
+  <div class="container" style="max-width:720px;">
+    <div style="background:var(--bg-card);border:1px solid var(--border);border-left:3px solid var(--gold);border-radius:var(--radius-lg);padding:40px;text-align:center;">
+      <div class="feature-icon" style="margin:0 auto 24px;"><i class="ti ti-certificate"></i></div>
+      <h2 style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:32px;text-transform:uppercase;color:var(--white);margin-bottom:12px;">Équipements <span style="color:var(--gold);">Matrix</span> haut de gamme</h2>
+      <p style="font-size:16px;color:var(--text-dim);line-height:1.7;margin-bottom:24px;">
+        SPORT+ s'est équipé exclusivement de matériel Matrix — la référence mondiale des équipements fitness professionnels.
+        Chaque machine est entretenue et calibrée pour garantir votre sécurité et maximiser vos performances.
+      </p>
+      <div style="display:flex;justify-content:center;gap:32px;flex-wrap:wrap;">
+        <div style="text-align:center;">
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:900;color:var(--gold);">100%</div>
+          <div style="font-size:13px;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px;">Matériel Matrix</div>
+        </div>
+        <div style="text-align:center;">
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:900;color:var(--gold);">Pro</div>
+          <div style="font-size:13px;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px;">Qualité club</div>
+        </div>
+        <div style="text-align:center;">
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:900;color:var(--gold);">Entretenu</div>
+          <div style="font-size:13px;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px;">Régulièrement</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{# ── Claim historique ── #}
+<section style="padding:60px 0;background:var(--bg-2);border-top:1px solid var(--border);">
+  <div class="container" style="max-width:720px;text-align:center;">
+    <div class="hero-badge" style="margin-bottom:20px;">Notre histoire</div>
+    <h2 style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:clamp(28px,4vw,48px);text-transform:uppercase;color:var(--white);margin-bottom:16px;letter-spacing:-1px;">
+      Première salle à Marseille<br>ouverte <span style="color:var(--gold);">24h/24</span>
+    </h2>
+    <p style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:19px;color:var(--text-dim);line-height:1.7;max-width:560px;margin:0 auto 32px;">
+      Depuis notre ouverture, SPORT+ a été le premier club de fitness à offrir un accès 24h/24 à Marseille.
+      Parce que votre emploi du temps ne doit pas dicter votre progression.
+    </p>
+    <div style="display:flex;justify-content:center;gap:16px;flex-wrap:wrap;">
+      <a href="{{ path('app_register') }}" class="btn btn-primary btn-lg">
+        <i class="ti ti-bolt"></i> Commencer maintenant
+      </a>
+      <a href="{{ path('app_founding_detail') }}" class="btn btn-secondary btn-lg">
+        Offre Founding Member
+      </a>
+    </div>
+  </div>
+</section>
+
+{# ── Slogan footer ── #}
+<section style="padding:24px 0;text-align:center;border-top:1px solid var(--border);">
+  <div class="brand-slogan">Pour le meilleur & pour le <span class="brand-plus">+</span></div>
+</section>
+
+{% endblock %}

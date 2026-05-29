@@ -18,18 +18,37 @@
     <div>
       {{ form_start(form, {'attr': {'class': 'booking-form'}}) }}
         <div class="form-field">{{ form_row(form.coach) }}</div>
-        <div class="form-field">{{ form_row(form.serviceType) }}</div>
+        <div class="form-field">{{ form_row(form.format) }}</div>
+        <div class="form-field">{{ form_row(form.timeSlot) }}</div>
+        <div class="form-field" id="group-persons-field" style="display:none;">
+          {{ form_row(form.personsCount) }}
+        </div>
         <div class="form-field">{{ form_row(form.startAt) }}</div>
+        <div class="form-field">{{ form_row(form.packType) }}</div>
+        <div class="form-field">{{ form_row(form.fullAccess) }}</div>
         <div class="form-field">{{ form_row(form.message) }}</div>
 
         <div class="price-summary">
-          Le prix dépend de la prestation choisie. Paiement sécurisé, uniquement si le coach accepte.
+          Le prix est calculé selon le format et le créneau choisis. Paiement uniquement si le coach accepte.
         </div>
 
         <button type="submit" class="btn btn-primary btn-lg btn-full" style="margin-top:24px;">
           <i class="ti ti-send"></i> Envoyer la demande
         </button>
       {{ form_end(form) }}
+
+      <script>
+        // Afficher le champ "Nombre de participants" uniquement pour GROUP
+        const formatField = document.querySelector('[name="booking[format]"]') ||
+                            document.querySelector('#booking_format');
+        const groupField  = document.getElementById('group-persons-field');
+        function togglePersons() {
+          const selected = document.querySelector('input[name="booking[format]"]:checked');
+          if (groupField) groupField.style.display = selected && selected.value === 'group' ? '' : 'none';
+        }
+        document.querySelectorAll('input[name="booking[format]"]').forEach(r => r.addEventListener('change', togglePersons));
+        togglePersons();
+      </script>
     </div>
 
     <!-- Info panel -->

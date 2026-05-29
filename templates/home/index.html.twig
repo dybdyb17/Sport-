@@ -16,6 +16,7 @@
         Coaching privé, small group ou accès salle. Sans engagement, sans compromis.
         Disponible même à 4h du matin.
       </p>
+      <div class="brand-slogan" style="opacity:.6;font-size:13px;margin-bottom:32px;">Pour le meilleur & pour le <span class="brand-plus">+</span></div>
       <div class="hero-actions">
         {% if app.user %}
           <a href="{{ path('app_booking_new') }}" class="btn btn-primary btn-lg">
@@ -50,6 +51,44 @@
     </div>
   </div>
 </section>
+
+{# ── Founding Member teaser ── #}
+{% set fo = foundingOffer ?? current_founding_offer() %}
+{% if fo and fo.isStillRunning %}
+  <section style="padding:40px 0 0;">
+    <div class="container">
+      {% if app.user and app.user.foundingClaim %}
+        {# Variante : déjà membre fondateur #}
+        <div class="founding-teaser" style="cursor:default;">
+          <div class="founding-title">{{ app.user.foundingClaim.foundingLabel }}</div>
+          <div class="founding-sub">
+            {{ app.user.foundingClaim.sessionsRemaining }}/{{ fo.sessionsIncluded }} séances incluses restantes
+            · Bilan {{ app.user.foundingClaim.isBilanDone ? '✓ effectué' : 'à programmer' }}
+          </div>
+          <a href="{{ path('app_espace_client') }}" class="btn btn-secondary btn-sm">Voir mon espace →</a>
+        </div>
+      {% elseif fo.hasPlacesLeft %}
+        {# Variante : places disponibles #}
+        <a href="{{ path('app_founding_detail') }}" class="founding-teaser">
+          <span class="badge-launch">Offre Lancement</span>
+          <div class="founding-title">Devenez Membre Fondateur</div>
+          <div class="founding-sub">3 séances pour {{ fo.price }}€ · Bilan forme offert · Valeur {{ fo.regularPrice }}€</div>
+          <div class="founding-progress-bar">
+            <div class="founding-progress-fill" style="width:{{ fo.progressPercent }}%;"></div>
+          </div>
+          <div class="founding-progress-label">{{ fo.placesTaken }} / {{ fo.totalPlaces }} membres fondateurs</div>
+          <div class="founding-teaser-footer">Voir l'offre complète →</div>
+        </a>
+      {% else %}
+        {# Variante : complet #}
+        <div class="founding-teaser" style="border-left-color:var(--border);cursor:default;">
+          <div class="founding-title" style="color:var(--text-dim);">Offre lancement complète</div>
+          <div class="founding-sub">Merci aux {{ fo.totalPlaces }} premiers fondateurs.</div>
+        </div>
+      {% endif %}
+    </div>
+  </section>
+{% endif %}
 
 {# ── POURQUOI SPORT+ ── #}
 <section class="section" style="background:var(--bg-2);">
