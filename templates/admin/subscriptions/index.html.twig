@@ -1,0 +1,105 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Abonnements — Admin SPORT+{% endblock %}
+
+{% block admin_body %}
+
+<div class="page-header">
+  <div>
+    <h1><span style="color:var(--gold)">Abonnements</span></h1>
+    <p class="page-subtitle">{{ subscriptions|length }} abonnement{% if subscriptions|length > 1 %}s{% endif %}{% if activeStatus %} — filtre : {{ activeStatus }}{% endif %}</p>
+  </div>
+  <a href="{{ path('app_admin_export_subscriptions') }}" class="btn btn-secondary btn-sm">
+    <i class="ti ti-download"></i> Export CSV
+  </a>
+</div>
+
+<div class="stats-grid">
+  <div class="stat-card success">
+    <span class="stat-label">Actifs</span>
+    <span class="stat-value">{{ subscriptionCounts['active'] }}</span>
+  </div>
+  <div class="stat-card warning">
+    <span class="stat-label">Expirés</span>
+    <span class="stat-value">{{ subscriptionCounts['expired'] }}</span>
+  </div>
+  <div class="stat-card">
+    <span class="stat-label">Annulés</span>
+    <span class="stat-value" style="color:var(--muted);">{{ subscriptionCounts['cancelled'] }}</span>
+  </div>
+</div>
+
+<div class="filter-bar">
+  <a href="{{ path('app_admin_subscriptions') }}"
+     class="btn btn-sm {{ activeStatus is null ? 'btn-primary' : 'btn-secondary' }}">
+    Tous
+  </a>
+  <a href="{{ path('app_admin_subscriptions', {status: 'active'}) }}"
+     class="btn btn-sm {{ activeStatus == 'active' ? 'btn-primary' : 'btn-secondary' }}">
+    Actifs
+  </a>
+  <a href="{{ path('app_admin_subscriptions', {status: 'expired'}) }}"
+     class="btn btn-sm {{ activeStatus == 'expired' ? 'btn-primary' : 'btn-secondary' }}">
+    Expirés
+  </a>
+  <a href="{{ path('app_admin_subscriptions', {status: 'cancelled'}) }}"
+     class="btn btn-sm {{ activeStatus == 'cancelled' ? 'btn-primary' : 'btn-secondary' }}">
+    Annulés
+  </a>
+</div>
+
+<div class="data-table-card">
+  <div class="data-table-header">
+    <h3>Suivi des abonnements</h3>
+  </div>
+  {% if subscriptions is empty %}
+    <div class="empty-placeholder" style="padding:60px;">
+      Aucun abonnement{% if activeStatus %} avec ce statut{% endif %}.
+    </div>
+  {% else %}
+    <table>
+      <thead>
+        <tr>
+          <th>Réf.</th>
+          <th>Client</th>
+          <th>Coach préféré</th>
+          <th>Pack</th>
+          <th>Séances</th>
+          <th>Période</th>
+          <th>Prix</th>
+          <th>Statut</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for subscription in subscriptions %}
+          <tr>
+            <td style="font-family:'Barlow Condensed',sans-serif;font-size:13px;letter-spacing:2px;color:var(--text-dim);">{{ subscription.reference }}</td>
+            <td style="font-family:'Barlow Condensed',sans-serif;font-weight:700;">{{ subscription.client.nomComplet }}</td>
+            <td style="color:var(--text-dim);">{{ subscription.coach ? subscription.coach.nomComplet : 'Tous coachs' }}</td>
+            <td>
+              <strong>{{ subscription.packType.label() }}</strong><br>
+              <span style="color:var(--text-dim);font-size:13px;">{{ subscription.format.label() }} · {{ subscription.timeSlot.label() }}{% if subscription.fullAccess %} · accès 24h/24{% endif %}</span>
+            </td>
+            <td style="color:var(--text-dim);">{{ subscription.remainingLabel }}</td>
+            <td style="color:var(--text-dim);">{{ subscription.startsAt|date('d/m/Y') }} → {{ subscription.endsAt|date('d/m/Y') }}</td>
+            <td style="color:var(--gold);font-family:'Barlow Condensed',sans-serif;font-weight:700;">{{ subscription.monthlyPriceFormatted }}</td>
+            <td><span class="status-badge {{ subscription.status == 'active' ? 'confirmed' : (subscription.status == 'expired' ? 'pending' : 'cancelled') }}">{{ subscription.statusLabel }}</span></td>
+            <td>
+              {% if subscription.active %}
+                <form method="post" action="{{ path('app_admin_subscription_cancel', {id: subscription.id}) }}" onsubmit="return confirm('Annuler cet abonnement ?');">
+                  <input type="hidden" name="_token" value="{{ csrf_token('cancel_subscription_' ~ subscription.id) }}">
+                  <button class="btn btn-danger btn-sm" type="submit">Annuler</button>
+                </form>
+              {% else %}
+                <span style="color:var(--text-dim);">—</span>
+              {% endif %}
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% endif %}
+</div>
+
+{% endblock %}

@@ -34,6 +34,9 @@
       <a href="{{ path('app_admin_bookings') }}" class="admin-nav-item {{ r == 'app_admin_bookings' ? 'active' : '' }}">
         <i class="ti ti-calendar"></i> Réservations
       </a>
+      <a href="{{ path('app_admin_subscriptions') }}" class="admin-nav-item {{ r starts with 'app_admin_subscription' ? 'active' : '' }}">
+        <i class="ti ti-credit-card"></i> Abonnements
+      </a>
       <a href="{{ path('app_admin_users') }}" class="admin-nav-item {{ r == 'app_admin_users' ? 'active' : '' }}">
         <i class="ti ti-id"></i> Utilisateurs
       </a>

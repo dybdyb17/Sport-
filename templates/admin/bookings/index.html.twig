@@ -9,6 +9,9 @@
     <h1><span style="color:var(--gold)">Réservations</span></h1>
     <p class="page-subtitle">{{ bookings|length }} réservation{% if bookings|length > 1 %}s{% endif %}{% if activeStatus %} — filtre : {{ activeStatus }}{% endif %}</p>
   </div>
+  <a href="{{ path('app_admin_export_bookings') }}" class="btn btn-secondary btn-sm">
+    <i class="ti ti-download"></i> Export CSV
+  </a>
 </div>
 
 <div class="filter-bar">
