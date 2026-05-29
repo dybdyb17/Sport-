@@ -1,0 +1,48 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Admin · Tableau de bord — SPORT+{% endblock %}
+
+{% block admin_body %}
+    <div class="admin-header">
+        <div>
+            <div class="section-label">{{ periodLabel }}</div>
+            <h1>Tableau de bord</h1>
+        </div>
+        <div class="admin-toolbar">
+            <a class="action-btn" href="{{ path('app_admin_export_revenue') }}">📊 Export CA mensuel</a>
+            <a class="action-btn" href="{{ path('app_admin_export_founding') }}">👥 Liste fondateurs</a>
+        </div>
+    </div>
+
+    <section class="admin-stat-grid">
+        <article class="stat-card"><span class="stat-card-label">CA du mois</span><span class="stat-card-num">{{ breakdown.total|number_format(2, ',', ' ') }} €</span><small>Part structure : {{ breakdown.structure|number_format(2, ',', ' ') }} € · Part coach : {{ breakdown.coach|number_format(2, ',', ' ') }} €</small></article>
+        <article class="stat-card stat-card--green"><span class="stat-card-label">Marge structure</span><span class="stat-card-num">{{ breakdown.structure|number_format(2, ',', ' ') }} €</span><small>{% if breakdown.total > 0 %}{{ (breakdown.structure / breakdown.total * 100)|round }}%{% else %}0%{% endif %} du CA confirmé</small></article>
+        <article class="stat-card"><span class="stat-card-label">Séances confirmées</span><span class="stat-card-num">{{ bookingCounts.confirmed }}</span><small>En attente : {{ bookingCounts.pending }} · Refusées : {{ bookingCounts.refused }}</small></article>
+        <article class="stat-card stat-card--gold"><span class="stat-card-label">Membres fondateurs</span><span class="stat-card-num">{{ foundingStats.total }}{% if foundingOffer %} / {{ foundingOffer.totalPlaces }}{% endif %}</span><small>{% if foundingOffer %}{{ foundingOffer.placesRemaining }} places restantes{% else %}Aucune offre active{% endif %}</small></article>
+    </section>
+
+    <section class="data-card">
+        <h2>Répartition par créneau</h2>
+        {% set maxRevenue = max(slotStats.day.revenue, slotStats.night.revenue, slotStats.astreinte.revenue, 1) %}
+        {% for key, label in {'day':'☀️ DAY · 06:00 — 21:00','night':'🌙 NIGHT · 21:00 — 00:00','astreinte':'✨ ASTREINTE · 00:00 — 06:00'} %}
+            <div class="slot-row">
+                <span>{{ label }}</span>
+                <strong>{{ slotStats[key].count }} séances</strong>
+                <em>{{ slotStats[key].revenue|number_format(2, ',', ' ') }} €</em>
+                <i style="width: {{ (slotStats[key].revenue / maxRevenue * 100)|round }}%"></i>
+            </div>
+        {% endfor %}
+    </section>
+
+    <section class="data-card">
+        <div class="admin-card-head"><h2>Calendrier hebdomadaire</h2><a class="link-gold" href="{{ path('app_admin_calendar') }}">Vue complète</a></div>
+        <p class="muted-note">{{ weekBookings|length }} séances confirmées cette semaine.</p>
+    </section>
+
+    <section class="admin-two-cols">
+        <div class="data-card"><h2>Top coachs du mois</h2><table class="admin-table"><thead><tr><th>#</th><th>Coach</th><th>Séances</th><th>CA</th><th>Marge coach</th></tr></thead><tbody>{% for row in topCoaches %}<tr><td>{{ loop.index }}</td><td>{{ row.coach.nomComplet }}</td><td>{{ row.sessions }}</td><td>{{ row.revenue|number_format(2, ',', ' ') }} €</td><td>{{ row.coachMargin|number_format(2, ',', ' ') }} €</td></tr>{% else %}<tr><td colspan="5">Aucune donnée.</td></tr>{% endfor %}</tbody></table></div>
+        <div class="data-card"><h2>Abonnements actifs</h2><span class="stat-card-num">{{ subStats.monthlyRecurring|number_format(2, ',', ' ') }} €</span><p>{{ subStats.active }} abonnements actifs</p>{% for pack, count in subStats.byPack %}<div class="mini-bar"><span>{{ pack|upper }}</span><strong>{{ count }}</strong></div>{% endfor %}{% if expiringSubs is not empty %}<p class="alert alert-error">⚠ {{ expiringSubs|length }} abonnement(s) expirent dans 7 jours. <a href="{{ path('app_admin_subscriptions', {expiring: 1}) }}">Voir détails</a></p>{% endif %}</div>
+    </section>
+
+    <section class="data-card"><h2>Dernières réservations</h2><table class="admin-table"><thead><tr><th>Réf</th><th>Client</th><th>Coach</th><th>Date</th><th>Statut</th><th>Prix</th></tr></thead><tbody>{% for booking in recentBookings %}<tr><td>{{ booking.reference }}</td><td>{{ booking.client.nomComplet }}</td><td>{{ booking.coach.nomComplet }}</td><td>{{ booking.startAt|date('d/m/Y H:i') }}</td><td><span class="status-badge {{ booking.status }}">{{ booking.statutLabel }}</span></td><td>{{ booking.prixFormatted }}</td></tr>{% else %}<tr><td colspan="6">Aucune réservation.</td></tr>{% endfor %}</tbody></table></section>
+{% endblock %}

@@ -1,0 +1,28 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    {% set route = app.request.attributes.get('_route') %}
+    <div class="admin-shell">
+        <aside class="admin-sidebar">
+            <div class="admin-kicker">Pilotage club</div>
+            <nav class="admin-nav" aria-label="Navigation administrateur">
+                <a class="{{ route == 'app_admin_dashboard' ? 'active' : '' }}" href="{{ path('app_admin_dashboard') }}">📊 Tableau de bord</a>
+                <a class="{{ route starts with 'app_admin_calendar' ? 'active' : '' }}" href="{{ path('app_admin_calendar') }}">📅 Calendrier</a>
+                <a href="#">👥 Coachs</a>
+                <a href="#">🔖 Réservations</a>
+                <a href="#">👤 Utilisateurs</a>
+                <a class="{{ route starts with 'app_admin_subscriptions' ? 'active' : '' }}" href="{{ path('app_admin_subscriptions') }}">💳 Abonnements</a>
+                <a class="{{ route starts with 'app_admin_founding' ? 'active' : '' }}" href="{{ path('app_admin_founding_list') }}">🏅 Fondateurs</a>
+                <span class="admin-nav-divider"></span>
+                <span class="admin-nav-title">Exports</span>
+                <a class="admin-nav-mini" href="{{ path('app_admin_export_revenue') }}">CA mensuel CSV</a>
+                <a class="admin-nav-mini" href="{{ path('app_admin_export_founding') }}">Fondateurs CSV</a>
+                <a class="admin-nav-mini" href="{{ path('app_admin_export_subscriptions') }}">Abonnements CSV</a>
+                <a class="admin-nav-mini" href="{{ path('app_admin_export_bookings') }}">Réservations CSV</a>
+            </nav>
+        </aside>
+        <main class="admin-content">
+            {% block admin_body %}{% endblock %}
+        </main>
+    </div>
+{% endblock %}

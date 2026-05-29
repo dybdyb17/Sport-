@@ -15,4 +15,15 @@ class CoachRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Coach::class);
     }
+    /** @return Coach[] */
+    public function findAllWithUser(): array
+    {
+        return $this->createQueryBuilder('c')
+            ->leftJoin('c.user', 'u')
+            ->addSelect('u')
+            ->orderBy('u.nomComplet', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
+
 }

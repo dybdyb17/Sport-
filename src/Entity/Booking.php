@@ -2,6 +2,9 @@
 
 namespace App\Entity;
 
+use App\Entity\Enum\BookingFormat;
+use App\Entity\Enum\PackType;
+use App\Entity\Enum\TimeSlot;
 use App\Repository\BookingRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
@@ -39,6 +42,21 @@ class Booking
     #[ORM\Column(length: 50)]
     #[Assert\NotBlank]
     private ?string $serviceType = null;
+
+    #[ORM\Column(enumType: BookingFormat::class, options: ['default' => 'solo'])]
+    private BookingFormat $format = BookingFormat::SOLO;
+
+    #[ORM\Column(enumType: TimeSlot::class, options: ['default' => 'day'])]
+    private TimeSlot $timeSlot = TimeSlot::DAY;
+
+    #[ORM\Column(options: ['default' => 1])]
+    private int $personsCount = 1;
+
+    #[ORM\Column(enumType: PackType::class, nullable: true)]
+    private ?PackType $packType = null;
+
+    #[ORM\Column(length: 30, nullable: true)]
+    private ?string $coveredBy = null;
 
     #[ORM\Column(type: Types::DATETIME_IMMUTABLE)]
     #[Assert\NotNull]
@@ -120,6 +138,67 @@ class Booking
     public function setServiceType(string $serviceType): static
     {
         $this->serviceType = $serviceType;
+
+        return $this;
+    }
+
+
+    public function getFormat(): BookingFormat
+    {
+        return $this->format;
+    }
+
+    public function setFormat(BookingFormat $format): static
+    {
+        $this->format = $format;
+
+        return $this;
+    }
+
+    public function getTimeSlot(): TimeSlot
+    {
+        return $this->timeSlot;
+    }
+
+    public function setTimeSlot(TimeSlot $timeSlot): static
+    {
+        $this->timeSlot = $timeSlot;
+
+        return $this;
+    }
+
+    public function getPersonsCount(): int
+    {
+        return $this->personsCount;
+    }
+
+    public function setPersonsCount(int $personsCount): static
+    {
+        $this->personsCount = max(1, $personsCount);
+
+        return $this;
+    }
+
+    public function getPackType(): ?PackType
+    {
+        return $this->packType;
+    }
+
+    public function setPackType(?PackType $packType): static
+    {
+        $this->packType = $packType;
+
+        return $this;
+    }
+
+    public function getCoveredBy(): ?string
+    {
+        return $this->coveredBy;
+    }
+
+    public function setCoveredBy(?string $coveredBy): static
+    {
+        $this->coveredBy = $coveredBy;
 
         return $this;
     }
@@ -230,6 +309,11 @@ class Booking
             self::STATUS_CANCELLED => '🚫 Annulée',
             default => 'Inconnu',
         };
+    }
+
+    public function getOfferLabel(): string
+    {
+        return $this->format->label() . ' · ' . $this->timeSlot->label();
     }
 
     public function getServiceTypeLabel(): string

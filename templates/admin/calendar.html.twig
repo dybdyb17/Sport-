@@ -1,0 +1,30 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Admin · Calendrier — SPORT+{% endblock %}
+
+{% block admin_body %}
+    <div class="calendar-toolbar">
+        <h1>Calendrier · semaine du {{ from|date('d/m/Y') }}</h1>
+        <div class="admin-toolbar">
+            <a class="action-btn" href="{{ path('app_admin_calendar', {week: prevWeek|date('Y-m-d')}) }}">← Précédent</a>
+            <a class="action-btn" href="{{ path('app_admin_calendar') }}">Aujourd'hui</a>
+            <a class="action-btn" href="{{ path('app_admin_calendar', {week: nextWeek|date('Y-m-d')}) }}">Suivant →</a>
+        </div>
+    </div>
+    <div class="calendar-legend"><span class="day"></span> Day <span class="night"></span> Night <span class="astreinte"></span> Astreinte</div>
+    <div class="calendar-grid">
+        <div class="calendar-cell header"></div>
+        {% for i in 0..6 %}<div class="calendar-cell header">{{ from|date_modify('+' ~ i ~ ' days')|date('D d/m') }}</div>{% endfor %}
+        {% for slot in slots %}
+            <div class="calendar-cell slot-label">{{ slot.label }}</div>
+            {% for day in 1..7 %}
+                <div class="calendar-cell">
+                    {% for booking in grid[day][slot.value] %}
+                        <div class="calendar-event {{ slot.value }}"><span class="calendar-event-time">{{ booking.startAt|date('H:i') }}</span> {{ booking.client.nomComplet|split(' ')|first }}<span class="calendar-event-meta">{{ booking.offerLabel }} · {{ booking.coach.nomComplet }}</span></div>
+                    {% else %}<span class="calendar-empty">·</span>{% endfor %}
+                </div>
+            {% endfor %}
+        {% endfor %}
+    </div>
+    <p class="muted-note">{{ totalSessions }} séances · CA généré : {{ totalRevenue|number_format(2, ',', ' ') }} €</p>
+{% endblock %}

@@ -53,3 +53,11 @@ Puis : register un client → /reservation/new → le coach voit la demande sur 
 - Intégration Stripe Checkout (le champ stripeData existe, le tunnel reste à coder dans BookingManager::confirm).
 - Son de notif : déposer un fichier dans public/sounds/notification.mp3.
 - Profil coach éditable, gestion ROLE_ADMIN.
+
+## Commandes utiles
+
+Créer un administrateur local :
+
+```bash
+php bin/console app:create-admin admin@sportplus.test test1234 "Boss SPORT+"
+```
