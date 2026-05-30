@@ -1,8 +1,34 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}SPORT+ — Coaching Premium Marseille{% endblock %}
+{% block meta_description %}<meta name="description" content="Coaching premium privé à Marseille — Night Coach dès 20h, accès salle 24h/24, solo ou groupe. 164 Chemin Saint-Jean du Désert, 13005.">{% endblock %}
+{% block og_title %}SPORT+ — Coaching Premium Marseille{% endblock %}
+{% block og_description %}Coaching privé, duo ou groupe à Marseille. Night Coach disponible dès 20h, accès salle 24h/24. 164 Chemin de Saint-Jean du Désert, 13005.{% endblock %}
 
 {% block body %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SportsActivityLocation",
+  "name": "SPORT+",
+  "description": "Club de coaching premium à Marseille. Coaching privé, duo ou groupe. Night Coach disponible dès 20h, accès salle 24h/24.",
+  "url": "{{ app.request.schemeAndHttpHost }}",
+  "telephone": "+33491422207",
+  "openingHours": "Mo-Su 00:00-24:00",
+  "priceRange": "40€ - 575€",
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "164 Chemin de Saint-Jean du Désert",
+    "addressLocality": "Marseille",
+    "postalCode": "13005",
+    "addressCountry": "FR"
+  },
+  "sameAs": [
+    "https://www.facebook.com/sportplusmarseille",
+    "https://www.instagram.com/sportplus_marseille"
+  ]
+}
+</script>
 
 {# ── HERO ── #}
 <section class="hero">
@@ -107,7 +133,7 @@
       <div class="feature-card">
         <div class="feature-icon"><i class="ti ti-clock"></i></div>
         <div class="feature-title">Disponible 24h/24</div>
-        <p class="feature-text">Night Coach dès 21h, accès salle à toute heure. Ton emploi du temps ne dicte plus ta progression.</p>
+        <p class="feature-text">Night Coach dès 20h, accès salle à toute heure. Ton emploi du temps ne dicte plus ta progression.</p>
       </div>
       <div class="feature-card">
         <div class="feature-icon"><i class="ti ti-shield-check"></i></div>
@@ -131,7 +157,7 @@
         <div class="service-icon"><i class="ti ti-moon"></i></div>
         <div class="service-name">Night Coach</div>
         <div class="service-price">dès 52,50 € / séance</div>
-        <p class="service-desc">Coaching privé dès 21h. Solo, duo ou groupe. Ton coach t'attend en salle, quelle que soit l'heure.</p>
+        <p class="service-desc">Coaching privé dès 20h. Solo, duo ou groupe. Ton coach t'attend en salle, quelle que soit l'heure.</p>
         <a href="{{ app.user ? path('app_booking_new') : path('app_register') }}" class="btn btn-outline">Réserver</a>
       </div>
       <div class="service-card">
@@ -209,7 +235,7 @@
         </details>
         <details class="faq-item">
           <summary>Comment fonctionne le Night Coach ?</summary>
-          <div class="faq-answer">Vous réservez votre créneau dès 21h. Un coach dédié vous attend en salle. Solo, duo ou groupe jusqu'à 6 personnes.</div>
+          <div class="faq-answer">Vous réservez votre créneau dès 20h. Un coach dédié vous attend en salle. Solo, duo ou groupe jusqu'à 6 personnes.</div>
         </details>
         <details class="faq-item">
           <summary>Je dois former mon groupe moi-même ?</summary>

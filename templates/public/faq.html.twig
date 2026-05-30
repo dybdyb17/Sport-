@@ -1,6 +1,7 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}FAQ — SPORT+ Marseille{% endblock %}
+{% block meta_description %}<meta name="description" content="Questions fréquentes sur SPORT+ Marseille : réservation, tarifs, Night Coach, Membres Fondateurs, accès salle, annulation. 30 questions, 30 réponses.">{% endblock %}
 
 {% block body %}
 
@@ -9,71 +10,278 @@
   <div class="container">
     <div class="hero-badge">Questions fréquentes</div>
     <h1 class="section-title" style="margin-top:16px;">Tout ce que tu veux <span style="color:var(--gold)">savoir</span></h1>
-    <p class="section-sub">Les réponses à toutes tes questions sur SPORT+ et nos services.</p>
+    <p class="section-sub">30 questions, 30 réponses. Tu ne trouves pas la tienne ?
+      <a href="{{ path('app_contact') }}" style="color:var(--gold);text-decoration:underline;">Écris-nous via le formulaire de contact.</a>
+    </p>
   </div>
 </section>
 
-{# FAQ 2-column layout #}
 <section class="section" style="padding-top:0;">
   <div class="container">
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:32px;align-items:start;">
 
-      <div>
-        <div class="section-label" style="margin-top:0;margin-bottom:20px;">Réservations & Paiement</div>
-        <div class="faq-list">
-          <details class="faq-item">
-            <summary>Y a-t-il un engagement ?</summary>
-            <div class="faq-answer">Non. Toutes nos formules sont sans engagement. Vous réservez quand vous voulez, annulez jusqu'à 2h avant sans frais.</div>
-          </details>
-          <details class="faq-item">
-            <summary>Quand est-ce que je paye ?</summary>
-            <div class="faq-answer">Uniquement si le coach confirme votre réservation. Aucun prélèvement tant que la séance n'est pas validée.</div>
-          </details>
-          <details class="faq-item">
-            <summary>Comment annuler une réservation ?</summary>
-            <div class="faq-answer">Depuis votre espace client, cliquez sur "Annuler" sur la réservation concernée. L'annulation est gratuite jusqu'à 2h avant la séance.</div>
-          </details>
-          <details class="faq-item">
-            <summary>Puis-je changer de coach ?</summary>
-            <div class="faq-answer">Absolument. Chaque réservation est indépendante, vous choisissez votre coach à chaque séance selon vos besoins.</div>
-          </details>
-          <details class="faq-item">
-            <summary>Y a-t-il des frais cachés ?</summary>
-            <div class="faq-answer">Aucun. Le prix affiché est le prix final. Pas d'abonnement, pas de frais d'inscription, pas de surprises.</div>
-          </details>
-        </div>
+    {# Menu d'ancres sticky #}
+    <nav class="faq-nav" aria-label="Catégories FAQ">
+      <a href="#reservations" class="faq-nav-link">
+        <i class="ti ti-calendar"></i> Réservations
+      </a>
+      <a href="#coachs" class="faq-nav-link">
+        <i class="ti ti-user-check"></i> Coachs & séances
+      </a>
+      <a href="#founding" class="faq-nav-link">
+        <i class="ti ti-crown"></i> Membres Fondateurs
+      </a>
+      <a href="#tarifs" class="faq-nav-link">
+        <i class="ti ti-coin"></i> Tarifs & packs
+      </a>
+      <a href="#salle" class="faq-nav-link">
+        <i class="ti ti-building"></i> La salle
+      </a>
+      <a href="#compte" class="faq-nav-link">
+        <i class="ti ti-user-cog"></i> Compte & données
+      </a>
+    </nav>
+
+    {# A. Réservations & Paiement #}
+    <section id="reservations" style="margin-bottom:56px;">
+      <div class="section-label" style="margin-top:0;margin-bottom:8px;">Réservations & Paiement</div>
+      <h2 style="font-family:'Barlow Condensed',sans-serif;font-size:32px;font-weight:900;
+                 text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">Réservations</h2>
+      <p style="color:var(--text-dim);font-size:14px;margin-bottom:24px;">Tout ce qu'il faut savoir avant de réserver.</p>
+      <div class="faq-list">
+
+        <details class="faq-item">
+          <summary>Comment réserver une séance ?</summary>
+          <div class="faq-answer">
+            <strong>3 étapes :</strong>
+            <ol style="margin:10px 0 0 16px;line-height:1.8;">
+              <li>Crée ton compte ou connecte-toi sur SPORT+.</li>
+              <li>Choisis un coach depuis la page <a href="{{ path('app_coachs_list') }}" style="color:var(--gold)">Coachs</a>, sélectionne ton format (Solo/Duo/Group) et ton créneau (Day/Night/Astreinte).</li>
+              <li>Confirme ta demande — le coach reçoit une notification et valide dans les 24h.</li>
+            </ol>
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary>Quel délai pour réserver à l'avance ?</summary>
+          <div class="faq-answer">Tu peux réserver jusqu'à 30 jours à l'avance. Le délai minimum est de 2h avant le début de la séance (au-delà, la réservation est impossible pour ce créneau).</div>
+        </details>
+
+        <details class="faq-item">
+          <summary>Quand est-ce que je paye ?</summary>
+          <div class="faq-answer">Uniquement si le coach confirme votre réservation. Aucun prélèvement tant que la séance n'est pas validée.</div>
+        </details>
+
+        <details class="faq-item">
+          <summary>Comment annuler une réservation ?</summary>
+          <div class="faq-answer">Depuis votre espace client, cliquez sur "Annuler" sur la réservation concernée. L'annulation est gratuite jusqu'à 2h avant la séance.</div>
+        </details>
+
+        <details class="faq-item">
+          <summary>Si le coach refuse ma demande, suis-je débité ?</summary>
+          <div class="faq-answer">Non, jamais. Le paiement n'est déclenché qu'à la confirmation de la séance. Un refus ou une expiration sans réponse du coach n'engendre aucun frais.</div>
+        </details>
+
       </div>
+    </section>
 
-      <div>
-        <div class="section-label" style="margin-top:0;margin-bottom:20px;">Coaching & Services</div>
-        <div class="faq-list">
-          <details class="faq-item">
-            <summary>Comment fonctionne le Night Coach ?</summary>
-            <div class="faq-answer">Vous réservez votre créneau dès 21h. Un coach dédié vous attend en salle. Solo, duo ou groupe jusqu'à 6 personnes.</div>
-          </details>
-          <details class="faq-item">
-            <summary>Je dois former mon groupe moi-même ?</summary>
-            <div class="faq-answer">Oui. Vous constituez votre groupe (amis, collègues, famille). Nous ne mixons pas des inconnus pour garantir votre confort.</div>
-          </details>
-          <details class="faq-item">
-            <summary>Les coachs sont-ils certifiés ?</summary>
-            <div class="faq-answer">Oui, tous nos coachs sont certifiés et régulièrement évalués. Leur profil inclut leurs spécialités et leur tarif horaire.</div>
-          </details>
-          <details class="faq-item">
-            <summary>Quelle est la durée d'une séance ?</summary>
-            <div class="faq-answer">Les séances durent entre 45 et 90 minutes selon la prestation choisie. La durée est indiquée lors de la réservation.</div>
-          </details>
-          <details class="faq-item">
-            <summary>Puis-je contacter mon coach avant la séance ?</summary>
-            <div class="faq-answer">Oui. Une messagerie privée s'ouvre automatiquement dès que le coach confirme votre réservation.</div>
-          </details>
-        </div>
+    {# B. Coachs & Séances #}
+    <section id="coachs" style="margin-bottom:56px;">
+      <div class="section-label" style="margin-top:0;margin-bottom:8px;">Coaching & Services</div>
+      <h2 style="font-family:'Barlow Condensed',sans-serif;font-size:32px;font-weight:900;
+                 text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">Coachs & séances</h2>
+      <p style="color:var(--text-dim);font-size:14px;margin-bottom:24px;">Tout sur nos coachs et le déroulé d'une séance.</p>
+      <div class="faq-list">
+
+        <details class="faq-item">
+          <summary>Les coachs sont-ils certifiés ?</summary>
+          <div class="faq-answer">Oui, tous nos coachs sont certifiés et régulièrement évalués. Leur profil inclut leurs spécialités et leur tarif horaire.</div>
+        </details>
+
+        <details class="faq-item">
+          <summary>Comment choisir le bon coach pour moi ?</summary>
+          <div class="faq-answer">Consulte les profils sur la page <a href="{{ path('app_coachs_list') }}" style="color:var(--gold)">Coachs</a> — chaque coach précise ses spécialités (musculation, cardio, mobilité, perte de poids…). Tu peux aussi lui envoyer un message avant de réserver pour discuter de tes objectifs.</div>
+        </details>
+
+        <details class="faq-item">
+          <summary>Quelle est la durée d'une séance ?</summary>
+          <div class="faq-answer">Les séances durent entre 45 et 90 minutes selon la prestation choisie. La durée est indiquée lors de la réservation.</div>
+        </details>
+
+        <details class="faq-item">
+          <summary>Puis-je changer de coach ?</summary>
+          <div class="faq-answer">Absolument. Chaque réservation est indépendante, vous choisissez votre coach à chaque séance selon vos besoins.</div>
+        </details>
+
+        <details class="faq-item">
+          <summary>Puis-je contacter mon coach avant la séance ?</summary>
+          <div class="faq-answer">Oui. Une messagerie privée s'ouvre automatiquement dès que le coach confirme votre réservation.</div>
+        </details>
+
+        <details class="faq-item">
+          <summary>Le coach apporte-t-il son matériel ?</summary>
+          <div class="faq-answer">Non, tout est sur place. La salle est entièrement équipée — machines cardio, poids libres, barres, bancs, élastiques, tapis, etc. Tu arrives les mains vides, le coach gère le reste.</div>
+        </details>
+
       </div>
+    </section>
 
-    </div>
+    {# C. Membres Fondateurs #}
+    <section id="founding" style="margin-bottom:56px;">
+      <div class="section-label" style="margin-top:0;margin-bottom:8px;">Offre Exclusive</div>
+      <h2 style="font-family:'Barlow Condensed',sans-serif;font-size:32px;font-weight:900;
+                 text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">Membres Fondateurs</h2>
+      <p style="color:var(--text-dim);font-size:14px;margin-bottom:24px;">Tout sur l'offre exclusive pour les 50 premiers.</p>
+      <div class="faq-list">
+
+        <details class="faq-item">
+          <summary>Qu'est-ce qu'un Membre Fondateur ?</summary>
+          <div class="faq-answer">Les 50 premiers membres à rejoindre SPORT+ sous cette offre reçoivent un badge "Fondateur" permanent sur leur compte — un statut qui reconnaît leur confiance dès le lancement.</div>
+        </details>
+
+        <details class="faq-item">
+          <summary>Quels sont les avantages ?</summary>
+          <div class="faq-answer">
+            En devenant Membre Fondateur, tu obtiens :
+            <ul style="margin:10px 0 0 16px;line-height:1.8;">
+              <li>3 séances de coaching offertes (utilisables dans les 6 mois)</li>
+              <li>Un bilan corporel complet avec un coach</li>
+              <li>Accès prioritaire aux créneaux Night Coach</li>
+              <li>Badge "Fondateur" à vie sur ton profil</li>
+            </ul>
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary>Combien ça coûte ?</summary>
+          <div class="faq-answer">99 € une seule fois, pour débloquer l'ensemble des avantages Fondateur à vie. Aucun renouvellement, aucun abonnement.</div>
+        </details>
+
+        <details class="faq-item">
+          <summary>Combien de places restent disponibles ?</summary>
+          <div class="faq-answer">Le nombre de places disponibles est affiché en temps réel sur la <a href="{{ path('app_founding_detail') }}" style="color:var(--gold)">page Offre Fondateur</a>. Dès que les 50 places sont prises, l'offre ferme définitivement.</div>
+        </details>
+
+        <details class="faq-item">
+          <summary>Puis-je devenir Founding plus tard ?</summary>
+          <div class="faq-answer">Oui, tant qu'il reste des places disponibles. Il n'y a pas de délai imposé, mais l'offre est limitée à 50 membres au total — first come, first served.</div>
+        </details>
+
+      </div>
+    </section>
+
+    {# D. Tarifs & Packs #}
+    <section id="tarifs" style="margin-bottom:56px;">
+      <div class="section-label" style="margin-top:0;margin-bottom:8px;">Tarification</div>
+      <h2 style="font-family:'Barlow Condensed',sans-serif;font-size:32px;font-weight:900;
+                 text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">Tarifs & packs</h2>
+      <p style="color:var(--text-dim);font-size:14px;margin-bottom:24px;">Comprendre notre grille tarifaire.</p>
+      <div class="faq-list">
+
+        <details class="faq-item">
+          <summary>Quelle différence entre séance unique et pack ?</summary>
+          <div class="faq-answer">Une séance unique se paye à l'unité. Un pack de 4 séances est prépayé et donne droit à une réduction de 10 à 30 % selon le format. Plus tu t'engages sur un pack, plus le tarif à la séance baisse.</div>
+        </details>
+
+        <details class="faq-item">
+          <summary>Quels sont les créneaux et leurs tarifs ?</summary>
+          <div class="faq-answer">
+            SPORT+ propose 3 types de créneaux :
+            <ul style="margin:10px 0 0 16px;line-height:1.8;">
+              <li><strong style="color:var(--gold)">Day (6h–20h)</strong> — tarif standard</li>
+              <li><strong style="color:var(--gold)">Night (20h–minuit)</strong> — majoration ×1.4, prime nocturne</li>
+              <li><strong style="color:var(--gold)">Astreinte (minuit–6h)</strong> — majoration ×1.8, garde d'équipe</li>
+            </ul>
+            Consulte la <a href="{{ path('app_tarifs') }}" style="color:var(--gold)">grille tarifaire complète</a>.
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary>Pourquoi le Night Coach est-il plus cher ?</summary>
+          <div class="faq-answer">Les créneaux nocturnes (20h–minuit) sont majorés ×1,4 par rapport au tarif Day pour rémunérer équitablement nos coachs qui travaillent en soirée. La prime est transparente et affichée sur chaque fiche tarif.</div>
+        </details>
+
+        <details class="faq-item">
+          <summary>Pourquoi l'Astreinte est-elle encore plus chère ?</summary>
+          <div class="faq-answer">L'Astreinte couvre les créneaux minuit–6h. Elle nécessite qu'un coach reste en garde sur place, ce qui justifie une majoration ×1,8 par rapport au tarif Day. C'est la formule la plus atypique, pensée pour les emplois du temps vraiment décalés.</div>
+        </details>
+
+        <details class="faq-item">
+          <summary>Y a-t-il des frais cachés ?</summary>
+          <div class="faq-answer">Aucun. Le prix affiché est le prix final. Pas d'abonnement, pas de frais d'inscription, pas de surprises.</div>
+        </details>
+
+      </div>
+    </section>
+
+    {# E. La salle #}
+    <section id="salle" style="margin-bottom:56px;">
+      <div class="section-label" style="margin-top:0;margin-bottom:8px;">Infos pratiques</div>
+      <h2 style="font-family:'Barlow Condensed',sans-serif;font-size:32px;font-weight:900;
+                 text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">La salle</h2>
+      <p style="color:var(--text-dim);font-size:14px;margin-bottom:24px;">Adresse, accès, équipements.</p>
+      <div class="faq-list">
+
+        <details class="faq-item">
+          <summary>Où se trouve SPORT+ ?</summary>
+          <div class="faq-answer">SPORT+ est située au <strong>164 Chemin de Saint-Jean du Désert, 13005 Marseille</strong> (5e arrondissement). Un espace calme, privatisé, à l'écart du tumulte des salles classiques.</div>
+        </details>
+
+        <details class="faq-item">
+          <summary>Comment accéder à la salle 24h/24 ?</summary>
+          <div class="faq-answer">Chaque membre actif reçoit un badge d'accès personnel après sa première séance confirmée. Ce badge te donne l'accès à la salle à n'importe quelle heure, même en dehors de tes créneaux avec un coach.</div>
+        </details>
+
+        <details class="faq-item">
+          <summary>Y a-t-il un parking ?</summary>
+          <div class="faq-answer">[À COMPLÉTER — informations parking à renseigner par le dirigeant]</div>
+        </details>
+
+        <details class="faq-item">
+          <summary>Y a-t-il des vestiaires et douches ?</summary>
+          <div class="faq-answer">Oui. La salle dispose de vestiaires équipés avec douches individuelles. Tu peux venir directement du travail et repartir frais.</div>
+        </details>
+
+        <details class="faq-item">
+          <summary>Quel équipement est disponible ?</summary>
+          <div class="faq-answer">La salle est entièrement équipée : machines cardio, poids libres, barres olympiques, bancs de musculation, câbles, élastiques, tapis, et plus encore. Découvre <a href="{{ path('app_concept') }}" style="color:var(--gold)">le concept complet</a> pour le détail des équipements.</div>
+        </details>
+
+      </div>
+    </section>
+
+    {# F. Compte & données #}
+    <section id="compte" style="margin-bottom:56px;">
+      <div class="section-label" style="margin-top:0;margin-bottom:8px;">Espace personnel</div>
+      <h2 style="font-family:'Barlow Condensed',sans-serif;font-size:32px;font-weight:900;
+                 text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">Compte & données</h2>
+      <p style="color:var(--text-dim);font-size:14px;margin-bottom:24px;">Tes données personnelles et tes droits.</p>
+      <div class="faq-list">
+
+        <details class="faq-item">
+          <summary>Comment fonctionne le Night Coach ?</summary>
+          <div class="faq-answer">Vous réservez votre créneau dès 20h. Un coach dédié vous attend en salle. Solo, duo ou groupe jusqu'à 6 personnes.</div>
+        </details>
+
+        <details class="faq-item">
+          <summary>Comment supprimer mon compte ?</summary>
+          <div class="faq-answer">Envoie ta demande de suppression depuis la page <a href="{{ path('app_contact') }}" style="color:var(--gold)">Contact</a>. Nous traitons toutes les demandes dans les 72h et supprimons définitivement tes données conformément au RGPD.</div>
+        </details>
+
+        <details class="faq-item">
+          <summary>Mes données sont-elles vendues ?</summary>
+          <div class="faq-answer">Non, jamais. Tes données sont exclusivement utilisées pour faire fonctionner SPORT+. Aucune transmission à des tiers à des fins commerciales. Consulte notre <a href="{{ path('app_legal_confidentialite') }}" style="color:var(--gold)">politique de confidentialité</a> pour tous les détails.</div>
+        </details>
+
+        <details class="faq-item">
+          <summary>Comment exercer mes droits RGPD ?</summary>
+          <div class="faq-answer">Tu peux exercer tes droits (accès, rectification, effacement, portabilité, opposition) en nous contactant directement par email depuis la page <a href="{{ path('app_contact') }}" style="color:var(--gold)">Contact</a>. Nous répondons dans un délai maximum de 30 jours.</div>
+        </details>
+
+      </div>
+    </section>
 
     {# CTA #}
-    <div style="text-align:center;margin-top:64px;padding:40px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);">
+    <div style="text-align:center;padding:40px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);">
       <h3 style="font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:900;text-transform:uppercase;margin-bottom:12px;">
         Pas trouvé ta réponse ?
       </h3>
@@ -82,6 +290,7 @@
         <i class="ti ti-mail"></i> Nous contacter
       </a>
     </div>
+
   </div>
 </section>
 

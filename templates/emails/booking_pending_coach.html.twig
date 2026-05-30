@@ -1,0 +1,33 @@
+{% extends 'emails/base.html.twig' %}
+{% import 'emails/_macros.html.twig' as m %}
+
+{% block subject %}Nouvelle demande de réservation — {{ client.nomComplet }}{% endblock %}
+
+{% block content %}
+<p style="margin:0 0 20px;font-size:16px;color:#ECECEC;font-family:Arial,Helvetica,sans-serif;">
+  Bonjour <strong style="color:#F4EFE6;">{{ coach.nomComplet|split(' ')|first }}</strong>,
+</p>
+
+<p style="margin:0 0 24px;font-size:16px;color:#ECECEC;font-family:Arial,Helvetica,sans-serif;line-height:1.65;">
+  <strong style="color:#F4EFE6;">{{ client.nomComplet }}</strong> vient de vous envoyer une demande de réservation.
+</p>
+
+{# Récap séance #}
+{{ m.infoCard('Format', booking.format.label) }}
+{{ m.infoCard('Créneau', booking.timeSlot.label) }}
+{{ m.infoCard('Date et heure', booking.startAt|date('d/m/Y à H:i')) }}
+{{ m.infoCard('Nombre de participants', booking.personsCount ~ ' personne' ~ (booking.personsCount > 1 ? 's' : '')) }}
+
+{% if booking.message %}
+  {{ m.infoCard('Message du client', '<em style="color:#9A8F7A;">' ~ booking.message|e ~ '</em>') }}
+{% endif %}
+
+{{ m.button(dashboardUrl, 'Voir la demande') }}
+
+{{ m.divider() }}
+
+<p style="margin:0;font-size:13px;color:#9A8F7A;font-family:Arial,Helvetica,sans-serif;text-align:center;">
+  <strong style="color:#C8A951;">Rappel :</strong> Tu peux accepter ou refuser depuis ton espace coach.<br>
+  Merci de répondre avant le début de la séance.
+</p>
+{% endblock %}

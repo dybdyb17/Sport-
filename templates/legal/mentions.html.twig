@@ -1,0 +1,93 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mentions légales — SPORT+ Marseille{% endblock %}
+{% block meta_description %}<meta name="description" content="Mentions légales de SPORT+ Marseille — Informations légales, éditeur, hébergeur et contact.">{% endblock %}
+
+{% block body %}
+<div class="container" style="max-width:820px;padding-top:60px;padding-bottom:80px;">
+
+  <div class="page-header" style="margin-bottom:40px;">
+    <div>
+      <h1>Mentions <span style="color:var(--gold)">Légales</span></h1>
+      <p class="page-subtitle">Conformément aux articles 6-III et 19 de la loi LCEN du 21 juin 2004</p>
+    </div>
+  </div>
+
+  <div style="background:rgba(255,138,77,0.1);border-left:3px solid #ff8a4d;padding:16px 20px;margin-bottom:36px;border-radius:var(--radius);font-size:14px;color:var(--text-soft);">
+    <i class="ti ti-alert-triangle" style="color:#ff8a4d;margin-right:8px;"></i>
+    <strong>À compléter avant mise en ligne :</strong> cette page contient des placeholders entre crochets <code style="background:rgba(255,138,77,0.15);padding:2px 6px;border-radius:4px;">[...]</code> à remplacer par les vraies informations juridiques de l'entreprise.
+  </div>
+
+  <section class="legal-section">
+    <h2>1. Éditeur du site</h2>
+    <p>Le site <strong>sport-plus-marseille.fr</strong> est édité par :</p>
+    <ul class="legal-list">
+      <li><strong>Raison sociale :</strong> [RAISON_SOCIALE]</li>
+      <li><strong>Forme juridique :</strong> [SARL / SAS / SASU / EI]</li>
+      <li><strong>Capital social :</strong> [CAPITAL_SOCIAL] €</li>
+      <li><strong>Siège social :</strong> 164 Chemin de Saint-Jean du Désert, 13005 Marseille</li>
+      <li><strong>SIREN :</strong> [SIREN]</li>
+      <li><strong>SIRET :</strong> [SIRET]</li>
+      <li><strong>N° TVA intracommunautaire :</strong> [TVA_INTRACOMMUNAUTAIRE]</li>
+      <li><strong>Code APE / NAF :</strong> [APE]</li>
+    </ul>
+  </section>
+
+  <section class="legal-section">
+    <h2>2. Directeur de la publication</h2>
+    <p>[NOM_DIRIGEANT], en qualité de gérant / président de [RAISON_SOCIALE].</p>
+  </section>
+
+  <section class="legal-section">
+    <h2>3. Contact</h2>
+    <ul class="legal-list">
+      <li><strong>Téléphone :</strong> <a href="tel:0491422207" style="color:var(--gold);">04 91 42 22 07</a></li>
+      <li><strong>Email :</strong> <a href="mailto:[EMAIL_CONTACT]" style="color:var(--gold);">[EMAIL_CONTACT]</a></li>
+      <li><strong>Adresse :</strong> 164 Chemin de Saint-Jean du Désert, 13005 Marseille</li>
+    </ul>
+  </section>
+
+  <section class="legal-section">
+    <h2>4. Hébergeur</h2>
+    <ul class="legal-list">
+      <li><strong>Nom :</strong> Railway Corp.</li>
+      <li><strong>Adresse :</strong> 548 Market St #80994, San Francisco, CA 94104, États-Unis</li>
+      <li><strong>Site web :</strong> <a href="https://railway.app" target="_blank" rel="noopener noreferrer" style="color:var(--gold);">https://railway.app</a></li>
+    </ul>
+  </section>
+
+  <section class="legal-section">
+    <h2>5. Propriété intellectuelle</h2>
+    <p>L'ensemble du contenu du site SPORT+ (textes, images, graphismes, logo, icônes, sons, logiciels) est la propriété exclusive de [RAISON_SOCIALE], sauf mentions contraires. Toute reproduction, distribution, modification, adaptation, retransmission ou publication, même partielle, de ces différents éléments est strictement interdite sans l'accord exprès par écrit de [RAISON_SOCIALE].</p>
+    <p>Le logo et la marque SPORT+ sont des marques déposées. Toute utilisation non autorisée constitue une contrefaçon sanctionnée par les articles L.335-2 et suivants du Code de la propriété intellectuelle.</p>
+  </section>
+
+  <section class="legal-section">
+    <h2>6. Données personnelles</h2>
+    <p>Les données collectées sur ce site font l'objet d'un traitement informatique destiné à la gestion de votre compte et de vos réservations. Pour en savoir plus, consultez notre <a href="{{ path('app_legal_confidentialite') }}" style="color:var(--gold);">Politique de Confidentialité</a>.</p>
+  </section>
+
+  <section class="legal-section">
+    <h2>7. Liens hypertextes</h2>
+    <p>Le site SPORT+ peut contenir des liens vers d'autres sites. SPORT+ n'est pas responsable du contenu de ces sites tiers ni de leurs pratiques en matière de vie privée.</p>
+  </section>
+
+  <section class="legal-section">
+    <h2>8. Loi applicable et juridiction</h2>
+    <p>Les présentes mentions légales sont soumises au droit français. En cas de litige, et après tentative de résolution amiable, les tribunaux compétents sont ceux du ressort de la Cour d'appel d'Aix-en-Provence.</p>
+  </section>
+
+  <p style="margin-top:40px;font-size:13px;color:var(--text-dim);font-style:italic;">Dernière mise à jour : [DATE_VERSION]</p>
+
+</div>
+
+<style>
+.legal-section { margin-bottom: 36px; padding-bottom: 36px; border-bottom: 1px solid var(--border); }
+.legal-section:last-of-type { border-bottom: none; }
+.legal-section h2 { font-family: var(--font-display); font-weight: 700; font-size: 20px; letter-spacing: 0.5px; color: var(--gold); margin-bottom: 14px; text-transform: uppercase; }
+.legal-section p { color: var(--text); line-height: 1.8; margin-bottom: 12px; }
+.legal-list { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+.legal-list li { color: var(--text); padding-left: 12px; border-left: 2px solid var(--border); font-size: 15px; }
+.legal-list li strong { color: var(--white); }
+</style>
+{% endblock %}

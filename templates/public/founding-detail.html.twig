@@ -1,6 +1,7 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}Offre Founding Member — SPORT+ Marseille{% endblock %}
+{% block meta_description %}<meta name="description" content="Offre Founding Member SPORT+ : rejoignez les 50 premiers membres fondateurs. 3 séances et bilan offerts à prix découverte à Marseille.">{% endblock %}
 
 {% block body %}
 
@@ -56,7 +57,7 @@
       <div class="feature-card">
         <div class="feature-icon"><i class="ti ti-moon-stars"></i></div>
         <div class="feature-title">Accès prioritaire Night</div>
-        <p class="feature-text">Priorité de réservation sur les créneaux Night Coach dès 21h. Les meilleurs créneaux vous sont réservés en premier.</p>
+        <p class="feature-text">Priorité de réservation sur les créneaux Night Coach dès 20h. Les meilleurs créneaux vous sont réservés en premier.</p>
       </div>
       <div class="feature-card" style="border-left:3px solid var(--green);">
         <div class="feature-icon" style="background:rgba(61,255,20,.08);border-color:rgba(61,255,20,.2);color:var(--green);"><i class="ti ti-award"></i></div>
@@ -72,10 +73,10 @@
   <div class="container">
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;">
       <div style="border-radius:var(--radius-lg);overflow:hidden;background:var(--bg-card);border:1px solid var(--border);min-height:200px;display:flex;align-items:center;justify-content:center;">
-        <img src="{{ asset('img/club/club-1.jpg') }}" alt="Salle SPORT+ Marseille" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentElement.innerHTML='<div style=\'text-align:center;padding:40px;color:var(--text-dim);\'><i class=\'ti ti-building\' style=\'font-size:48px;display:block;margin-bottom:12px;opacity:.3;\'></i>Salle SPORT+</div>'">
+        <img src="{{ asset('img/club/club-1.jpg') }}" alt="Salle de coaching privatif SPORT+ Marseille" loading="lazy" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentElement.innerHTML='<div style=\'text-align:center;padding:40px;color:var(--text-dim);\'><i class=\'ti ti-building\' style=\'font-size:48px;display:block;margin-bottom:12px;opacity:.3;\'></i>Salle SPORT+</div>'">
       </div>
       <div style="border-radius:var(--radius-lg);overflow:hidden;background:var(--bg-card);border:1px solid var(--border);min-height:200px;display:flex;align-items:center;justify-content:center;">
-        <img src="{{ asset('img/club/club-2.jpg') }}" alt="Équipements SPORT+ Marseille" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentElement.innerHTML='<div style=\'text-align:center;padding:40px;color:var(--text-dim);\'><i class=\'ti ti-barbell\' style=\'font-size:48px;display:block;margin-bottom:12px;opacity:.3;\'></i>Équipements premium</div>'">
+        <img src="{{ asset('img/club/club-2.jpg') }}" alt="Équipements premium de la salle SPORT+ Marseille" loading="lazy" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentElement.innerHTML='<div style=\'text-align:center;padding:40px;color:var(--text-dim);\'><i class=\'ti ti-barbell\' style=\'font-size:48px;display:block;margin-bottom:12px;opacity:.3;\'></i>Équipements premium</div>'">
       </div>
     </div>
   </div>
@@ -147,7 +148,7 @@
       <li>Offre réservée aux {{ offer.totalPlaces }} premiers inscrits uniquement</li>
       <li>Non renouvelable — valable une seule fois par personne</li>
       <li>Les 3 séances sont utilisables sans limite de durée</li>
-      <li>Séances au choix : Night Coach (à partir de 21h) ou Small Group</li>
+      <li>Séances au choix : Night Coach (à partir de 20h) ou Small Group</li>
       <li>Le bilan forme est effectué lors de la première séance, sans frais supplémentaires</li>
       <li>Le badge <strong style="color:var(--gold);">Membre Fondateur</strong> est attribué définitivement</li>
       <li>Offre non remboursable après activation</li>

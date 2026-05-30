@@ -1,0 +1,40 @@
+{% extends 'emails/base.html.twig' %}
+{% import 'emails/_macros.html.twig' as m %}
+
+{% block subject %}Ta réservation n'a pas pu être confirmée{% endblock %}
+
+{% block content %}
+<p style="margin:0 0 20px;font-size:16px;color:#ECECEC;font-family:Arial,Helvetica,sans-serif;">
+  Bonjour <strong style="color:#F4EFE6;">{{ client.nomComplet|split(' ')|first }}</strong>,
+</p>
+
+<p style="margin:0 0 24px;font-size:16px;color:#ECECEC;font-family:Arial,Helvetica,sans-serif;line-height:1.65;">
+  <strong style="color:#F4EFE6;">{{ coach.nomComplet }}</strong> n'a malheureusement pas pu accepter ta demande pour le {{ booking.startAt|date('d/m/Y à H:i') }}.
+</p>
+
+{% if reason %}
+  {{ m.infoCard('Motif indiqué', '<em style="color:#9A8F7A;">' ~ reason|e ~ '</em>') }}
+{% endif %}
+
+<p style="margin:0 0 24px;font-size:15px;color:#9A8F7A;font-family:Arial,Helvetica,sans-serif;line-height:1.65;">
+  Ne t'inquiète pas — d'autres coachs SPORT+ sont disponibles sur ce créneau. Tu peux réserver une nouvelle séance en quelques secondes.
+</p>
+
+{{ m.button(bookingUrl, 'Réserver avec un autre coach') }}
+
+<table role="presentation" cellspacing="0" cellpadding="0" border="0" style="margin:16px auto 0;">
+  <tr>
+    <td align="center">
+      <a href="{{ coachsUrl }}" target="_blank" style="font-family:Arial,Helvetica,sans-serif;font-size:14px;color:#C8A951;text-decoration:underline;">
+        Voir tous nos coachs disponibles →
+      </a>
+    </td>
+  </tr>
+</table>
+
+{{ m.divider() }}
+
+<p style="margin:0;font-size:13px;color:#9A8F7A;font-family:Arial,Helvetica,sans-serif;text-align:center;">
+  Aucun montant ne t'a été prélevé pour cette réservation.
+</p>
+{% endblock %}

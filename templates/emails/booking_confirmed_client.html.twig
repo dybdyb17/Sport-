@@ -1,0 +1,42 @@
+{% extends 'emails/base.html.twig' %}
+{% import 'emails/_macros.html.twig' as m %}
+
+{% block subject %}✅ Ta séance avec {{ coach.nomComplet }} est confirmée{% endblock %}
+
+{% block content %}
+<p style="margin:0 0 8px;font-size:16px;color:#ECECEC;font-family:Arial,Helvetica,sans-serif;">
+  Bonjour <strong style="color:#F4EFE6;">{{ client.nomComplet|split(' ')|first }}</strong>,
+</p>
+
+<p style="margin:0 0 28px;font-size:20px;font-weight:700;color:#C8A951;font-family:Arial,Helvetica,sans-serif;">
+  Bonne nouvelle ! 🎉
+</p>
+
+<p style="margin:0 0 24px;font-size:16px;color:#ECECEC;font-family:Arial,Helvetica,sans-serif;line-height:1.65;">
+  <strong style="color:#F4EFE6;">{{ coach.nomComplet }}</strong> a accepté ta réservation. Tu es prêt(e) à t'entraîner !
+</p>
+
+{{ m.infoCard('Coach', coach.nomComplet) }}
+{{ m.infoCard('Format', booking.format.label) }}
+{{ m.infoCard('Créneau', booking.timeSlot.label) }}
+{{ m.infoCard('Date et heure', booking.startAt|date('d/m/Y à H:i')) }}
+{{ m.infoCard('Lieu', '164 Chemin de Saint-Jean du Désert, 13005 Marseille') }}
+
+{{ m.button(espaceClientUrl, 'Voir ma séance') }}
+
+<table role="presentation" cellspacing="0" cellpadding="0" border="0" style="margin:16px auto 0;">
+  <tr>
+    <td align="center">
+      <a href="{{ inboxUrl }}" target="_blank" style="font-family:Arial,Helvetica,sans-serif;font-size:14px;color:#C8A951;text-decoration:underline;">
+        Envoyer un message au coach →
+      </a>
+    </td>
+  </tr>
+</table>
+
+{{ m.divider() }}
+
+<p style="margin:0;font-size:13px;color:#9A8F7A;font-family:Arial,Helvetica,sans-serif;text-align:center;">
+  <strong style="color:#C8A951;">Annulation gratuite</strong> jusqu'à 2 heures avant le début de la séance.
+</p>
+{% endblock %}

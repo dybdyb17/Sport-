@@ -34,15 +34,17 @@ class BookingType extends AbstractType
                 'class'        => BookingFormat::class,
                 'choice_label' => fn (BookingFormat $f) => $f->label(),
                 'label'        => 'Format de séance',
-                'expanded'     => true,
+                'expanded'     => false,
                 'multiple'     => false,
+                'attr'         => ['class' => 'booking-select', 'id' => 'booking_format'],
             ])
             ->add('timeSlot', EnumType::class, [
                 'class'        => TimeSlot::class,
                 'choice_label' => fn (TimeSlot $s) => $s->label(),
                 'label'        => 'Créneau horaire',
-                'expanded'     => true,
+                'expanded'     => false,
                 'multiple'     => false,
+                'attr'         => ['class' => 'booking-select', 'id' => 'booking_timeslot'],
             ])
             // Nombre de participants (GROUP uniquement) — géré dans le controller
             ->add('personsCount', ChoiceType::class, [
@@ -58,10 +60,11 @@ class BookingType extends AbstractType
                 'class'        => PackType::class,
                 'choice_label' => fn (PackType $p) => $p->label(),
                 'label'        => 'Type d\'engagement',
-                'expanded'     => true,
+                'expanded'     => false,
                 'multiple'     => false,
                 'data'         => PackType::SINGLE,
                 'mapped'       => false,
+                'attr'         => ['class' => 'booking-select', 'id' => 'booking_packtype'],
             ])
             ->add('fullAccess', CheckboxType::class, [
                 'label'    => 'Ajouter l\'accès salle 24h/24 (+30€/mois, +25€ pour Group)',

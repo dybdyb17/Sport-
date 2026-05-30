@@ -1,0 +1,131 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Politique de Confidentialité — SPORT+ Marseille{% endblock %}
+{% block meta_description %}<meta name="description" content="Politique de confidentialité et protection des données personnelles de SPORT+ Marseille — conformité RGPD.">{% endblock %}
+
+{% block body %}
+<div class="container" style="max-width:820px;padding-top:60px;padding-bottom:80px;">
+
+  <div class="page-header" style="margin-bottom:40px;">
+    <div>
+      <h1>Politique de <span style="color:var(--gold)">Confidentialité</span></h1>
+      <p class="page-subtitle">Protection des données personnelles — Conformité RGPD</p>
+    </div>
+  </div>
+
+  <div style="background:rgba(255,138,77,0.1);border-left:3px solid #ff8a4d;padding:16px 20px;margin-bottom:36px;border-radius:var(--radius);font-size:14px;color:var(--text-soft);">
+    <i class="ti ti-alert-triangle" style="color:#ff8a4d;margin-right:8px;"></i>
+    <strong>À compléter avant mise en ligne :</strong> les placeholders <code style="background:rgba(255,138,77,0.15);padding:2px 6px;border-radius:4px;">[...]</code> doivent être remplacés par les informations juridiques définitives.
+  </div>
+
+  <section class="legal-section">
+    <h2>1. Responsable du traitement</h2>
+    <ul class="legal-list">
+      <li><strong>Entité :</strong> [RAISON_SOCIALE] (SPORT+ Marseille)</li>
+      <li><strong>Siège social :</strong> 164 Chemin de Saint-Jean du Désert, 13005 Marseille</li>
+      <li><strong>Contact :</strong> <a href="mailto:[EMAIL_CONTACT]" style="color:var(--gold);">[EMAIL_CONTACT]</a></li>
+    </ul>
+  </section>
+
+  <section class="legal-section">
+    <h2>2. Délégué à la Protection des Données (DPO)</h2>
+    <p>[NOM_DPO] — joignable à <a href="mailto:[EMAIL_DPO]" style="color:var(--gold);">[EMAIL_DPO]</a></p>
+    <p><em>Note : pour les structures de moins de 250 salariés, la désignation d'un DPO est facultative mais recommandée.</em></p>
+  </section>
+
+  <section class="legal-section">
+    <h2>3. Données collectées</h2>
+    <ul class="legal-list">
+      <li><strong>À l'inscription :</strong> nom, prénom, adresse email, mot de passe (chiffré bcrypt), numéro de téléphone (optionnel)</li>
+      <li><strong>À la réservation :</strong> créneaux choisis, format de séance, coach sélectionné, historique des réservations</li>
+      <li><strong>Paiement :</strong> les données bancaires sont traitées directement par notre prestataire [STRIPE/DECIPLUS]. SPORT+ ne stocke aucune coordonnée bancaire.</li>
+      <li><strong>Messagerie :</strong> contenu des conversations entre Clients et Coachs via la plateforme</li>
+      <li><strong>Cookies :</strong> voir la <a href="{{ path('app_legal_cookies') }}" style="color:var(--gold);">Politique de Cookies</a> dédiée</li>
+      <li><strong>Logs techniques :</strong> adresse IP, navigateur, pages visitées (conservation 1 an)</li>
+    </ul>
+  </section>
+
+  <section class="legal-section">
+    <h2>4. Finalités des traitements</h2>
+    <ul class="legal-list">
+      <li>Création et gestion de votre compte client</li>
+      <li>Traitement et suivi de vos réservations</li>
+      <li>Communication avec votre coach via la messagerie intégrée</li>
+      <li>Envoi de notifications (confirmation, rappels, messages du coach)</li>
+      <li>Facturation et comptabilité</li>
+      <li>Analyses statistiques anonymisées pour améliorer le service</li>
+      <li>Respect de nos obligations légales</li>
+    </ul>
+  </section>
+
+  <section class="legal-section">
+    <h2>5. Base légale des traitements</h2>
+    <ul class="legal-list">
+      <li><strong>Exécution du contrat :</strong> gestion du compte, réservations, messagerie, facturation</li>
+      <li><strong>Consentement :</strong> cookies analytiques et marketing (si activés)</li>
+      <li><strong>Obligation légale :</strong> conservation des factures (10 ans)</li>
+      <li><strong>Intérêt légitime :</strong> sécurité du service, prévention de la fraude</li>
+    </ul>
+  </section>
+
+  <section class="legal-section">
+    <h2>6. Destinataires des données</h2>
+    <p>Vos données sont destinées à SPORT+ et à ses sous-traitants techniques dans le cadre strict de la fourniture du service :</p>
+    <ul class="legal-list">
+      <li><strong>Railway Corp.</strong> — hébergement du serveur (USA, couvert par le Data Privacy Framework)</li>
+      <li><strong>[STRIPE/DECIPLUS]</strong> — traitement des paiements</li>
+      <li><strong>Google LLC</strong> — si Google Analytics est activé (anonymisation IP activée)</li>
+    </ul>
+    <p>Aucune donnée personnelle n'est vendue ou louée à des tiers.</p>
+  </section>
+
+  <section class="legal-section">
+    <h2>7. Durée de conservation</h2>
+    <ul class="legal-list">
+      <li><strong>Compte actif :</strong> données conservées pendant toute la durée de la relation commerciale</li>
+      <li><strong>Compte inactif (&gt; 3 ans) :</strong> suppression automatique après information préalable</li>
+      <li><strong>Factures et données comptables :</strong> 10 ans (obligation légale)</li>
+      <li><strong>Logs techniques :</strong> 1 an maximum</li>
+      <li><strong>Messages :</strong> durée de la relation + 1 an</li>
+    </ul>
+  </section>
+
+  <section class="legal-section">
+    <h2>8. Vos droits RGPD</h2>
+    <p>Conformément au Règlement (UE) 2016/679 (RGPD) et à la loi Informatique et Libertés, vous disposez des droits suivants :</p>
+    <ul class="legal-list">
+      <li><strong>Droit d'accès :</strong> obtenir une copie de vos données personnelles</li>
+      <li><strong>Droit de rectification :</strong> corriger des données inexactes ou incomplètes</li>
+      <li><strong>Droit à l'effacement (« droit à l'oubli ») :</strong> demander la suppression de vos données</li>
+      <li><strong>Droit à la portabilité :</strong> recevoir vos données dans un format structuré et lisible</li>
+      <li><strong>Droit d'opposition :</strong> vous opposer à certains traitements</li>
+      <li><strong>Droit à la limitation :</strong> restreindre temporairement un traitement</li>
+    </ul>
+    <p>Pour exercer ces droits : <a href="mailto:[EMAIL_CONTACT]" style="color:var(--gold);">[EMAIL_CONTACT]</a> ou par courrier à l'adresse du siège social. Réponse sous 30 jours.</p>
+    <p>Vous pouvez également déposer une réclamation auprès de la <strong>CNIL</strong> : <a href="https://www.cnil.fr" target="_blank" rel="noopener noreferrer" style="color:var(--gold);">www.cnil.fr</a></p>
+  </section>
+
+  <section class="legal-section">
+    <h2>9. Transferts hors Union Européenne</h2>
+    <p>Certains de nos sous-traitants sont basés aux États-Unis (Railway Corp., Stripe). Ces transferts sont encadrés par le <strong>Data Privacy Framework UE-États-Unis</strong> (décision d'adéquation de la Commission européenne du 10 juillet 2023), garantissant un niveau de protection équivalent à celui de l'UE.</p>
+  </section>
+
+  <section class="legal-section">
+    <h2>10. Sécurité</h2>
+    <p>SPORT+ met en œuvre les mesures techniques et organisationnelles appropriées pour protéger vos données : chiffrement des mots de passe (bcrypt), connexion HTTPS, jetons CSRF sur tous les formulaires, accès restreint aux données sensibles.</p>
+  </section>
+
+  <p style="margin-top:40px;font-size:13px;color:var(--text-dim);font-style:italic;">Dernière mise à jour : [DATE_VERSION]</p>
+
+</div>
+
+<style>
+.legal-section { margin-bottom: 36px; padding-bottom: 36px; border-bottom: 1px solid var(--border); }
+.legal-section:last-of-type { border-bottom: none; }
+.legal-section h2 { font-family: var(--font-display); font-weight: 700; font-size: 20px; letter-spacing: 0.5px; color: var(--gold); margin-bottom: 14px; text-transform: uppercase; }
+.legal-section p { color: var(--text); line-height: 1.8; margin-bottom: 12px; }
+.legal-list { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+.legal-list li { color: var(--text); padding-left: 12px; border-left: 2px solid var(--border); font-size: 15px; }
+.legal-list li strong { color: var(--white); }
+</style>
+{% endblock %}

@@ -111,6 +111,36 @@ class SeedPricingShowcaseCommand extends Command
             $marginRows,
         );
 
+        // ─── ÉCONOMIES PACK VS UNITAIRE ───────────────────────────────────
+        $io->section('ÉCONOMIES : PACK vs séance unitaire (par personne / mois)');
+
+        $savingsRows = [];
+        foreach (BookingFormat::cases() as $format) {
+            foreach ([PackType::PACK_4, PackType::PACK_8, PackType::PACK_12] as $pack) {
+                foreach (TimeSlot::cases() as $slot) {
+                    $single    = (float) $this->pricing->singleSessionPrice($format, $slot);
+                    $monthly   = (float) $this->pricing->monthlyPackPrice($format, $pack, $slot);
+                    $sessions  = $pack->sessionsCount();
+                    $fullPrice = $single * $sessions;
+                    $savings   = $this->pricing->packSavingsPerPerson($format, $pack, $slot);
+
+                    $savingsRows[] = [
+                        $format->label(),
+                        $slot->label(),
+                        $pack->label(),
+                        sprintf('%s × %d = %s €', $this->pricing->formatPrice((string) $single), $sessions, number_format($fullPrice, 2, ',', ' ')),
+                        $this->pricing->formatPrice((string) $monthly),
+                        $savings > 0 ? sprintf('<info>−%s €</info>', number_format($savings, 2, ',', ' ')) : '—',
+                    ];
+                }
+            }
+        }
+
+        $io->table(
+            ['Format', 'Créneau', 'Pack', 'Unitaire ×N', 'Pack mensuel', 'Économie'],
+            $savingsRows,
+        );
+
         $io->success('Matrice affichée. Vérifiez chaque ligne contre la grille du boss avant la démo.');
 
         return Command::SUCCESS;

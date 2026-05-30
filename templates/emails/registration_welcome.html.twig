@@ -1,0 +1,37 @@
+{% extends 'emails/base.html.twig' %}
+{% import 'emails/_macros.html.twig' as m %}
+
+{% block subject %}Bienvenue chez SPORT+ Marseille{% endblock %}
+
+{% block content %}
+<p style="margin:0 0 20px;font-size:16px;color:#ECECEC;font-family:Arial,Helvetica,sans-serif;">
+  Bonjour <strong style="color:#F4EFE6;">{{ user.nomComplet|split(' ')|first }}</strong>,
+</p>
+
+<p style="margin:0 0 24px;font-size:16px;color:#ECECEC;font-family:Arial,Helvetica,sans-serif;line-height:1.65;">
+  Bienvenue chez <strong style="color:#C8A951;">SPORT+ Marseille</strong> ! Ton compte est créé et tu es prêt(e) à réserver ton premier coaching.
+</p>
+
+{{ m.infoCard('Ton email', user.email) }}
+{{ m.infoCard('Salle', '164 Chemin de Saint-Jean du Désert, 13005 Marseille — Ouverte 24h/24') }}
+
+{{ m.button(coachsUrl, 'Découvrir nos coachs') }}
+
+{{ m.divider() }}
+
+{# Teaser Founding #}
+<table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color:#0D0D08;border:1px solid #3DFF14;border-radius:8px;margin:24px 0 0;">
+  <tr>
+    <td style="padding:18px 20px;">
+      <div style="font-family:Arial,Helvetica,sans-serif;font-size:11px;letter-spacing:3px;text-transform:uppercase;color:#3DFF14;margin-bottom:8px;font-weight:700;">Offre lancement</div>
+      <div style="font-family:Arial,Helvetica,sans-serif;font-size:14px;color:#ECECEC;line-height:1.7;margin-bottom:12px;">
+        Rejoins les premiers membres fondateurs et bénéficie de 3 séances incluses + bilan offert.
+        Les places sont limitées.
+      </div>
+      <a href="{{ foundingUrl }}" target="_blank" style="font-family:Arial,Helvetica,sans-serif;font-size:13px;color:#3DFF14;text-decoration:underline;">
+        Découvrir l'offre Founding Member →
+      </a>
+    </td>
+  </tr>
+</table>
+{% endblock %}

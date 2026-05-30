@@ -1,0 +1,37 @@
+{% macro button(url, label, variant = 'primary') %}
+  {% set bg     = variant == 'primary' ? '#C8A951' : 'transparent' %}
+  {% set color  = variant == 'primary' ? '#060606'  : '#C8A951' %}
+  {% set border = '#C8A951' %}
+  <table role="presentation" cellspacing="0" cellpadding="0" border="0" style="margin:24px auto 0;">
+    <tr>
+      <td align="center" style="background-color:{{ bg }};border:2px solid {{ border }};border-radius:8px;">
+        <a href="{{ url }}" target="_blank" style="display:inline-block;padding:14px 32px;font-family:'Helvetica Neue',Arial,sans-serif;font-size:14px;font-weight:700;letter-spacing:1px;color:{{ color }};text-decoration:none;text-transform:uppercase;">
+          {{ label }}
+        </a>
+      </td>
+    </tr>
+  </table>
+{% endmacro %}
+
+{% macro infoCard(title, content) %}
+  <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color:#161620;border-left:3px solid #C8A951;border-radius:6px;margin:16px 0;">
+    <tr>
+      <td style="padding:14px 18px;">
+        <div style="font-weight:700;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#C8A951;margin-bottom:6px;font-family:Arial,Helvetica,sans-serif;">{{ title }}</div>
+        <div style="color:#ECECEC;font-size:14px;font-family:Arial,Helvetica,sans-serif;line-height:1.6;">{{ content|raw }}</div>
+      </td>
+    </tr>
+  </table>
+{% endmacro %}
+
+{% macro divider() %}
+  <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin:24px 0;">
+    <tr>
+      <td style="height:1px;background-color:#2A2720;"></td>
+    </tr>
+  </table>
+{% endmacro %}
+
+{% macro badge(label, color = '#C8A951') %}
+  <span style="display:inline-block;background-color:{{ color }};color:#060606;font-family:Arial,Helvetica,sans-serif;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:4px 12px;border-radius:100px;">{{ label }}</span>
+{% endmacro %}

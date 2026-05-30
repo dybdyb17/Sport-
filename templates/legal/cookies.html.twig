@@ -1,0 +1,100 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Politique de Cookies — SPORT+ Marseille{% endblock %}
+{% block meta_description %}<meta name="description" content="Politique de cookies de SPORT+ Marseille — types de cookies utilisés et comment les gérer.">{% endblock %}
+
+{% block body %}
+<div class="container" style="max-width:820px;padding-top:60px;padding-bottom:80px;">
+
+  <div class="page-header" style="margin-bottom:40px;">
+    <div>
+      <h1>Politique de <span style="color:var(--gold)">Cookies</span></h1>
+      <p class="page-subtitle">Utilisation des cookies sur SPORT+ Marseille</p>
+    </div>
+  </div>
+
+  <section class="legal-section">
+    <h2>1. Qu'est-ce qu'un cookie ?</h2>
+    <p>Un cookie est un petit fichier texte déposé sur votre terminal (ordinateur, smartphone, tablette) lors de votre visite sur un site web. Il permet au site de mémoriser des informations sur votre visite et de vous reconnaître lors de vos prochaines visites.</p>
+    <p>Les cookies ne contiennent pas de virus et ne peuvent pas être utilisés pour accéder à votre appareil. Ils sont indispensables au bon fonctionnement de nombreux services en ligne.</p>
+  </section>
+
+  <section class="legal-section">
+    <h2>2. Cookies utilisés sur SPORT+</h2>
+
+    <div style="background:rgba(61,255,20,0.05);border-left:3px solid #7AB85A;padding:14px 18px;border-radius:var(--radius);margin-bottom:20px;">
+      <div style="font-family:var(--font-display);font-weight:700;font-size:14px;letter-spacing:1px;color:#7AB85A;margin-bottom:8px;">STRICTEMENT NÉCESSAIRES — Aucun consentement requis</div>
+      <ul class="legal-list">
+        <li><strong>PHPSESSID</strong> — Session PHP : maintient votre connexion entre les pages. Durée : session navigateur.</li>
+        <li><strong>CSRF Token</strong> — Sécurité : protège contre les attaques Cross-Site Request Forgery sur tous les formulaires. Durée : session navigateur.</li>
+        <li><strong>symfony_session</strong> — Flashbag Symfony : affiche les messages de confirmation/erreur. Durée : session navigateur.</li>
+      </ul>
+      <p style="margin-top:10px;margin-bottom:0;font-size:13px;color:var(--text-soft);">Ces cookies sont indispensables au fonctionnement du site. Ils ne peuvent pas être désactivés.</p>
+    </div>
+
+    <div style="background:rgba(200,169,81,0.05);border-left:3px solid var(--gold-dim);padding:14px 18px;border-radius:var(--radius);margin-bottom:20px;">
+      <div style="font-family:var(--font-display);font-weight:700;font-size:14px;letter-spacing:1px;color:var(--gold);margin-bottom:8px;">FONCTIONNELS — Optionnels</div>
+      <ul class="legal-list">
+        <li><strong>Préférences utilisateur</strong> — Mémorise vos préférences d'affichage (si applicable). Durée : 1 an.</li>
+      </ul>
+    </div>
+
+    <div style="background:rgba(255,255,255,0.02);border-left:3px solid var(--border);padding:14px 18px;border-radius:var(--radius);margin-bottom:20px;">
+      <div style="font-family:var(--font-display);font-weight:700;font-size:14px;letter-spacing:1px;color:var(--text-soft);margin-bottom:8px;">ANALYTIQUES — Consentement requis</div>
+      <ul class="legal-list">
+        <li><strong>Google Analytics (_ga, _gid)</strong> — Mesure d'audience anonymisée. Statut actuel : <strong style="color:{% if true %}#7AB85A{% else %}#ff6666{% endif %};">[ACTIF / NON ACTIF]</strong>. Durée : 26 mois maximum.</li>
+      </ul>
+      <p style="margin-top:10px;margin-bottom:0;font-size:13px;color:var(--text-soft);">Si Google Analytics est activé, l'IP est anonymisée. Vous pouvez vous opposer à ce suivi via l'extension <a href="https://tools.google.com/dlpage/gaoptout" target="_blank" rel="noopener noreferrer" style="color:var(--gold);">Google Analytics Opt-out</a>.</p>
+    </div>
+
+    <div style="background:rgba(255,255,255,0.02);border-left:3px solid var(--border);padding:14px 18px;border-radius:var(--radius);">
+      <div style="font-family:var(--font-display);font-weight:700;font-size:14px;letter-spacing:1px;color:var(--text-soft);margin-bottom:8px;">MARKETING / RÉSEAUX SOCIAUX — Consentement requis</div>
+      <ul class="legal-list">
+        <li><strong>Facebook Pixel</strong> — Suivi des conversions publicitaires. Statut actuel : <strong>[ACTIF / NON ACTIF]</strong>.</li>
+        <li><strong>Instagram</strong> — Pixel Meta pour les publicités Instagram. Statut actuel : <strong>[ACTIF / NON ACTIF]</strong>.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="legal-section">
+    <h2>3. Comment gérer vos cookies ?</h2>
+    <p>Vous pouvez à tout moment configurer votre navigateur pour refuser ou supprimer les cookies :</p>
+    <ul class="legal-list">
+      <li><strong>Chrome :</strong> Paramètres → Confidentialité → Cookies et autres données des sites</li>
+      <li><strong>Firefox :</strong> Options → Vie privée et sécurité → Cookies et données de sites</li>
+      <li><strong>Safari :</strong> Préférences → Confidentialité → Gérer les données de sites web</li>
+      <li><strong>Edge :</strong> Paramètres → Cookies et autorisations de site</li>
+    </ul>
+    <p><strong>Attention :</strong> le refus des cookies strictement nécessaires (PHPSESSID, CSRF) empêchera la connexion et l'utilisation du site.</p>
+  </section>
+
+  <section class="legal-section">
+    <h2>4. Durées de conservation résumées</h2>
+    <ul class="legal-list">
+      <li><strong>Cookies de session :</strong> supprimés à la fermeture du navigateur</li>
+      <li><strong>Google Analytics :</strong> 26 mois maximum</li>
+      <li><strong>Facebook Pixel :</strong> 180 jours</li>
+      <li><strong>Cookies fonctionnels :</strong> 12 mois</li>
+    </ul>
+  </section>
+
+  <section class="legal-section">
+    <h2>5. Mise à jour de cette politique</h2>
+    <p>Cette politique de cookies peut être mise à jour en fonction de l'évolution de nos pratiques ou de la réglementation. La date de dernière mise à jour est indiquée ci-dessous.</p>
+    <p>Pour toute question : <a href="mailto:[EMAIL_CONTACT]" style="color:var(--gold);">[EMAIL_CONTACT]</a></p>
+  </section>
+
+  <p style="margin-top:40px;font-size:13px;color:var(--text-dim);font-style:italic;">Dernière mise à jour : [DATE_VERSION]</p>
+
+</div>
+
+<style>
+.legal-section { margin-bottom: 36px; padding-bottom: 36px; border-bottom: 1px solid var(--border); }
+.legal-section:last-of-type { border-bottom: none; }
+.legal-section h2 { font-family: var(--font-display); font-weight: 700; font-size: 20px; letter-spacing: 0.5px; color: var(--gold); margin-bottom: 14px; text-transform: uppercase; }
+.legal-section p { color: var(--text); line-height: 1.8; margin-bottom: 12px; }
+.legal-list { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+.legal-list li { color: var(--text); padding-left: 12px; border-left: 2px solid var(--border); font-size: 15px; }
+.legal-list li strong { color: var(--white); }
+</style>
+{% endblock %}

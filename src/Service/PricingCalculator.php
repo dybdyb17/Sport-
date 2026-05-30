@@ -9,59 +9,54 @@ use App\Entity\Enum\TimeSlot;
 /**
  * Source de vérité unique pour TOUS les calculs de prix SPORT+.
  *
- * Principe de calcul :
- * - Séance unique par personne = BASE_SOLO × format.ratioFromSolo() × slot.multiplier()
- * - Pack mensuel par personne  = PACK_SOLO[pack] × format.ratioFromSolo() × slot.multiplier()
- *                                + surcharge FullAccess si activée
- *
- * Les prix sont manipulés en float en interne et retournés en string DECIMAL "0.00"
- * pour la compatibilité avec les colonnes DECIMAL de la base de données.
+ * Deux tables indépendantes : prix séance unique (pay-per-session)
+ * et prix packs mensuels. Les deux sont par personne.
  */
 final class PricingCalculator
 {
-    /**
-     * Prix de référence : séance unique SOLO en créneau DAY.
-     * Calcul : 150 € (pack 4) / 4 séances = 37,50 € la séance.
-     */
-    private const SOLO_SINGLE_BASE = 37.50;
-
-    /**
-     * Prix mensuel Solo × créneau DAY pour chaque type de pack.
-     * Source officielle : grille tarifaire validée par le gérant.
-     */
-    private const PACK_SOLO_MONTHLY = [
-        PackType::PACK_4->value  => 150.0,
-        PackType::PACK_8->value  => 240.0,
-        PackType::PACK_12->value => 320.0,
+    /** Prix séance unique par personne : format × créneau. */
+    private const SINGLE_SESSION_PRICES = [
+        'solo'  => ['day' => 40.0, 'night' => 56.0, 'astreinte' => 72.0],
+        'duo'   => ['day' => 40.0, 'night' => 56.0, 'astreinte' => 72.0],
+        'group' => ['day' => 22.0, 'night' => 31.0, 'astreinte' => 40.0],
     ];
 
-    /**
-     * Surcharge mensuelle FullAccess (accès salle 24h/24).
-     * GROUP bénéficie d'un tarif réduit car l'accès est partagé.
-     */
-    private const FULL_ACCESS_SURCHARGE_GROUP  = 25.0;  // €/mois pour GROUP
-    private const FULL_ACCESS_SURCHARGE_OTHERS = 30.0;  // €/mois pour SOLO/DUO/TRIO
+    /** Prix packs mensuels par personne : format × pack × créneau. */
+    private const MONTHLY_PACK_PRICES = [
+        'solo' => [
+            'pack_4'  => ['day' => 150.0, 'night' => 210.0, 'astreinte' => 270.0],
+            'pack_8'  => ['day' => 240.0, 'night' => 335.0, 'astreinte' => 430.0],
+            'pack_12' => ['day' => 320.0, 'night' => 450.0, 'astreinte' => 575.0],
+        ],
+        'duo' => [
+            'pack_4'  => ['day' => 105.0, 'night' => 147.0, 'astreinte' => 189.0],
+            'pack_8'  => ['day' => 168.0, 'night' => 235.0, 'astreinte' => 302.0],
+            'pack_12' => ['day' => 224.0, 'night' => 314.0, 'astreinte' => 403.0],
+        ],
+        'group' => [
+            'pack_4'  => ['day' => 60.0,  'night' => 84.0,  'astreinte' => 108.0],
+            'pack_8'  => ['day' => 96.0,  'night' => 134.0, 'astreinte' => 173.0],
+            'pack_12' => ['day' => 128.0, 'night' => 179.0, 'astreinte' => 230.0],
+        ],
+    ];
 
-    /**
-     * Prix d'une séance unique pour 1 personne (avant multiplication par le nombre de participants).
-     *
-     * Exemples :
-     *   SOLO  + DAY       → 37,50 €
-     *   DUO   + NIGHT     → 37,50 × 0,70 × 1,40 = 36,75 €
-     *   TRIO  + ASTREINTE → 37,50 × 0,56 × 1,80 = 37,80 €
-     *   GROUP + DAY       → 37,50 × 0,40 × 1,00 = 15,00 €
-     */
+    private const FULL_ACCESS_SURCHARGE = [
+        'solo'  => 30.0,
+        'duo'   => 30.0,
+        'group' => 25.0,
+    ];
+
+    /** Prix séance unique pour 1 personne (€). */
     public function singleSessionPrice(BookingFormat $format, TimeSlot $slot): string
     {
-        $price = self::SOLO_SINGLE_BASE * $format->ratioFromSolo() * $slot->multiplier();
-
+        $price = self::SINGLE_SESSION_PRICES[$format->value][$slot->value];
         return number_format($price, 2, '.', '');
     }
 
     /**
-     * Prix mensuel par personne pour un pack donné.
+     * Prix pack mensuel par personne, FullAccess optionnel.
      *
-     * @throws \InvalidArgumentException si PackType::SINGLE est fourni (pas de tarif mensuel)
+     * @throws \LogicException si PackType::SINGLE est fourni
      */
     public function monthlyPackPrice(
         BookingFormat $format,
@@ -69,30 +64,40 @@ final class PricingCalculator
         TimeSlot $slot,
         bool $fullAccess = false,
     ): string {
-        $soloBase = self::PACK_SOLO_MONTHLY[$pack->value] ?? null;
-        if (null === $soloBase) {
-            throw new \InvalidArgumentException(
-                sprintf('"%s" est une séance unique, pas un pack mensuel.', $pack->label())
-            );
+        if ($pack === PackType::SINGLE) {
+            throw new \LogicException('Pour une séance unique, utiliser singleSessionPrice().');
         }
 
-        // Prix de base : Solo × ratio format × multiplicateur créneau
-        $price = $soloBase * $format->ratioFromSolo() * $slot->multiplier();
+        $base = self::MONTHLY_PACK_PRICES[$format->value][$pack->value][$slot->value];
 
-        // Surcharge FullAccess si demandée
         if ($fullAccess) {
-            $price += $format === BookingFormat::GROUP
-                ? self::FULL_ACCESS_SURCHARGE_GROUP
-                : self::FULL_ACCESS_SURCHARGE_OTHERS;
+            $base += self::FULL_ACCESS_SURCHARGE[$format->value];
         }
 
-        return number_format($price, 2, '.', '');
+        return number_format($base, 2, '.', '');
+    }
+
+    /**
+     * Économie réalisée avec un pack vs achat à la séance (par personne).
+     * Économie = singlePrice × sessions - monthlyPrice
+     */
+    public function packSavingsPerPerson(BookingFormat $format, PackType $pack, TimeSlot $slot): float
+    {
+        if ($pack === PackType::SINGLE) {
+            return 0.0;
+        }
+
+        $singlePrice  = (float) $this->singleSessionPrice($format, $slot);
+        $monthlyPrice = (float) $this->monthlyPackPrice($format, $pack, $slot);
+        $sessions     = $pack->sessionsCount();
+
+        return max(0.0, $singlePrice * $sessions - $monthlyPrice);
     }
 
     /**
      * Répartition marge structure / coach sur un prix total.
      *
-     * @return array{total: string, structure: string, coach: string}
+     * @return array{total:string,structure:string,coach:string}
      */
     public function structureMargin(string $price, TimeSlot $slot): array
     {
@@ -108,9 +113,7 @@ final class PricingCalculator
         ];
     }
 
-    /**
-     * Formatage affichage français : "1 234,56 €"
-     */
+    /** Formatage affichage français : "1 234,56 €" */
     public function formatPrice(string $price): string
     {
         return number_format((float) $price, 2, ',', "\u{202F}") . ' €';

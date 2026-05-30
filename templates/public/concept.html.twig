@@ -1,6 +1,7 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}Notre Concept — SPORT+ Marseille{% endblock %}
+{% block meta_description %}<meta name="description" content="Découvrez le concept SPORT+ : salle privatisée, coaching sur-mesure, accès 24h/24 et Night Coach pour vos entraînements nocturnes à Marseille.">{% endblock %}
 
 {% block body %}
 
@@ -37,10 +38,10 @@
   <div class="container">
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;">
       <div style="border-radius:var(--radius-lg);overflow:hidden;background:var(--bg-card);border:1px solid var(--border);min-height:240px;display:flex;align-items:center;justify-content:center;">
-        <img src="{{ asset('img/club/club-1.png') }}" alt="Salle SPORT+ Marseille" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentElement.innerHTML='<div style=\'text-align:center;padding:60px;color:var(--text-dim);\'><i class=\'ti ti-building\' style=\'font-size:48px;display:block;margin-bottom:12px;opacity:.3;\'></i>Salle SPORT+</div>'">
+        <img src="{{ asset('img/club/club-1.jpg') }}" alt="Salle de coaching SPORT+ à Marseille" style="width:100%;height:100%;object-fit:cover;" loading="lazy" onerror="this.parentElement.innerHTML='<div style=\'text-align:center;padding:60px;color:var(--text-dim);\'><i class=\'ti ti-building\' style=\'font-size:48px;display:block;margin-bottom:12px;opacity:.3;\'></i>Salle SPORT+</div>'">
       </div>
       <div style="border-radius:var(--radius-lg);overflow:hidden;background:var(--bg-card);border:1px solid var(--border);min-height:240px;display:flex;align-items:center;justify-content:center;">
-        <img src="{{ asset('img/club/club-2.png') }}" alt="Équipements SPORT+ Marseille" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentElement.innerHTML='<div style=\'text-align:center;padding:60px;color:var(--text-dim);\'><i class=\'ti ti-barbell\' style=\'font-size:48px;display:block;margin-bottom:12px;opacity:.3;\'></i>Équipements premium</div>'">
+        <img src="{{ asset('img/club/club-2.jpg') }}" alt="Équipements premium de la salle SPORT+ Marseille" style="width:100%;height:100%;object-fit:cover;" loading="lazy" onerror="this.parentElement.innerHTML='<div style=\'text-align:center;padding:60px;color:var(--text-dim);\'><i class=\'ti ti-barbell\' style=\'font-size:48px;display:block;margin-bottom:12px;opacity:.3;\'></i>Équipements premium</div>'">
       </div>
     </div>
   </div>
@@ -78,7 +79,7 @@
       <div class="feature-card" style="border-left:3px solid var(--green);">
         <div class="feature-icon" style="background:rgba(61,255,20,.08);border-color:rgba(61,255,20,.2);color:var(--green);"><i class="ti ti-star"></i></div>
         <div class="feature-title">Coaching privé</div>
-        <p class="feature-text">Espace coaching privatif. Votre coach, vos objectifs, votre programme — Night Coach disponible dès 21h.</p>
+        <p class="feature-text">Espace coaching privatif. Votre coach, vos objectifs, votre programme — Night Coach disponible dès 20h.</p>
       </div>
       <div class="feature-card">
         <div class="feature-icon"><i class="ti ti-heart"></i></div>

@@ -1,82 +1,294 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Réserver un coach — SPORT+{% endblock %}
+{% block title %}Réserver une séance — SPORT+{% endblock %}
+
+{% block stylesheets %}
+  {{ parent() }}
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+{% endblock %}
 
 {% block body %}
-<div class="container" style="padding-top:40px;padding-bottom:60px;">
+<div class="container" style="padding-top:32px;padding-bottom:80px;">
 
-  <div class="page-header">
-    <div>
-      <h1>Réserver <span style="color:var(--gold)">ton coach</span></h1>
-      <p class="page-subtitle">Choisis ta prestation et ton créneau</p>
-    </div>
+  <div style="text-align:center;margin-bottom:40px;">
+    <div class="hero-badge">Réservation</div>
+    <h1 style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:clamp(36px,5vw,56px);text-transform:uppercase;letter-spacing:-1px;margin-top:12px;">
+      Réservez votre <span style="color:var(--gold)">séance</span>
+    </h1>
+    <p style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:18px;color:var(--text-dim);max-width:500px;margin:0 auto;">
+      Ton coach t'attend. Avance, progresse, dépasse.
+    </p>
   </div>
 
-  <div class="booking-form-layout">
+  {% for label, messages in app.flashes %}
+    {% for message in messages %}
+      <div class="alert alert-{{ label }}" style="margin-bottom:20px;">{{ message }}</div>
+    {% endfor %}
+  {% endfor %}
 
-    <!-- Form -->
-    <div>
-      {{ form_start(form, {'attr': {'class': 'booking-form'}}) }}
-        <div class="form-field">{{ form_row(form.coach) }}</div>
-        <div class="form-field">{{ form_row(form.format) }}</div>
-        <div class="form-field">{{ form_row(form.timeSlot) }}</div>
-        <div class="form-field" id="group-persons-field" style="display:none;">
-          {{ form_row(form.personsCount) }}
+  {{ form_start(form, {'attr': {'id': 'booking-form', 'novalidate': 'novalidate'}}) }}
+
+  <div class="booking-layout">
+
+    {# ═══════════════════════════════════════════════════════ COLONNE GAUCHE #}
+    <div class="booking-left">
+
+      {# ── Section 1 : Format ─────────────────────────────────────────────── #}
+      <div class="booking-step">
+        <div class="booking-step-label">Étape 1</div>
+        <h2>Choisis ton format</h2>
+
+        <div class="booking-fallback-field">{{ form_row(form.format) }}</div>
+
+        <div class="selector-grid" data-selector="format">
+          <div class="selector-card selected" data-value="solo" tabindex="0" role="button">
+            <i class="ti ti-user selector-card-icon"></i>
+            <div class="selector-card-title">Solo</div>
+            <div class="selector-card-meta">1 personne</div>
+            <div class="selector-card-price" id="price-format-solo">à partir de 40 €</div>
+          </div>
+          <div class="selector-card" data-value="duo" tabindex="0" role="button">
+            <i class="ti ti-users selector-card-icon"></i>
+            <div class="selector-card-title">Duo</div>
+            <div class="selector-card-meta">2 personnes</div>
+            <div class="selector-card-price" id="price-format-duo">à partir de 40 €<span style="font-size:13px;color:var(--text-dim)">/pers.</span></div>
+          </div>
+          <div class="selector-card" data-value="group" tabindex="0" role="button">
+            <i class="ti ti-users-group selector-card-icon"></i>
+            <div class="selector-card-title">Groupe</div>
+            <div class="selector-card-meta">4 à 6 personnes</div>
+            <div class="selector-card-price" id="price-format-group">à partir de 22 €<span style="font-size:13px;color:var(--text-dim)">/pers.</span></div>
+          </div>
         </div>
-        <div class="form-field">{{ form_row(form.startAt) }}</div>
-        <div class="form-field">{{ form_row(form.packType) }}</div>
-        <div class="form-field">{{ form_row(form.fullAccess) }}</div>
-        <div class="form-field">{{ form_row(form.message) }}</div>
+      </div>
 
-        <div class="price-summary">
-          Le prix est calculé selon le format et le créneau choisis. Paiement uniquement si le coach accepte.
+      {# ── Section 2 : Créneau ────────────────────────────────────────────── #}
+      <div class="booking-step">
+        <div class="booking-step-label">Étape 2</div>
+        <h2>Choisis ton créneau</h2>
+
+        <div class="booking-fallback-field">{{ form_row(form.timeSlot) }}</div>
+
+        <div class="selector-grid" data-selector="slot">
+          <div class="selector-card selected" data-value="day" tabindex="0" role="button">
+            <i class="ti ti-sun selector-card-icon"></i>
+            <div class="selector-card-title">Journée</div>
+            <div class="selector-card-meta">6h — 20h</div>
+            <div style="margin-top:8px;font-size:11px;font-family:'Barlow Condensed',sans-serif;letter-spacing:1px;color:var(--text-dim);">tarif de base</div>
+          </div>
+          <div class="selector-card" data-value="night" tabindex="0" role="button">
+            <span class="selector-card-savings">+40%</span>
+            <i class="ti ti-moon selector-card-icon"></i>
+            <div class="selector-card-title">Night Coach</div>
+            <div class="selector-card-meta">20h — minuit</div>
+            <div style="margin-top:8px;font-size:11px;font-family:'Barlow Condensed',sans-serif;letter-spacing:1px;color:var(--text-dim);">×1.40</div>
+          </div>
+          <div class="selector-card" data-value="astreinte" tabindex="0" role="button">
+            <span class="selector-card-savings">+80%</span>
+            <i class="ti ti-moon-stars selector-card-icon"></i>
+            <div class="selector-card-title">Astreinte</div>
+            <div class="selector-card-meta">minuit — 6h</div>
+            <div style="margin-top:8px;font-size:11px;font-family:'Barlow Condensed',sans-serif;letter-spacing:1px;color:var(--text-dim);">×1.80</div>
+          </div>
+        </div>
+      </div>
+
+      {# ── Section 3 : Engagement ─────────────────────────────────────────── #}
+      <div class="booking-step">
+        <div class="booking-step-label">Étape 3</div>
+        <h2>Choisis ton engagement</h2>
+
+        <div class="booking-fallback-field">{{ form_row(form.packType) }}</div>
+
+        <div class="selector-grid" style="grid-template-columns:repeat(auto-fit,minmax(155px,1fr));" data-selector="pack">
+          <div class="selector-card selected" data-value="single" tabindex="0" role="button">
+            <i class="ti ti-bolt selector-card-icon"></i>
+            <div class="selector-card-title">Séance unique</div>
+            <div class="selector-card-meta">Sans engagement</div>
+            <div class="selector-card-price" id="price-pack-single">—</div>
+          </div>
+          <div class="selector-card" data-value="pack_4" tabindex="0" role="button">
+            <i class="ti ti-calendar-month selector-card-icon"></i>
+            <div class="selector-card-title">Pack 4</div>
+            <div class="selector-card-meta">4 séances / mois</div>
+            <div class="selector-card-price" id="price-pack-pack_4">—</div>
+            <div class="selector-card-economy" id="economy-pack_4" style="display:none;"></div>
+          </div>
+          <div class="selector-card" data-value="pack_8" tabindex="0" role="button">
+            <i class="ti ti-calendar-stats selector-card-icon"></i>
+            <div class="selector-card-title">Pack 8</div>
+            <div class="selector-card-meta">8 séances / mois</div>
+            <div class="selector-card-price" id="price-pack-pack_8">—</div>
+            <div class="selector-card-economy" id="economy-pack_8" style="display:none;"></div>
+          </div>
+          <div class="selector-card" data-value="pack_12" tabindex="0" role="button" style="position:relative;padding-top:28px;">
+            <span class="selector-card-badge-best">Meilleure offre</span>
+            <i class="ti ti-crown selector-card-icon"></i>
+            <div class="selector-card-title">Pack 12</div>
+            <div class="selector-card-meta">12 séances / mois</div>
+            <div class="selector-card-price" id="price-pack-pack_12">—</div>
+            <div class="selector-card-economy" id="economy-pack_12" style="display:none;"></div>
+          </div>
+        </div>
+      </div>
+
+      {# ── Section 4 : Détails ─────────────────────────────────────────────── #}
+      <div class="booking-step">
+        <div class="booking-step-label">Étape 4</div>
+        <h2>Détails de la séance</h2>
+
+        <div class="booking-form-field">
+          {{ form_label(form.coach) }}
+          {{ form_widget(form.coach) }}
+          {{ form_errors(form.coach) }}
+        </div>
+
+        <div class="booking-form-field">
+          {{ form_label(form.startAt) }}
+          {{ form_widget(form.startAt) }}
+          <div style="font-size:12px;color:var(--text-dim);margin-top:4px;" id="slot-hint">
+            <i class="ti ti-info-circle"></i>
+            L'heure doit correspondre au créneau sélectionné :
+            Journée 6h–20h · Night Coach 20h–minuit · Astreinte minuit–6h.
+          </div>
+          {{ form_errors(form.startAt) }}
+        </div>
+
+        <div class="booking-form-field" id="group-persons-wrapper" style="display:none;">
+          {{ form_label(form.personsCount) }}
+          {{ form_widget(form.personsCount) }}
+          {{ form_errors(form.personsCount) }}
+        </div>
+
+        <label class="fullaccess-toggle" id="fullaccess-toggle" for="booking_fullAccess">
+          <div>
+            <div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:16px;letter-spacing:1px;">
+              <i class="ti ti-24-hours" style="color:var(--green);margin-right:6px;"></i>
+              Accès salle 24h/24
+            </div>
+            <div style="font-size:13px;color:var(--text-dim);margin-top:2px;">
+              Entraîne-toi quand tu veux. +<span id="fullaccess-price">30</span>€/mois.
+            </div>
+          </div>
+          {{ form_widget(form.fullAccess, {'attr': {'id': 'booking_fullAccess', 'style': 'width:20px;height:20px;accent-color:var(--green);cursor:pointer;'}}) }}
+        </label>
+
+        <div class="booking-form-field" style="margin-top:20px;">
+          {{ form_label(form.message) }}
+          {{ form_widget(form.message, {'attr': {'placeholder': 'Objectifs, préférences, contraintes physiques…', 'rows': 3, 'maxlength': 500}}) }}
+          {{ form_errors(form.message) }}
         </div>
 
         <button type="submit" class="btn btn-primary btn-lg btn-full" style="margin-top:24px;">
-          <i class="ti ti-send"></i> Envoyer la demande
+          <i class="ti ti-send"></i> Envoyer la demande au coach
         </button>
-      {{ form_end(form) }}
-
-      <script>
-        // Afficher le champ "Nombre de participants" uniquement pour GROUP
-        const formatField = document.querySelector('[name="booking[format]"]') ||
-                            document.querySelector('#booking_format');
-        const groupField  = document.getElementById('group-persons-field');
-        function togglePersons() {
-          const selected = document.querySelector('input[name="booking[format]"]:checked');
-          if (groupField) groupField.style.display = selected && selected.value === 'group' ? '' : 'none';
-        }
-        document.querySelectorAll('input[name="booking[format]"]').forEach(r => r.addEventListener('change', togglePersons));
-        togglePersons();
-      </script>
-    </div>
-
-    <!-- Info panel -->
-    <div class="booking-info-panel">
-      <h3><i class="ti ti-info-circle" style="color:var(--gold-dim);margin-right:8px;"></i>Comment ça marche ?</h3>
-      <div class="booking-info-item">
-        <i class="ti ti-send"></i>
-        <span>Ta demande est envoyée au coach immédiatement</span>
-      </div>
-      <div class="booking-info-item">
-        <i class="ti ti-bell"></i>
-        <span>Tu reçois une notification dès sa réponse</span>
-      </div>
-      <div class="booking-info-item">
-        <i class="ti ti-coins"></i>
-        <span>Paiement uniquement si le coach confirme</span>
-      </div>
-      <div class="booking-info-item">
-        <i class="ti ti-x"></i>
-        <span>Annulation gratuite jusqu'à 2h avant la séance</span>
-      </div>
-      <div style="margin-top:20px;padding:16px;background:rgba(200,169,81,.06);border:1px solid rgba(200,169,81,.15);border-radius:var(--radius);font-size:13px;color:var(--text-dim);">
-        <i class="ti ti-shield-check" style="color:var(--gold);margin-right:6px;"></i>
-        <strong style="color:var(--gold);">Sans engagement</strong> — Réserve, teste, avance.
       </div>
     </div>
+
+    {# ═══════════════════════════════════════════════════ COLONNE DROITE (sidebar sticky) #}
+    <aside class="booking-sidebar">
+
+      {# Récap en PREMIER — immédiatement visible au top de la sidebar #}
+      <div class="booking-summary">
+        <h3><i class="ti ti-receipt" style="margin-right:8px;"></i>Votre séance</h3>
+        <div class="summary-row">
+          <span class="label">Format</span>
+          <span class="value" id="sum-format">Solo (1 pers.)</span>
+        </div>
+        <div class="summary-row">
+          <span class="label">Créneau</span>
+          <span class="value" id="sum-slot">Journée 6h–20h</span>
+        </div>
+        <div class="summary-row">
+          <span class="label">Engagement</span>
+          <span class="value" id="sum-pack">Séance unique</span>
+        </div>
+        <div class="summary-row">
+          <span class="label">Accès 24h/24</span>
+          <span class="value" id="sum-fullaccess">Non</span>
+        </div>
+        <div class="summary-total">
+          <div class="summary-total-price" id="sum-price">40 €</div>
+          <div class="summary-total-period" id="sum-period">pour cette séance</div>
+          <div class="summary-savings" id="sum-savings" style="display:none;"></div>
+        </div>
+      </div>
+
+      {# Comment ça marche — en dessous du récap #}
+      <div class="booking-info-panel">
+        <h3><i class="ti ti-info-circle" style="color:var(--gold-dim);margin-right:8px;"></i>Comment ça marche ?</h3>
+        <div class="booking-info-item"><i class="ti ti-send"></i><span>Ta demande est envoyée au coach immédiatement</span></div>
+        <div class="booking-info-item"><i class="ti ti-bell"></i><span>Tu reçois une notification dès sa réponse</span></div>
+        <div class="booking-info-item"><i class="ti ti-coins"></i><span>Paiement uniquement si le coach confirme</span></div>
+        <div class="booking-info-item"><i class="ti ti-x"></i><span>Annulation gratuite jusqu'à 2h avant</span></div>
+        <div style="margin-top:16px;padding:14px;background:rgba(200,169,81,.06);border:1px solid rgba(200,169,81,.15);border-radius:var(--radius);font-size:14px;color:var(--text-soft);">
+          <i class="ti ti-shield-check" style="color:var(--gold);margin-right:6px;"></i>
+          <strong style="color:var(--gold);">Sans engagement</strong> — Réserve, teste, avance.
+        </div>
+      </div>
+
+    </aside>
 
   </div>
 
+  {{ form_end(form) }}
+
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/flatpickr" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/fr.js" defer></script>
+<script src="{{ asset('js/booking-form.js') }}" defer></script>
+
+<style>
+/* ── Flatpickr thème SPORT+ dark ─────────────────────────────── */
+.flatpickr-calendar {
+  background: #12121A !important;
+  border: 1px solid #2A2720 !important;
+  border-radius: 12px !important;
+  box-shadow: 0 20px 50px rgba(0,0,0,.6) !important;
+  font-family: 'Inter', sans-serif !important;
+  color: #ECECEC !important;
+}
+.flatpickr-months { background: #12121A; border-radius: 12px 12px 0 0; }
+.flatpickr-month { color: #C8A951 !important; fill: #C8A951 !important; }
+.flatpickr-current-month { font-size: 16px !important; font-weight: 700; color: #C8A951 !important; }
+.flatpickr-current-month .cur-month { color: #C8A951 !important; }
+.flatpickr-current-month input.cur-year { color: #C8A951 !important; }
+.flatpickr-prev-month svg, .flatpickr-next-month svg { fill: #C8A951 !important; }
+.flatpickr-prev-month:hover svg, .flatpickr-next-month:hover svg { fill: #fff !important; }
+.flatpickr-weekday { color: #7A6228 !important; font-size: 12px !important; font-weight: 700 !important; }
+.flatpickr-day { color: #ECECEC !important; border-radius: 8px !important; font-size: 14px !important; }
+.flatpickr-day:hover { background: rgba(200,169,81,0.15) !important; border-color: transparent !important; }
+.flatpickr-day.selected, .flatpickr-day.startRange, .flatpickr-day.endRange {
+  background: #C8A951 !important;
+  border-color: #C8A951 !important;
+  color: #060606 !important;
+  font-weight: 700 !important;
+}
+.flatpickr-day.today { border-color: #C8A951 !important; color: #C8A951 !important; }
+.flatpickr-day.flatpickr-disabled, .flatpickr-day.prevMonthDay, .flatpickr-day.nextMonthDay {
+  color: #2A2720 !important;
+}
+.flatpickr-time { background: #12121A !important; border-top: 1px solid #2A2720 !important; border-radius: 0 0 12px 12px !important; }
+.flatpickr-time input { color: #C8A951 !important; font-size: 18px !important; font-weight: 700 !important; font-family: 'Barlow Condensed', sans-serif !important; }
+.flatpickr-time .flatpickr-time-separator { color: #C8A951 !important; }
+.numInputWrapper:hover { background: rgba(200,169,81,0.08) !important; }
+.flatpickr-input.active { border-color: #C8A951 !important; outline: 2px solid rgba(200,169,81,0.3) !important; }
+/* Input visible (altInput) */
+.flatpickr-input[readonly] {
+  background: var(--bg-3) !important;
+  border: 1px solid var(--border) !important;
+  color: var(--white) !important;
+  padding: 12px 14px !important;
+  border-radius: var(--radius) !important;
+  font-family: var(--font-body) !important;
+  font-size: 16px !important;
+  width: 100% !important;
+  cursor: pointer !important;
+}
+.flatpickr-input[readonly]:focus-visible {
+  outline: 2px solid var(--gold) !important;
+  border-color: var(--gold) !important;
+}
+</style>
 {% endblock %}

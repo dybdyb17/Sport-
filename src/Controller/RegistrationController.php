@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Enum\UserRole;
 use App\Entity\User;
 use App\Form\RegistrationFormType;
+use App\Service\MailerService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -21,6 +22,7 @@ class RegistrationController extends AbstractController
         UserPasswordHasherInterface $passwordHasher,
         EntityManagerInterface $em,
         Security $security,
+        MailerService $mailerService,
     ): Response {
         if ($this->getUser()) {
             return $this->redirectToRoute('app_home');
@@ -39,8 +41,9 @@ class RegistrationController extends AbstractController
             $em->persist($user);
             $em->flush();
 
+            $mailerService->sendRegistrationWelcome($user);
+
             // Connexion automatique après inscription (Security::login = Symfony 6.2+).
-            // LoginRedirectHandler retourne une Response ; fallback sur app_espace_client.
             $response = $security->login($user, 'form_login', 'main');
 
             return $response ?? $this->redirectToRoute('app_espace_client');

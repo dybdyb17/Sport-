@@ -1,0 +1,253 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}À propos — L'histoire SPORT+ Marseille{% endblock %}
+{% block meta_description %}<meta name="description" content="Découvrez l'histoire de SPORT+ Marseille : coaching premium et sur-mesure, accessible 24h/24, dans une salle privatisée du 5e arrondissement.">{% endblock %}
+{% block og_title %}À propos — L'histoire SPORT+{% endblock %}
+{% block og_description %}Découvrez l'histoire de SPORT+ Marseille — coaching premium et sur-mesure, accessible 24h/24.{% endblock %}
+
+{% block body %}
+
+{# Encart d'avertissement placeholders #}
+<div class="container" style="padding-top:30px;">
+  <div style="background:rgba(255,138,77,0.1);border-left:3px solid #ff8a4d;
+              padding:14px 18px;border-radius:var(--radius);
+              font-size:14px;color:var(--text-soft);">
+    <i class="ti ti-alert-triangle" style="color:#ff8a4d;margin-right:8px;"></i>
+    <strong>À compléter :</strong> cette page contient des placeholders entre
+    crochets <code>[...]</code> à remplacer par les vraies informations
+    historiques de SPORT+ (année d'ouverture, parcours du dirigeant, etc.).
+  </div>
+</div>
+
+{# Bloc 1 — Hero #}
+<section style="padding:80px 0 60px;text-align:center;">
+  <div class="container">
+    <div class="hero-badge">Notre histoire</div>
+    <h1 class="section-title" style="margin-top:16px;">
+      Bien plus qu'une salle. Une <span style="color:var(--gold)">vision</span>.
+    </h1>
+    <p class="section-sub" style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:20px;max-width:640px;margin:0 auto;">
+      "SPORT+ est née de l'envie de faire du coaching premium accessible à tous,
+      à toute heure du jour ou de la nuit, à Marseille."
+    </p>
+  </div>
+</section>
+
+{# Bloc 2 — L'idée #}
+<section class="section" style="padding-top:0;">
+  <div class="container">
+    <div class="section-label">L'ORIGINE</div>
+    <h2 class="section-title" style="margin-bottom:40px;">Pourquoi SPORT+ ?</h2>
+    <div style="display:grid;grid-template-columns:3fr 2fr;gap:48px;align-items:center;">
+      <div style="display:flex;flex-direction:column;gap:20px;">
+        <p style="color:var(--text-soft);line-height:1.8;font-size:16px;">
+          <strong style="color:var(--white);">[NOM_DIRIGEANT]</strong> a fondé SPORT+ en
+          <strong style="color:var(--gold);">[ANNÉE_OUVERTURE]</strong> à Marseille, avec une conviction
+          simple : le coaching premium ne devrait pas être réservé aux pratiquants matinaux.
+        </p>
+        <p style="color:var(--text-soft);line-height:1.8;font-size:16px;">
+          Après <strong style="color:var(--white);">[NOMBRE_ANNÉES]</strong> ans dans le monde du fitness,
+          il a décidé de créer une salle où chaque client est suivi individuellement,
+          dans un cadre intimiste et accessible 24h/24.
+        </p>
+        <p style="color:var(--text-soft);line-height:1.8;font-size:16px;">
+          [TEXTE_COMPLÉMENTAIRE — parcours du dirigeant, vision, anecdote fondatrice.]
+        </p>
+      </div>
+      <div style="text-align:center;background:var(--bg-card);border:1px solid var(--border);
+                  border-radius:var(--radius-lg);padding:40px 24px;">
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:72px;font-weight:900;
+                    color:var(--gold);line-height:1;">24/24</div>
+        <div style="font-size:14px;color:var(--text-dim);text-transform:uppercase;
+                    letter-spacing:2px;margin-top:8px;">Heures d'ouverture</div>
+        <div style="margin-top:24px;padding-top:24px;border-top:1px solid var(--border);
+                    font-size:13px;color:var(--text-dim);">
+          164 Chemin de Saint-Jean du Désert<br>13005 Marseille
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{# Bloc 3 — Trois piliers #}
+<section class="section" style="background:var(--bg-2);">
+  <div class="container">
+    <div class="section-label">NOS VALEURS</div>
+    <h2 class="section-title" style="margin-bottom:40px;">Trois piliers</h2>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:24px;">
+
+      <div class="bg-card" style="background:var(--bg-card);border:1px solid var(--border);
+                                   border-radius:var(--radius-lg);padding:32px 28px;">
+        <div style="width:48px;height:48px;background:rgba(200,169,81,0.12);
+                    border-radius:12px;display:flex;align-items:center;justify-content:center;
+                    margin-bottom:20px;">
+          <i class="ti ti-user-check" style="font-size:24px;color:var(--gold);"></i>
+        </div>
+        <h3 style="font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:900;
+                   text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;">Sur-mesure</h3>
+        <p style="color:var(--text-soft);line-height:1.7;font-size:15px;">
+          Chaque séance est conçue autour de tes objectifs, ton niveau, ton rythme.
+          Pas de routine standardisée.
+        </p>
+      </div>
+
+      <div class="bg-card" style="background:var(--bg-card);border:1px solid var(--border);
+                                   border-radius:var(--radius-lg);padding:32px 28px;">
+        <div style="width:48px;height:48px;background:rgba(200,169,81,0.12);
+                    border-radius:12px;display:flex;align-items:center;justify-content:center;
+                    margin-bottom:20px;">
+          <i class="ti ti-clock" style="font-size:24px;color:var(--gold);"></i>
+        </div>
+        <h3 style="font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:900;
+                   text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;">Accessible</h3>
+        <p style="color:var(--text-soft);line-height:1.7;font-size:15px;">
+          Premium ne veut pas dire élitiste. Nos formules s'adaptent à tous les budgets,
+          avec Night Coach et Astreinte pour les emplois du temps atypiques.
+        </p>
+      </div>
+
+      <div class="bg-card" style="background:var(--bg-card);border:1px solid var(--border);
+                                   border-radius:var(--radius-lg);padding:32px 28px;">
+        <div style="width:48px;height:48px;background:rgba(200,169,81,0.12);
+                    border-radius:12px;display:flex;align-items:center;justify-content:center;
+                    margin-bottom:20px;">
+          <i class="ti ti-heart" style="font-size:24px;color:var(--gold);"></i>
+        </div>
+        <h3 style="font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:900;
+                   text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;">Humain</h3>
+        <p style="color:var(--text-soft);line-height:1.7;font-size:15px;">
+          Tu n'es pas un numéro de badge. Nos coachs prennent le temps, écoutent, ajustent.
+          C'est ce qui fait la différence.
+        </p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+{# Bloc 4 — Nos chiffres #}
+<section class="section">
+  <div class="container">
+    <div class="section-label">EN CHIFFRES</div>
+    <h2 class="section-title" style="margin-bottom:40px;">SPORT+ en quelques nombres</h2>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:24px;">
+
+      <div style="text-align:center;background:var(--bg-card);border:1px solid var(--border);
+                  border-radius:var(--radius-lg);padding:32px 20px;">
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:48px;font-weight:900;
+                    color:var(--gold);line-height:1;">[ANNÉE_OUVERTURE]</div>
+        <div style="font-size:13px;color:var(--text-dim);text-transform:uppercase;
+                    letter-spacing:2px;margin-top:8px;">Année de création</div>
+      </div>
+
+      <div style="text-align:center;background:var(--bg-card);border:1px solid var(--border);
+                  border-radius:var(--radius-lg);padding:32px 20px;">
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:48px;font-weight:900;
+                    color:var(--gold);line-height:1;">{{ coachsCount }}</div>
+        <div style="font-size:13px;color:var(--text-dim);text-transform:uppercase;
+                    letter-spacing:2px;margin-top:8px;">Coachs certifiés</div>
+      </div>
+
+      <div style="text-align:center;background:var(--bg-card);border:1px solid var(--border);
+                  border-radius:var(--radius-lg);padding:32px 20px;">
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:48px;font-weight:900;
+                    color:var(--gold);line-height:1;">24/7</div>
+        <div style="font-size:13px;color:var(--text-dim);text-transform:uppercase;
+                    letter-spacing:2px;margin-top:8px;">Accessible</div>
+      </div>
+
+      <div style="text-align:center;background:var(--bg-card);border:1px solid var(--border);
+                  border-radius:var(--radius-lg);padding:32px 20px;">
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:48px;font-weight:900;
+                    color:var(--gold);line-height:1;">
+          {{ foundingOffer ? foundingOffer.placesTaken : '50' }}
+        </div>
+        <div style="font-size:13px;color:var(--text-dim);text-transform:uppercase;
+                    letter-spacing:2px;margin-top:8px;">Membres Fondateurs</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+{# Bloc 5 — Notre équipe (teaser) #}
+<section class="section" style="background:var(--bg-2);">
+  <div class="container" style="text-align:center;">
+    <div class="section-label">L'ÉQUIPE</div>
+    <h2 class="section-title" style="margin-bottom:20px;">Les visages SPORT+</h2>
+    <p style="color:var(--text-soft);line-height:1.8;font-size:16px;max-width:620px;margin:0 auto 32px;">
+      Une équipe de coachs certifiés, sélectionnés pour leur expertise mais aussi pour leur
+      capacité d'écoute. Chacun apporte sa spécialité — musculation, cardio, mobilité,
+      perte de poids, préparation physique.
+    </p>
+    <a href="{{ path('app_coachs_list') }}" class="btn btn-primary">
+      <i class="ti ti-users"></i> Découvrir les coachs
+    </a>
+  </div>
+</section>
+
+{# Bloc 6 — Notre engagement #}
+<section class="section">
+  <div class="container">
+    <div class="section-label">NOTRE PROMESSE</div>
+    <h2 class="section-title" style="margin-bottom:40px;">Notre engagement</h2>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:32px;">
+
+      <div>
+        <h3 style="font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:900;
+                   text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;
+                   color:var(--gold);">Sans engagement</h3>
+        <p style="color:var(--text-soft);line-height:1.7;font-size:15px;">
+          Tu réserves, tu testes, tu décides. Aucune obligation, aucun contrat.
+          Annulation libre jusqu'à 2h avant chaque séance.
+        </p>
+      </div>
+
+      <div>
+        <h3 style="font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:900;
+                   text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;
+                   color:var(--gold);">Transparent</h3>
+        <p style="color:var(--text-soft);line-height:1.7;font-size:15px;">
+          Pas de frais cachés, pas de prix d'appel trompeurs.
+          Notre <a href="{{ path('app_tarifs') }}" style="color:var(--gold);text-decoration:underline;">grille tarifaire</a>
+          est publique et fixe.
+        </p>
+      </div>
+
+      <div>
+        <h3 style="font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:900;
+                   text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;
+                   color:var(--gold);">Premium accessible</h3>
+        <p style="color:var(--text-soft);line-height:1.7;font-size:15px;">
+          Du matériel haut de gamme, des coachs certifiés, dans un espace privatisé —
+          sans réserver à une élite.
+        </p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+{# Bloc 7 — CTA final #}
+<section class="section" style="background:linear-gradient(135deg,rgba(200,169,81,0.08) 0%,rgba(6,6,6,0) 100%);
+              border-top:1px solid var(--border);">
+  <div class="container" style="text-align:center;">
+    <h2 class="section-title" style="margin-bottom:16px;">Prêt à essayer ?</h2>
+    <p style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:20px;
+              color:var(--text-soft);margin-bottom:36px;">
+      "Ta première séance commence ici."
+    </p>
+    <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap;">
+      <a href="{{ path('app_coachs_list') }}" class="btn btn-primary">
+        <i class="ti ti-users"></i> Découvrir nos coachs
+      </a>
+      {% if foundingOffer and foundingOffer.hasPlacesLeft %}
+        <a href="{{ path('app_founding_detail') }}" class="btn btn-secondary">
+          <i class="ti ti-crown"></i> Voir l'offre Founding
+        </a>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+{% endblock %}

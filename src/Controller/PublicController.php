@@ -81,6 +81,17 @@ class PublicController extends AbstractController
         return $this->redirectToRoute('app_founding_detail');
     }
 
+    #[Route('/a-propos', name: 'app_about', methods: ['GET'])]
+    public function about(
+        FoundingOfferService $foundingOfferService,
+        CoachRepository $coachRepo
+    ): Response {
+        return $this->render('public/about.html.twig', [
+            'foundingOffer' => $foundingOfferService->getActive(),
+            'coachsCount'   => $coachRepo->count([]),
+        ]);
+    }
+
     #[Route('/concept', name: 'app_concept', methods: ['GET'])]
     public function concept(): Response
     {

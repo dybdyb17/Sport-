@@ -92,8 +92,8 @@
   {% set slotMax = slotMax > 0 ? slotMax : 1 %}
 
   {% for slot, info in {
-    'day': {label: 'Journée', hours: '6h — 21h', icon: 'ti-sun', data: slotStats['day']},
-    'night': {label: 'Night Coach', hours: '21h — minuit', icon: 'ti-moon', data: slotStats['night']},
+    'day': {label: 'Journée', hours: '6h — 20h', icon: 'ti-sun', data: slotStats['day']},
+    'night': {label: 'Night Coach', hours: '20h — minuit', icon: 'ti-moon', data: slotStats['night']},
     'astreinte': {label: 'Astreinte', hours: 'minuit — 6h', icon: 'ti-moon-stars', data: slotStats['astreinte']}
   } %}
     {% set barWidth = (info.data.count / slotMax * 100)|round %}

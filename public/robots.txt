@@ -1,0 +1,10 @@
+Sitemap: https://VOTRE_DOMAINE/sitemap.xml
+
+User-agent: *
+Allow: /
+
+Disallow: /admin/
+Disallow: /reservation/api/
+Disallow: /mon-espace
+Disallow: /coach/
+Disallow: /messages

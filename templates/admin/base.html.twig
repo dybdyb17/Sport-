@@ -6,7 +6,7 @@
   <title>{% block title %}Admin — SPORT+{% endblock %}</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800;900&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Barlow+Condensed:wght@500;700;900&family=Cormorant+Garamond:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.11.0/dist/tabler-icons.min.css">
   <link rel="stylesheet" href="{{ asset('styles/sportplus.css') }}">
 </head>
@@ -14,7 +14,7 @@
 <div class="admin-layout">
 
   <!-- Sidebar -->
-  <aside class="admin-sidebar">
+  <aside class="admin-sidebar" id="adminSidebar">
     <div class="sidebar-logo">
       <a href="{{ path('app_home') }}" class="logo">
         <div class="logo-mark">S<span style="color:var(--gold)">+</span></div>
@@ -50,13 +50,13 @@
         <i class="ti ti-message"></i> Messages
       </a>
       <div class="admin-nav-label" style="margin-top:8px;">Exports</div>
-      <a href="{{ path('app_admin_export_revenue') }}" class="admin-nav-item" style="font-size:12px;padding:6px 12px;">
+      <a href="{{ path('app_admin_export_revenue') }}" class="admin-nav-item" style="font-size:14px;padding:6px 12px;">
         <i class="ti ti-chart-bar"></i> CA mensuel
       </a>
-      <a href="{{ path('app_admin_export_founding') }}" class="admin-nav-item" style="font-size:12px;padding:6px 12px;">
+      <a href="{{ path('app_admin_export_founding') }}" class="admin-nav-item" style="font-size:14px;padding:6px 12px;">
         <i class="ti ti-medal"></i> Fondateurs
       </a>
-      <a href="{{ path('app_admin_export_subscriptions') }}" class="admin-nav-item" style="font-size:12px;padding:6px 12px;">
+      <a href="{{ path('app_admin_export_subscriptions') }}" class="admin-nav-item" style="font-size:14px;padding:6px 12px;">
         <i class="ti ti-credit-card"></i> Abonnements
       </a>
     </nav>
@@ -71,9 +71,14 @@
     </div>
   </aside>
 
+  <div id="adminOverlay" class="admin-overlay"></div>
+
   <!-- Main content -->
   <div class="admin-main">
     <div class="admin-topbar">
+      <button class="admin-burger" id="adminBurger" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="adminSidebar">
+        <i class="ti ti-menu-2"></i>
+      </button>
       {% for label, messages in app.flashes %}
         {% for message in messages %}
           <div class="alert alert-{{ label }}" style="margin:0;padding:8px 16px;font-size:13px;">{{ message }}</div>
@@ -90,6 +95,34 @@
 
 </div>
 {% block mercure %}{% endblock %}
+<script src="{{ asset('js/app.js') }}" defer></script>
+<script defer>
+document.addEventListener('DOMContentLoaded', () => {
+  const burger  = document.getElementById('adminBurger');
+  const sidebar = document.getElementById('adminSidebar');
+  const overlay = document.getElementById('adminOverlay');
+  if (!burger || !sidebar) return;
+
+  function closeSidebar() {
+    sidebar.classList.remove('is-open');
+    burger.setAttribute('aria-expanded', 'false');
+  }
+
+  burger.addEventListener('click', e => {
+    e.stopPropagation();
+    const open = sidebar.classList.toggle('is-open');
+    burger.setAttribute('aria-expanded', open);
+  });
+
+  if (overlay) {
+    overlay.addEventListener('click', closeSidebar);
+  }
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closeSidebar();
+  });
+});
+</script>
 <script src="{{ asset('js/app.js') }}" defer></script>
 </body>
 </html>

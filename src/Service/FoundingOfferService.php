@@ -17,6 +17,7 @@ class FoundingOfferService
         private readonly FoundingOfferRepository $offerRepo,
         private readonly FoundingClaimRepository $claimRepo,
         private readonly EntityManagerInterface  $em,
+        private readonly MailerService           $mailer,
     ) {}
 
     public function getActive(): ?FoundingOffer
@@ -41,6 +42,9 @@ class FoundingOfferService
 
         $this->em->persist($claim);
         $this->em->flush();
+
+        $this->mailer->sendFoundingWelcomeToUser($claim);
+        $this->mailer->sendNewFoundingAlertToAdmin($claim);
 
         return $claim;
     }

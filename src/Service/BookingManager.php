@@ -23,6 +23,7 @@ class BookingManager
         private readonly NotificationService    $notifier,
         private readonly PricingCalculator      $pricing,
         private readonly FoundingOfferService   $foundingService,
+        private readonly MailerService          $mailer,
     ) {}
 
     /**
@@ -81,6 +82,7 @@ class BookingManager
         $this->em->flush();
 
         $this->notifier->notifyCoach($booking);
+        $this->mailer->sendBookingPendingToCoach($booking);
 
         return $booking;
     }
@@ -121,6 +123,7 @@ class BookingManager
 
         $this->em->flush();
         $this->notifier->notifyClient($booking);
+        $this->mailer->sendBookingConfirmedToClient($booking);
 
         return $booking;
     }
@@ -136,6 +139,7 @@ class BookingManager
 
         $booking->setStatus(Booking::STATUS_REFUSED);
         $this->em->flush();
+        $this->mailer->sendBookingRefusedToClient($booking);
 
         return $booking;
     }

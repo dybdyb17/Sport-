@@ -11,31 +11,46 @@ ul, ol { list-style: none; }
 
 /* ── TOKENS ─────────────────────────────────────────────────── */
 :root {
-  /* Existing */
+  /* Couleurs accent */
   --gold: #C8A951;
   --gold-dim: #7A6228;
   --green: #3DFF14;
   --black: #060606;
   --panel: #121212;
-  --white: #F4EFE6;
-  --muted: #6A6050;
 
-  /* New */
+  /* Backgrounds */
   --bg: #060606;
   --bg-2: #0E0E10;
   --bg-3: #161620;
   --bg-card: #12121A;
   --border: #2A2720;
-  --text-dim: #8A8070;
+
+  /* Texte — hiérarchie lisible (renforcée B1.2) */
+  --white: #FFFFFF;             /* blanc pur pour titres et impacts */
+  --text: #ECECEC;              /* corps principal, quasi blanc */
+  --text-soft: #D4D0C8;         /* hiérarchie secondaire discrète */
+  --muted-readable: #D4D0C8;    /* alias backward compat */
+  --muted: #B5AB99;             /* annotations en retrait */
+  --text-dim: #B5AB99;          /* métadonnées (alias) */
+
+  /* Polices */
+  --font-display: 'Barlow Condensed', sans-serif;
+  --font-body: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-serif: 'Cormorant Garamond', Georgia, serif;
+
+  /* Tailles — juste milieu confortable */
+  --fs-body: 17px;
+  --fs-md: 16px;
+  --fs-sm: 14px;
+  --fs-micro: 13px;
+
+  /* Géométrie */
   --radius-sm: 6px;
   --radius: 10px;
   --radius-lg: 16px;
   --shadow: 0 8px 24px rgba(0,0,0,.4);
   --shadow-lg: 0 20px 50px rgba(0,0,0,.5);
   --container: 1200px;
-
-  /* Lisibilité */
-  --muted-readable: #9A8F7A;
 }
 
 /* ── BASE ────────────────────────────────────────────────────── */
@@ -47,14 +62,16 @@ html {
 
 body {
   background: var(--bg);
-  color: var(--white);
-  font-family: 'Barlow', sans-serif;
+  color: var(--text);
+  font-family: var(--font-body);
   font-weight: 400;
-  font-size: 17px;
-  line-height: 1.65;
+  font-size: var(--fs-body);
+  line-height: 1.7;
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 body::before {
@@ -73,6 +90,43 @@ main {
   flex: 1;
   position: relative;
   z-index: 1;
+}
+
+/* ── TYPOGRAPHIE GLOBALE ────────────────────────────────────── */
+p { font-family: var(--font-body); font-size: var(--fs-body); line-height: 1.7; color: var(--text); }
+li { font-family: var(--font-body); color: var(--text); }
+td, th { font-family: var(--font-body); }
+
+h1, h2, h3, h4, h5, h6 { font-family: var(--font-display); color: var(--white); line-height: 1.2; }
+h1 { font-size: clamp(36px, 5vw, 56px); font-weight: 900; letter-spacing: -0.5px; }
+h2 { font-size: clamp(26px, 3.5vw, 36px); font-weight: 700; }
+h3 { font-size: clamp(18px, 2.5vw, 22px); font-weight: 700; letter-spacing: 0.5px; }
+
+input, select, textarea, button {
+  font-family: var(--font-body);
+  font-size: var(--fs-md);
+}
+
+input, select, textarea {
+  color: var(--white);
+  background: var(--bg-3);
+  border: 1px solid var(--border);
+  padding: 12px 14px;
+  border-radius: var(--radius);
+}
+
+input::placeholder, textarea::placeholder {
+  color: var(--text-dim);
+  font-style: italic;
+}
+
+label {
+  font-family: var(--font-body);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  color: var(--text);
+  display: block;
+  margin-bottom: 6px;
 }
 
 /* ── LAYOUT ─────────────────────────────────────────────────── */
@@ -163,7 +217,7 @@ main {
 .main-nav a {
   padding: 8px 14px;
   border-radius: var(--radius-sm);
-  font-family: 'Barlow', sans-serif;
+  font-family: var(--font-body);
   font-weight: 500;
   font-size: 15px;
   color: var(--muted);
@@ -196,7 +250,7 @@ main {
   gap: 8px;
   padding: 10px 22px;
   border-radius: var(--radius);
-  font-family: 'Barlow', sans-serif;
+  font-family: var(--font-body);
   font-weight: 600;
   font-size: 15px;
   white-space: nowrap;
@@ -336,7 +390,7 @@ main {
   font-size: 14px;
   text-decoration: none;
   transition: background .15s, color .15s;
-  font-family: 'Barlow', sans-serif;
+  font-family: var(--font-body);
 }
 
 .dropdown-item:hover {
@@ -433,7 +487,7 @@ main {
   display: block;
   padding: 12px 16px;
   border-radius: var(--radius-sm);
-  font-family: 'Barlow', sans-serif;
+  font-family: var(--font-body);
   font-weight: 500;
   font-size: 15px;
   color: var(--muted);
@@ -524,7 +578,7 @@ main {
 }
 
 .hero-sub {
-  font-family: 'Barlow', sans-serif;
+  font-family: var(--font-body);
   font-size: 18px;
   color: var(--text-dim);
   max-width: 560px;
@@ -562,7 +616,7 @@ main {
 }
 
 .stat-label {
-  font-family: 'Barlow', sans-serif;
+  font-family: var(--font-body);
   font-size: 13px;
   text-transform: uppercase;
   letter-spacing: 2px;
@@ -602,7 +656,7 @@ main {
 }
 
 .section-sub {
-  font-family: 'Barlow', sans-serif;
+  font-family: var(--font-body);
   font-size: 17px;
   color: var(--text-dim);
   text-align: center;
@@ -656,7 +710,7 @@ main {
 }
 
 .feature-text {
-  font-family: 'Barlow', sans-serif;
+  font-family: var(--font-body);
   font-size: 15px;
   color: var(--text-dim);
   line-height: 1.6;
@@ -837,6 +891,53 @@ main {
   line-height: 1.7;
 }
 
+/* ── FAQ NAV STICKY ───────────────────────────────────────────── */
+.faq-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  position: sticky;
+  top: 80px;
+  z-index: 50;
+  background: rgba(6,6,6,0.92);
+  backdrop-filter: blur(10px);
+  padding: 14px 16px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  margin-bottom: 40px;
+}
+.faq-nav-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: 100px;
+  background: var(--bg-3);
+  color: var(--text-soft);
+  font-size: 13px;
+  text-decoration: none;
+  font-family: var(--font-body);
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  transition: all 0.2s;
+}
+.faq-nav-link:hover {
+  background: var(--gold);
+  color: var(--black);
+}
+@media (max-width: 600px) {
+  .faq-nav { top: 60px; padding: 10px; }
+  .faq-nav-link { font-size: 12px; padding: 6px 10px; }
+}
+[id="reservations"],
+[id="coachs"],
+[id="founding"],
+[id="tarifs"],
+[id="salle"],
+[id="compte"] {
+  scroll-margin-top: 160px;
+}
+
 /* ── FORMS ────────────────────────────────────────────────────── */
 .form-field {
   margin-bottom: 20px;
@@ -868,7 +969,7 @@ textarea {
   border-radius: var(--radius);
   color: var(--white);
   padding: 12px 16px;
-  font-family: 'Barlow', sans-serif;
+  font-family: var(--font-body);
   font-size: 16px;
   transition: border-color .2s;
   appearance: none;
@@ -971,7 +1072,7 @@ input[type="radio"] {
 }
 
 .page-subtitle {
-  font-family: 'Barlow', sans-serif;
+  font-family: var(--font-body);
   font-size: 16px;
   color: var(--text-dim);
   margin-top: 8px;
@@ -993,7 +1094,7 @@ input[type="radio"] {
 }
 
 .stat-card .stat-label {
-  font-family: 'Barlow', sans-serif;
+  font-family: var(--font-body);
   font-size: 13px;
   text-transform: uppercase;
   letter-spacing: 2px;
@@ -1019,8 +1120,13 @@ input[type="radio"] {
   background: var(--bg-card);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
-  overflow: hidden;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
   margin-bottom: 32px;
+}
+
+.data-table-card table {
+  min-width: 560px;
 }
 
 .data-table-header {
@@ -1044,10 +1150,11 @@ input[type="radio"] {
 .data-table-card table {
   width: 100%;
   border-collapse: collapse;
+  min-width: 560px;
 }
 
 .data-table-card th {
-  font-family: 'Barlow', sans-serif;
+  font-family: var(--font-body);
   font-weight: 700;
   font-size: 13px;
   text-transform: uppercase;
@@ -1125,9 +1232,9 @@ input[type="radio"] {
   gap: 10px;
   padding: 10px 12px;
   border-radius: var(--radius);
-  color: var(--muted);
-  font-size: 14px;
-  font-family: 'Barlow', sans-serif;
+  color: var(--text-soft);
+  font-size: 15px;
+  font-family: var(--font-body);
   text-decoration: none;
   transition: background .15s, color .15s;
   border-left: 2px solid transparent;
@@ -1432,7 +1539,7 @@ input[type="radio"] {
 .msg-bubble {
   max-width: 70%;
   padding: 12px 16px;
-  font-family: 'Barlow', sans-serif;
+  font-family: var(--font-body);
   font-size: 14px;
   line-height: 1.5;
 }
@@ -1510,8 +1617,8 @@ input[type="radio"] {
   align-items: center;
   gap: 8px;
   padding: 5px 0;
-  color: var(--text-dim);
-  font-size: 14px;
+  color: var(--text-soft);
+  font-size: 15px;
   text-decoration: none;
   transition: color .2s;
 }
@@ -1577,7 +1684,7 @@ input[type="radio"] {
   padding: 6px 14px;
   border-radius: var(--radius-sm);
   font-size: 13px;
-  font-family: 'Barlow', sans-serif;
+  font-family: var(--font-body);
   font-weight: 500;
   text-decoration: none;
   color: var(--muted);
@@ -1748,7 +1855,7 @@ input[type="radio"] {
 
 /* Section label for dashboard pages */
 .section-label {
-  font-family: 'Barlow Condensed', sans-serif;
+  font-family: var(--font-display);
   font-size: 13px;
   font-weight: 700;
   text-transform: uppercase;
@@ -1802,15 +1909,17 @@ input[type="radio"] {
   .admin-sidebar {
     position: fixed;
     top: 0;
-    left: -280px;
+    left: 0;
     height: 100vh;
-    width: 260px;
-    z-index: 500;
-    transition: left .3s ease;
+    width: 280px;
+    z-index: 999;
+    transform: translateX(-100%);
+    transition: transform 0.25s ease-out;
+    overflow-y: auto;
   }
 
   .admin-sidebar.is-open {
-    left: 0;
+    transform: translateX(0);
   }
 
   .main-nav {
@@ -1873,10 +1982,6 @@ input[type="radio"] {
     gap: 24px;
   }
 
-  .data-table-card {
-    overflow-x: auto;
-  }
-
   .data-table-card table {
     min-width: 600px;
   }
@@ -1887,6 +1992,59 @@ input[type="radio"] {
   outline: 2px solid var(--gold);
   outline-offset: 3px;
   border-radius: var(--radius-sm);
+}
+
+.nav-link:focus-visible,
+.footer-link:focus-visible,
+.dropdown-item:focus-visible,
+.admin-nav-item:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+/* Prévention overflow horizontal sur mobile */
+body { overflow-x: hidden; }
+* { overflow-wrap: break-word; word-break: break-word; }
+img, video, iframe { max-width: 100%; }
+
+/* Admin burger mobile ─────────────────────────────────────── */
+.admin-burger {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius);
+  background: var(--bg-3);
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-size: 20px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+@media (max-width: 900px) {
+  .admin-burger { display: flex; }
+}
+
+.admin-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  z-index: 998;
+  opacity: 0;
+  transition: opacity 0.25s;
+}
+
+@media (max-width: 900px) {
+  .admin-sidebar.is-open + .admin-overlay {
+    display: block;
+    opacity: 1;
+  }
 }
 
 /* ── FOUNDING MEMBER ─────────────────────────────────────────────── */
@@ -1915,7 +2073,7 @@ input[type="radio"] {
   background: var(--gold);
   color: var(--black);
   font-family: 'Barlow Condensed', sans-serif;
-  font-size: 11px; font-weight: 700;
+  font-size: 12px; font-weight: 700;
   letter-spacing: 2px; text-transform: uppercase;
   padding: 4px 12px; border-radius: 100px;
   white-space: nowrap;
@@ -1947,7 +2105,7 @@ input[type="radio"] {
 }
 .founding-teaser-footer {
   font-size: 13px; color: var(--gold);
-  font-family: 'Barlow', sans-serif;
+  font-family: var(--font-body);
 }
 .founding-member-card {
   background: linear-gradient(135deg, rgba(200,169,81,.08), transparent);
@@ -1988,7 +2146,7 @@ input[type="radio"] {
 }
 .badge-founding-mini {
   font-family: 'Barlow Condensed', sans-serif;
-  font-size: 11px; font-weight: 700;
+  font-size: 12px; font-weight: 700;
   color: var(--gold); letter-spacing: 1px;
   border: 1px solid var(--gold-dim);
   padding: 4px 10px; border-radius: 100px;
@@ -2077,9 +2235,45 @@ input[type="radio"] {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 16px;
+  gap: 12px;
   margin-bottom: 24px;
   flex-wrap: wrap;
+}
+
+.calendar-nav-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.calendar-legend {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+  font-size: 14px;
+  color: var(--text-soft);
+}
+
+.btn-label-long { display: inline; }
+
+@media (max-width: 600px) {
+  .calendar-toolbar {
+    gap: 8px;
+  }
+
+  .calendar-nav-actions .btn {
+    font-size: 13px;
+    padding: 8px 12px;
+    flex: 1 1 auto;
+    min-width: 0;
+    text-align: center;
+  }
+
+  .btn-label-long { display: none; }
+
+  .calendar-legend { display: none; }
 }
 
 .calendar-grid {
@@ -2104,11 +2298,11 @@ input[type="radio"] {
   background: var(--bg-3);
   font-family: 'Barlow Condensed', sans-serif;
   font-weight: 700;
-  letter-spacing: 1px;
+  letter-spacing: 1.5px;
   text-transform: uppercase;
   text-align: center;
   padding: 12px 6px;
-  font-size: 12px;
+  font-size: 13px;
   min-height: auto;
 }
 
@@ -2117,7 +2311,7 @@ input[type="radio"] {
   text-align: center;
   font-family: 'Barlow Condensed', sans-serif;
   font-weight: 700;
-  font-size: 11px;
+  font-size: 13px;
   letter-spacing: 2px;
   display: flex;
   align-items: center;
@@ -2134,8 +2328,8 @@ input[type="radio"] {
   padding: 4px 6px;
   border-radius: 4px;
   margin-bottom: 4px;
-  font-size: 12px;
-  line-height: 1.4;
+  font-size: 13px;
+  line-height: 1.5;
   text-decoration: none;
   color: var(--text);
   transition: background .15s;
@@ -2172,8 +2366,8 @@ input[type="radio"] {
 
 .calendar-event-meta {
   display: block;
-  color: var(--muted-readable);
-  font-size: 11px;
+  color: var(--text-soft);
+  font-size: 13px;
   margin-top: 2px;
 }
 
@@ -2194,22 +2388,485 @@ input[type="radio"] {
   margin-bottom: 0;
 }
 
+/* ── Calendrier mobile ───────────────────────────── */
+.calendar-mobile-list { display: none; }
+
 @media (max-width: 900px) {
-  .calendar-grid {
-    display: block;
-  }
+  .calendar-grid { display: none !important; }
+  .calendar-mobile-list { display: block; }
+}
 
-  .calendar-cell {
-    display: block;
-    min-height: auto;
-  }
+.calendar-day-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  margin-bottom: 10px;
+  overflow: hidden;
+}
 
-  .calendar-cell.header,
-  .calendar-cell.slot-label {
-    display: none;
-  }
+.calendar-day-card summary {
+  cursor: pointer;
+  padding: 14px 16px;
+  list-style: none;
+  user-select: none;
+}
 
-  .calendar-event {
-    margin-bottom: 6px;
-  }
+.calendar-day-card summary::-webkit-details-marker { display: none; }
+.calendar-day-card summary::marker { display: none; }
+
+.calendar-day-card[open] summary {
+  border-bottom: 1px solid var(--border);
+}
+
+.calendar-day-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.calendar-day-title {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.calendar-day-title .day-name {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 16px;
+  letter-spacing: 2px;
+  color: var(--gold);
+}
+
+.calendar-day-title .day-date {
+  font-size: 14px;
+  color: var(--text-soft);
+}
+
+.calendar-day-header .day-count {
+  font-size: 13px;
+  color: var(--text-soft);
+  font-style: italic;
+}
+
+.calendar-day-body {
+  padding: 12px 16px 16px;
+}
+
+.calendar-slot-group {
+  margin-bottom: 12px;
+}
+
+.calendar-slot-group:last-child { margin-bottom: 0; }
+
+.calendar-slot-title {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+/* ── Parcours de réservation premium (Lot B1) ──────────────────────────── */
+
+.booking-layout {
+  display: grid;
+  grid-template-columns: 1fr 360px;
+  gap: 40px;
+  margin: 0 0 40px;
+  align-items: start;   /* nécessaire pour que le sticky fonctionne dans grid */
+}
+
+@media (max-width: 900px) {
+  .booking-layout { grid-template-columns: 1fr; }
+}
+
+.booking-left {}
+
+.booking-step {
+  margin-bottom: 40px;
+  padding-bottom: 40px;
+  border-bottom: 1px solid var(--border);
+}
+
+.booking-step:last-child { border-bottom: none; }
+
+.booking-step-label {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--gold-dim);
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.booking-step-label::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  background: var(--gold);
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.booking-step h2 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 28px;
+  letter-spacing: 1.5px;
+  color: var(--white);
+  margin-bottom: 20px;
+  text-transform: uppercase;
+}
+
+.selector-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+}
+
+.selector-card {
+  background: var(--bg-card);
+  border: 2px solid var(--border);
+  border-radius: var(--radius-lg, 12px);
+  padding: 20px 16px;
+  cursor: pointer;
+  transition: border-color .15s, transform .15s, background .15s, box-shadow .15s;
+  position: relative;
+  text-align: center;
+  user-select: none;
+}
+
+.selector-card:hover {
+  border-color: var(--gold-dim);
+  transform: translateY(-2px);
+}
+
+.selector-card:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+}
+
+.selector-card.selected {
+  border-color: var(--gold);
+  background: rgba(200, 169, 81, 0.08);
+  box-shadow: 0 0 0 1px var(--gold), 0 8px 24px rgba(200, 169, 81, 0.15);
+}
+
+.selector-card-icon {
+  font-size: 32px;
+  color: var(--gold);
+  margin-bottom: 12px;
+  display: block;
+}
+
+.selector-card-title {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 19px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--white);
+  margin-bottom: 4px;
+}
+
+.selector-card-meta {
+  font-size: 14px;
+  color: var(--text-soft);
+  font-family: var(--font-serif);
+  font-style: italic;
+}
+
+.selector-card-price {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 22px;
+  color: var(--gold);
+  margin-top: 10px;
+}
+
+.selector-card-economy {
+  margin-top: 6px;
+  background: rgba(61, 255, 20, 0.12);
+  border-radius: 100px;
+  padding: 4px 10px;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 1px;
+  color: #7AB85A;
+}
+
+.selector-card-savings {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: var(--green);
+  color: var(--black);
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 1.5px;
+  padding: 3px 8px;
+  border-radius: 100px;
+}
+
+.selector-card-badge-best {
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--gold);
+  color: var(--black);
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 2.5px;
+  padding: 4px 10px;
+  border-radius: 100px;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.booking-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  position: sticky;   /* toute la sidebar colle, pas juste la card */
+  top: 90px;
+  align-self: start;  /* obligatoire pour sticky dans CSS grid */
+}
+
+@media (max-width: 900px) {
+  .booking-sidebar { position: relative; top: auto; }
+}
+
+.booking-summary {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--gold);
+  border-radius: var(--radius-lg, 12px);
+  padding: 28px 24px;
+  position: relative;  /* plus de sticky individuel */
+}
+
+.booking-summary h3 {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--gold-dim);
+  margin-bottom: 18px;
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 15px;
+  gap: 8px;
+}
+
+.summary-row:last-of-type { border-bottom: none; }
+
+.summary-row .label {
+  color: var(--text-soft);
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 15px;
+  flex-shrink: 0;
+}
+
+.summary-row .value {
+  color: var(--text);
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 15px;
+  text-align: right;
+}
+
+.summary-total {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 2px solid var(--gold);
+  text-align: center;
+}
+
+.summary-total-price {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 900;
+  font-size: 48px;
+  letter-spacing: -1px;
+  color: var(--gold);
+  line-height: 1;
+}
+
+.summary-total-period {
+  font-size: 14px;
+  color: var(--text-soft);
+  margin-top: 8px;
+  font-family: var(--font-serif);
+  font-style: italic;
+}
+
+.summary-savings {
+  background: rgba(61, 255, 20, 0.08);
+  border-left: 3px solid var(--green);
+  padding: 10px 14px;
+  margin-top: 12px;
+  border-radius: 4px;
+  font-size: 13px;
+  color: #7AB85A;
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-align: left;
+}
+
+.booking-form-field {
+  margin-bottom: 16px;
+}
+
+.booking-form-field label {
+  display: block;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--gold-dim);
+  margin-bottom: 6px;
+}
+
+.booking-form-field input,
+.booking-form-field select,
+.booking-form-field textarea {
+  width: 100%;
+  background: var(--bg-3);
+  border: 1px solid var(--border);
+  color: var(--white);
+  padding: 10px 14px;
+  border-radius: var(--radius);
+  font-family: var(--font-body);
+  font-size: 16px;
+}
+
+.booking-form-field input:focus-visible,
+.booking-form-field select:focus-visible,
+.booking-form-field textarea:focus-visible {
+  outline: 2px solid var(--gold);
+  border-color: var(--gold);
+}
+
+.fullaccess-toggle {
+  background: var(--bg-3);
+  border: 2px solid var(--border);
+  border-radius: var(--radius-lg, 12px);
+  padding: 14px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  cursor: pointer;
+  transition: border-color .15s, background .15s;
+  margin-top: 4px;
+}
+
+.fullaccess-toggle.checked {
+  border-color: var(--green);
+  background: rgba(61, 255, 20, 0.05);
+}
+
+.booking-fallback-field select {
+  width: 100%;
+  background: var(--bg-3);
+  border: 1px solid var(--border);
+  color: var(--white);
+  padding: 10px 14px;
+  border-radius: var(--radius);
+  font-family: var(--font-body);
+  font-size: 15px;
+  margin-bottom: 12px;
+}
+
+/* ── Tableau tarifs public ──────────────────────────────────────────────── */
+
+.tarif-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--bg-card);
+  border-radius: var(--radius);
+  overflow: hidden;
+  border: 1px solid var(--border);
+  font-size: 15px;
+}
+
+.tarif-table th {
+  background: var(--bg-3);
+  padding: 14px 20px;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--gold-dim);
+  text-align: center;
+  border-bottom: 1px solid var(--border);
+}
+
+.tarif-table th span {
+  display: block;
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--text-soft);
+  letter-spacing: 0;
+  text-transform: none;
+  margin-top: 2px;
+}
+
+.tarif-table td {
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--border);
+}
+
+.tarif-table tr:last-child td { border-bottom: none; }
+
+.tarif-table tr:nth-child(even) td { background: rgba(255,255,255,.015); }
+
+.tarif-label {
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 16px;
+}
+
+.tarif-price {
+  text-align: center;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 24px;
+  color: var(--gold);
+}
+
+.tarif-best {
+  display: inline-block;
+  background: var(--gold);
+  color: var(--black);
+  font-family: var(--font-display);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  padding: 3px 9px;
+  border-radius: 100px;
+  vertical-align: middle;
+  margin-left: 8px;
+  font-style: normal;
+  text-transform: uppercase;
 }

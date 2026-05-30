@@ -36,7 +36,6 @@ class BookingController extends AbstractController
                 // Déduire le vrai personsCount selon le format
                 $format = $booking->getFormat();
                 if ($format !== BookingFormat::GROUP) {
-                    // Pour SOLO/DUO/TRIO : personsCount est fixe et dérivé du format
                     $personsCount = $format->personsMin();
                 } else {
                     // Pour GROUP : valeur saisie par l'utilisateur (mapped: false → lu manuellement)
@@ -118,10 +117,15 @@ class BookingController extends AbstractController
             ];
 
             if ($pack !== PackType::SINGLE) {
-                $monthly = $pricing->monthlyPackPrice($format, $pack, $slot, $fullAccess);
-                $result['pack']        = $pack->label();
-                $result['monthly']     = $pricing->formatPrice($monthly);
-                $result['fullAccess']  = $fullAccess;
+                $monthly  = $pricing->monthlyPackPrice($format, $pack, $slot, $fullAccess);
+                $savings  = $pricing->packSavingsPerPerson($format, $pack, $slot);
+                $result['pack']               = $pack->label();
+                $result['packSessions']        = $pack->sessionsCount();
+                $result['monthly']            = $pricing->formatPrice($monthly);
+                $result['monthlyRaw']         = $monthly;
+                $result['savingsPerPerson']   = $pricing->formatPrice(number_format($savings, 2, '.', ''));
+                $result['savingsRaw']         = $savings;
+                $result['fullAccess']         = $fullAccess;
             }
 
             return $this->json($result);
