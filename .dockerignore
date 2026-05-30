@@ -1,0 +1,38 @@
+# Git
+.git
+.gitignore
+.gitattributes
+
+# Environnement local
+.env.local
+.env.local.php
+.env.*.local
+
+# IDE
+.idea
+.vscode
+.DS_Store
+
+# Dossiers de dev
+node_modules
+var/cache/*
+var/log/*
+!var/cache/.gitkeep
+!var/log/.gitkeep
+
+# Tests
+tests
+phpunit.xml*
+.phpunit.result.cache
+
+# Documentation
+*.md
+docs/
+
+# Scripts dev
+docker-compose.override.yaml
+compose.override.yaml
+
+# Logs et debug
+*.log
+.phpunit.result.cache

@@ -29,6 +29,8 @@ when@test:
 
 when@prod:
     doctrine:
+        dbal:
+            server_version: '16'
         orm:
             query_cache_driver:
                 type: pool
