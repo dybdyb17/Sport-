@@ -2318,9 +2318,9 @@ img, video, iframe { max-width: 100%; }
 /* Slogan signature */
 .brand-slogan {
   font-family: 'Barlow Condensed', sans-serif;
-  font-weight: 700; font-size: 14px;
+  font-weight: 700; font-size: 18px;
   letter-spacing: 3px; text-transform: uppercase;
-  color: var(--text-dim); text-align: center;
+  color: var(--white); text-align: center;
   margin-top: 16px;
 }
 .brand-plus {
