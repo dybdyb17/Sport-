@@ -14,10 +14,13 @@ use App\Entity\Enum\TimeSlot;
  */
 final class PricingCalculator
 {
-    /** Prix séance unique par personne : format × créneau. */
+    /** Prix séance unique par personne : format × créneau.
+     *  Day Pass : Journée 40€ · Night 60€ · Astreinte 80€ (Solo/Duo).
+     *  Group : Journée 22€ · Night 31€ · Astreinte 40€ (inchangé).
+     */
     private const SINGLE_SESSION_PRICES = [
-        'solo'  => ['day' => 40.0, 'night' => 56.0, 'astreinte' => 72.0],
-        'duo'   => ['day' => 40.0, 'night' => 56.0, 'astreinte' => 72.0],
+        'solo'  => ['day' => 40.0, 'night' => 60.0, 'astreinte' => 80.0],
+        'duo'   => ['day' => 40.0, 'night' => 60.0, 'astreinte' => 80.0],
         'group' => ['day' => 22.0, 'night' => 31.0, 'astreinte' => 40.0],
     ];
 
