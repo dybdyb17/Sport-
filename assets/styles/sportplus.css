@@ -2971,3 +2971,130 @@ img, video, iframe { max-width: 100%; }
   font-style: normal;
   text-transform: uppercase;
 }
+
+/* ── PAGES PUBLIQUES — RESPONSIVE MOBILE (mobile-first) ──────────────── */
+
+/*
+ * Approche mobile-first : défaut = mobile, desktop = opt-in via min-width.
+ * Évite tout risque d'échec de media query "override".
+ */
+
+/* ─ Grille L'Origine (about) ─
+   Défaut : 1 colonne (mobile).
+   À partir de 768px : 3fr 2fr (desktop).
+*/
+.about-origin-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 28px;
+  align-items: start;
+}
+
+@media (min-width: 768px) {
+  .about-origin-grid {
+    grid-template-columns: 3fr 2fr;
+    gap: 48px;
+    align-items: center;
+  }
+}
+
+/* ─ Hero sections publiques ─ */
+@media (max-width: 640px) {
+  .pub-hero {
+    padding-top: 50px !important;
+    padding-bottom: 36px !important;
+  }
+}
+
+@media (min-width: 641px) and (max-width: 900px) {
+  .pub-hero {
+    padding-top: 64px !important;
+    padding-bottom: 48px !important;
+  }
+}
+
+/* ─ Section sub : margin-bottom excessif sur mobile ─ */
+@media (max-width: 640px) {
+  .section-sub {
+    margin-bottom: 36px;
+    font-size: 15px;
+  }
+}
+
+/* ─ Tarif tables : scroll horizontal propre ─
+   Le wrapper div a déjà overflow-x:auto.
+   On force min-width > viewport + white-space:nowrap sur les prix
+   pour empêcher "40" / "€" de se couper sur deux lignes.
+*/
+.tarif-price {
+  white-space: nowrap;
+}
+
+@media (max-width: 700px) {
+  .tarif-table {
+    min-width: 520px !important;
+    width: auto !important;
+  }
+  .tarif-table th {
+    padding: 10px 12px;
+    font-size: 11px;
+    white-space: nowrap;
+  }
+  .tarif-table th span {
+    white-space: nowrap;
+  }
+  .tarif-table td {
+    padding: 10px 12px;
+  }
+  .tarif-price {
+    font-size: 20px;
+    white-space: nowrap;
+  }
+  .tarif-label {
+    font-size: 13px;
+    min-width: 130px;
+  }
+  .tarif-best {
+    display: block;
+    margin-left: 0;
+    margin-top: 4px;
+    width: fit-content;
+    white-space: nowrap;
+  }
+}
+
+/* ─ FullAccess block (tarifs) ─ */
+@media (max-width: 640px) {
+  .fullaccess-block {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 20px !important;
+  }
+}
+
+/* ─ Concept hero stats row ─ */
+@media (max-width: 640px) {
+  .concept-hero-stats {
+    gap: 16px !important;
+    justify-content: space-around !important;
+  }
+  .concept-hero-stats > div {
+    min-width: 80px;
+  }
+}
+
+/* ─ Founding pricing card ─ */
+@media (max-width: 640px) {
+  .founding-pricing-card {
+    padding: 28px 20px !important;
+    margin: 0 !important;
+  }
+}
+
+/* ─ Page header mobile ─ */
+@media (max-width: 640px) {
+  .page-header {
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+}
