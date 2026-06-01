@@ -18,13 +18,19 @@
 <div style="max-width:800px;margin:0 auto 32px;">
 <div style="display:flex;gap:20px;align-items:center;padding:20px;
             background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);">
-  <div style="width:60px;height:60px;border-radius:50%;
-              background:linear-gradient(135deg,rgba(200,169,81,.2),rgba(200,169,81,.05));
-              border:1px solid var(--gold-dim);display:flex;align-items:center;justify-content:center;
-              font-family:var(--font-display);font-size:22px;font-weight:700;color:var(--gold);flex-shrink:0;">
-    {%- set words = coach.nomComplet|split(' ') -%}
-    {{- words[0]|first|upper -}}{%- if words|length > 1 -%}{{- words[1]|first|upper -}}{%- endif -%}
-  </div>
+  {% if coach.photoFilename %}
+    <img src="{{ asset('img/coaches/' ~ coach.photoFilename) }}"
+         alt="{{ coach.nomComplet }}"
+         style="width:60px;height:60px;border-radius:50%;object-fit:cover;border:2px solid var(--gold-dim);flex-shrink:0;">
+  {% else %}
+    <div style="width:60px;height:60px;border-radius:50%;
+                background:linear-gradient(135deg,rgba(200,169,81,.2),rgba(200,169,81,.05));
+                border:1px solid var(--gold-dim);display:flex;align-items:center;justify-content:center;
+                font-family:var(--font-display);font-size:22px;font-weight:700;color:var(--gold);flex-shrink:0;">
+      {%- set words = coach.nomComplet|split(' ') -%}
+      {{- words[0]|first|upper -}}{%- if words|length > 1 -%}{{- words[1]|first|upper -}}{%- endif -%}
+    </div>
+  {% endif %}
   <div style="flex:1;">
     <div style="font-family:var(--font-display);font-weight:700;font-size:18px;color:var(--white);">{{ coach.nomComplet }}</div>
     <div style="font-size:14px;color:var(--text-soft);">{{ coach.user.email }}</div>
@@ -40,7 +46,7 @@
 <div style="max-width:800px;margin:0 auto;">
   <div class="data-table-card" style="padding:32px 40px;">
 
-    {{ form_start(form) }}
+    {{ form_start(form, {'attr': {'enctype': 'multipart/form-data'}}) }}
 
       <div class="form-field">
         {{ form_label(form.nomComplet) }}
@@ -62,7 +68,12 @@
 
       <div class="form-field">
         {{ form_label(form.plainPassword) }}
-        {{ form_widget(form.plainPassword) }}
+        <div class="password-field-wrapper">
+          {{ form_widget(form.plainPassword) }}
+          <button type="button" class="password-toggle" aria-label="Afficher/masquer le mot de passe">
+            <i class="ti ti-eye"></i>
+          </button>
+        </div>
         {{ form_errors(form.plainPassword) }}
         <div style="font-size:12px;color:var(--text-dim);margin-top:6px;">
           <i class="ti ti-info-circle"></i> Minimum 8 caractères si modifié
@@ -70,9 +81,23 @@
       </div>
 
       <div class="form-field">
-        {{ form_label(form.hourlyRate) }}
-        {{ form_widget(form.hourlyRate) }}
-        {{ form_errors(form.hourlyRate) }}
+        {{ form_label(form.bio) }}
+        {{ form_widget(form.bio) }}
+        {{ form_errors(form.bio) }}
+      </div>
+
+      <div class="form-field">
+        {{ form_label(form.photoFile) }}
+        {% if coach.photoFilename %}
+          <div style="margin-bottom:10px;display:flex;align-items:center;gap:12px;">
+            <img src="{{ asset('img/coaches/' ~ coach.photoFilename) }}"
+                 alt="Photo actuelle"
+                 style="width:80px;height:80px;border-radius:10px;object-fit:cover;border:1px solid var(--border);">
+            <span style="font-size:13px;color:var(--text-dim);">Photo actuelle — uploader une nouvelle pour la remplacer</span>
+          </div>
+        {% endif %}
+        {{ form_widget(form.photoFile) }}
+        {{ form_errors(form.photoFile) }}
       </div>
 
       <div class="form-field">

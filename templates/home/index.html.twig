@@ -220,19 +220,35 @@
     {% if coaches is empty %}
       <div class="empty-placeholder">Nos coachs arrivent bientôt.</div>
     {% else %}
-      <div class="cards-grid">
+      <div class="coach-pro-grid">
         {% for coach in coaches %}
-          <div class="coach-card">
-            <div class="coach-avatar">
-              {%- set words = coach.nomComplet|split(' ') -%}
-              {{- words[0]|first|upper -}}{%- if words|length > 1 -%}{{- words[1]|first|upper -}}{%- endif -%}
+          <div class="coach-pro-card">
+            <div class="coach-pro-photo-wrap">
+              {% if coach.photoFilename %}
+                <img src="{{ asset('img/coaches/' ~ coach.photoFilename) }}" alt="{{ coach.nomComplet }}" class="coach-pro-photo">
+              {% else %}
+                <div class="coach-pro-initials">
+                  {%- set words = coach.nomComplet|split(' ') -%}
+                  {{- words[0]|first|upper -}}{%- if words|length > 1 -%}{{- words[1]|first|upper -}}{%- endif -%}
+                </div>
+              {% endif %}
             </div>
-            <div class="coach-name">{{ coach.nomComplet }}</div>
-            <div class="coach-specialty">{{ coach.specialtiesLabel }}</div>
-            <div class="coach-price">{{ coach.prixFormatted }}</div>
-            <a href="{{ app.user ? path('app_booking_new') : path('app_login') }}" class="btn btn-secondary btn-full coach-action">
-              <i class="ti ti-calendar-plus"></i> Réserver
-            </a>
+            <div class="coach-pro-body">
+              <div class="coach-pro-name">{{ coach.nomComplet }}</div>
+              {% if coach.bio %}
+                <p class="coach-pro-bio">{{ coach.bio|slice(0,120) }}{% if coach.bio|length > 120 %}…{% endif %}</p>
+              {% endif %}
+              {% if coach.specialties is not empty %}
+                <div class="coach-pro-chips">
+                  {% for specialty in coach.specialties %}
+                    <span class="coach-pro-chip">{{ specialty|capitalize }}</span>
+                  {% endfor %}
+                </div>
+              {% endif %}
+              <a href="{{ app.user ? path('app_booking_new') : path('app_login') }}" class="btn btn-primary coach-pro-cta">
+                <i class="ti ti-calendar-plus"></i> Réserver
+              </a>
+            </div>
           </div>
         {% endfor %}
       </div>

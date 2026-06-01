@@ -9,11 +9,13 @@ use App\Form\AdminCoachType;
 use App\Repository\CoachRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Component\String\Slugger\SluggerInterface;
 
 #[Route('/admin/coachs')]
 #[IsGranted('ROLE_ADMIN')]
@@ -32,6 +34,7 @@ class AdminCoachController extends AbstractController
         Request $request,
         EntityManagerInterface $em,
         UserPasswordHasherInterface $hasher,
+        SluggerInterface $slugger,
     ): Response {
         $form = $this->createForm(AdminCoachType::class);
         $form->handleRequest($request);
@@ -42,7 +45,6 @@ class AdminCoachController extends AbstractController
 
             if ($em->getRepository(User::class)->findOneBy(['email' => $email])) {
                 $this->addFlash('error', sprintf('Un compte existe déjà avec l\'adresse "%s".', $email));
-
                 return $this->redirectToRoute('app_admin_coach_new');
             }
 
@@ -52,20 +54,23 @@ class AdminCoachController extends AbstractController
                 ->setNomComplet((string) $data['nomComplet'])
                 ->setPhone($data['phone'] ?: null)
                 ->setRole(UserRole::COACH);
-            $user->setPassword($hasher->hashPassword($user, (string) $data['plainPassword']));
+            $user->setPassword($hasher->hashPassword($user, (string) $form->get('plainPassword')->getData()));
 
             $coach = new Coach();
             $coach
                 ->setUser($user)
-                ->setHourlyRate(number_format((float) $data['hourlyRate'], 2, '.', ''))
+                ->setHourlyRate('40.00')
+                ->setBio($data['bio'] ?: null)
                 ->setSpecialties((array) ($data['specialties'] ?? []));
 
             $em->persist($user);
             $em->persist($coach);
             $em->flush();
 
-            $this->addFlash('success', sprintf('Coach "%s" créé avec succès.', $user->getNomComplet()));
+            // Photo upload (après flush pour avoir l'ID)
+            $this->handlePhotoUpload($form->get('photoFile')->getData(), $coach, $slugger, $em);
 
+            $this->addFlash('success', sprintf('Coach "%s" créé avec succès.', $user->getNomComplet()));
             return $this->redirectToRoute('app_admin_coachs');
         }
 
@@ -81,6 +86,7 @@ class AdminCoachController extends AbstractController
         CoachRepository $coachRepository,
         EntityManagerInterface $em,
         UserPasswordHasherInterface $hasher,
+        SluggerInterface $slugger,
     ): Response {
         $coach = $coachRepository->find($id);
         if (!$coach) {
@@ -93,7 +99,7 @@ class AdminCoachController extends AbstractController
             'email'       => $user->getEmail(),
             'nomComplet'  => $user->getNomComplet(),
             'phone'       => $user->getPhone(),
-            'hourlyRate'  => $coach->getHourlyRate(),
+            'bio'         => $coach->getBio(),
             'specialties' => $coach->getSpecialties(),
         ];
 
@@ -107,7 +113,7 @@ class AdminCoachController extends AbstractController
             if ($newEmail !== $user->getEmail()) {
                 $existing = $em->getRepository(User::class)->findOneBy(['email' => $newEmail]);
                 if ($existing && $existing->getId() !== $user->getId()) {
-                    $this->addFlash('error', sprintf('L\'adresse "%s" est déjà utilisée par un autre compte.', $newEmail));
+                    $this->addFlash('error', sprintf('L\'adresse "%s" est déjà utilisée.', $newEmail));
                     return $this->redirectToRoute('app_admin_coach_edit', ['id' => $id]);
                 }
             }
@@ -121,8 +127,10 @@ class AdminCoachController extends AbstractController
                 $user->setPassword($hasher->hashPassword($user, $plainPassword));
             }
 
-            $coach->setHourlyRate(number_format((float) $data['hourlyRate'], 2, '.', ''));
+            $coach->setBio($data['bio'] ?: null);
             $coach->setSpecialties((array) ($data['specialties'] ?? []));
+
+            $this->handlePhotoUpload($form->get('photoFile')->getData(), $coach, $slugger, $em);
 
             $em->flush();
 
@@ -134,5 +142,31 @@ class AdminCoachController extends AbstractController
             'form'  => $form,
             'coach' => $coach,
         ]);
+    }
+
+    private function handlePhotoUpload(?UploadedFile $file, Coach $coach, SluggerInterface $slugger, EntityManagerInterface $em): void
+    {
+        if (!$file) {
+            return;
+        }
+
+        // Supprimer l'ancienne photo
+        if ($coach->getPhotoFilename()) {
+            $oldPath = $this->getParameter('kernel.project_dir') . '/public/img/coaches/' . $coach->getPhotoFilename();
+            if (file_exists($oldPath)) {
+                unlink($oldPath);
+            }
+        }
+
+        $safeNom  = $slugger->slug($coach->getNomComplet() ?? 'coach');
+        $filename = $safeNom . '-' . uniqid() . '.' . $file->guessExtension();
+
+        $file->move(
+            $this->getParameter('kernel.project_dir') . '/public/img/coaches',
+            $filename
+        );
+
+        $coach->setPhotoFilename($filename);
+        $em->flush();
     }
 }

@@ -17,7 +17,7 @@
 <div style="max-width:800px;margin:0 auto;">
   <div class="data-table-card" style="padding:32px 40px;">
 
-    {{ form_start(form) }}
+    {{ form_start(form, {'attr': {'enctype': 'multipart/form-data'}}) }}
 
       <div class="form-field">
         {{ form_label(form.nomComplet) }}
@@ -39,14 +39,28 @@
 
       <div class="form-field">
         {{ form_label(form.plainPassword) }}
-        {{ form_widget(form.plainPassword) }}
+        <div class="password-field-wrapper">
+          {{ form_widget(form.plainPassword) }}
+          <button type="button" class="password-toggle" aria-label="Afficher/masquer le mot de passe">
+            <i class="ti ti-eye"></i>
+          </button>
+        </div>
         {{ form_errors(form.plainPassword) }}
       </div>
 
       <div class="form-field">
-        {{ form_label(form.hourlyRate) }}
-        {{ form_widget(form.hourlyRate) }}
-        {{ form_errors(form.hourlyRate) }}
+        {{ form_label(form.bio) }}
+        {{ form_widget(form.bio) }}
+        {{ form_errors(form.bio) }}
+      </div>
+
+      <div class="form-field">
+        {{ form_label(form.photoFile) }}
+        {{ form_widget(form.photoFile) }}
+        {{ form_errors(form.photoFile) }}
+        <div style="font-size:12px;color:var(--text-dim);margin-top:6px;">
+          <i class="ti ti-info-circle"></i> JPEG, PNG ou WebP — max 2 Mo
+        </div>
       </div>
 
       <div class="form-field">

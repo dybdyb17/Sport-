@@ -5,16 +5,17 @@ namespace App\Form;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
-use Symfony\Component\Form\Extension\Core\Type\NumberType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\TelType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\Email;
+use Symfony\Component\Validator\Constraints\File;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
-use Symfony\Component\Validator\Constraints\Positive;
 
 class AdminCoachType extends AbstractType
 {
@@ -66,13 +67,25 @@ class AdminCoachType extends AbstractType
                 'mapped'   => false,
                 'constraints' => $passwordConstraints,
             ])
-            ->add('hourlyRate', NumberType::class, [
-                'label'  => 'Tarif horaire (€)',
-                'scale'  => 2,
-                'attr'   => ['placeholder' => '40.00'],
+            ->add('bio', TextareaType::class, [
+                'label'    => 'Bio / Présentation',
+                'required' => false,
+                'attr'     => [
+                    'placeholder' => 'Parcours, philosophie de coaching, spécialités…',
+                    'rows'        => 4,
+                    'maxlength'   => 600,
+                ],
+            ])
+            ->add('photoFile', FileType::class, [
+                'label'    => 'Photo de profil (JPEG/PNG, max 2 Mo)',
+                'required' => false,
+                'mapped'   => false,
                 'constraints' => [
-                    new NotBlank(['message' => 'Le tarif est obligatoire.']),
-                    new Positive(['message' => 'Le tarif doit être positif.']),
+                    new File([
+                        'maxSize'          => '2M',
+                        'mimeTypes'        => ['image/jpeg', 'image/png', 'image/webp'],
+                        'mimeTypesMessage' => 'Formats acceptés : JPEG, PNG, WebP.',
+                    ]),
                 ],
             ])
             ->add('specialties', ChoiceType::class, [

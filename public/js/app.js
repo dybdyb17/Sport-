@@ -3,6 +3,37 @@
  * Compatible iOS 12+ / Safari / Android / tous navigateurs mobiles.
  */
 
+// ── Oeil mot de passe — injecté sur tous les champs password ──────────────
+// Fonctionne sur les formulaires Symfony (form_widget) ET les inputs manuels.
+// Ne re-wrap pas si déjà dans .password-field-wrapper.
+document.addEventListener('DOMContentLoaded', function() {
+  document.querySelectorAll('input[type="password"]').forEach(function(input) {
+    if (input.closest('.password-field-wrapper')) return; // déjà géré
+
+    // Créer le wrapper
+    var wrapper = document.createElement('div');
+    wrapper.className = 'password-field-wrapper';
+    input.parentNode.insertBefore(wrapper, input);
+    wrapper.appendChild(input);
+
+    // Créer le bouton oeil
+    var btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'password-toggle';
+    btn.setAttribute('aria-label', 'Afficher/masquer le mot de passe');
+    btn.innerHTML = '<i class="ti ti-eye"></i>';
+    wrapper.appendChild(btn);
+
+    btn.addEventListener('click', function() {
+      var isText = input.type === 'text';
+      input.type = isText ? 'password' : 'text';
+      btn.innerHTML = isText
+        ? '<i class="ti ti-eye"></i>'
+        : '<i class="ti ti-eye-off"></i>';
+    });
+  });
+});
+
 // Sécurité : fonctionne que le DOM soit chargé ou non
 (function init() {
   if (document.readyState === 'loading') {

@@ -24,10 +24,10 @@
     <table>
       <thead>
         <tr>
-          <th>Nom</th>
+          <th>Coach</th>
           <th>Email</th>
           <th>Spécialités</th>
-          <th>Tarif/h</th>
+          <th>Bio</th>
           <th style="text-align:right;">Actions</th>
         </tr>
       </thead>
@@ -35,17 +35,29 @@
         {% for coach in coaches %}
           <tr>
             <td>
-              <div style="display:flex;align-items:center;gap:10px;">
-                <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,rgba(200,169,81,.2),rgba(200,169,81,.05));border:1px solid var(--gold-dim);display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;color:var(--gold);flex-shrink:0;">
-                  {%- set words = coach.nomComplet|split(' ') -%}
-                  {{- words[0]|first|upper -}}{%- if words|length > 1 -%}{{- words[1]|first|upper -}}{%- endif -%}
-                </div>
+              <div style="display:flex;align-items:center;gap:12px;">
+                {% if coach.photoFilename %}
+                  <img src="{{ asset('img/coaches/' ~ coach.photoFilename) }}"
+                       alt="{{ coach.nomComplet }}"
+                       style="width:40px;height:40px;border-radius:50%;object-fit:cover;border:1px solid var(--border);flex-shrink:0;">
+                {% else %}
+                  <div style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,rgba(200,169,81,.2),rgba(200,169,81,.05));border:1px solid var(--gold-dim);display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;color:var(--gold);flex-shrink:0;">
+                    {%- set words = coach.nomComplet|split(' ') -%}
+                    {{- words[0]|first|upper -}}{%- if words|length > 1 -%}{{- words[1]|first|upper -}}{%- endif -%}
+                  </div>
+                {% endif %}
                 <span style="font-family:'Barlow Condensed',sans-serif;font-weight:700;">{{ coach.nomComplet }}</span>
               </div>
             </td>
             <td style="color:var(--text-dim);">{{ coach.user.email }}</td>
             <td style="color:var(--text-dim);font-style:italic;">{{ coach.specialtiesLabel }}</td>
-            <td style="color:var(--gold);font-family:'Barlow Condensed',sans-serif;font-weight:700;">{{ coach.prixFormatted }}</td>
+            <td style="color:var(--text-dim);max-width:200px;">
+              {% if coach.bio %}
+                <span style="font-size:13px;">{{ coach.bio|slice(0,60) }}{% if coach.bio|length > 60 %}…{% endif %}</span>
+              {% else %}
+                <span style="opacity:.4;font-size:12px;">—</span>
+              {% endif %}
+            </td>
             <td style="text-align:right;">
               <a href="{{ path('app_admin_coach_edit', {id: coach.id}) }}" class="btn btn-secondary btn-sm">
                 <i class="ti ti-edit"></i> Modifier

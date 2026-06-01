@@ -31,6 +31,12 @@ class Coach
     #[Assert\Positive]
     private ?string $hourlyRate = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $photoFilename = null;
+
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $bio = null;
+
     /**
      * @var Collection<int, Booking>
      */
@@ -118,7 +124,20 @@ class Coach
         return $this;
     }
 
+    public function getPhotoFilename(): ?string { return $this->photoFilename; }
+    public function setPhotoFilename(?string $photoFilename): static { $this->photoFilename = $photoFilename; return $this; }
+
+    public function getBio(): ?string { return $this->bio; }
+    public function setBio(?string $bio): static { $this->bio = $bio; return $this; }
+
     // === HELPERS ===
+
+    public function getPhotoUrl(): string
+    {
+        return $this->photoFilename
+            ? '/img/coaches/' . $this->photoFilename
+            : '';
+    }
 
     public function getNomComplet(): ?string
     {
