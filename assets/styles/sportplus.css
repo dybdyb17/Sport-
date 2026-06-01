@@ -455,18 +455,29 @@ label {
   display: none;
   flex-direction: column;
   gap: 5px;
-  width: 30px;
+  width: 36px;
+  height: 36px;
   cursor: pointer;
   border: none;
   background: transparent;
-  padding: 4px;
+  padding: 6px;
+  /* Supprime le délai 300ms sur iOS sans toucher à touchend */
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  /* Cible tactile suffisante (WCAG 2.5.5) */
+  min-width: 44px;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  position: relative;
 }
 
 .mobile-toggle span {
   height: 2px;
+  width: 22px;
   background: var(--white);
   border-radius: 2px;
-  transition: transform .25s, opacity .25s;
+  transition: transform .25s ease, opacity .25s ease;
   display: block;
 }
 
@@ -483,25 +494,39 @@ label {
   transform: translateY(-7px) rotate(-45deg);
 }
 
-/* ── MOBILE MENU ─────────────────────────────────────────────── */
+/* ── MOBILE MENU ──────────────────────────────────────────────────
+   On évite transform:translateY(-100%) qui est buggé sur iOS 12/13
+   avec position:fixed + backdrop-filter.
+   On utilise display:none → display:block + animation simple.
+───────────────────────────────────────────────────────────────── */
 .mobile-menu {
+  display: none;
   position: fixed;
   top: 70px;
   left: 0;
   right: 0;
   background: rgba(6,6,6,.97);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
   border-bottom: 1px solid var(--border);
   z-index: 190;
-  transform: translateY(-100%);
-  transition: transform .3s ease;
-  pointer-events: none;
+  /* Pas de transform — évite le bug iOS WebKit */
 }
 
 .mobile-menu.is-open {
-  transform: translateY(0);
-  pointer-events: auto;
+  display: block;
+  -webkit-animation: mobileMenuIn .22s ease forwards;
+  animation: mobileMenuIn .22s ease forwards;
+}
+
+@-webkit-keyframes mobileMenuIn {
+  from { opacity: 0; -webkit-transform: translateY(-6px); transform: translateY(-6px); }
+  to   { opacity: 1; -webkit-transform: translateY(0);    transform: translateY(0); }
+}
+
+@keyframes mobileMenuIn {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 .mobile-nav {
