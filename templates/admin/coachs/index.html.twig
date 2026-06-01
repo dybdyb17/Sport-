@@ -28,6 +28,7 @@
           <th>Email</th>
           <th>Spécialités</th>
           <th>Tarif/h</th>
+          <th style="text-align:right;">Actions</th>
         </tr>
       </thead>
       <tbody>
@@ -45,6 +46,11 @@
             <td style="color:var(--text-dim);">{{ coach.user.email }}</td>
             <td style="color:var(--text-dim);font-style:italic;">{{ coach.specialtiesLabel }}</td>
             <td style="color:var(--gold);font-family:'Barlow Condensed',sans-serif;font-weight:700;">{{ coach.prixFormatted }}</td>
+            <td style="text-align:right;">
+              <a href="{{ path('app_admin_coach_edit', {id: coach.id}) }}" class="btn btn-secondary btn-sm">
+                <i class="ti ti-edit"></i> Modifier
+              </a>
+            </td>
           </tr>
         {% endfor %}
       </tbody>

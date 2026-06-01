@@ -10,9 +10,14 @@
       <h1>Mon <span style="color:var(--gold)">Espace</span></h1>
       <p class="page-subtitle">Bienvenue, {{ app.user.nomComplet }}</p>
     </div>
-    <a href="{{ path('app_booking_new') }}" class="btn btn-primary">
-      <i class="ti ti-calendar-plus"></i> Nouvelle réservation
-    </a>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;">
+      <a href="{{ path('app_booking_new') }}" class="btn btn-primary">
+        <i class="ti ti-calendar-plus"></i> Nouvelle réservation
+      </a>
+      <a href="{{ path('app_espace_client_profil') }}" class="btn btn-secondary">
+        <i class="ti ti-user-cog"></i> Modifier mon profil
+      </a>
+    </div>
   </div>
 
   {# ── Founding Member card ── #}

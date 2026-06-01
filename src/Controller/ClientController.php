@@ -3,11 +3,15 @@
 namespace App\Controller;
 
 use App\Entity\Booking;
+use App\Entity\User;
+use App\Form\PasswordChangeFormType;
+use App\Form\ProfilFormType;
 use App\Repository\BookingRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
@@ -39,6 +43,55 @@ class ClientController extends AbstractController
             'total'               => count($all),
             'nbConfirmees'        => $nbConfirmees,
             'nbEnAttente'         => $nbEnAttente,
+        ]);
+    }
+
+    #[Route('/mon-espace/profil', name: 'app_espace_client_profil', methods: ['GET', 'POST'])]
+    public function profil(
+        Request $request,
+        EntityManagerInterface $em,
+        UserPasswordHasherInterface $hasher,
+    ): Response {
+        /** @var User $user */
+        $user = $this->getUser();
+
+        $profilForm = $this->createForm(ProfilFormType::class, $user);
+        $profilForm->handleRequest($request);
+
+        if ($profilForm->isSubmitted() && $profilForm->isValid()) {
+            $newEmail = $user->getEmail();
+            $existing = $em->getRepository(User::class)->findOneBy(['email' => $newEmail]);
+            if ($existing && $existing->getId() !== $user->getId()) {
+                $this->addFlash('danger', sprintf('L\'adresse "%s" est déjà utilisée par un autre compte.', $newEmail));
+                return $this->redirectToRoute('app_espace_client_profil');
+            }
+
+            $em->flush();
+            $this->addFlash('success', 'Tes informations ont été mises à jour.');
+            return $this->redirectToRoute('app_espace_client_profil');
+        }
+
+        $passwordForm = $this->createForm(PasswordChangeFormType::class);
+        $passwordForm->handleRequest($request);
+
+        if ($passwordForm->isSubmitted() && $passwordForm->isValid()) {
+            $currentPassword = $passwordForm->get('currentPassword')->getData();
+            $newPassword     = $passwordForm->get('newPassword')->getData();
+
+            if (!$hasher->isPasswordValid($user, $currentPassword)) {
+                $this->addFlash('danger', 'Mot de passe actuel incorrect.');
+                return $this->redirectToRoute('app_espace_client_profil');
+            }
+
+            $user->setPassword($hasher->hashPassword($user, $newPassword));
+            $em->flush();
+            $this->addFlash('success', 'Mot de passe modifié avec succès.');
+            return $this->redirectToRoute('app_espace_client_profil');
+        }
+
+        return $this->render('client/profil.html.twig', [
+            'profilForm'   => $profilForm,
+            'passwordForm' => $passwordForm,
         ]);
     }
 

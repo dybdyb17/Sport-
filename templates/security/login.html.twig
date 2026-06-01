@@ -30,9 +30,12 @@
 
         <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
 
-        <label style="display:flex;align-items:center;gap:8px;margin-bottom:24px;color:var(--text-soft);font-size:14px;text-transform:none;letter-spacing:0;font-family:var(--font-body);">
-          <input type="checkbox" name="_remember_me"> Se souvenir de moi
-        </label>
+        <div style="margin-bottom:24px;">
+          <label class="chip">
+            <input type="checkbox" name="_remember_me">
+            <span class="chip-text">Se souvenir de moi</span>
+          </label>
+        </div>
 
         <button class="btn btn-primary btn-full btn-lg" type="submit">
           <i class="ti ti-login"></i> Se connecter

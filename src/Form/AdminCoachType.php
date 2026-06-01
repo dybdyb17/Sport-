@@ -20,6 +20,21 @@ class AdminCoachType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+        $isEdit = $options['is_edit'];
+
+        $passwordConstraints = [
+            new Length([
+                'min'        => 8,
+                'minMessage' => 'Minimum {{ limit }} caractères.',
+                'max'        => 4096,
+            ]),
+        ];
+        if (!$isEdit) {
+            array_unshift($passwordConstraints, new NotBlank([
+                'message' => 'Le mot de passe est obligatoire.',
+            ]));
+        }
+
         $builder
             ->add('email', EmailType::class, [
                 'label' => 'Adresse email',
@@ -43,16 +58,13 @@ class AdminCoachType extends AbstractType
                 'attr'     => ['placeholder' => '06 12 34 56 78'],
             ])
             ->add('plainPassword', PasswordType::class, [
-                'label' => 'Mot de passe',
-                'attr'  => ['autocomplete' => 'new-password'],
-                'constraints' => [
-                    new NotBlank(['message' => 'Le mot de passe est obligatoire.']),
-                    new Length([
-                        'min'        => 8,
-                        'minMessage' => 'Minimum {{ limit }} caractères.',
-                        'max'        => 4096,
-                    ]),
-                ],
+                'label'    => $isEdit
+                    ? 'Nouveau mot de passe (laisser vide pour conserver l\'actuel)'
+                    : 'Mot de passe',
+                'required' => !$isEdit,
+                'attr'     => ['autocomplete' => 'new-password'],
+                'mapped'   => false,
+                'constraints' => $passwordConstraints,
             ])
             ->add('hourlyRate', NumberType::class, [
                 'label'  => 'Tarif horaire (€)',
@@ -77,14 +89,15 @@ class AdminCoachType extends AbstractType
                 'multiple' => true,
                 'expanded' => true,
                 'required' => false,
-                'data'     => [],
             ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class' => null, // Tableau simple — le controller construit User+Coach explicitement
+            'data_class' => null,
+            'is_edit'    => false,
         ]);
+        $resolver->setAllowedTypes('is_edit', 'bool');
     }
 }

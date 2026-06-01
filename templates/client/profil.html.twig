@@ -1,0 +1,82 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mon profil — SPORT+{% endblock %}
+
+{% block body %}
+<div class="container" style="padding-top:60px;padding-bottom:80px;max-width:900px;">
+
+  <div class="page-header" style="margin-bottom:40px;">
+    <div>
+      <div class="section-label">Mon compte</div>
+      <h1 style="margin-top:8px;">Mes <span style="color:var(--gold)">informations</span></h1>
+      <p class="page-subtitle">Mets à jour tes données personnelles et ton mot de passe</p>
+    </div>
+    <a href="{{ path('app_espace_client') }}" class="btn btn-secondary">
+      <i class="ti ti-arrow-left"></i> Mon espace
+    </a>
+  </div>
+
+  {# Form 1 : Mes informations #}
+  <div class="form-card" style="margin-bottom:32px;">
+    <h2 style="font-family:var(--font-display);font-size:24px;font-weight:700;
+               text-transform:uppercase;letter-spacing:1px;margin-bottom:24px;">
+      <i class="ti ti-user" style="color:var(--gold);"></i> Mes informations
+    </h2>
+
+    {{ form_start(profilForm) }}
+      <div class="form-field">
+        {{ form_label(profilForm.nomComplet) }}
+        {{ form_widget(profilForm.nomComplet) }}
+        {{ form_errors(profilForm.nomComplet) }}
+      </div>
+      <div class="form-field">
+        {{ form_label(profilForm.email) }}
+        {{ form_widget(profilForm.email) }}
+        {{ form_errors(profilForm.email) }}
+      </div>
+      <div class="form-field">
+        {{ form_label(profilForm.phone) }}
+        {{ form_widget(profilForm.phone) }}
+        {{ form_errors(profilForm.phone) }}
+      </div>
+      <button type="submit" class="btn btn-primary">
+        <i class="ti ti-device-floppy"></i> Enregistrer
+      </button>
+    {{ form_end(profilForm) }}
+  </div>
+
+  {# Form 2 : Changer mot de passe #}
+  <div class="form-card">
+    <h2 style="font-family:var(--font-display);font-size:24px;font-weight:700;
+               text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;">
+      <i class="ti ti-lock" style="color:var(--gold);"></i> Mot de passe
+    </h2>
+    <p style="color:var(--text-soft);font-size:14px;margin-bottom:24px;">
+      Pour ta sécurité, modifie ton mot de passe régulièrement.
+    </p>
+
+    {{ form_start(passwordForm) }}
+      <div class="form-field">
+        {{ form_label(passwordForm.currentPassword) }}
+        {{ form_widget(passwordForm.currentPassword) }}
+        {{ form_errors(passwordForm.currentPassword) }}
+      </div>
+      <div class="form-field">
+        {{ form_label(passwordForm.newPassword.first) }}
+        {{ form_widget(passwordForm.newPassword.first) }}
+        {{ form_errors(passwordForm.newPassword.first) }}
+      </div>
+      <div class="form-field">
+        {{ form_label(passwordForm.newPassword.second) }}
+        {{ form_widget(passwordForm.newPassword.second) }}
+        {{ form_errors(passwordForm.newPassword.second) }}
+      </div>
+      {{ form_errors(passwordForm.newPassword) }}
+      <button type="submit" class="btn btn-primary">
+        <i class="ti ti-key"></i> Changer le mot de passe
+      </button>
+    {{ form_end(passwordForm) }}
+  </div>
+
+</div>
+{% endblock %}

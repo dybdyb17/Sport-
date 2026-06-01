@@ -1,0 +1,103 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Modifier {{ coach.nomComplet }} — Admin SPORT+{% endblock %}
+
+{% block admin_body %}
+
+<div class="page-header">
+  <div>
+    <h1>Modifier <span style="color:var(--gold)">{{ coach.nomComplet }}</span></h1>
+    <p class="page-subtitle">Mise à jour des informations du coach</p>
+  </div>
+  <a href="{{ path('app_admin_coachs') }}" class="btn btn-secondary">
+    <i class="ti ti-arrow-left"></i> Retour à la liste
+  </a>
+</div>
+
+{# Mini-card récap #}
+<div style="max-width:800px;margin:0 auto 32px;">
+<div style="display:flex;gap:20px;align-items:center;padding:20px;
+            background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);">
+  <div style="width:60px;height:60px;border-radius:50%;
+              background:linear-gradient(135deg,rgba(200,169,81,.2),rgba(200,169,81,.05));
+              border:1px solid var(--gold-dim);display:flex;align-items:center;justify-content:center;
+              font-family:var(--font-display);font-size:22px;font-weight:700;color:var(--gold);flex-shrink:0;">
+    {%- set words = coach.nomComplet|split(' ') -%}
+    {{- words[0]|first|upper -}}{%- if words|length > 1 -%}{{- words[1]|first|upper -}}{%- endif -%}
+  </div>
+  <div style="flex:1;">
+    <div style="font-family:var(--font-display);font-weight:700;font-size:18px;color:var(--white);">{{ coach.nomComplet }}</div>
+    <div style="font-size:14px;color:var(--text-soft);">{{ coach.user.email }}</div>
+    <div style="font-size:13px;color:var(--text-dim);margin-top:4px;">
+      <i class="ti ti-calendar"></i> Membre depuis {{ coach.user.createdAt|date('d/m/Y') }}
+      &nbsp;·&nbsp;
+      <i class="ti ti-list-check"></i> {{ coach.bookings|length }} réservation{% if coach.bookings|length > 1 %}s{% endif %}
+    </div>
+  </div>
+</div>
+</div>
+
+<div style="max-width:800px;margin:0 auto;">
+  <div class="data-table-card" style="padding:32px 40px;">
+
+    {{ form_start(form) }}
+
+      <div class="form-field">
+        {{ form_label(form.nomComplet) }}
+        {{ form_widget(form.nomComplet) }}
+        {{ form_errors(form.nomComplet) }}
+      </div>
+
+      <div class="form-field">
+        {{ form_label(form.email) }}
+        {{ form_widget(form.email) }}
+        {{ form_errors(form.email) }}
+      </div>
+
+      <div class="form-field">
+        {{ form_label(form.phone) }}
+        {{ form_widget(form.phone) }}
+        {{ form_errors(form.phone) }}
+      </div>
+
+      <div class="form-field">
+        {{ form_label(form.plainPassword) }}
+        {{ form_widget(form.plainPassword) }}
+        {{ form_errors(form.plainPassword) }}
+        <div style="font-size:12px;color:var(--text-dim);margin-top:6px;">
+          <i class="ti ti-info-circle"></i> Minimum 8 caractères si modifié
+        </div>
+      </div>
+
+      <div class="form-field">
+        {{ form_label(form.hourlyRate) }}
+        {{ form_widget(form.hourlyRate) }}
+        {{ form_errors(form.hourlyRate) }}
+      </div>
+
+      <div class="form-field">
+        {{ form_label(form.specialties, null, {'label_attr': {'class': 'form-label-uppercase'}}) }}
+        <div class="chip-group">
+          {% for child in form.specialties %}
+            <label class="chip">
+              {{ form_widget(child) }}
+              <span class="chip-text">{{ child.vars.label }}</span>
+            </label>
+          {% endfor %}
+        </div>
+        {{ form_errors(form.specialties) }}
+      </div>
+
+      <div style="display:flex;gap:12px;margin-top:8px;">
+        <button type="submit" class="btn btn-primary">
+          <i class="ti ti-device-floppy"></i> Enregistrer les modifications
+        </button>
+        <a href="{{ path('app_admin_coachs') }}" class="btn btn-secondary">Annuler</a>
+      </div>
+
+    {{ form_end(form) }}
+
+  </div>
+</div>
+
+{% endblock %}

@@ -1018,6 +1018,96 @@ input[type="radio"] {
   accent-color: var(--gold);
 }
 
+/* ── CHIPS / PILLS — checkboxes/radios stylés SPORT+ ────────── */
+.chip-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 6px;
+}
+
+.chip {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  background: var(--bg-3);
+  color: var(--text-soft);
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.18s ease;
+}
+
+.chip:hover {
+  border-color: var(--gold-dim);
+  color: var(--text);
+  background: rgba(200, 169, 81, 0.06);
+}
+
+/* Masquer la checkbox/radio native tout en la gardant accessible */
+.chip input[type="checkbox"],
+.chip input[type="radio"] {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+  width: 1px;
+  height: 1px;
+}
+
+/* État sélectionné */
+.chip:has(input:checked) {
+  background: var(--gold);
+  border-color: var(--gold);
+  color: var(--black);
+  font-weight: 700;
+  box-shadow: 0 4px 14px rgba(200, 169, 81, 0.25);
+}
+
+.chip:has(input:checked):hover {
+  background: #d4b766;
+}
+
+/* Check visuel quand sélectionné */
+.chip:has(input:checked)::before {
+  content: "✓";
+  font-weight: 900;
+  font-size: 13px;
+  margin-right: -2px;
+}
+
+/* Accessibilité : outline focus-visible */
+.chip:has(input:focus-visible) {
+  outline: 2px solid var(--gold);
+  outline-offset: 3px;
+}
+
+.form-label-uppercase {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: var(--gold-dim);
+  margin-bottom: 8px;
+  display: block;
+}
+
+@media (max-width: 600px) {
+  .chip {
+    padding: 8px 14px;
+    font-size: 13px;
+  }
+  .chip-group {
+    gap: 8px;
+  }
+}
+
 /* ── STATUS BADGES ────────────────────────────────────────────── */
 .status-badge {
   display: inline-flex;
@@ -1287,6 +1377,17 @@ input[type="radio"] {
   flex: 1;
   padding: 32px 40px;
   overflow-y: auto;
+}
+
+/* ── FORM CARD ────────────────────────────────────────────────── */
+.form-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 32px;
+}
+@media (max-width: 600px) {
+  .form-card { padding: 20px; }
 }
 
 /* ── AUTH PAGES ───────────────────────────────────────────────── */

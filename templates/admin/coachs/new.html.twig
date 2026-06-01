@@ -14,8 +14,8 @@
   </a>
 </div>
 
-<div style="max-width:540px;">
-  <div class="data-table-card" style="padding:32px;">
+<div style="max-width:800px;margin:0 auto;">
+  <div class="data-table-card" style="padding:32px 40px;">
 
     {{ form_start(form) }}
 
@@ -50,9 +50,14 @@
       </div>
 
       <div class="form-field">
-        {{ form_label(form.specialties) }}
-        <div style="display:flex;flex-direction:column;gap:8px;margin-top:8px;">
-          {{ form_widget(form.specialties) }}
+        {{ form_label(form.specialties, null, {'label_attr': {'class': 'form-label-uppercase'}}) }}
+        <div class="chip-group">
+          {% for child in form.specialties %}
+            <label class="chip">
+              {{ form_widget(child) }}
+              <span class="chip-text">{{ child.vars.label }}</span>
+            </label>
+          {% endfor %}
         </div>
         {{ form_errors(form.specialties) }}
       </div>
