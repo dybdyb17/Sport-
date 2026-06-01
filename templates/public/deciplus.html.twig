@@ -6,204 +6,394 @@
 {% block body %}
 
 {# ── Hero ── #}
-<section class="pub-hero" style="padding:80px 0 60px;text-align:center;">
+<section class="pub-hero" style="padding:60px 0 40px;text-align:center;">
   <div class="container">
     <div class="hero-badge">Espace Membre</div>
-    <h1 class="section-title" style="margin-top:16px;">
+    <h1 class="section-title" style="margin-top:12px;">
       Votre espace <span style="color:var(--green)">Deciplus</span>
     </h1>
-    <p class="section-sub">Réservations, planning, abonnements — tout gérer directement depuis cette page.</p>
+    <p class="section-sub" style="margin-bottom:0;">
+      Réservations, planning, abonnements et accès salle 24h/24.
+    </p>
   </div>
 </section>
 
-<section class="section" style="padding-top:0;">
+<section class="section" style="padding-top:32px;">
   <div class="container">
 
-    {# ── Code Centre + Decipass ── #}
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;margin-bottom:48px;">
+    {# ── Code Centre + Decipass — stacked sur mobile ── #}
+    <div class="deciplus-info-grid">
 
       {# Code Centre #}
-      <div style="background:var(--bg-card);border:1px solid rgba(61,255,20,.35);
-                  border-radius:var(--radius-lg);padding:28px 24px;">
-        <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
-          <div style="width:44px;height:44px;background:rgba(61,255,20,.1);border-radius:10px;
-                      display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-            <i class="ti ti-building" style="font-size:22px;color:var(--green);"></i>
+      <div class="deciplus-card deciplus-card-green">
+        <div class="deciplus-card-header">
+          <div class="deciplus-icon">
+            <i class="ti ti-building"></i>
           </div>
           <div>
-            <div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:16px;
-                        text-transform:uppercase;letter-spacing:1px;color:var(--white);">Code Centre</div>
-            <div style="font-size:13px;color:var(--text-dim);">Pour rejoindre le club sur l'app</div>
+            <div class="deciplus-card-title">Code Centre</div>
+            <div class="deciplus-card-sub">Pour rejoindre SPORT+ sur l'app</div>
           </div>
         </div>
-        <div style="background:var(--bg-3);border:1px solid var(--border);border-radius:var(--radius);
-                    padding:14px 18px;display:flex;align-items:center;justify-content:space-between;gap:12px;">
-          <span style="font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:900;
-                       color:var(--green);letter-spacing:4px;">{{ codeCentre }}</span>
-          <button onclick="navigator.clipboard.writeText('{{ codeCentre }}').then(()=>{this.innerHTML='<i class=\'ti ti-check\'></i>';setTimeout(()=>{this.innerHTML='<i class=\'ti ti-copy\'></i>';},1500)})"
-                  style="background:none;border:1px solid var(--border);border-radius:var(--radius-sm);
-                         padding:8px 10px;cursor:pointer;color:var(--text-soft);transition:all .2s;"
-                  title="Copier le code">
-            <i class="ti ti-copy"></i>
+        <div class="deciplus-code-box">
+          <span class="deciplus-code-value">{{ codeCentre }}</span>
+          <button class="deciplus-copy-btn"
+                  onclick="navigator.clipboard.writeText('{{ codeCentre }}').then(()=>{this.textContent='✓ Copié';setTimeout(()=>{this.textContent='Copier';},1500)})"
+                  aria-label="Copier le code centre">
+            Copier
           </button>
         </div>
-        <p style="font-size:13px;color:var(--text-dim);margin-top:12px;line-height:1.6;">
-          Ouvre l'app <strong style="color:var(--white);">Xplor Active</strong>,
-          tape ce code pour retrouver SPORT+ et accéder à tes réservations.
+        <p class="deciplus-hint">
+          Ouvre <strong>Xplor Active</strong>, entre ce code pour accéder à SPORT+.
         </p>
       </div>
 
-      {# Decipass / Accès salle #}
-      <div style="background:var(--bg-card);border:1px solid var(--border);
-                  border-radius:var(--radius-lg);padding:28px 24px;">
-        <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
-          <div style="width:44px;height:44px;background:rgba(61,255,20,.1);border-radius:10px;
-                      display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-            <i class="ti ti-qrcode" style="font-size:22px;color:var(--green);"></i>
+      {# Decipass #}
+      <div class="deciplus-card">
+        <div class="deciplus-card-header">
+          <div class="deciplus-icon">
+            <i class="ti ti-qrcode"></i>
           </div>
           <div>
-            <div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:16px;
-                        text-transform:uppercase;letter-spacing:1px;color:var(--white);">Decipass</div>
-            <div style="font-size:13px;color:var(--text-dim);">Accès salle 24h/24 via QR code</div>
+            <div class="deciplus-card-title">Decipass</div>
+            <div class="deciplus-card-sub">Accès salle 24h/24 par QR code</div>
           </div>
         </div>
-        <p style="color:var(--text-soft);font-size:14px;line-height:1.7;margin-bottom:16px;">
-          Ton <strong style="color:var(--white);">Decipass</strong> est un QR code personnel dans l'app
-          <strong style="color:var(--white);">Xplor Active</strong>. Il remplace le badge physique
-          et te permet d'entrer dans la salle à n'importe quelle heure.
+        <p class="deciplus-hint" style="margin-bottom:16px;">
+          Ton <strong>Decipass</strong> est un QR code dans l'app qui remplace le badge physique. Présente-le devant le lecteur à l'entrée pour ouvrir la porte.
         </p>
-        <div style="display:flex;gap:10px;flex-wrap:wrap;">
+        <div class="deciplus-app-links">
           <a href="https://apps.apple.com/fr/app/xplor-active/id1479082498"
-             target="_blank" rel="noopener noreferrer"
-             style="display:inline-flex;align-items:center;gap:8px;padding:10px 16px;
-                    background:var(--bg-3);border:1px solid var(--border);border-radius:var(--radius);
-                    color:var(--white);text-decoration:none;font-size:13px;font-weight:600;
-                    transition:border-color .2s;">
-            <i class="ti ti-brand-apple" style="font-size:16px;"></i> App Store
+             target="_blank" rel="noopener noreferrer" class="deciplus-app-btn">
+            <i class="ti ti-brand-apple"></i> App Store
           </a>
           <a href="https://play.google.com/store/apps/details?id=pro.deciplus.xploractive"
-             target="_blank" rel="noopener noreferrer"
-             style="display:inline-flex;align-items:center;gap:8px;padding:10px 16px;
-                    background:var(--bg-3);border:1px solid var(--border);border-radius:var(--radius);
-                    color:var(--white);text-decoration:none;font-size:13px;font-weight:600;
-                    transition:border-color .2s;">
-            <i class="ti ti-brand-google-play" style="font-size:16px;"></i> Google Play
+             target="_blank" rel="noopener noreferrer" class="deciplus-app-btn">
+            <i class="ti ti-brand-google-play"></i> Google Play
           </a>
         </div>
-      </div>
-
-    </div>
-
-    {# ── Iframe Deciplus ── #}
-    <div class="section-label" style="margin-bottom:20px;">Planning & réservations</div>
-
-    <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);
-                overflow:hidden;margin-bottom:48px;">
-
-      {# Tabs de navigation #}
-      <div style="display:flex;gap:0;border-bottom:1px solid var(--border);overflow-x:auto;
-                  -webkit-overflow-scrolling:touch;">
-        <a href="{{ path('app_deciplus') }}#iframe-area"
-           onclick="document.getElementById('deciplus-frame').src='https://member-app.deciplus.pro/{{ slug }}/calendar';return false;"
-           class="deciplus-tab active-tab" id="tab-calendar">
-          <i class="ti ti-calendar"></i> Planning
-        </a>
-        <a href="{{ path('app_deciplus') }}#iframe-area"
-           onclick="document.getElementById('deciplus-frame').src='https://member-app.deciplus.pro/{{ slug }}/tunnel';document.querySelectorAll('.deciplus-tab').forEach(t=>t.classList.remove('active-tab'));this.classList.add('active-tab');return false;"
-           class="deciplus-tab" id="tab-inscription">
-          <i class="ti ti-user-plus"></i> Inscription
-        </a>
-        <a href="{{ path('app_deciplus') }}#iframe-area"
-           onclick="document.getElementById('deciplus-frame').src='https://member-app.deciplus.pro/{{ slug }}/shop';document.querySelectorAll('.deciplus-tab').forEach(t=>t.classList.remove('active-tab'));this.classList.add('active-tab');return false;"
-           class="deciplus-tab" id="tab-shop">
-          <i class="ti ti-shopping-cart"></i> Boutique
-        </a>
-      </div>
-
-      {# Iframe #}
-      <div id="iframe-area">
-        <iframe
-          id="deciplus-frame"
-          src="https://member-app.deciplus.pro/{{ slug }}/calendar"
-          width="100%"
-          height="800"
-          frameborder="0"
-          allow="camera; microphone"
-          loading="lazy"
-          title="Espace membre SPORT+ — Deciplus"
-          style="display:block;min-height:600px;">
-        </iframe>
       </div>
 
     </div>
 
     {# ── Aide rapide ── #}
-    <div style="background:var(--bg-card);border:1px solid var(--border);border-left:3px solid var(--green);
-                border-radius:var(--radius-lg);padding:24px 28px;">
-      <div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:18px;
-                  text-transform:uppercase;letter-spacing:1px;margin-bottom:16px;color:var(--white);">
-        <i class="ti ti-help-circle" style="color:var(--green);margin-right:8px;"></i>Aide rapide
+    <div class="deciplus-help">
+      <div class="deciplus-help-title">
+        <i class="ti ti-help-circle" style="color:var(--green);"></i> Comment ça marche
       </div>
-      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;">
-        <div>
-          <div style="font-size:13px;font-weight:600;color:var(--white);margin-bottom:4px;">
-            <i class="ti ti-circle-check" style="color:var(--green);margin-right:6px;"></i>
-            Première connexion
+      <div class="deciplus-steps">
+        <div class="deciplus-step">
+          <div class="deciplus-step-num">1</div>
+          <div>
+            <strong>Télécharge Xplor Active</strong><br>
+            <span>App Store ou Google Play</span>
           </div>
-          <p style="font-size:13px;color:var(--text-dim);line-height:1.6;margin:0;">
-            Télécharge Xplor Active, entre le code centre <strong style="color:var(--green);">{{ codeCentre }}</strong> et crée ton compte.
-          </p>
         </div>
-        <div>
-          <div style="font-size:13px;font-weight:600;color:var(--white);margin-bottom:4px;">
-            <i class="ti ti-circle-check" style="color:var(--green);margin-right:6px;"></i>
-            Accéder à la salle
+        <div class="deciplus-step">
+          <div class="deciplus-step-num">2</div>
+          <div>
+            <strong>Entre le code <span style="color:var(--green)">{{ codeCentre }}</span></strong><br>
+            <span>Pour rejoindre SPORT+</span>
           </div>
-          <p style="font-size:13px;color:var(--text-dim);line-height:1.6;margin:0;">
-            Ouvre l'app → onglet Decipass → présente ton QR code devant le lecteur d'accès.
-          </p>
         </div>
-        <div>
-          <div style="font-size:13px;font-weight:600;color:var(--white);margin-bottom:4px;">
-            <i class="ti ti-circle-check" style="color:var(--green);margin-right:6px;"></i>
-            Réserver une séance
+        <div class="deciplus-step">
+          <div class="deciplus-step-num">3</div>
+          <div>
+            <strong>Récupère ton Decipass</strong><br>
+            <span>QR code → accès salle 24h/24</span>
           </div>
-          <p style="font-size:13px;color:var(--text-dim);line-height:1.6;margin:0;">
-            Utilise le planning ci-dessus ou l'app pour réserver avec un coach.
-          </p>
         </div>
       </div>
+    </div>
+
+    {# ── Iframe Deciplus ── #}
+    <div class="deciplus-frame-section">
+
+      <div class="section-label" style="margin-bottom:16px;">Planning & réservations</div>
+
+      {# Tabs ── #}
+      <div class="deciplus-tabs" role="tablist">
+        <button class="deciplus-tab deciplus-tab-active"
+                onclick="switchTab(this,'https://member-app.deciplus.pro/{{ slug }}/calendar')"
+                role="tab" aria-selected="true">
+          <i class="ti ti-calendar"></i><span>Planning</span>
+        </button>
+        <button class="deciplus-tab"
+                onclick="switchTab(this,'https://member-app.deciplus.pro/{{ slug }}/tunnel')"
+                role="tab" aria-selected="false">
+          <i class="ti ti-user-plus"></i><span>Inscription</span>
+        </button>
+        <button class="deciplus-tab"
+                onclick="switchTab(this,'https://member-app.deciplus.pro/{{ slug }}/shop')"
+                role="tab" aria-selected="false">
+          <i class="ti ti-shopping-cart"></i><span>Boutique</span>
+        </button>
+      </div>
+
+      {# Iframe ── #}
+      <div class="deciplus-frame-wrapper">
+        <iframe
+          id="deciplus-frame"
+          src="https://member-app.deciplus.pro/{{ slug }}/calendar"
+          width="100%"
+          height="900"
+          frameborder="0"
+          allow="camera; microphone"
+          loading="lazy"
+          title="Espace membre SPORT+ — Deciplus"
+          style="display:block;">
+        </iframe>
+      </div>
+
     </div>
 
   </div>
 </section>
 
+<script>
+function switchTab(btn, url) {
+  document.querySelectorAll('.deciplus-tab').forEach(t => {
+    t.classList.remove('deciplus-tab-active');
+    t.setAttribute('aria-selected', 'false');
+  });
+  btn.classList.add('deciplus-tab-active');
+  btn.setAttribute('aria-selected', 'true');
+  document.getElementById('deciplus-frame').src = url;
+}
+</script>
+
 <style>
+/* ── Grille info cards ── */
+.deciplus-info-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+@media (min-width: 640px) {
+  .deciplus-info-grid { grid-template-columns: 1fr 1fr; gap: 20px; }
+}
+
+/* ── Cards ── */
+.deciplus-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+}
+.deciplus-card-green {
+  border-color: rgba(61,255,20,.35);
+  box-shadow: 0 0 20px rgba(61,255,20,.05);
+}
+.deciplus-card-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+.deciplus-icon {
+  width: 40px;
+  height: 40px;
+  background: rgba(61,255,20,.1);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 20px;
+  color: var(--green);
+}
+.deciplus-card-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  font-size: 15px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--white);
+}
+.deciplus-card-sub {
+  font-size: 12px;
+  color: var(--text-dim);
+  margin-top: 2px;
+}
+.deciplus-hint {
+  font-size: 13px;
+  color: var(--text-soft);
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* ── Code box ── */
+.deciplus-code-box {
+  background: var(--bg-3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.deciplus-code-value {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 26px;
+  font-weight: 900;
+  color: var(--green);
+  letter-spacing: 3px;
+}
+.deciplus-copy-btn {
+  background: rgba(61,255,20,.1);
+  border: 1px solid rgba(61,255,20,.3);
+  border-radius: var(--radius-sm);
+  padding: 6px 12px;
+  cursor: pointer;
+  color: var(--green);
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+  transition: background .2s;
+}
+.deciplus-copy-btn:hover { background: rgba(61,255,20,.2); }
+
+/* ── App links ── */
+.deciplus-app-links {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.deciplus-app-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 9px 14px;
+  background: var(--bg-3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--white);
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 600;
+  transition: border-color .2s;
+}
+.deciplus-app-btn:hover { border-color: rgba(61,255,20,.4); }
+
+/* ── Aide rapide ── */
+.deciplus-help {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--green);
+  border-radius: var(--radius-lg);
+  padding: 18px 20px;
+  margin-bottom: 28px;
+}
+.deciplus-help-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  font-size: 16px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--white);
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.deciplus-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+@media (min-width: 640px) {
+  .deciplus-steps { flex-direction: row; gap: 20px; }
+}
+.deciplus-step {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  font-size: 13px;
+  color: var(--text-soft);
+  line-height: 1.5;
+}
+.deciplus-step strong { color: var(--white); font-size: 13px; }
+.deciplus-step span { color: var(--text-dim); }
+.deciplus-step-num {
+  width: 26px;
+  height: 26px;
+  background: rgba(61,255,20,.12);
+  border: 1px solid rgba(61,255,20,.3);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 900;
+  font-size: 13px;
+  color: var(--green);
+  flex-shrink: 0;
+}
+
+/* ── Tabs ── */
+.deciplus-frame-section {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  margin-bottom: 40px;
+}
+.deciplus-tabs {
+  display: flex;
+  border-bottom: 1px solid var(--border);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.deciplus-tabs::-webkit-scrollbar { display: none; }
 .deciplus-tab {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  padding: 14px 20px;
+  gap: 7px;
+  padding: 13px 18px;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  border-right: 1px solid var(--border);
+  cursor: pointer;
+  color: var(--text-soft);
   font-family: var(--font-body);
   font-size: 14px;
   font-weight: 600;
-  color: var(--text-soft);
-  text-decoration: none;
-  border-right: 1px solid var(--border);
   white-space: nowrap;
   transition: color .2s, background .2s;
 }
-.deciplus-tab:hover {
-  color: var(--white);
-  background: rgba(61,255,20,.05);
-}
-.deciplus-tab.active-tab {
-  color: var(--green);
-  border-bottom: 2px solid var(--green);
+.deciplus-tab:hover { color: var(--white); background: rgba(255,255,255,.03); }
+.deciplus-tab-active {
+  color: var(--green) !important;
+  border-bottom-color: var(--green) !important;
   background: rgba(61,255,20,.04);
 }
+.deciplus-tab span { display: inline; }
+
+/* ── Iframe ── */
+.deciplus-frame-wrapper { overflow: hidden; }
+.deciplus-frame-wrapper iframe {
+  width: 100%;
+  min-height: 600px;
+  height: 900px;
+  display: block;
+}
+
+/* ── Mobile ── */
 @media (max-width: 640px) {
-  .deciplus-tab { padding: 12px 14px; font-size: 13px; }
+  .deciplus-tab { padding: 11px 14px; font-size: 13px; }
+  .deciplus-tab span { display: none; } /* icône seule sur mobile */
+  .deciplus-tab i { font-size: 18px; }
+  .deciplus-frame-wrapper iframe {
+    height: 80vh;
+    min-height: 500px;
+  }
+  .deciplus-card { padding: 16px; }
+  .deciplus-code-value { font-size: 22px; letter-spacing: 2px; }
 }
 </style>
 

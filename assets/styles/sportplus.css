@@ -206,11 +206,22 @@ label {
   color: var(--white);
   letter-spacing: 1px;
   text-transform: uppercase;
+  white-space: nowrap;
 }
 
 .logo-name span {
   color: var(--green);
   text-shadow: 0 0 8px rgba(61,255,20,.4);
+}
+
+/* Bouton "Connexion" caché sur mobile — présent dans le menu burger */
+@media (max-width: 640px) {
+  .header-connexion-btn {
+    display: none !important;
+  }
+  .header-actions {
+    gap: 8px;
+  }
 }
 
 /* ── NAV ─────────────────────────────────────────────────────── */
