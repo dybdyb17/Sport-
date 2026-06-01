@@ -23,6 +23,11 @@ class CoachController extends AbstractController
         $coach = $user->getCoach();
 
         if (!$coach) {
+            // Admin sans profil coach → retour au tableau de bord admin
+            if ($this->isGranted('ROLE_ADMIN')) {
+                $this->addFlash('info', 'Ton compte admin n\'a pas de profil coach. Crée-le d\'abord via la gestion des coachs, ou utilise app:promote-admin si tu es déjà coach.');
+                return $this->redirectToRoute('app_admin_dashboard');
+            }
             throw $this->createAccessDeniedException('Aucun profil coach associé à ce compte.');
         }
 
