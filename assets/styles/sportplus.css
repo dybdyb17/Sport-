@@ -157,6 +157,12 @@ label {
   margin: 0 auto;
 }
 
+@media (max-width: 480px) {
+  .header-inner {
+    padding: 0 14px;
+  }
+}
+
 /* ── LOGO ────────────────────────────────────────────────────── */
 .logo {
   display: flex;
@@ -2978,6 +2984,56 @@ img, video, iframe { max-width: 100%; }
  * Approche mobile-first : défaut = mobile, desktop = opt-in via min-width.
  * Évite tout risque d'échec de media query "override".
  */
+
+/* ─ Stat cards (about) — 2 colonnes mobile, 4 desktop ─ */
+.about-stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+@media (min-width: 768px) {
+  .about-stats-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+  }
+}
+
+.about-stat-card {
+  text-align: center;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 24px 16px;
+}
+
+@media (min-width: 768px) {
+  .about-stat-card {
+    padding: 32px 20px;
+  }
+}
+
+.about-stat-card .stat-number {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 36px;
+  font-weight: 900;
+  color: var(--gold);
+  line-height: 1;
+}
+
+@media (min-width: 768px) {
+  .about-stat-card .stat-number {
+    font-size: 48px;
+  }
+}
+
+.about-stat-card .stat-label {
+  font-size: 11px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-top: 8px;
+}
 
 /* ─ Grille L'Origine (about) ─
    Défaut : 1 colonne (mobile).
