@@ -92,6 +92,15 @@ class PublicController extends AbstractController
         ]);
     }
 
+    #[Route('/espace-deciplus', name: 'app_deciplus', methods: ['GET'])]
+    public function deciplus(): Response
+    {
+        return $this->render('public/deciplus.html.twig', [
+            'slug'         => $this->getParameter('deciplus_slug'),
+            'codeCentre'   => $this->getParameter('deciplus_code_centre'),
+        ]);
+    }
+
     #[Route('/concept', name: 'app_concept', methods: ['GET'])]
     public function concept(): Response
     {

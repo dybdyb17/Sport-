@@ -50,6 +50,9 @@
       <a href="{{ path('app_about') }}" class="nav-link {% if app.request.attributes.get('_route') == 'app_about' %}active{% endif %}">À propos</a>
       <a href="{{ path('app_faq') }}" class="nav-link {% if app.request.attributes.get('_route') == 'app_faq' %}active{% endif %}">FAQ</a>
       <a href="{{ path('app_contact') }}" class="nav-link {% if app.request.attributes.get('_route') == 'app_contact' %}active{% endif %}">Contact</a>
+      <a href="{{ path('app_deciplus') }}" class="nav-link nav-link-deciplus {% if app.request.attributes.get('_route') == 'app_deciplus' %}active{% endif %}">
+        <i class="ti ti-qrcode" style="font-size:14px;"></i> Deciplus
+      </a>
     </nav>
 
     <!-- Actions -->
@@ -123,6 +126,9 @@
     <a href="{{ path('app_about') }}" class="nav-link">À propos</a>
     <a href="{{ path('app_faq') }}" class="nav-link">FAQ</a>
     <a href="{{ path('app_contact') }}" class="nav-link">Contact</a>
+    <a href="{{ path('app_deciplus') }}" class="nav-link" style="color:var(--green);">
+      <i class="ti ti-qrcode"></i> Deciplus
+    </a>
   </nav>
   <div class="mobile-actions">
     {% if app.user %}
@@ -186,6 +192,7 @@
         <div class="footer-col-title">Suivez-nous</div>
         <a href="https://www.facebook.com/sportplusmarseille" target="_blank" rel="noopener noreferrer" class="footer-link"><i class="ti ti-brand-facebook"></i> Facebook</a>
         <a href="https://www.instagram.com/sportplus_marseille" target="_blank" rel="noopener noreferrer" class="footer-link"><i class="ti ti-brand-instagram"></i> Instagram</a>
+        <a href="{{ path('app_deciplus') }}" class="footer-link"><i class="ti ti-qrcode"></i> Espace Deciplus</a>
         <div class="footer-col-title" style="margin-top:20px;">Légal</div>
         <a href="{{ path('app_about') }}" class="footer-link">À propos</a>
         <a href="{{ path('app_legal_mentions') }}" class="footer-link">Mentions légales</a>

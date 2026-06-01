@@ -61,6 +61,31 @@
     </div>
   </div>
 
+  {# ── Encart Deciplus ── #}
+  <div style="background:var(--bg-card);border:1px solid rgba(61,255,20,.3);
+              border-left:3px solid var(--green);border-radius:var(--radius-lg);
+              padding:20px 24px;margin-bottom:32px;
+              display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;">
+    <div style="display:flex;align-items:center;gap:14px;">
+      <div style="width:42px;height:42px;background:rgba(61,255,20,.1);border-radius:10px;
+                  display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+        <i class="ti ti-qrcode" style="font-size:20px;color:var(--green);"></i>
+      </div>
+      <div>
+        <div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:15px;
+                    text-transform:uppercase;letter-spacing:1px;color:var(--white);">
+          Accès salle 24h/24 — Deciplus
+        </div>
+        <div style="font-size:13px;color:var(--text-dim);margin-top:2px;">
+          Planning, réservations et QR code d'accès via l'app Xplor Active.
+        </div>
+      </div>
+    </div>
+    <a href="{{ path('app_deciplus') }}" class="btn btn-secondary btn-sm" style="flex-shrink:0;">
+      <i class="ti ti-external-link"></i> Mon espace Deciplus
+    </a>
+  </div>
+
   {% if total == 0 %}
     <div class="empty-placeholder">
       <i class="ti ti-barbell" style="font-size:48px;display:block;margin-bottom:16px;opacity:.3;"></i>
