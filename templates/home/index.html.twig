@@ -1,9 +1,9 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}SPORT+ — Coaching Premium Marseille{% endblock %}
-{% block meta_description %}<meta name="description" content="Coaching premium privé à Marseille — Night Coach dès 20h, accès salle 24h/24, solo ou groupe. 164 Chemin Saint-Jean du Désert, 13005.">{% endblock %}
+{% block meta_description %}<meta name="description" content="Coaching premium à Marseille — Day Pass dès 40€, Night Coach dès 20h, accès salle 24h/24. 164 Chemin Saint-Jean du Désert, 13005.">{% endblock %}
 {% block og_title %}SPORT+ — Coaching Premium Marseille{% endblock %}
-{% block og_description %}Coaching privé, duo ou groupe à Marseille. Night Coach disponible dès 20h, accès salle 24h/24. 164 Chemin de Saint-Jean du Désert, 13005.{% endblock %}
+{% block og_description %}Day Pass dès 40€ · Night Coach 60€ · Astreinte 80€. Accès salle 24h/24 à Marseille. Sans engagement.{% endblock %}
 
 {% block body %}
 <script type="application/ld+json">
@@ -11,7 +11,7 @@
   "@context": "https://schema.org",
   "@type": "SportsActivityLocation",
   "name": "SPORT+",
-  "description": "Club de coaching premium à Marseille. Coaching privé, duo ou groupe. Night Coach disponible dès 20h, accès salle 24h/24.",
+  "description": "Club de coaching premium à Marseille. Day Pass dès 40€. Night Coach dès 20h. Accès salle 24h/24.",
   "url": "{{ app.request.schemeAndHttpHost }}",
   "telephone": "+33491422207",
   "openingHours": "Mo-Su 00:00-24:00",
@@ -151,36 +151,51 @@
       <div class="section-badge">Nos offres</div>
     </div>
     <h2 class="section-title">Nos <span style="color:var(--gold)">Prestations</span></h2>
-    <p class="section-sub">Des formules adaptées à tous les objectifs et tous les emplois du temps.</p>
+    <p class="section-sub">Un Day Pass à l'unité ou des packs mensuels — sans engagement, sans compromis.</p>
     <div class="cards-grid">
+
+      {# Day Pass Journée #}
       <div class="service-card">
-        <div class="service-icon"><i class="ti ti-moon"></i></div>
-        <div class="service-name">Night Coach</div>
-        <div class="service-price">dès 52,50 € / séance</div>
-        <p class="service-desc">Coaching privé dès 20h. Solo, duo ou groupe. Ton coach t'attend en salle, quelle que soit l'heure.</p>
+        <div class="service-icon"><i class="ti ti-sun"></i></div>
+        <div class="service-name">Day Pass Journée</div>
+        <div class="service-price">40 € / séance</div>
+        <p class="service-desc">Coaching privé en journée, de 6h à 20h. Séance à l'unité, sans abonnement.</p>
         <a href="{{ app.user ? path('app_booking_new') : path('app_register') }}" class="btn btn-outline">Réserver</a>
       </div>
-      <div class="service-card">
-        <div class="service-icon"><i class="ti ti-users"></i></div>
-        <div class="service-name">Small Group</div>
-        <div class="service-price">dès 22 € / pers / séance</div>
-        <p class="service-desc">2 à 6 personnes. Partagez l'expérience avec vos proches et bénéficiez d'un coaching à prix réduit.</p>
+
+      {# Day Pass Night Coach — mis en avant #}
+      <div class="service-card" style="border-left:3px solid var(--green);position:relative;">
+        <div style="position:absolute;top:-1px;right:16px;background:var(--green);color:var(--black);
+                    font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;
+                    letter-spacing:2px;text-transform:uppercase;padding:4px 10px;
+                    border-radius:0 0 8px 8px;">Signature SPORT+</div>
+        <div class="service-icon" style="background:rgba(61,255,20,.08);border-color:rgba(61,255,20,.2);color:var(--green);">
+          <i class="ti ti-moon"></i>
+        </div>
+        <div class="service-name">Day Pass Night</div>
+        <div class="service-price">60 € / séance</div>
+        <p class="service-desc">Coaching privé dès 20h jusqu'à minuit. Pour ceux qui vivent la nuit.</p>
         <a href="{{ app.user ? path('app_booking_new') : path('app_register') }}" class="btn btn-outline">Réserver</a>
       </div>
+
+      {# Day Pass Astreinte #}
       <div class="service-card">
-        <div class="service-icon"><i class="ti ti-user"></i></div>
-        <div class="service-name">Solo Journée</div>
-        <div class="service-price">37,50 € / séance</div>
-        <p class="service-desc">Coaching individuel en journée. Un suivi personnalisé pour atteindre tes objectifs plus vite.</p>
+        <div class="service-icon"><i class="ti ti-moon-stars"></i></div>
+        <div class="service-name">Day Pass Astreinte</div>
+        <div class="service-price">80 € / séance</div>
+        <p class="service-desc">Coaching de minuit à 6h du matin. La formule ultime pour les emplois du temps les plus décalés.</p>
         <a href="{{ app.user ? path('app_booking_new') : path('app_register') }}" class="btn btn-outline">Réserver</a>
       </div>
+
+      {# Packs mensuels #}
       <div class="service-card">
-        <div class="service-icon"><i class="ti ti-bolt"></i></div>
-        <div class="service-name">Groupe 6</div>
-        <div class="service-price">22 € / pers / séance</div>
-        <p class="service-desc">Le meilleur rapport qualité-prix. Six personnes, une énergie collective, un coach dédié.</p>
-        <a href="{{ app.user ? path('app_booking_new') : path('app_register') }}" class="btn btn-outline">Réserver</a>
+        <div class="service-icon"><i class="ti ti-calendar-repeat"></i></div>
+        <div class="service-name">Packs Mensuels</div>
+        <div class="service-price">dès 60 € / mois</div>
+        <p class="service-desc">Solo, Duo ou Groupe — 4, 8 ou 12 séances par mois. Jusqu'à 30% de réduction sur le tarif à l'unité.</p>
+        <a href="{{ path('app_tarifs') }}" class="btn btn-outline">Voir les tarifs</a>
       </div>
+
     </div>
   </div>
 </section>
