@@ -14,7 +14,7 @@ ul, ol { list-style: none; }
   /* Couleurs accent */
   --gold: #C8A951;
   --gold-dim: #7A6228;
-  --green: #3DFF14;
+  --green: #2ECC71;
   --black: #060606;
   --panel: #121212;
 
@@ -25,13 +25,13 @@ ul, ol { list-style: none; }
   --bg-card: #12121A;
   --border: #2A2720;
 
-  /* Texte — hiérarchie lisible (renforcée B1.2) */
+  /* Texte — tout en blanc/quasi-blanc */
   --white: #FFFFFF;             /* blanc pur pour titres et impacts */
-  --text: #ECECEC;              /* corps principal, quasi blanc */
-  --text-soft: #D4D0C8;         /* hiérarchie secondaire discrète */
-  --muted-readable: #D4D0C8;    /* alias backward compat */
-  --muted: #B5AB99;             /* annotations en retrait */
-  --text-dim: #B5AB99;          /* métadonnées (alias) */
+  --text: #F2F2F2;              /* corps principal */
+  --text-soft: #E8E4DC;         /* hiérarchie secondaire — bien visible */
+  --muted-readable: #E8E4DC;    /* alias backward compat */
+  --muted: #D4D0C8;             /* annotations — plus blanc qu'avant */
+  --text-dim: #D4D0C8;          /* métadonnées */
 
   /* Polices */
   --font-display: 'Barlow Condensed', sans-serif;
@@ -83,7 +83,7 @@ body::before {
   background:
     radial-gradient(ellipse 50% 40% at 90% 10%, rgba(200,169,81,.06) 0%, transparent 70%),
     radial-gradient(ellipse 40% 40% at 10% 90%, rgba(200,169,81,.04) 0%, transparent 70%),
-    radial-gradient(ellipse 30% 20% at 50% 50%, rgba(61,255,20,.015) 0%, transparent 70%);
+    radial-gradient(ellipse 30% 20% at 50% 50%, rgba(46,204,113,.015) 0%, transparent 70%);
 }
 
 main {
@@ -211,7 +211,7 @@ label {
 
 .logo-name span {
   color: var(--green);
-  text-shadow: 0 0 8px rgba(61,255,20,.4);
+  text-shadow: 0 0 8px rgba(46,204,113,.4);
 }
 
 /* Bouton "Connexion" caché sur mobile — présent dans le menu burger */
@@ -246,7 +246,7 @@ label {
 .main-nav .nav-link:hover,
 .main-nav a:hover {
   color: var(--white);
-  background: rgba(61,255,20,.07);
+  background: rgba(46,204,113,.07);
 }
 
 .main-nav .nav-link.active,
@@ -256,12 +256,12 @@ label {
 
 .nav-link-deciplus {
   color: var(--green) !important;
-  border: 1px solid rgba(61,255,20,.25);
+  border: 1px solid rgba(46,204,113,.25);
   border-radius: var(--radius-sm);
 }
 .nav-link-deciplus:hover {
-  background: rgba(61,255,20,.1) !important;
-  border-color: rgba(61,255,20,.5) !important;
+  background: rgba(46,204,113,.1) !important;
+  border-color: rgba(46,204,113,.5) !important;
 }
 
 /* ── HEADER ACTIONS ─────────────────────────────────────────── */
@@ -297,7 +297,7 @@ label {
 
 .btn-primary:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(200,169,81,.3), 0 4px 14px rgba(61,255,20,.15);
+  box-shadow: 0 8px 20px rgba(200,169,81,.3), 0 4px 14px rgba(46,204,113,.15);
 }
 
 .btn-secondary {
@@ -307,8 +307,8 @@ label {
 }
 
 .btn-secondary:hover {
-  border-color: rgba(61,255,20,.35);
-  box-shadow: 0 4px 14px rgba(61,255,20,.08);
+  border-color: rgba(46,204,113,.35);
+  box-shadow: 0 4px 14px rgba(46,204,113,.08);
 }
 
 .btn-outline {
@@ -581,7 +581,7 @@ label {
   background:
     radial-gradient(ellipse 50% 40% at 80% 20%, rgba(200,169,81,.06) 0%, transparent 60%),
     radial-gradient(ellipse 40% 40% at 20% 80%, rgba(200,169,81,.04) 0%, transparent 60%),
-    radial-gradient(ellipse 30% 20% at 50% 30%, rgba(61,255,20,.015) 0%, transparent 60%);
+    radial-gradient(ellipse 30% 20% at 50% 30%, rgba(46,204,113,.015) 0%, transparent 60%);
 }
 
 .hero-inner {
@@ -737,8 +737,8 @@ label {
 
 .feature-card:hover {
   transform: translateY(-4px);
-  border-color: rgba(61,255,20,.3);
-  box-shadow: 0 8px 28px rgba(61,255,20,.07);
+  border-color: rgba(46,204,113,.3);
+  box-shadow: 0 8px 28px rgba(46,204,113,.07);
 }
 
 .feature-icon {
@@ -786,8 +786,8 @@ label {
 
 .coach-card:hover {
   transform: translateY(-4px);
-  border-color: rgba(61,255,20,.3);
-  box-shadow: 0 8px 28px rgba(61,255,20,.07);
+  border-color: rgba(46,204,113,.3);
+  box-shadow: 0 8px 28px rgba(46,204,113,.07);
 }
 
 .coach-avatar {
@@ -924,7 +924,7 @@ label {
 .faq-item > summary::-webkit-details-marker { display: none; }
 
 .faq-item > summary:hover {
-  background: rgba(61,255,20,.04);
+  background: rgba(46,204,113,.04);
   color: var(--green);
 }
 
@@ -1190,9 +1190,9 @@ input[type="radio"] {
 }
 
 .status-badge.confirmed {
-  background: rgba(61,255,20,.08);
+  background: rgba(46,204,113,.08);
   color: var(--green);
-  border: 1px solid rgba(61,255,20,.25);
+  border: 1px solid rgba(46,204,113,.25);
 }
 
 .status-badge.refused {
@@ -1822,8 +1822,8 @@ input[type="radio"] {
 }
 
 .alert-success {
-  background: rgba(61,255,20,.08);
-  border-color: rgba(61,255,20,.2);
+  background: rgba(46,204,113,.08);
+  border-color: rgba(46,204,113,.2);
   color: var(--green);
 }
 
@@ -1864,11 +1864,11 @@ input[type="radio"] {
 
 .action-btn--confirm {
   color: var(--green);
-  border-color: rgba(61,255,20,.3);
+  border-color: rgba(46,204,113,.3);
 }
 
 .action-btn--confirm:hover {
-  background: rgba(61,255,20,.08);
+  background: rgba(46,204,113,.08);
 }
 
 .action-btn--danger {
@@ -2228,7 +2228,7 @@ img, video, iframe { max-width: 100%; }
 .founding-teaser:hover {
   transform: translateY(-2px);
   box-shadow: var(--shadow-lg);
-  border-color: rgba(61,255,20,.4);
+  border-color: rgba(46,204,113,.4);
 }
 .badge-launch {
   position: absolute;
@@ -2325,7 +2325,7 @@ img, video, iframe { max-width: 100%; }
 }
 .brand-plus {
   color: var(--green);
-  text-shadow: 0 0 8px rgba(61,255,20,.5);
+  text-shadow: 0 0 8px rgba(46,204,113,.5);
   font-weight: 900;
 }
 
@@ -3065,8 +3065,8 @@ img, video, iframe { max-width: 100%; }
 }
 
 .about-stat-card:hover {
-  border-color: rgba(61,255,20,.3);
-  box-shadow: 0 6px 20px rgba(61,255,20,.07);
+  border-color: rgba(46,204,113,.3);
+  box-shadow: 0 6px 20px rgba(46,204,113,.07);
 }
 
 @media (min-width: 768px) {
