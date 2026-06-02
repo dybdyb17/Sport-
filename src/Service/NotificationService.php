@@ -90,10 +90,21 @@ class NotificationService
 
     /**
      * @param array<string, mixed> $data
+     *
+     * Le hub Mercure peut être injoignable (dev sans hub configuré,
+     * URL placeholder, etc.). On capture l'erreur pour ne pas casser
+     * le flux principal — la notif temps réel est nice-to-have,
+     * l'email transactionnel et la BDD restent autoritaires.
      */
     private function publish(string $topic, array $data): void
     {
-        $json = json_encode($data, JSON_THROW_ON_ERROR | JSON_UNESCAPED_UNICODE);
-        $this->mercureHub->publish(new Update($topic, $json, true));
+        try {
+            $json = json_encode($data, JSON_THROW_ON_ERROR | JSON_UNESCAPED_UNICODE);
+            $this->mercureHub->publish(new Update($topic, $json, true));
+        } catch (\Throwable $e) {
+            // Silencieux : la notification Mercure échoue, mais l'opération
+            // (réservation, message, etc.) doit continuer.
+            // En prod avec un vrai hub configuré, ça ne se déclenchera pas.
+        }
     }
 }

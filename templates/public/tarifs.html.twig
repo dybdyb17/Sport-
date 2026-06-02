@@ -6,7 +6,7 @@
 {% block body %}
 
 {# ── Hero #}
-<section class="pub-hero" style="padding:80px 0 56px;text-align:center;">
+<section class="pub-hero" data-bg style="padding:80px 0 56px;text-align:center;--hero-bg:url('{{ asset('img/club-photos/bench-orange.jpg') }}');">
   <div class="container">
     <div class="hero-badge">Tarification officielle</div>
     <h1 class="section-title" style="margin-top:16px;">Nos <span style="color:var(--gold)">Tarifs</span></h1>
@@ -18,9 +18,14 @@
 <section class="section" style="padding-top:0;padding-bottom:60px;">
   <div class="container">
     <div class="section-label" style="text-align:center;display:block;margin-bottom:8px;">Nos abonnements</div>
-    <h2 class="section-title" style="font-size:clamp(28px,4vw,42px);margin-bottom:32px;">
+    <h2 class="section-title" style="font-size:clamp(28px,4vw,42px);margin-bottom:14px;">
       Formules <span style="color:var(--gold)">officielles</span>
     </h2>
+    <p style="text-align:center;color:var(--text-soft);font-size:15px;max-width:600px;margin:0 auto 32px;line-height:1.6;">
+      Inscription &amp; paiement <strong style="color:var(--green);">Paylib</strong> directement sur
+      <strong style="color:var(--white);">Deciplus</strong> — le système officiel de gestion du club.
+      Pas de double compte, pas de double saisie.
+    </p>
 
     <div class="formules-grid" data-stagger data-animate="fade-up">
 
@@ -136,6 +141,37 @@
               font-size:17px;color:var(--text-soft);margin-top:32px;">
       Toutes les formules incluent l'accès libre 24h/24 à la salle.
     </p>
+
+    {# Encart explicatif : 2 systèmes complémentaires #}
+    <div class="dual-system-info">
+      <div class="dual-system-card">
+        <div class="dual-system-icon" style="background:rgba(46,204,113,.1);color:var(--green);">
+          <i class="ti ti-credit-card"></i>
+        </div>
+        <div>
+          <div class="dual-system-title">Abonnements mensuels</div>
+          <div class="dual-system-text">
+            Student, Premium+, Duo+, Ultra — inscription &amp; paiement
+            <strong style="color:var(--green);">Paylib</strong> sur Deciplus.
+            Tu retrouves ton compte sur l'app <strong>Xplor Active</strong> + QR code Decipass pour entrer dans la salle.
+          </div>
+        </div>
+      </div>
+      <div class="dual-system-card">
+        <div class="dual-system-icon" style="background:rgba(200,169,81,.1);color:var(--gold);">
+          <i class="ti ti-user-star"></i>
+        </div>
+        <div>
+          <div class="dual-system-title">Coaching à la séance</div>
+          <div class="dual-system-text">
+            Day Pass, Pack 4/8/12 — réservation directe sur SPORT+ avec
+            <strong style="color:var(--gold);">choix du coach</strong>,
+            <strong style="color:var(--gold);">messagerie privée</strong> et
+            paiement uniquement si le coach confirme.
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -172,13 +208,15 @@
 
         <div class="formule-modal-fees" id="formule-modal-fees"></div>
 
-        <a href="{{ path('app_contact') }}" class="btn btn-primary btn-lg formule-modal-cta">
-          <i class="ti ti-bolt"></i> Je veux cette formule
+        <a href="https://member-app.deciplus.pro/{{ deciplusSlug }}/tunnel"
+           target="_blank" rel="noopener noreferrer"
+           class="btn btn-primary btn-lg formule-modal-cta">
+          <i class="ti ti-credit-card"></i> Je m'abonne via Deciplus
         </a>
 
         <div class="formule-modal-hint">
-          <i class="ti ti-info-circle"></i>
-          Inscription directement au club ou par téléphone : <strong>04 91 42 22 07</strong>
+          <i class="ti ti-shield-check"></i>
+          Inscription &amp; paiement sécurisés <strong>Paylib</strong> sur Deciplus, le système officiel SPORT+.
         </div>
       </div>
 

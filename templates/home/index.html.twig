@@ -125,6 +125,53 @@
   </section>
 {% endif %}
 
+{# ── NIGHT COACH — Bannière signature SPORT+ ── #}
+<section class="night-banner-section" data-animate="fade-up">
+  <div class="container">
+    <div class="night-banner">
+      <div class="night-banner-bg" style="background-image:url('{{ asset('img/club-photos/cardio-vue.jpg') }}');"></div>
+      <div class="night-banner-content">
+        <div class="night-banner-badge">
+          <span class="night-banner-dot"></span>
+          La signature SPORT+
+        </div>
+        <h2 class="night-banner-title">
+          Le <span style="color:var(--green);">Night Coach</span><br>
+          dès 20h.
+        </h2>
+        <p class="night-banner-sub">
+          Première salle de Marseille à proposer un <strong>coaching privé en pleine nuit</strong>.
+          Quand les autres ferment, ton coach t'attend.
+        </p>
+        <div class="night-banner-meta">
+          <div class="night-banner-meta-item">
+            <i class="ti ti-moon"></i>
+            <div>
+              <strong>20h → minuit</strong>
+              <span>Night Coach — 60€/séance</span>
+            </div>
+          </div>
+          <div class="night-banner-meta-item">
+            <i class="ti ti-moon-stars"></i>
+            <div>
+              <strong>Minuit → 6h</strong>
+              <span>Astreinte — 80€/séance</span>
+            </div>
+          </div>
+        </div>
+        <div class="night-banner-cta">
+          <a href="{{ app.user ? path('app_booking_new') : path('app_register') }}" class="btn btn-primary btn-lg">
+            <i class="ti ti-bolt"></i> Réserver une séance Night
+          </a>
+          <a href="{{ path('app_tarifs') }}" class="btn btn-outline btn-lg">
+            Voir tous les tarifs
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
 {# ── POURQUOI SPORT+ ── #}
 <section class="section" style="background:var(--bg-2);">
   <div class="container">

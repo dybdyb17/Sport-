@@ -24,7 +24,9 @@ class PublicController extends AbstractController
     #[Route('/tarifs', name: 'app_tarifs', methods: ['GET'])]
     public function tarifs(): Response
     {
-        return $this->render('public/tarifs.html.twig');
+        return $this->render('public/tarifs.html.twig', [
+            'deciplusSlug' => $this->getParameter('deciplus_slug'),
+        ]);
     }
 
     #[Route('/faq', name: 'app_faq', methods: ['GET'])]

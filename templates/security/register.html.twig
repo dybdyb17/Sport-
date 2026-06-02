@@ -27,23 +27,25 @@
     </div>
   </div>
 
-  <!-- Visual panel -->
-  <div class="auth-visual">
+  <!-- Visual panel : photo immersive + texte en bas -->
+  <div class="auth-visual" style="background-image:url('{{ asset('img/club-photos/portrait-souriante.jpg') }}');">
     <div class="auth-quote">
+      <div class="auth-quote-eyebrow">Rejoins-nous</div>
       <blockquote>"Chaque séance est un pas vers la meilleure version de toi-même."</blockquote>
       <cite>— L'équipe SPORT+</cite>
-      <div style="margin-top:32px;display:flex;flex-direction:column;gap:12px;text-align:left;">
-        <div style="display:flex;align-items:center;gap:10px;font-size:14px;color:var(--text-dim);">
-          <i class="ti ti-circle-check" style="color:var(--green);font-size:18px;"></i>
-          Sans engagement, annulation gratuite
+
+      <div class="auth-quote-features">
+        <div class="auth-quote-feature">
+          <i class="ti ti-circle-check"></i>
+          <span>Sans engagement — annulation libre 2h avant</span>
         </div>
-        <div style="display:flex;align-items:center;gap:10px;font-size:14px;color:var(--text-dim);">
-          <i class="ti ti-circle-check" style="color:var(--green);font-size:18px;"></i>
-          Coachs certifiés disponibles 24h/24
+        <div class="auth-quote-feature">
+          <i class="ti ti-circle-check"></i>
+          <span>Coachs certifiés disponibles 24h/24</span>
         </div>
-        <div style="display:flex;align-items:center;gap:10px;font-size:14px;color:var(--text-dim);">
-          <i class="ti ti-circle-check" style="color:var(--green);font-size:18px;"></i>
-          Paiement uniquement si confirmé
+        <div class="auth-quote-feature">
+          <i class="ti ti-circle-check"></i>
+          <span>Paiement uniquement si le coach confirme</span>
         </div>
       </div>
     </div>

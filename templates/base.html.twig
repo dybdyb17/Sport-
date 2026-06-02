@@ -107,7 +107,7 @@
         </div>
       {% else %}
         <a href="{{ path('app_login') }}" class="btn btn-ghost btn-sm header-connexion-btn">Connexion</a>
-        <a href="{{ path('app_register') }}" class="btn btn-primary btn-sm">Commencer</a>
+        <button type="button" class="btn btn-primary btn-sm" onclick="openStartModal()">Commencer</button>
       {% endif %}
       <!-- Burger mobile -->
       <button class="mobile-toggle" aria-label="Menu" aria-expanded="false" aria-controls="mobileMenu">
@@ -147,7 +147,7 @@
       <a href="{{ path('app_logout') }}" class="btn btn-ghost btn-full">Déconnexion</a>
     {% else %}
       <a href="{{ path('app_login') }}" class="btn btn-ghost btn-full">Connexion</a>
-      <a href="{{ path('app_register') }}" class="btn btn-primary btn-full">Commencer</a>
+      <button type="button" class="btn btn-primary btn-full" onclick="openStartModal()">Commencer</button>
     {% endif %}
   </div>
 </div>
@@ -215,6 +215,90 @@
     </div>
   </div>
 </footer>
+
+{# ── Popup "Commencer" : 2 chemins pour les nouveaux visiteurs ── #}
+<div id="start-modal" class="start-modal" aria-hidden="true" role="dialog">
+  <div class="start-modal-backdrop" onclick="closeStartModal()"></div>
+  <div class="start-modal-content">
+    <button type="button" class="start-modal-close" onclick="closeStartModal()" aria-label="Fermer">
+      <i class="ti ti-x"></i>
+    </button>
+
+    <div class="start-modal-head">
+      <div class="start-modal-eyebrow">Bienvenue chez SPORT+</div>
+      <h2 class="start-modal-title">Qu'est-ce que tu cherches ?</h2>
+      <p class="start-modal-sub">2 chemins, 1 club. Choisis celui qui te parle.</p>
+    </div>
+
+    <div class="start-modal-paths">
+
+      {# Path 1 — Abonnement mensuel #}
+      <a href="https://member-app.deciplus.pro/sportplus/tunnel"
+         target="_blank" rel="noopener noreferrer"
+         class="start-path start-path-green">
+        <div class="start-path-icon">
+          <i class="ti ti-credit-card"></i>
+        </div>
+        <div class="start-path-body">
+          <div class="start-path-tag">Abonnement mensuel</div>
+          <div class="start-path-name">Je m'abonne</div>
+          <div class="start-path-text">
+            Accès salle 24h/24, cours collectifs, paiement <strong>Paylib</strong> sur Deciplus.
+            <span class="start-path-prices">Dès <strong>25€</strong> / 4 semaines</span>
+          </div>
+          <div class="start-path-cta">
+            Continuer sur Deciplus <i class="ti ti-arrow-right"></i>
+          </div>
+        </div>
+      </a>
+
+      {# Path 2 — Coaching à la séance #}
+      <a href="{{ path('app_register') }}" class="start-path start-path-gold">
+        <div class="start-path-icon">
+          <i class="ti ti-user-star"></i>
+        </div>
+        <div class="start-path-body">
+          <div class="start-path-tag">Coaching à la séance</div>
+          <div class="start-path-name">Je réserve un coach</div>
+          <div class="start-path-text">
+            Choix du coach, messagerie privée, sans engagement.
+            <span class="start-path-prices">Dès <strong>22€</strong> / séance</span>
+          </div>
+          <div class="start-path-cta">
+            Créer mon compte SPORT+ <i class="ti ti-arrow-right"></i>
+          </div>
+        </div>
+      </a>
+
+    </div>
+
+    <div class="start-modal-footer">
+      <i class="ti ti-info-circle"></i>
+      Tu peux faire <strong>les deux</strong> — l'abonnement Deciplus n'empêche pas de prendre des séances avec un coach.
+    </div>
+  </div>
+</div>
+
+<script>
+window.openStartModal = function() {
+  var m = document.getElementById('start-modal');
+  m.classList.add('is-open');
+  m.setAttribute('aria-hidden', 'false');
+  document.body.style.overflow = 'hidden';
+};
+window.closeStartModal = function() {
+  var m = document.getElementById('start-modal');
+  m.classList.remove('is-open');
+  m.setAttribute('aria-hidden', 'true');
+  document.body.style.overflow = '';
+};
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') {
+    var m = document.getElementById('start-modal');
+    if (m && m.classList.contains('is-open')) window.closeStartModal();
+  }
+});
+</script>
 
 <script src="{{ asset('js/app.js') }}?v=20260602d" defer></script>
 {% block mercure %}{% endblock %}
