@@ -58,7 +58,7 @@
   // ── Activer une card dans son groupe ────────────────────────────────────────
   function activateCard(card, grid) {
     if (!card || !grid) return;
-    grid.querySelectorAll('.selector-card').forEach(c => {
+    grid.querySelectorAll('.selector-card, .bk-choice').forEach(c => {
       c.classList.remove('selected');
       c.setAttribute('aria-pressed', 'false');
     });
@@ -70,7 +70,7 @@
   selAll('[data-selector]').forEach(grid => {
     const selectorType = grid.dataset.selector;
 
-    grid.querySelectorAll('.selector-card').forEach(card => {
+    grid.querySelectorAll('.selector-card, .bk-choice').forEach(card => {
       // Clic
       card.addEventListener('click', () => handleCardSelect(selectorType, card, grid));
       // Clavier (Enter / Espace)
@@ -181,9 +181,13 @@
     const sumPeriod = $('sum-period');
     const sumSavings = $('sum-savings');
 
+    // Mise à jour du prix dans le bouton submit
+    const submitPrice = $('bk-submit-price');
+
     if (data.monthly) {
       // Pack
-      if (sumPrice)  sumPrice.textContent  = data.monthly;
+      if (sumPrice)    sumPrice.textContent    = data.monthly;
+      if (submitPrice) submitPrice.textContent = data.monthly;
       if (sumPeriod) sumPeriod.textContent  = `/ mois · ${data.packSessions || ''} séances`;
       if (sumSavings && data.savingsRaw > 0) {
         sumSavings.style.display = '';
@@ -193,7 +197,8 @@
       }
     } else {
       // Séance unique
-      if (sumPrice)  sumPrice.textContent  = data.singleTotal || '—';
+      if (sumPrice)    sumPrice.textContent    = data.singleTotal || '—';
+      if (submitPrice) submitPrice.textContent = data.singleTotal || '—';
       if (sumPeriod) sumPeriod.textContent  = 'pour cette séance';
       if (sumSavings) sumSavings.style.display = 'none';
     }
