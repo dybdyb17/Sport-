@@ -7,15 +7,15 @@
 
 {% block body %}
 
-{# Encart d'avertissement placeholders #}
+{# Encart d'avertissement placeholders — textes seulement, photos OK #}
 <div class="container" style="padding-top:30px;">
-  <div style="background:rgba(255,138,77,0.1);border-left:3px solid #ff8a4d;
+  <div style="background:rgba(255,138,77,0.08);border-left:3px solid #ff8a4d;
               padding:14px 18px;border-radius:var(--radius);
               font-size:14px;color:var(--text-soft);">
     <i class="ti ti-alert-triangle" style="color:#ff8a4d;margin-right:8px;"></i>
-    <strong>À compléter :</strong> les 5 programmes ci-dessous sont des exemples avec
-    placeholders entre crochets <code>[...]</code>. Remplace les noms, descriptions,
-    horaires et photos par les vrais programmes SPORT+ une fois définis avec les coachs.
+    <strong>À finaliser :</strong> les <strong>noms, horaires et descriptions</strong> entre
+    crochets <code>[...]</code> sont des exemples — à confirmer avec les coachs. Les photos
+    sont en place.
   </div>
 </div>
 
@@ -41,10 +41,7 @@
       {# ─── Programme 1 : Power Women #}
       <article class="programme-card">
         <div class="programme-photo">
-          <div class="programme-photo-placeholder">
-            <i class="ti ti-photo"></i>
-            <span>[PHOTO_POWER_WOMEN]</span>
-          </div>
+          <img src="{{ asset('img/club-photos/cours-collectif-1.jpg') }}" alt="Programme Power Women SPORT+" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block;">
           <div class="programme-badge programme-badge-women">
             <i class="ti ti-spark"></i> Femmes uniquement
           </div>
@@ -70,10 +67,7 @@
       {# ─── Programme 2 : Kids Energy #}
       <article class="programme-card">
         <div class="programme-photo">
-          <div class="programme-photo-placeholder">
-            <i class="ti ti-photo"></i>
-            <span>[PHOTO_KIDS_ENERGY]</span>
-          </div>
+          <img src="{{ asset('img/club-photos/duo-rire.jpg') }}" alt="Programme Kids Energy SPORT+" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block;">
           <div class="programme-badge programme-badge-kids">
             <i class="ti ti-mood-kid"></i> 7–12 ans
           </div>
@@ -99,10 +93,7 @@
       {# ─── Programme 3 : After Work #}
       <article class="programme-card">
         <div class="programme-photo">
-          <div class="programme-photo-placeholder">
-            <i class="ti ti-photo"></i>
-            <span>[PHOTO_AFTER_WORK]</span>
-          </div>
+          <img src="{{ asset('img/club-photos/coaching-halteres.jpg') }}" alt="Programme After Work SPORT+" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block;">
           <div class="programme-badge programme-badge-afterwork">
             <i class="ti ti-briefcase"></i> Salariés & cadres
           </div>
@@ -128,10 +119,7 @@
       {# ─── Programme 4 : Senior Wellness #}
       <article class="programme-card">
         <div class="programme-photo">
-          <div class="programme-photo-placeholder">
-            <i class="ti ti-photo"></i>
-            <span>[PHOTO_SENIOR_WELLNESS]</span>
-          </div>
+          <img src="{{ asset('img/club-photos/cours-collectif-2.jpg') }}" alt="Programme Senior Wellness SPORT+" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block;">
           <div class="programme-badge programme-badge-senior">
             <i class="ti ti-heart-handshake"></i> 60+ ans
           </div>
@@ -157,10 +145,7 @@
       {# ─── Programme 5 : Boxe & Combat #}
       <article class="programme-card">
         <div class="programme-photo">
-          <div class="programme-photo-placeholder">
-            <i class="ti ti-photo"></i>
-            <span>[PHOTO_BOXE_COMBAT]</span>
-          </div>
+          <img src="{{ asset('img/club-photos/muscu-homme.jpg') }}" alt="Programme Boxe &amp; Combat SPORT+" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block;">
           <div class="programme-badge programme-badge-combat">
             <i class="ti ti-flame"></i> Tous niveaux
           </div>

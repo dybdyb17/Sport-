@@ -18,12 +18,12 @@ ul, ol { list-style: none; }
   --black: #060606;
   --panel: #121212;
 
-  /* Backgrounds */
-  --bg: #060606;
-  --bg-2: #0E0E10;
-  --bg-3: #161620;
-  --bg-card: #12121A;
-  --border: #2A2720;
+  /* Backgrounds — adoucis pour moins de noir agressif tout en gardant la DA premium */
+  --bg: #0F0F13;
+  --bg-2: #15151B;
+  --bg-3: #1C1C24;
+  --bg-card: #18181F;
+  --border: #2F2C25;
 
   /* Texte — tout en blanc/quasi-blanc */
   --white: #FFFFFF;             /* blanc pur pour titres et impacts */
@@ -2317,13 +2317,28 @@ img, video, iframe { max-width: 100%; }
   white-space: nowrap;
 }
 /* Slogan signature */
+.brand-pioneers {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-style: italic;
+  font-weight: 500;
+  font-size: 26px;
+  letter-spacing: 0.5px;
+  text-transform: none;
+  color: var(--gold);
+  text-align: center;
+  margin-top: 16px;
+  margin-bottom: 4px;
+  opacity: .9;
+}
 .brand-slogan {
   font-family: 'Barlow Condensed', sans-serif;
   font-weight: 700; font-size: 18px;
   letter-spacing: 3px; text-transform: uppercase;
   color: var(--white); text-align: center;
-  margin-top: 16px;
+  margin-top: 0;
 }
+/* Quand pioneers est juste avant slogan, retire le margin-top du slogan */
+.brand-pioneers + .brand-slogan { margin-top: 0; }
 .brand-plus {
   color: var(--green);
   text-shadow: 0 0 8px rgba(46,204,113,.5);
@@ -4310,5 +4325,190 @@ body {
 }
 .faq-item[open] > summary::after {
   transform: rotate(180deg);
+}
+
+
+/* ── BODY : gradient subtil pour donner de la profondeur ───────────────── */
+body {
+  background:
+    radial-gradient(ellipse 80% 40% at 50% 0%, rgba(200,169,81,.04) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 50% at 100% 50%, rgba(46,204,113,.025) 0%, transparent 60%),
+    var(--bg);
+  background-attachment: fixed;
+}
+
+/* ── Effet grain très subtil sur les sections sombres ──────────────────── */
+.section,
+.pub-hero {
+  position: relative;
+}
+
+/* ── GALERIE HOMEPAGE — section "Vie du club" ──────────────────────────── */
+.club-gallery-section {
+  padding: 80px 0;
+  background:
+    linear-gradient(180deg, transparent 0%, rgba(200,169,81,.03) 50%, transparent 100%),
+    var(--bg);
+}
+
+.club-gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-auto-rows: 200px;
+  gap: 12px;
+  margin-top: 40px;
+}
+
+.club-gallery-item {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--radius);
+  cursor: pointer;
+}
+
+.club-gallery-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform .8s cubic-bezier(.2, .8, .2, 1);
+  filter: brightness(.92);
+}
+
+.club-gallery-item:hover img {
+  transform: scale(1.08);
+  filter: brightness(1.05);
+}
+
+/* Item large (2x2) */
+.club-gallery-item.is-large {
+  grid-column: span 2;
+  grid-row: span 2;
+}
+
+/* Item haut (1x2) */
+.club-gallery-item.is-tall {
+  grid-row: span 2;
+}
+
+/* Overlay au hover */
+.club-gallery-item::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 60%, rgba(0,0,0,.6) 100%);
+  opacity: 0;
+  transition: opacity .3s;
+}
+.club-gallery-item:hover::after { opacity: 1; }
+
+/* Tablette : 2 colonnes uniformes, on neutralise les spans pour éviter les trous */
+@media (max-width: 1024px) {
+  .club-gallery-grid {
+    grid-template-columns: repeat(2, 1fr);
+    grid-auto-rows: 220px;
+  }
+  .club-gallery-item.is-large,
+  .club-gallery-item.is-tall {
+    grid-column: span 1;
+    grid-row: span 1;
+  }
+  /* La première image prend les 2 colonnes pour casser la grille */
+  .club-gallery-item:first-child {
+    grid-column: span 2;
+    grid-row: span 1;
+  }
+}
+
+/* Mobile : 2 colonnes uniformes, toutes les images 1x1 (8 items = 4 lignes propres) */
+@media (max-width: 640px) {
+  .club-gallery-grid {
+    grid-template-columns: repeat(2, 1fr);
+    grid-auto-rows: 150px;
+    gap: 8px;
+  }
+  .club-gallery-item.is-large,
+  .club-gallery-item.is-tall,
+  .club-gallery-item:first-child {
+    grid-column: span 1;
+    grid-row: span 1;
+  }
+}
+
+/* ── HERO : ajout d'une photo en arrière-plan subtile (homepage) ───────── */
+.hero-bg-photo {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background-size: cover;
+  background-position: center;
+  filter: brightness(.18) saturate(.6);
+  pointer-events: none;
+}
+.hero-bg-photo::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at center, transparent 0%, rgba(15,15,19,.9) 80%),
+    linear-gradient(180deg, rgba(15,15,19,.4) 0%, var(--bg) 100%);
+}
+
+/* ── Card images du concept : photos réelles ─────────────────────────── */
+.concept-photo-card {
+  position: relative;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  aspect-ratio: 4 / 3;
+}
+.concept-photo-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform .6s cubic-bezier(.2, .8, .2, 1);
+}
+.concept-photo-card:hover img {
+  transform: scale(1.06);
+}
+.concept-photo-card-caption {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  padding: 20px 22px 18px;
+  background: linear-gradient(180deg, transparent 0%, rgba(15,15,19,.85) 100%);
+  z-index: 2;
+}
+.concept-photo-card-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 900;
+  font-size: 22px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--white);
+  margin-bottom: 4px;
+}
+.concept-photo-card-sub {
+  font-size: 13px;
+  color: var(--gold);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+}
+
+
+/* ── Concept photos grid : 3 colonnes desktop, 2 tablette, 1 mobile ──── */
+.concept-photos-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+@media (max-width: 900px) {
+  .concept-photos-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 600px) {
+  .concept-photos-grid { grid-template-columns: 1fr; gap: 12px; }
 }
 

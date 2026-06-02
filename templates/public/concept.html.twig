@@ -33,16 +33,59 @@
   </div>
 </section>
 
-{# ── Club images ── #}
-<section style="padding:0 0 60px;">
+{# ── Club photos — vraie immersion ── #}
+<section style="padding:0 0 80px;">
   <div class="container">
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;">
-      <div style="border-radius:var(--radius-lg);overflow:hidden;background:var(--bg-card);border:1px solid var(--border);min-height:240px;display:flex;align-items:center;justify-content:center;">
-        <img src="{{ asset('img/club/club-1.jpg') }}" alt="Salle de coaching SPORT+ à Marseille" style="width:100%;height:100%;object-fit:cover;" loading="lazy" onerror="this.parentElement.innerHTML='<div style=\'text-align:center;padding:60px;color:var(--text-dim);\'><i class=\'ti ti-building\' style=\'font-size:48px;display:block;margin-bottom:12px;opacity:.3;\'></i>Salle SPORT+</div>'">
+    <div class="concept-photos-grid" data-stagger data-animate="fade-up">
+
+      <div class="concept-photo-card">
+        <img src="{{ asset('img/club-photos/cours-collectif-1.jpg') }}" alt="Cours collectif musculation SPORT+">
+        <div class="concept-photo-card-caption">
+          <div class="concept-photo-card-sub">Cours collectifs</div>
+          <div class="concept-photo-card-title">Énergie commune</div>
+        </div>
       </div>
-      <div style="border-radius:var(--radius-lg);overflow:hidden;background:var(--bg-card);border:1px solid var(--border);min-height:240px;display:flex;align-items:center;justify-content:center;">
-        <img src="{{ asset('img/club/club-2.jpg') }}" alt="Équipements premium de la salle SPORT+ Marseille" style="width:100%;height:100%;object-fit:cover;" loading="lazy" onerror="this.parentElement.innerHTML='<div style=\'text-align:center;padding:60px;color:var(--text-dim);\'><i class=\'ti ti-barbell\' style=\'font-size:48px;display:block;margin-bottom:12px;opacity:.3;\'></i>Équipements premium</div>'">
+
+      <div class="concept-photo-card">
+        <img src="{{ asset('img/club-photos/coaching-guide-orange.jpg') }}" alt="Coaching personnel SPORT+">
+        <div class="concept-photo-card-caption">
+          <div class="concept-photo-card-sub">Coaching</div>
+          <div class="concept-photo-card-title">Suivi sur-mesure</div>
+        </div>
       </div>
+
+      <div class="concept-photo-card">
+        <img src="{{ asset('img/club-photos/cardio-tapis.jpg') }}" alt="Espace cardio SPORT+">
+        <div class="concept-photo-card-caption">
+          <div class="concept-photo-card-sub">Cardio</div>
+          <div class="concept-photo-card-title">Endurance</div>
+        </div>
+      </div>
+
+      <div class="concept-photo-card">
+        <img src="{{ asset('img/club-photos/muscu-homme.jpg') }}" alt="Espace musculation SPORT+">
+        <div class="concept-photo-card-caption">
+          <div class="concept-photo-card-sub">Musculation</div>
+          <div class="concept-photo-card-title">Force pure</div>
+        </div>
+      </div>
+
+      <div class="concept-photo-card">
+        <img src="{{ asset('img/club-photos/back-extension.jpg') }}" alt="Renforcement musculaire SPORT+">
+        <div class="concept-photo-card-caption">
+          <div class="concept-photo-card-sub">Renforcement</div>
+          <div class="concept-photo-card-title">Mobilité &amp; gainage</div>
+        </div>
+      </div>
+
+      <div class="concept-photo-card">
+        <img src="{{ asset('img/club-photos/cours-collectif-2.jpg') }}" alt="Cours collectif SPORT+">
+        <div class="concept-photo-card-caption">
+          <div class="concept-photo-card-sub">Studio</div>
+          <div class="concept-photo-card-title">Petits groupes</div>
+        </div>
+      </div>
+
     </div>
   </div>
 </section>
@@ -142,6 +185,7 @@
 
 {# ── Slogan footer ── #}
 <section style="padding:24px 0;text-align:center;border-top:1px solid var(--border);">
+  <div class="brand-pioneers">À jamais les pionniers</div>
   <div class="brand-slogan">Pour le meilleur & pour le <span class="brand-plus">+</span></div>
 </section>
 

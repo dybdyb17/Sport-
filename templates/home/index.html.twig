@@ -34,7 +34,8 @@
 
 {# ── HERO ── #}
 <section class="hero">
-  <div class="hero-inner">
+  <div class="hero-bg-photo" style="background-image:url('{{ asset('img/club-photos/cours-collectif-1.jpg') }}');"></div>
+  <div class="hero-inner" style="position:relative;z-index:1;">
     <div class="hero-content">
       <div class="hero-badge" data-animate="fade-down">Marseille — Ouvert 24h/24</div>
       <h1 class="hero-title">
@@ -47,7 +48,10 @@
         Coaching privé, small group ou accès salle. Sans engagement, sans compromis.
         Disponible même à 4h du matin.
       </p>
-      <div class="brand-slogan" style="margin-bottom:32px;" data-animate="fade-up">Pour le meilleur & pour le <span class="brand-plus">+</span></div>
+      <div data-animate="fade-up" style="margin-bottom:32px;">
+        <div class="brand-pioneers">À jamais les pionniers</div>
+        <div class="brand-slogan">Pour le meilleur & pour le <span class="brand-plus">+</span></div>
+      </div>
       <div class="hero-actions">
         {% if app.user %}
           <a href="{{ path('app_booking_new') }}" class="btn btn-primary btn-lg">
@@ -208,6 +212,53 @@
       <a href="{{ path('app_tarifs') }}" class="btn btn-primary" style="flex-shrink:0;">
         <i class="ti ti-arrow-right"></i> Voir tous les tarifs
       </a>
+    </div>
+  </div>
+</section>
+
+{# ── VIE DU CLUB — Galerie photos ── #}
+<section class="club-gallery-section">
+  <div class="container">
+    <div style="text-align:center;">
+      <div class="section-badge">Vie du club</div>
+    </div>
+    <h2 class="section-title" data-animate="fade-up">L'<span style="color:var(--gold)">esprit</span> SPORT+</h2>
+    <p class="section-sub" data-animate="fade-up">Des coachs passionnés, des membres qui se dépassent, une ambiance unique. Bienvenue chez nous.</p>
+
+    <div class="club-gallery-grid" data-stagger data-animate="fade-up">
+
+      <div class="club-gallery-item is-large">
+        <img src="{{ asset('img/club-photos/cours-collectif-1.jpg') }}" alt="Cours collectif de musculation chez SPORT+" loading="lazy">
+      </div>
+
+      <div class="club-gallery-item">
+        <img src="{{ asset('img/club-photos/muscu-homme.jpg') }}" alt="Séance musculation homme chez SPORT+" loading="lazy">
+      </div>
+
+      <div class="club-gallery-item is-tall">
+        <img src="{{ asset('img/club-photos/portrait-souriante.jpg') }}" alt="Membre souriante chez SPORT+" loading="lazy">
+      </div>
+
+      <div class="club-gallery-item">
+        <img src="{{ asset('img/club-photos/bench-orange.jpg') }}" alt="Espace musculation premium SPORT+" loading="lazy">
+      </div>
+
+      <div class="club-gallery-item">
+        <img src="{{ asset('img/club-photos/duo-rire.jpg') }}" alt="Séance duo motivation SPORT+" loading="lazy">
+      </div>
+
+      <div class="club-gallery-item">
+        <img src="{{ asset('img/club-photos/cardio-vue.jpg') }}" alt="Coaching cardio avec vue SPORT+" loading="lazy">
+      </div>
+
+      <div class="club-gallery-item">
+        <img src="{{ asset('img/club-photos/coaching-halteres.jpg') }}" alt="Coaching haltères SPORT+" loading="lazy">
+      </div>
+
+      <div class="club-gallery-item">
+        <img src="{{ asset('img/club-photos/back-extension.jpg') }}" alt="Renforcement musculaire SPORT+" loading="lazy">
+      </div>
+
     </div>
   </div>
 </section>
