@@ -1683,7 +1683,7 @@ input[type="radio"] {
   color: var(--text-dim);
   font-style: italic;
   font-family: 'Cormorant Garamond', serif;
-  font-size: 20px;
+  font-size: 30px;
   text-align: center;
   padding: 40px;
 }
@@ -1909,7 +1909,7 @@ input[type="radio"] {
   color: var(--muted-readable); /* #9A8F7A → ratio 6.5:1 sur fond noir, WCAG AA ✓ */
   font-style: italic;
   font-family: 'Cormorant Garamond', serif;
-  font-size: 20px;
+  font-size: 30px;
 }
 
 .booking-card-actions {
@@ -2321,7 +2321,7 @@ img, video, iframe { max-width: 100%; }
   font-family: 'Cormorant Garamond', Georgia, serif;
   font-style: italic;
   font-weight: 500;
-  font-size: 26px;
+  font-size: 30px;
   letter-spacing: 0.5px;
   text-transform: none;
   color: var(--gold);
@@ -2378,7 +2378,7 @@ img, video, iframe { max-width: 100%; }
   gap: 6px;
   font-family: 'Cormorant Garamond', serif;
   font-style: italic;
-  font-size: 13px;
+  font-size: 30px;
   color: var(--muted-readable);
   margin-top: 12px;
 }
