@@ -14,6 +14,257 @@
   </div>
 </section>
 
+{# ── Section : Abonnements officiels SPORT+ ── #}
+<section class="section" style="padding-top:0;padding-bottom:60px;">
+  <div class="container">
+    <div class="section-label" style="text-align:center;display:block;margin-bottom:8px;">Nos abonnements</div>
+    <h2 class="section-title" style="font-size:clamp(28px,4vw,42px);margin-bottom:32px;">
+      Formules <span style="color:var(--gold)">officielles</span>
+    </h2>
+
+    <div class="formules-grid" data-stagger data-animate="fade-up">
+
+      {# Student #}
+      <article class="formule-card"
+               data-img="{{ asset('img/formules/student.jpg') }}"
+               data-name="Student"
+               data-price="25"
+               data-period="/ 4 semaines"
+               data-tag="Étudiant"
+               data-fees="50€ frais d'inscription"
+               data-features='["Sans engagement","Accès 24/24","1 semaine d''accès à offrir","Bilan forme offert","Cours collectif avec coach"]'>
+        <div class="formule-tag">Étudiant</div>
+        <div class="formule-name">Student</div>
+        <div class="formule-price">25 <span>€</span></div>
+        <div class="formule-period">/ 4 semaines</div>
+        <ul class="formule-features">
+          <li><i class="ti ti-check"></i> Sans engagement</li>
+          <li><i class="ti ti-check"></i> Accès 24/24</li>
+          <li><i class="ti ti-check"></i> 1 semaine d'accès à offrir</li>
+          <li><i class="ti ti-check"></i> Bilan forme offert</li>
+          <li><i class="ti ti-check"></i> Cours collectif avec coach</li>
+        </ul>
+        <div class="formule-fees">+ 50€ frais d'inscription</div>
+        <button type="button" class="btn btn-outline formule-btn">
+          <i class="ti ti-photo"></i> Voir la formule
+        </button>
+      </article>
+
+      {# Premium+ #}
+      <article class="formule-card"
+               data-img="{{ asset('img/formules/premium-plus.jpg') }}"
+               data-name="Premium +"
+               data-price="45"
+               data-period="/ 4 semaines"
+               data-tag="Solo"
+               data-fees="50€ frais d'inscription"
+               data-features='["Sans engagement","Accès 24/24","1 semaine d''accès à offrir","Bilan forme offert","Cours collectif avec coach"]'>
+        <div class="formule-tag">Solo</div>
+        <div class="formule-name">Premium <span style="color:var(--green);">+</span></div>
+        <div class="formule-price">45 <span>€</span></div>
+        <div class="formule-period">/ 4 semaines</div>
+        <ul class="formule-features">
+          <li><i class="ti ti-check"></i> Sans engagement</li>
+          <li><i class="ti ti-check"></i> Accès 24/24</li>
+          <li><i class="ti ti-check"></i> 1 semaine d'accès à offrir</li>
+          <li><i class="ti ti-check"></i> Bilan forme offert</li>
+          <li><i class="ti ti-check"></i> Cours collectif avec coach</li>
+        </ul>
+        <div class="formule-fees">+ 50€ frais d'inscription</div>
+        <button type="button" class="btn btn-outline formule-btn">
+          <i class="ti ti-photo"></i> Voir la formule
+        </button>
+      </article>
+
+      {# Duo+ — mis en avant #}
+      <article class="formule-card formule-card-featured"
+               data-img="{{ asset('img/formules/duo-plus.jpg') }}"
+               data-name="Duo +"
+               data-price="55"
+               data-period="/ 4 semaines"
+               data-tag="Duo"
+               data-fees="50€ frais d'inscription"
+               data-features='["Sans engagement","Accès 24/24","1 semaine d''accès à offrir","Entraînement avec un invité","Bilan forme offert","Cours collectif avec coach"]'>
+        <div class="formule-badge-top">Le plus populaire</div>
+        <div class="formule-tag">Duo</div>
+        <div class="formule-name">Duo <span style="color:var(--green);">+</span></div>
+        <div class="formule-price">55 <span>€</span></div>
+        <div class="formule-period">/ 4 semaines</div>
+        <ul class="formule-features">
+          <li><i class="ti ti-check"></i> Sans engagement</li>
+          <li><i class="ti ti-check"></i> Accès 24/24</li>
+          <li><i class="ti ti-check"></i> 1 semaine d'accès à offrir</li>
+          <li><i class="ti ti-check"></i> Entraînement avec un invité</li>
+          <li><i class="ti ti-check"></i> Bilan forme offert</li>
+          <li><i class="ti ti-check"></i> Cours collectif avec coach</li>
+        </ul>
+        <div class="formule-fees">+ 50€ frais d'inscription</div>
+        <button type="button" class="btn btn-primary formule-btn">
+          <i class="ti ti-photo"></i> Voir la formule
+        </button>
+      </article>
+
+      {# Ultra #}
+      <article class="formule-card"
+               data-img="{{ asset('img/formules/ultra.jpg') }}"
+               data-name="Ultra"
+               data-price="90"
+               data-period="/ 4 semaines · groupe"
+               data-tag="Groupe"
+               data-fees="Voir conditions au club"
+               data-features='["Divise le prix entre amis","Jusqu''à 5 membres sur l''abonnement","Sans engagement","Accès 24/24","Ex : 18€/pers pour 5 personnes"]'>
+        <div class="formule-tag">Groupe</div>
+        <div class="formule-name">Ultra</div>
+        <div class="formule-price">90 <span>€</span></div>
+        <div class="formule-period">/ 4 semaines · groupe</div>
+        <ul class="formule-features">
+          <li><i class="ti ti-check"></i> Divise le prix entre amis</li>
+          <li><i class="ti ti-check"></i> Jusqu'à 5 membres sur l'abonnement</li>
+          <li><i class="ti ti-check"></i> Sans engagement</li>
+          <li><i class="ti ti-check"></i> Accès 24/24</li>
+          <li style="font-style:italic;color:var(--green);">Ex : 18€/pers pour 5 personnes</li>
+        </ul>
+        <div class="formule-fees">Voir conditions au club</div>
+        <button type="button" class="btn btn-outline formule-btn">
+          <i class="ti ti-photo"></i> Voir la formule
+        </button>
+      </article>
+
+    </div>
+
+    <p style="text-align:center;font-family:'Cormorant Garamond',serif;font-style:italic;
+              font-size:17px;color:var(--text-soft);margin-top:32px;">
+      Toutes les formules incluent l'accès libre 24h/24 à la salle.
+    </p>
+  </div>
+</section>
+
+{# ── Modal split : visuel + panneau infos animé ── #}
+<div id="formule-modal" class="formule-modal" aria-hidden="true" role="dialog">
+  <div class="formule-modal-backdrop" onclick="closeFormuleModal()"></div>
+
+  <div class="formule-modal-content">
+    <button type="button" class="formule-modal-close" onclick="closeFormuleModal()" aria-label="Fermer">
+      <i class="ti ti-x"></i>
+    </button>
+
+    <div class="formule-modal-split">
+
+      {# Visuel à gauche #}
+      <div class="formule-modal-visual">
+        <div class="formule-modal-glow"></div>
+        <img id="formule-modal-img" src="" alt="" loading="lazy">
+      </div>
+
+      {# Panneau infos animé à droite #}
+      <div class="formule-modal-info">
+        <div class="formule-modal-tag" id="formule-modal-tag"></div>
+        <h2 class="formule-modal-name" id="formule-modal-name"></h2>
+
+        <div class="formule-modal-price-block">
+          <div class="formule-modal-price">
+            <span id="formule-modal-price-num">0</span><span class="euro">€</span>
+          </div>
+          <div class="formule-modal-period" id="formule-modal-period"></div>
+        </div>
+
+        <ul class="formule-modal-features" id="formule-modal-features"></ul>
+
+        <div class="formule-modal-fees" id="formule-modal-fees"></div>
+
+        <a href="{{ path('app_contact') }}" class="btn btn-primary btn-lg formule-modal-cta">
+          <i class="ti ti-bolt"></i> Je veux cette formule
+        </a>
+
+        <div class="formule-modal-hint">
+          <i class="ti ti-info-circle"></i>
+          Inscription directement au club ou par téléphone : <strong>04 91 42 22 07</strong>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+(function() {
+  var modal       = document.getElementById('formule-modal');
+  var modalImg    = document.getElementById('formule-modal-img');
+  var modalTag    = document.getElementById('formule-modal-tag');
+  var modalName   = document.getElementById('formule-modal-name');
+  var modalPrice  = document.getElementById('formule-modal-price-num');
+  var modalPeriod = document.getElementById('formule-modal-period');
+  var modalFees   = document.getElementById('formule-modal-fees');
+  var modalFeat   = document.getElementById('formule-modal-features');
+
+  function animateNumber(el, target, duration) {
+    var start    = 0;
+    var startTs  = null;
+    function step(ts) {
+      if (!startTs) startTs = ts;
+      var progress = Math.min((ts - startTs) / duration, 1);
+      // ease-out cubic
+      var eased = 1 - Math.pow(1 - progress, 3);
+      el.textContent = Math.round(start + (target - start) * eased);
+      if (progress < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+
+  document.querySelectorAll('.formule-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var card = btn.closest('.formule-card');
+      if (!card) return;
+
+      var img      = card.getAttribute('data-img');
+      var name     = card.getAttribute('data-name');
+      var price    = parseInt(card.getAttribute('data-price'), 10) || 0;
+      var period   = card.getAttribute('data-period') || '';
+      var tag      = card.getAttribute('data-tag') || '';
+      var fees     = card.getAttribute('data-fees') || '';
+      var features = [];
+      try { features = JSON.parse(card.getAttribute('data-features') || '[]'); } catch (e) {}
+
+      modalImg.src    = img;
+      modalImg.alt    = 'Formule ' + name + ' — SPORT+ Marseille';
+      modalTag.textContent    = tag;
+      modalName.innerHTML     = name.replace('+', '<span style="color:var(--green);">+</span>');
+      modalPeriod.textContent = period;
+      modalFees.textContent   = fees;
+
+      modalFeat.innerHTML = '';
+      features.forEach(function(f, i) {
+        var li = document.createElement('li');
+        li.style.animationDelay = (0.15 + i * 0.06) + 's';
+        li.innerHTML = '<i class="ti ti-circle-check"></i><span>' + f + '</span>';
+        modalFeat.appendChild(li);
+      });
+
+      modal.classList.add('is-open');
+      modal.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+
+      // Anime le prix avec délai pour que ça apparaisse après l'entrée
+      modalPrice.textContent = '0';
+      setTimeout(function() { animateNumber(modalPrice, price, 600); }, 300);
+    });
+  });
+
+  window.closeFormuleModal = function() {
+    modal.classList.remove('is-open');
+    modal.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+    setTimeout(function() { modalImg.src = ''; }, 300);
+  };
+
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape' && modal.classList.contains('is-open')) {
+      window.closeFormuleModal();
+    }
+  });
+})();
+</script>
+
 {# ── Section 1 : Séances uniques #}
 <section class="section" style="padding-top:0;">
   <div class="container">

@@ -36,9 +36,9 @@
 {# Bloc 2 — L'idée #}
 <section class="section" style="padding-top:0;">
   <div class="container">
-    <div class="section-label">L'ORIGINE</div>
-    <h2 class="section-title" style="margin-bottom:40px;">Pourquoi SPORT+ ?</h2>
-    <div class="about-origin-grid">
+    <div class="section-label" data-animate="fade-right">L'ORIGINE</div>
+    <h2 class="section-title" style="margin-bottom:40px;" data-animate="fade-right">Pourquoi SPORT+ ?</h2>
+    <div class="about-origin-grid" data-animate="fade-up">
       <div style="display:flex;flex-direction:column;gap:20px;">
         <p style="color:var(--text-soft);line-height:1.8;font-size:16px;">
           <strong style="color:var(--white);">[NOM_DIRIGEANT]</strong> a fondé SPORT+ en
@@ -72,8 +72,8 @@
 {# Bloc 3 — Trois piliers #}
 <section class="section" style="background:var(--bg-2);">
   <div class="container">
-    <div class="section-label">NOS VALEURS</div>
-    <h2 class="section-title" style="margin-bottom:40px;">Trois piliers</h2>
+    <div class="section-label" data-animate="fade-up">NOS VALEURS</div>
+    <h2 class="section-title" style="margin-bottom:40px;" data-animate="fade-up">Trois piliers</h2>
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:24px;">
 
       <div class="bg-card" style="background:var(--bg-card);border:1px solid var(--border);
@@ -128,27 +128,27 @@
 {# Bloc 4 — Nos chiffres #}
 <section class="section">
   <div class="container">
-    <div class="section-label">EN CHIFFRES</div>
-    <h2 class="section-title" style="margin-bottom:40px;">SPORT+ en quelques nombres</h2>
-    <div class="about-stats-grid">
+    <div class="section-label" data-animate="fade-down">EN CHIFFRES</div>
+    <h2 class="section-title" style="margin-bottom:40px;" data-animate="fade-down">SPORT+ en quelques nombres</h2>
+    <div class="about-stats-grid" data-stagger data-animate="fade-up">
 
-      <div class="about-stat-card">
+      <div class="about-stat-card" data-animate="fade-up">
         <div class="stat-number">[ANNÉE_OUVERTURE]</div>
         <div class="stat-label">Année de création</div>
       </div>
 
-      <div class="about-stat-card">
-        <div class="stat-number">{{ coachsCount }}</div>
+      <div class="about-stat-card" data-animate="fade-up">
+        <div class="stat-number" data-counter="{{ coachsCount }}">0</div>
         <div class="stat-label">Coachs certifiés</div>
       </div>
 
-      <div class="about-stat-card">
+      <div class="about-stat-card" data-animate="fade-up">
         <div class="stat-number">24/7</div>
         <div class="stat-label">Accessible</div>
       </div>
 
-      <div class="about-stat-card">
-        <div class="stat-number">{{ foundingOffer ? foundingOffer.placesTaken : '50' }}</div>
+      <div class="about-stat-card" data-animate="fade-up">
+        <div class="stat-number" data-counter="{{ foundingOffer ? foundingOffer.placesTaken : 50 }}">0</div>
         <div class="stat-label">Membres Fondateurs</div>
       </div>
 

@@ -14,6 +14,7 @@ class SitemapController extends AbstractController
         $routes = [
             ['name' => 'app_home',                     'priority' => '1.0', 'changefreq' => 'weekly'],
             ['name' => 'app_about',                    'priority' => '0.8', 'changefreq' => 'monthly'],
+            ['name' => 'app_programmes',               'priority' => '0.8', 'changefreq' => 'monthly'],
             ['name' => 'app_deciplus',                 'priority' => '0.7', 'changefreq' => 'monthly'],
             ['name' => 'app_concept',                  'priority' => '0.8', 'changefreq' => 'monthly'],
             ['name' => 'app_tarifs',                   'priority' => '0.9', 'changefreq' => 'monthly'],

@@ -47,6 +47,7 @@
       <a href="{{ path('app_coachs_list') }}" class="nav-link {% if app.request.attributes.get('_route') == 'app_coachs_list' %}active{% endif %}">Coachs</a>
       <a href="{{ path('app_concept') }}" class="nav-link {% if app.request.attributes.get('_route') == 'app_concept' %}active{% endif %}">Concept</a>
       <a href="{{ path('app_tarifs') }}" class="nav-link {% if app.request.attributes.get('_route') == 'app_tarifs' %}active{% endif %}">Tarifs</a>
+      <a href="{{ path('app_programmes') }}" class="nav-link {% if app.request.attributes.get('_route') == 'app_programmes' %}active{% endif %}">Programmes</a>
       <a href="{{ path('app_about') }}" class="nav-link {% if app.request.attributes.get('_route') == 'app_about' %}active{% endif %}">À propos</a>
       <a href="{{ path('app_faq') }}" class="nav-link {% if app.request.attributes.get('_route') == 'app_faq' %}active{% endif %}">FAQ</a>
       <a href="{{ path('app_contact') }}" class="nav-link {% if app.request.attributes.get('_route') == 'app_contact' %}active{% endif %}">Contact</a>
@@ -123,6 +124,7 @@
     <a href="{{ path('app_coachs_list') }}" class="nav-link">Coachs</a>
     <a href="{{ path('app_concept') }}" class="nav-link">Concept</a>
     <a href="{{ path('app_tarifs') }}" class="nav-link">Tarifs</a>
+    <a href="{{ path('app_programmes') }}" class="nav-link">Programmes</a>
     <a href="{{ path('app_about') }}" class="nav-link">À propos</a>
     <a href="{{ path('app_faq') }}" class="nav-link">FAQ</a>
     <a href="{{ path('app_contact') }}" class="nav-link">Contact</a>
@@ -213,7 +215,7 @@
   </div>
 </footer>
 
-<script src="{{ asset('js/app.js') }}?v=20260602c" defer></script>
+<script src="{{ asset('js/app.js') }}?v=20260602d" defer></script>
 {% block mercure %}{% endblock %}
 </body>
 </html>
