@@ -1315,6 +1315,7 @@ input[type="radio"] {
   padding: 14px 20px;
   text-align: left;
   border-bottom: 1px solid var(--border);
+  white-space: nowrap;
 }
 
 .data-table-card td {

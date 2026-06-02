@@ -70,7 +70,7 @@
         {{ form_label(form.plainPassword) }}
         <div class="password-field-wrapper">
           {{ form_widget(form.plainPassword) }}
-          <button type="button" class="password-toggle" aria-label="Afficher/masquer le mot de passe">
+          <button type="button" class="password-toggle" onclick="togglePassword(this)" aria-label="Afficher/masquer le mot de passe">
             <i class="ti ti-eye"></i>
           </button>
         </div>
