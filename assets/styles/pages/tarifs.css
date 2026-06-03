@@ -1,0 +1,305 @@
+/* ── Tableau tarifs public ──────────────────────────────────────────────── */
+
+.tarif-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--bg-card);
+  border-radius: var(--radius);
+  overflow: hidden;
+  border: 1px solid var(--border);
+  font-size: 15px;
+}
+
+.tarif-table th {
+  background: var(--bg-3);
+  padding: 14px 20px;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--gold-dim);
+  text-align: center;
+  border-bottom: 1px solid var(--border);
+}
+
+.tarif-table th span {
+  display: block;
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--text-soft);
+  letter-spacing: 0;
+  text-transform: none;
+  margin-top: 2px;
+}
+
+.tarif-table td {
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--border);
+}
+
+.tarif-table tr:last-child td { border-bottom: none; }
+
+.tarif-table tr:nth-child(even) td { background: rgba(255,255,255,.015); }
+
+.tarif-label {
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 16px;
+}
+
+.tarif-price {
+  text-align: center;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 24px;
+  color: var(--gold);
+}
+
+.tarif-best {
+  display: inline-block;
+  background: var(--gold);
+  color: var(--black);
+  font-family: var(--font-display);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  padding: 3px 9px;
+  border-radius: 100px;
+  vertical-align: middle;
+  margin-left: 8px;
+  font-style: normal;
+  text-transform: uppercase;
+}
+
+/* ── FORMULES OFFICIELLES SPORT+ ──────────────────────────────────────── */
+.formules-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 20px;
+}
+
+.formule-card {
+  position: relative;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 28px 24px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  transition: border-color .25s, transform .25s, box-shadow .25s;
+  overflow: hidden;
+}
+
+.formule-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, var(--gold-dim), transparent);
+  opacity: .5;
+}
+
+.formule-card:hover {
+  border-color: rgba(46,204,113,.4);
+  transform: translateY(-4px);
+  box-shadow: 0 16px 40px rgba(46,204,113,.08);
+}
+
+.formule-card-featured {
+  border-color: rgba(46,204,113,.4);
+  background: linear-gradient(180deg, var(--bg-card) 0%, rgba(46,204,113,.04) 100%);
+}
+
+.formule-card-featured::before {
+  background: linear-gradient(90deg, transparent, var(--green), transparent);
+  opacity: 1;
+  height: 4px;
+}
+
+.formule-badge-top {
+  position: absolute;
+  top: 8px;
+  right: 14px;
+  background: var(--green);
+  color: var(--black);
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  border-radius: 100px;
+}
+
+.formule-tag {
+  display: inline-block;
+  align-self: flex-start;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: var(--gold-dim);
+  padding: 3px 10px;
+  border: 1px solid var(--gold-dim);
+  border-radius: 100px;
+}
+
+.formule-name {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 900;
+  font-size: 32px;
+  text-transform: uppercase;
+  letter-spacing: -0.5px;
+  color: var(--white);
+  line-height: 1;
+  margin-top: 4px;
+}
+
+.formule-price {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 900;
+  font-size: 58px;
+  color: var(--white);
+  line-height: 1;
+  margin-top: 8px;
+}
+.formule-price span {
+  font-size: 28px;
+  color: var(--gold);
+  vertical-align: top;
+  margin-left: 4px;
+}
+
+.formule-period {
+  font-size: 13px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.formule-features {
+  list-style: none;
+  margin: 0;
+  padding: 14px 0;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+}
+
+.formule-features li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: var(--text);
+  line-height: 1.4;
+}
+
+.formule-features li i {
+  color: var(--green);
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+.formule-fees {
+  font-size: 12px;
+  color: var(--text-dim);
+  text-align: center;
+  font-style: italic;
+  margin-bottom: 4px;
+}
+
+.formule-btn {
+  width: 100%;
+  justify-content: center;
+}
+
+/* ── Glow animé sur card featured ── */
+.formule-card-featured::after {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: var(--radius-lg);
+  background: linear-gradient(135deg, transparent 30%, rgba(46,204,113,.4) 50%, transparent 70%);
+  background-size: 200% 200%;
+  z-index: -1;
+  animation: featuredGlow 6s ease infinite;
+  pointer-events: none;
+}
+@keyframes featuredGlow {
+  0%, 100% { background-position: 0% 50%; }
+  50%      { background-position: 100% 50%; }
+}
+
+/* ── Hover marqué sur toutes les formule-cards ── */
+.formule-card .formule-price {
+  background: linear-gradient(180deg, var(--white) 0%, rgba(255,255,255,.7) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  transition: transform .3s ease;
+}
+.formule-card:hover .formule-price {
+  transform: scale(1.05);
+}
+
+/* ── 2 systèmes : encart explicatif ──────────────────────────────────── */
+.dual-system-info {
+  margin-top: 48px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  max-width: 880px;
+  margin-left: auto;
+  margin-right: auto;
+}
+@media (max-width: 760px) {
+  .dual-system-info { grid-template-columns: 1fr; }
+}
+
+.dual-system-card {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 22px 24px;
+}
+
+.dual-system-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  flex-shrink: 0;
+}
+
+.dual-system-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 800;
+  font-size: 17px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--white);
+  margin-bottom: 6px;
+}
+
+.dual-system-text {
+  font-size: 13.5px;
+  color: var(--text-soft);
+  line-height: 1.65;
+}
+

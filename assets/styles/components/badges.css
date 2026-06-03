@@ -1,0 +1,76 @@
+/* ── SECTIONS ─────────────────────────────────────────────────── */
+.section {
+  padding: 100px 0;
+}
+
+.section-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 14px;
+  background: rgba(200,169,81,.1);
+  border: 1px solid rgba(200,169,81,.3);
+  border-radius: 100px;
+  color: var(--gold);
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 16px;
+}
+
+.section-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 900;
+  font-size: clamp(36px, 5vw, 56px);
+  text-transform: uppercase;
+  text-align: center;
+  margin-bottom: 16px;
+  letter-spacing: -1px;
+  color: var(--white);
+}
+
+.section-sub {
+  font-family: var(--font-body);
+  font-size: 17px;
+  color: var(--text-dim);
+  text-align: center;
+  max-width: 560px;
+  margin: 0 auto 64px;
+  line-height: 1.7;
+}
+
+/* ── STATUS BADGES ────────────────────────────────────────────── */
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: 100px;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.status-badge.pending {
+  background: rgba(200,169,81,.15);
+  color: var(--gold);
+}
+
+.status-badge.confirmed {
+  background: rgba(46,204,113,.08);
+  color: var(--green);
+  border: 1px solid rgba(46,204,113,.25);
+}
+
+.status-badge.refused {
+  background: rgba(255,68,68,.1);
+  color: #ff4444;
+}
+
+.status-badge.cancelled {
+  background: rgba(106,96,80,.1);
+  color: var(--muted);
+}

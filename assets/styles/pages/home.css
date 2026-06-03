@@ -1,0 +1,438 @@
+/* ── HERO ─────────────────────────────────────────────────────── */
+.hero {
+  min-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background:
+    radial-gradient(ellipse 50% 40% at 80% 20%, rgba(200,169,81,.06) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 40% at 20% 80%, rgba(200,169,81,.04) 0%, transparent 60%),
+    radial-gradient(ellipse 30% 20% at 50% 30%, rgba(46,204,113,.015) 0%, transparent 60%);
+}
+
+.hero-inner {
+  position: relative;
+  z-index: 1;
+  max-width: var(--container);
+  margin: 0 auto;
+  padding: 0 24px;
+  width: 100%;
+}
+
+.hero-content {
+  max-width: 800px;
+  margin: 0 auto;
+  text-align: center;
+  padding: 60px 0;
+}
+
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 18px;
+  background: rgba(200,169,81,.1);
+  border: 1px solid rgba(200,169,81,.3);
+  border-radius: 100px;
+  color: var(--gold);
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  margin-bottom: 24px;
+}
+
+.hero-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 900;
+  font-size: clamp(52px, 8vw, 100px);
+  letter-spacing: -2px;
+  line-height: .92;
+  text-transform: uppercase;
+  margin-bottom: 24px;
+  color: var(--white);
+}
+
+.hero-title .gold {
+  color: var(--gold);
+}
+
+.hero-sub {
+  font-family: var(--font-body);
+  font-size: 18px;
+  color: var(--text-dim);
+  max-width: 560px;
+  margin: 0 auto 40px;
+  line-height: 1.7;
+}
+
+.hero-actions {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 64px;
+}
+
+.hero-stats {
+  display: flex;
+  gap: 64px;
+  justify-content: center;
+  flex-wrap: wrap;
+  border-top: 1px solid var(--border);
+  padding-top: 40px;
+}
+
+.stat-item {
+  text-align: center;
+}
+
+.stat-value {
+  display: block;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 40px;
+  font-weight: 900;
+  color: var(--gold);
+}
+
+.stat-label {
+  font-family: var(--font-body);
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: var(--text-dim);
+}
+
+/* ── SERVICE CARD ─────────────────────────────────────────────── */
+.service-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 28px;
+  transition: transform .25s, border-color .25s;
+}
+
+.service-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--gold-dim);
+}
+
+.service-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: rgba(200,169,81,.1);
+  border: 1px solid rgba(200,169,81,.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+  font-size: 22px;
+  color: var(--gold);
+}
+
+.service-name {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+  color: var(--white);
+}
+
+.service-price {
+  color: var(--gold);
+  font-weight: 700;
+  margin-bottom: 8px;
+  font-size: 15px;
+}
+
+.service-desc {
+  color: var(--text-dim);
+  font-size: 14px;
+  margin-bottom: 20px;
+  line-height: 1.5;
+}
+
+/* ── BODY : gradient subtil pour donner de la profondeur ───────────────── */
+body {
+  background:
+    radial-gradient(ellipse 80% 40% at 50% 0%, rgba(200,169,81,.04) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 50% at 100% 50%, rgba(46,204,113,.025) 0%, transparent 60%),
+    var(--bg);
+  background-attachment: fixed;
+}
+
+/* ── Effet grain très subtil sur les sections sombres ──────────────────── */
+.section,
+.pub-hero {
+  position: relative;
+}
+
+
+/* ── GALERIE HOMEPAGE — section "Vie du club" ──────────────────────────── */
+.club-gallery-section {
+  padding: 80px 0;
+  background:
+    linear-gradient(180deg, transparent 0%, rgba(200,169,81,.03) 50%, transparent 100%),
+    var(--bg);
+}
+
+.club-gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-auto-rows: 200px;
+  gap: 12px;
+  margin-top: 40px;
+}
+
+.club-gallery-item {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--radius);
+  cursor: pointer;
+}
+
+.club-gallery-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform .8s cubic-bezier(.2, .8, .2, 1);
+  filter: brightness(.92);
+}
+
+.club-gallery-item:hover img {
+  transform: scale(1.08);
+  filter: brightness(1.05);
+}
+
+/* Item large (2x2) */
+.club-gallery-item.is-large {
+  grid-column: span 2;
+  grid-row: span 2;
+}
+
+/* Item haut (1x2) */
+.club-gallery-item.is-tall {
+  grid-row: span 2;
+}
+
+/* Overlay au hover */
+.club-gallery-item::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 60%, rgba(0,0,0,.6) 100%);
+  opacity: 0;
+  transition: opacity .3s;
+}
+.club-gallery-item:hover::after { opacity: 1; }
+
+/* Tablette : 2 colonnes uniformes, on neutralise les spans pour éviter les trous */
+@media (max-width: 1024px) {
+  .club-gallery-grid {
+    grid-template-columns: repeat(2, 1fr);
+    grid-auto-rows: 220px;
+  }
+  .club-gallery-item.is-large,
+  .club-gallery-item.is-tall {
+    grid-column: span 1;
+    grid-row: span 1;
+  }
+  /* La première image prend les 2 colonnes pour casser la grille */
+  .club-gallery-item:first-child {
+    grid-column: span 2;
+    grid-row: span 1;
+  }
+}
+
+/* Mobile : 2 colonnes uniformes, toutes les images 1x1 (8 items = 4 lignes propres) */
+@media (max-width: 640px) {
+  .club-gallery-grid {
+    grid-template-columns: repeat(2, 1fr);
+    grid-auto-rows: 150px;
+    gap: 8px;
+  }
+  .club-gallery-item.is-large,
+  .club-gallery-item.is-tall,
+  .club-gallery-item:first-child {
+    grid-column: span 1;
+    grid-row: span 1;
+  }
+}
+
+/* ── HERO : ajout d'une photo en arrière-plan subtile (homepage) ───────── */
+.hero-bg-photo {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background-size: cover;
+  background-position: center;
+  filter: brightness(.18) saturate(.6);
+  pointer-events: none;
+}
+.hero-bg-photo::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at center, transparent 0%, rgba(15,15,19,.9) 80%),
+    linear-gradient(180deg, rgba(15,15,19,.4) 0%, var(--bg) 100%);
+}
+
+/* ── NIGHT COACH BANNER ──────────────────────────────────────────────── */
+.night-banner-section {
+  padding: 60px 0;
+}
+
+.night-banner {
+  position: relative;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: var(--bg-card);
+  border: 1px solid rgba(46,204,113,.25);
+  box-shadow: 0 20px 60px rgba(0,0,0,.4), 0 0 80px rgba(46,204,113,.05);
+}
+
+.night-banner-bg {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  filter: brightness(.22) saturate(.8) hue-rotate(180deg);
+  z-index: 0;
+}
+.night-banner-bg::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 30% 40%, rgba(46,204,113,.15) 0%, transparent 50%),
+    linear-gradient(135deg, rgba(15,15,19,.85) 0%, rgba(15,15,19,.6) 100%);
+}
+
+.night-banner-content {
+  position: relative;
+  z-index: 1;
+  padding: 56px 48px;
+  max-width: 720px;
+}
+
+.night-banner-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  background: rgba(46,204,113,.12);
+  border: 1px solid rgba(46,204,113,.4);
+  border-radius: 100px;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: var(--green);
+  margin-bottom: 22px;
+}
+.night-banner-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--green);
+  box-shadow: 0 0 10px var(--green);
+  animation: nightDot 1.6s ease-in-out infinite;
+}
+@keyframes nightDot {
+  0%, 100% { transform: scale(1);   opacity: 1; }
+  50%      { transform: scale(1.6); opacity: .5; }
+}
+
+.night-banner-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 900;
+  font-size: clamp(40px, 6vw, 72px);
+  text-transform: uppercase;
+  letter-spacing: -2px;
+  line-height: .95;
+  color: var(--white);
+  margin: 0 0 18px;
+}
+
+.night-banner-sub {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 20px;
+  color: var(--text-soft);
+  line-height: 1.6;
+  margin: 0 0 30px;
+  max-width: 560px;
+}
+.night-banner-sub strong {
+  color: var(--white);
+  font-style: normal;
+  font-weight: 600;
+}
+
+.night-banner-meta {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 32px;
+  max-width: 540px;
+}
+
+.night-banner-meta-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 18px;
+  background: rgba(6,6,6,.4);
+  border: 1px solid rgba(46,204,113,.2);
+  border-radius: var(--radius);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+.night-banner-meta-item i {
+  font-size: 24px;
+  color: var(--green);
+  flex-shrink: 0;
+}
+.night-banner-meta-item strong {
+  display: block;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 800;
+  font-size: 16px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--white);
+}
+.night-banner-meta-item span {
+  font-size: 13px;
+  color: var(--text-soft);
+}
+
+.night-banner-cta {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 700px) {
+  .night-banner-content { padding: 40px 28px; }
+  .night-banner-meta { grid-template-columns: 1fr; gap: 10px; }
+  .night-banner-meta-item { padding: 12px 14px; }
+  .night-banner-meta-item strong { font-size: 14px; }
+  .night-banner-sub { font-size: 17px; }
+  .night-banner-cta .btn { width: 100%; justify-content: center; }
+}
+

@@ -1,0 +1,51 @@
+/* ── CARDS GRID ───────────────────────────────────────────────── */
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px;
+}
+
+/* ── FEATURE CARD ─────────────────────────────────────────────── */
+.feature-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 32px;
+  transition: transform .25s, border-color .25s;
+}
+
+.feature-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(46,204,113,.3);
+  box-shadow: 0 8px 28px rgba(46,204,113,.07);
+}
+
+.feature-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: rgba(200,169,81,.1);
+  border: 1px solid rgba(200,169,81,.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+  font-size: 28px;
+  color: var(--gold);
+}
+
+.feature-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+  color: var(--white);
+}
+
+.feature-text {
+  font-family: var(--font-body);
+  font-size: 15px;
+  color: var(--text-dim);
+  line-height: 1.6;
+}

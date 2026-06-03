@@ -1,0 +1,263 @@
+/* ═══════════════════════════════════════════════════════════════════════
+   SYSTÈME D'ANIMATIONS GLOBAL SPORT+
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* ── Smooth scroll global ── */
+html { scroll-behavior: smooth; }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    transition-duration: .01ms !important;
+  }
+}
+
+/* ── Animations d'apparition au scroll ───────────────────────────────── */
+[data-animate] {
+  opacity: 0;
+  will-change: opacity, transform;
+  transition: opacity .8s cubic-bezier(.2, .8, .2, 1),
+              transform .8s cubic-bezier(.2, .8, .2, 1);
+}
+
+[data-animate="fade-up"]    { transform: translateY(40px); }
+[data-animate="fade-down"]  { transform: translateY(-40px); }
+[data-animate="fade-left"]  { transform: translateX(-40px); }
+[data-animate="fade-right"] { transform: translateX(40px); }
+[data-animate="scale-in"]   { transform: scale(.92); }
+[data-animate="rotate-in"]  { transform: rotate(-3deg) scale(.96); }
+[data-animate="zoom-out"]   { transform: scale(1.08); }
+[data-animate="blur-in"]    { filter: blur(8px); }
+
+[data-animate].is-visible {
+  opacity: 1;
+  transform: translate(0, 0) scale(1) rotate(0);
+  filter: blur(0);
+}
+
+/* Stagger pour les enfants directs */
+[data-stagger] > * {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity .6s cubic-bezier(.2, .8, .2, 1),
+              transform .6s cubic-bezier(.2, .8, .2, 1);
+}
+[data-stagger].is-visible > * { opacity: 1; transform: translateY(0); }
+[data-stagger].is-visible > *:nth-child(1) { transition-delay: 0s; }
+[data-stagger].is-visible > *:nth-child(2) { transition-delay: .08s; }
+[data-stagger].is-visible > *:nth-child(3) { transition-delay: .16s; }
+[data-stagger].is-visible > *:nth-child(4) { transition-delay: .24s; }
+[data-stagger].is-visible > *:nth-child(5) { transition-delay: .32s; }
+[data-stagger].is-visible > *:nth-child(6) { transition-delay: .40s; }
+[data-stagger].is-visible > *:nth-child(7) { transition-delay: .48s; }
+
+/* ── Bouton scroll-to-top ─────────────────────────────────────────────── */
+.scroll-top {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--gold);
+  color: var(--black);
+  border: none;
+  cursor: pointer;
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(20px);
+  transition: opacity .3s, transform .3s, visibility .3s, box-shadow .25s;
+  z-index: 100;
+  box-shadow: 0 8px 24px rgba(200,169,81,.4);
+}
+.scroll-top.is-visible {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+.scroll-top:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 14px 32px rgba(200,169,81,.55), 0 0 24px rgba(46,204,113,.2);
+}
+
+@media (max-width: 640px) {
+  .scroll-top { bottom: 16px; right: 16px; width: 42px; height: 42px; font-size: 18px; }
+}
+
+/* ── Slogan : le + qui respire ────────────────────────────────────────── */
+.brand-plus {
+  display: inline-block;
+  animation: plusBreath 3.5s ease-in-out infinite;
+}
+@keyframes plusBreath {
+  0%, 100% { transform: scale(1);    text-shadow: 0 0 8px rgba(46,204,113,.5); }
+  50%      { transform: scale(1.18); text-shadow: 0 0 16px rgba(46,204,113,.9); }
+}
+
+/* ── Tilt 3D sur cards coachs ─────────────────────────────────────────── */
+.coach-pro-card {
+  transform-style: preserve-3d;
+  perspective: 1000px;
+}
+.coach-pro-card.is-tilting {
+  transition: transform .15s ease-out;
+}
+.coach-pro-card .coach-pro-photo-wrap,
+.coach-pro-card .coach-pro-body {
+  transform: translateZ(0);
+  transition: transform .15s ease-out;
+}
+.coach-pro-card.is-tilting .coach-pro-photo-wrap {
+  transform: translateZ(24px);
+}
+.coach-pro-card.is-tilting .coach-pro-name {
+  transform: translateZ(36px);
+}
+
+/* ── Hero accueil : split text qui apparait mot par mot ──────────────── */
+.split-word {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(40px) rotate(2deg);
+  animation: wordIn .7s cubic-bezier(.2, .8, .2, 1) forwards;
+}
+@keyframes wordIn {
+  to { opacity: 1; transform: translateY(0) rotate(0); }
+}
+
+/* ── Compteurs : style pour rouler ────────────────────────────────────── */
+[data-counter] {
+  font-variant-numeric: tabular-nums;
+  display: inline-block;
+}
+
+/* ── Cards programmes : flip au hover (révèle infos) ─────────────────── */
+.programme-card .programme-photo-placeholder i,
+.programme-card .programme-photo img {
+  transition: transform .6s cubic-bezier(.2, .8, .2, 1);
+}
+.programme-card:hover .programme-photo-placeholder i,
+.programme-card:hover .programme-photo img {
+  transform: scale(1.08) rotate(-2deg);
+}
+.programme-card .programme-badge {
+  transition: transform .3s ease, box-shadow .3s ease;
+}
+.programme-card:hover .programme-badge {
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 8px 20px rgba(0,0,0,.3);
+}
+
+/* ── Indicateur de scroll en haut de page ─────────────────────────────── */
+.scroll-progress {
+  position: fixed;
+  top: 0; left: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--gold), var(--green));
+  width: 0%;
+  z-index: 999;
+  transition: width .1s ease-out;
+  box-shadow: 0 0 8px rgba(200,169,81,.5);
+}
+
+/* ── Shine effect sur boutons primary au hover ────────────────────────── */
+.btn-primary {
+  position: relative;
+  overflow: hidden;
+}
+.btn-primary::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,.3), transparent);
+  transition: left .6s ease;
+  pointer-events: none;
+}
+.btn-primary:hover::after { left: 100%; }
+
+/* ── Stats / chiffres : effet glow subtil ─────────────────────────────── */
+.stat-value, .about-stat-card .stat-number {
+  transition: text-shadow .3s ease;
+}
+.stat-card:hover .stat-value,
+.about-stat-card:hover .stat-number {
+  text-shadow: 0 0 24px currentColor;
+}
+
+/* ── Logo : léger pulse au load ───────────────────────────────────────── */
+.logo-mark::after {
+  animation: dotPulse 2.5s ease-in-out infinite;
+}
+@keyframes dotPulse {
+  0%, 100% {
+    box-shadow: 0 0 10px var(--green), 0 0 4px var(--green);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 0 16px var(--green), 0 0 8px var(--green);
+    transform: scale(1.15);
+  }
+}
+
+/* ── Animation d'entrée du body au chargement ─────────────────────────── */
+body {
+  animation: bodyFadeIn .4s ease;
+}
+@keyframes bodyFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* ── Underline animé sur liens du footer/nav ─────────────────────────── */
+.footer-link {
+  position: relative;
+  display: inline-flex;
+}
+.footer-link::after {
+  content: '';
+  position: absolute;
+  bottom: 2px;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background: var(--green);
+  transition: width .3s ease;
+}
+.footer-link:hover::after { width: 100%; }
+
+/* ── Hover effects supplémentaires sur les feature-icons ──────────────── */
+.feature-card .feature-icon {
+  transition: transform .35s cubic-bezier(.2, .8, .2, 1), background .35s;
+}
+.feature-card:hover .feature-icon {
+  transform: rotate(-8deg) scale(1.1);
+  background: rgba(46,204,113,.15);
+  border-color: rgba(46,204,113,.4);
+  color: var(--green);
+}
+
+
+/* ── FAQ animation d'ouverture améliorée ──────────────────────────── */
+.faq-item[open] .faq-answer {
+  animation: faqAnswerIn .35s ease;
+}
+@keyframes faqAnswerIn {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.faq-item > summary::after {
+  transition: transform .3s cubic-bezier(.2, .8, .2, 1), color .2s;
+}
+.faq-item[open] > summary::after {
+  transform: rotate(180deg);
+}
+

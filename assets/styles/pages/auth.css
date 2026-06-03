@@ -1,0 +1,165 @@
+/* ── AUTH PAGES ───────────────────────────────────────────────── */
+.auth-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: 100vh;
+}
+
+.auth-panel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 40px;
+}
+
+.auth-form-box {
+  width: 100%;
+  max-width: 440px;
+}
+
+.auth-visual {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-start;
+  background-size: cover;
+  background-position: center;
+}
+
+/* Overlay dark + gradient bas pour la lisibilité du texte */
+.auth-visual::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, rgba(15,15,19,.15) 0%, rgba(15,15,19,.6) 60%, rgba(15,15,19,.95) 100%),
+    radial-gradient(ellipse at top right, rgba(200,169,81,.18) 0%, transparent 60%);
+  z-index: 1;
+}
+
+/* Filigrane SPORT+ en haut à droite */
+.auth-visual::after {
+  content: 'SPORT+';
+  position: absolute;
+  top: 32px; right: 36px;
+  z-index: 2;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 900;
+  font-size: 28px;
+  letter-spacing: 2px;
+  color: var(--white);
+  opacity: .85;
+  text-shadow: 0 2px 12px rgba(0,0,0,.6);
+}
+
+.auth-quote {
+  position: relative;
+  z-index: 2;
+  padding: 48px 40px 56px;
+  text-align: left;
+  max-width: 520px;
+}
+
+.auth-quote-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 14px;
+  padding: 5px 12px;
+  background: rgba(0,0,0,.45);
+  border: 1px solid rgba(200,169,81,.4);
+  border-radius: 100px;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+.auth-quote-eyebrow::before {
+  content: '';
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--green);
+  box-shadow: 0 0 8px var(--green);
+  animation: greenDotPulse 1.8s ease-in-out infinite;
+}
+
+.auth-quote blockquote {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: clamp(24px, 3vw, 32px);
+  color: var(--white);
+  line-height: 1.4;
+  margin: 0 0 18px;
+  text-shadow: 0 4px 20px rgba(0,0,0,.5);
+}
+
+.auth-quote cite {
+  display: inline-block;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  color: var(--gold);
+  margin-bottom: 26px;
+  font-style: normal;
+}
+
+.auth-quote-features {
+  margin-top: 24px;
+  padding-top: 24px;
+  border-top: 1px solid rgba(255,255,255,.12);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.auth-quote-feature {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 14px;
+  color: var(--white);
+  text-shadow: 0 2px 8px rgba(0,0,0,.4);
+}
+.auth-quote-feature i {
+  color: var(--green);
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.auth-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 42px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: -1px;
+  margin-bottom: 8px;
+  color: var(--white);
+}
+
+.auth-sub {
+  font-size: 15px;
+  color: var(--text-dim);
+  margin-bottom: 32px;
+}
+
+.auth-link {
+  margin-top: 24px;
+  text-align: center;
+  font-size: 14px;
+  color: var(--text-dim);
+}
+
+.auth-link a {
+  color: var(--gold);
+  text-decoration: none;
+}
+
+.auth-link a:hover {
+  text-decoration: underline;
+}

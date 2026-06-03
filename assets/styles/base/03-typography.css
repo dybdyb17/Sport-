@@ -1,0 +1,36 @@
+/* ── TYPOGRAPHIE GLOBALE ────────────────────────────────────── */
+p { font-family: var(--font-body); font-size: var(--fs-body); line-height: 1.7; color: var(--text); }
+li { font-family: var(--font-body); color: var(--text); }
+td, th { font-family: var(--font-body); }
+
+h1, h2, h3, h4, h5, h6 { font-family: var(--font-display); color: var(--white); line-height: 1.2; }
+h1 { font-size: clamp(36px, 5vw, 56px); font-weight: 900; letter-spacing: -0.5px; }
+h2 { font-size: clamp(26px, 3.5vw, 36px); font-weight: 700; }
+h3 { font-size: clamp(18px, 2.5vw, 22px); font-weight: 700; letter-spacing: 0.5px; }
+
+input, select, textarea, button {
+  font-family: var(--font-body);
+  font-size: var(--fs-md);
+}
+
+input, select, textarea {
+  color: var(--white);
+  background: var(--bg-3);
+  border: 1px solid var(--border);
+  padding: 12px 14px;
+  border-radius: var(--radius);
+}
+
+input::placeholder, textarea::placeholder {
+  color: var(--text-dim);
+  font-style: italic;
+}
+
+label {
+  font-family: var(--font-body);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  color: var(--text);
+  display: block;
+  margin-bottom: 6px;
+}

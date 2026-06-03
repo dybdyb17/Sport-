@@ -1,0 +1,107 @@
+/* ── FAQ ──────────────────────────────────────────────────────── */
+.faq-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.faq-item {
+  border: 1px solid var(--border);
+  border-bottom: none;
+}
+
+.faq-item:last-child {
+  border-bottom: 1px solid var(--border);
+}
+
+.faq-item > summary {
+  padding: 20px 24px;
+  cursor: pointer;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: var(--white);
+  list-style: none;
+  transition: background .15s;
+}
+
+.faq-item > summary::-webkit-details-marker { display: none; }
+
+.faq-item > summary:hover {
+  background: rgba(46,204,113,.04);
+  color: var(--green);
+}
+
+.faq-item[open] > summary {
+  color: var(--green);
+  border-left: 2px solid var(--green);
+}
+
+.faq-item > summary::after {
+  content: '+';
+  font-size: 20px;
+  font-weight: 300;
+  color: var(--gold-dim);
+  transition: transform .2s;
+  flex-shrink: 0;
+}
+
+.faq-item[open] > summary::after {
+  content: '\00d7';
+}
+
+.faq-answer {
+  padding: 0 24px 20px;
+  color: var(--text-dim);
+  font-size: 15px;
+  line-height: 1.7;
+}
+
+/* ── FAQ NAV STICKY ───────────────────────────────────────────── */
+.faq-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  position: sticky;
+  top: 80px;
+  z-index: 50;
+  background: rgba(6,6,6,0.92);
+  backdrop-filter: blur(10px);
+  padding: 14px 16px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  margin-bottom: 40px;
+}
+.faq-nav-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: 100px;
+  background: var(--bg-3);
+  color: var(--text-soft);
+  font-size: 13px;
+  text-decoration: none;
+  font-family: var(--font-body);
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  transition: all 0.2s;
+}
+.faq-nav-link:hover {
+  background: var(--gold);
+  color: var(--black);
+}
+@media (max-width: 600px) {
+  .faq-nav { top: 60px; padding: 10px; }
+  .faq-nav-link { font-size: 12px; padding: 6px 10px; }
+}
+[id="reservations"],
+[id="coachs"],
+[id="founding"],
+[id="tarifs"],
+[id="salle"],
+[id="compte"] {
+  scroll-margin-top: 160px;
+}

@@ -1,0 +1,29 @@
+/* ── ALERTS / FLASH MESSAGES ──────────────────────────────────── */
+.alert {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  border-radius: var(--radius);
+  font-size: 14px;
+  margin-bottom: 16px;
+  border: 1px solid transparent;
+}
+
+.alert-success {
+  background: rgba(46,204,113,.08);
+  border-color: rgba(46,204,113,.2);
+  color: var(--green);
+}
+
+.alert-error {
+  background: rgba(255,68,68,.08);
+  border-color: rgba(255,68,68,.2);
+  color: #ff6666;
+}
+
+.alert-info {
+  background: rgba(200,169,81,.08);
+  border-color: rgba(200,169,81,.2);
+  color: var(--gold);
+}

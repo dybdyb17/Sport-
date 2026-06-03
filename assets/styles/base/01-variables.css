@@ -1,0 +1,43 @@
+/* ── TOKENS ─────────────────────────────────────────────────── */
+:root {
+  /* Couleurs accent */
+  --gold: #C8A951;
+  --gold-dim: #7A6228;
+  --green: #2ECC71;
+  --black: #060606;
+  --panel: #121212;
+
+  /* Backgrounds — adoucis pour moins de noir agressif tout en gardant la DA premium */
+  --bg: #0F0F13;
+  --bg-2: #15151B;
+  --bg-3: #1C1C24;
+  --bg-card: #18181F;
+  --border: #2F2C25;
+
+  /* Texte — tout en blanc/quasi-blanc */
+  --white: #FFFFFF;             /* blanc pur pour titres et impacts */
+  --text: #F2F2F2;              /* corps principal */
+  --text-soft: #E8E4DC;         /* hiérarchie secondaire — bien visible */
+  --muted-readable: #E8E4DC;    /* alias backward compat */
+  --muted: #D4D0C8;             /* annotations — plus blanc qu'avant */
+  --text-dim: #D4D0C8;          /* métadonnées */
+
+  /* Polices */
+  --font-display: 'Barlow Condensed', sans-serif;
+  --font-body: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-serif: 'Cormorant Garamond', Georgia, serif;
+
+  /* Tailles — juste milieu confortable */
+  --fs-body: 17px;
+  --fs-md: 16px;
+  --fs-sm: 14px;
+  --fs-micro: 13px;
+
+  /* Géométrie */
+  --radius-sm: 6px;
+  --radius: 10px;
+  --radius-lg: 16px;
+  --shadow: 0 8px 24px rgba(0,0,0,.4);
+  --shadow-lg: 0 20px 50px rgba(0,0,0,.5);
+  --container: 1200px;
+}

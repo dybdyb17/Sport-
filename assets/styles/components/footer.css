@@ -1,0 +1,60 @@
+/* ── SITE FOOTER ──────────────────────────────────────────────── */
+.site-footer {
+  background: var(--bg-2);
+  border-top: 1px solid var(--border);
+  margin-top: auto;
+  padding-top: 64px;
+  position: relative;
+  z-index: 1;
+}
+
+.footer-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 48px;
+  padding-bottom: 48px;
+}
+
+.footer-col-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  color: var(--gold);
+  margin-bottom: 20px;
+}
+
+.footer-link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 0;
+  color: var(--text-soft);
+  font-size: 15px;
+  text-decoration: none;
+  transition: color .2s;
+}
+
+.footer-link:hover {
+  color: var(--green);
+}
+
+.footer-link .ti {
+  font-size: 15px;
+}
+
+.footer-bottom {
+  border-top: 1px solid var(--border);
+  padding: 24px 0;
+}
+
+.footer-bottom-inner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: var(--text-dim);
+  font-size: 13px;
+  flex-wrap: wrap;
+  gap: 12px;
+}

@@ -1,0 +1,182 @@
+/* ── COACH CARD ───────────────────────────────────────────────── */
+.coach-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  transition: transform .25s, border-color .25s;
+}
+
+.coach-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(46,204,113,.3);
+  box-shadow: 0 8px 28px rgba(46,204,113,.07);
+}
+
+.coach-avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(200,169,81,.2), rgba(200,169,81,.05));
+  border: 1px solid var(--gold-dim);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--gold);
+}
+
+.coach-name {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 22px;
+  font-weight: 900;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+  color: var(--white);
+}
+
+.coach-specialty {
+  font-size: 13px;
+  color: var(--text-dim);
+  margin-bottom: 20px;
+  font-style: italic;
+}
+
+.coach-price {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 36px;
+  font-weight: 900;
+  color: var(--gold);
+  margin-bottom: 24px;
+}
+
+.coach-action {
+  margin-top: auto;
+  width: 100%;
+}
+
+/* coach card non-centered variant (dashboard/admin) */
+.coach-card--list {
+  align-items: flex-start;
+  text-align: left;
+}
+
+/* ── COACH CARDS PRO ──────────────────────────────────────────────────── */
+.coach-pro-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 28px;
+}
+
+.coach-pro-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: border-color .25s, box-shadow .25s, transform .25s;
+}
+
+.coach-pro-card:hover {
+  border-color: rgba(46,204,113,.3);
+  box-shadow: 0 12px 36px rgba(46,204,113,.07);
+  transform: translateY(-4px);
+}
+
+.coach-pro-photo-wrap {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  background: var(--bg-3);
+  position: relative;
+}
+
+.coach-pro-photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform .4s ease;
+}
+
+.coach-pro-card:hover .coach-pro-photo {
+  transform: scale(1.04);
+}
+
+.coach-pro-initials {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 64px;
+  font-weight: 900;
+  color: var(--gold);
+  background: linear-gradient(135deg, rgba(200,169,81,.1) 0%, rgba(200,169,81,.03) 100%);
+  letter-spacing: -2px;
+}
+
+.coach-pro-body {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  gap: 12px;
+}
+
+.coach-pro-name {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 24px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--white);
+}
+
+.coach-pro-bio {
+  font-size: 14px;
+  color: var(--text-soft);
+  line-height: 1.7;
+  margin: 0;
+  flex: 1;
+}
+
+.coach-pro-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.coach-pro-chip {
+  display: inline-block;
+  padding: 4px 12px;
+  background: rgba(200,169,81,.1);
+  border: 1px solid rgba(200,169,81,.25);
+  border-radius: 100px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--gold);
+  font-family: var(--font-body);
+  letter-spacing: 0.5px;
+}
+
+.coach-pro-cta {
+  width: 100%;
+  justify-content: center;
+  margin-top: auto;
+}
+
+@media (max-width: 640px) {
+  .coach-pro-grid { grid-template-columns: 1fr; gap: 20px; }
+  .coach-pro-photo-wrap { aspect-ratio: 3 / 2; }
+  .coach-pro-initials { font-size: 52px; }
+}

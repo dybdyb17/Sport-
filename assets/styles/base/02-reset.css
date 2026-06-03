@@ -1,0 +1,49 @@
+/* ============================================================
+   SPORT+ — Premium Design System
+   ============================================================ */
+
+/* ── RESET ─────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+img, video { max-width: 100%; display: block; }
+a { color: inherit; }
+button { font-family: inherit; }
+ul, ol { list-style: none; }
+
+/* ── BASE ────────────────────────────────────────────────────── */
+html {
+  scroll-behavior: smooth;
+  font-size: 100%;               /* respecte les réglages système */
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: var(--fs-body);
+  line-height: 1.7;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background:
+    radial-gradient(ellipse 50% 40% at 90% 10%, rgba(200,169,81,.06) 0%, transparent 70%),
+    radial-gradient(ellipse 40% 40% at 10% 90%, rgba(200,169,81,.04) 0%, transparent 70%),
+    radial-gradient(ellipse 30% 20% at 50% 50%, rgba(46,204,113,.015) 0%, transparent 70%);
+}
+
+main {
+  flex: 1;
+  position: relative;
+  z-index: 1;
+}

@@ -1,0 +1,85 @@
+/* ── BUTTONS ─────────────────────────────────────────────────── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 22px;
+  border-radius: var(--radius);
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 15px;
+  white-space: nowrap;
+  transition: transform .2s, box-shadow .2s, background .2s, border-color .2s, color .2s;
+  cursor: pointer;
+  border: 1px solid transparent;
+  text-decoration: none;
+  line-height: 1;
+}
+
+.btn-primary {
+  background: var(--gold);
+  color: var(--black);
+  border-color: var(--gold);
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(200,169,81,.3), 0 4px 14px rgba(46,204,113,.15);
+}
+
+.btn-secondary {
+  background: var(--bg-card);
+  border-color: var(--border);
+  color: var(--white);
+}
+
+.btn-secondary:hover {
+  border-color: rgba(46,204,113,.35);
+  box-shadow: 0 4px 14px rgba(46,204,113,.08);
+}
+
+.btn-outline {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--muted);
+}
+
+.btn-outline:hover {
+  border-color: var(--gold);
+  color: var(--white);
+}
+
+.btn-ghost {
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--muted);
+}
+
+.btn-ghost:hover {
+  color: var(--white);
+}
+
+.btn-danger {
+  background: rgba(255,68,68,.1);
+  border-color: rgba(255,68,68,.3);
+  color: #ff6666;
+}
+
+.btn-danger:hover {
+  background: rgba(255,68,68,.2);
+}
+
+.btn-sm {
+  padding: 7px 16px;
+  font-size: 14px;
+}
+
+.btn-lg {
+  padding: 14px 32px;
+  font-size: 17px;
+}
+
+.btn-full {
+  width: 100%;
+  justify-content: center;
+}
