@@ -20,16 +20,20 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 20px;
   padding: 0 24px;
-  height: 70px;
+  height: 78px;
   max-width: var(--container);
   margin: 0 auto;
 }
 
+/* Sur écrans intermédiaires : padding réduit */
+@media (max-width: 1280px) {
+  .header-inner { padding: 0 16px; gap: 14px; }
+}
+
 @media (max-width: 480px) {
-  .header-inner {
-    padding: 0 14px;
-  }
+  .header-inner { padding: 0 12px; }
 }
 
 /* ── LOGO ────────────────────────────────────────────────────── */
@@ -38,6 +42,37 @@
   align-items: center;
   gap: 10px;
   text-decoration: none;
+}
+
+/* Logo officiel SPORT+ — image avec ratio préservé */
+.logo-img {
+  height: 50px;
+  width: auto;
+  max-width: 200px;
+  display: block;
+  object-fit: contain;
+  object-position: left center;
+  transition: transform .25s ease, filter .25s ease;
+  filter: brightness(1.1);
+}
+.logo:hover .logo-img {
+  transform: scale(1.04);
+  filter: brightness(1.2) drop-shadow(0 0 14px rgba(46,204,113,.4));
+}
+
+/* Version footer plus grande */
+.logo-footer .logo-img {
+  height: 64px;
+  max-width: 240px;
+}
+
+@media (max-width: 640px) {
+  .logo-img { height: 42px; max-width: 160px; }
+  .logo-footer .logo-img { height: 52px; max-width: 200px; }
+}
+
+@media (max-width: 480px) {
+  .logo-img { height: 38px; max-width: 140px; }
 }
 
 .logo-mark {
@@ -144,7 +179,24 @@
 .header-actions {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+/* Sur écrans intermédiaires, réduire encore le gap */
+@media (max-width: 1280px) {
+  .header-actions { gap: 8px; }
+  .header-actions .btn-sm {
+    padding: 6px 12px;
+    font-size: 13px;
+  }
+}
+
+/* Le badge "Membre Fondateur" prend de la place — le cacher entre 1150 et 1280 pour que tout rentre */
+@media (max-width: 1280px) {
+  .badge-founding-mini {
+    display: none;
+  }
 }
 
 /* ── USER AVATAR & DROPDOWN ─────────────────────────────────── */
@@ -292,7 +344,7 @@
 .mobile-menu {
   display: none;
   position: fixed;
-  top: 70px;
+  top: 78px;
   left: 0;
   right: 0;
   background: rgba(6,6,6,.97);

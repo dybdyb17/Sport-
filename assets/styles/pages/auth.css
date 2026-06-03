@@ -38,19 +38,28 @@
   z-index: 1;
 }
 
-/* Filigrane SPORT+ en haut à droite */
+/* Filigrane SPORT+ en haut à droite — logo officiel */
 .auth-visual::after {
-  content: 'SPORT+';
+  content: '';
   position: absolute;
-  top: 32px; right: 36px;
+  top: 28px; right: 32px;
   z-index: 2;
-  font-family: 'Barlow Condensed', sans-serif;
-  font-weight: 900;
-  font-size: 28px;
-  letter-spacing: 2px;
-  color: var(--white);
-  opacity: .85;
-  text-shadow: 0 2px 12px rgba(0,0,0,.6);
+  width: 160px;
+  height: 56px;
+  background-image: url('/img/sportplus-logo.png');
+  background-size: contain;
+  background-position: right center;
+  background-repeat: no-repeat;
+  opacity: .92;
+  filter: drop-shadow(0 4px 16px rgba(0,0,0,.7)) brightness(1.1);
+}
+
+@media (max-width: 640px) {
+  .auth-visual::after {
+    width: 120px;
+    height: 44px;
+    top: 20px; right: 20px;
+  }
 }
 
 .auth-quote {

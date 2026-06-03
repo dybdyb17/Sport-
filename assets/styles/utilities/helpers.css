@@ -251,3 +251,53 @@ img, video, iframe { max-width: 100%; }
     opacity: 1;
   }
 }
+
+/* ── CONTOURS VERTS PARTOUT — DA SPORT+ ──────────────────────────────── */
+/* Cards et conteneurs principaux passent en vert subtil au lieu du gold-dim */
+.feature-card,
+.coach-pro-card,
+.programme-card,
+.formule-card,
+.about-stat-card,
+.bk-card,
+.concept-photo-card,
+.start-path,
+.dual-system-card,
+.form-card,
+.founding-pricing-card {
+  border-color: rgba(46,204,113,.25);
+}
+
+.feature-card:hover,
+.coach-pro-card:hover,
+.programme-card:hover,
+.formule-card:hover,
+.about-stat-card:hover {
+  border-color: rgba(46,204,113,.55) !important;
+  box-shadow: 0 12px 36px rgba(46,204,113,.12) !important;
+}
+
+/* Boutons secondaires : bordure verte par défaut */
+.btn-secondary {
+  border-color: rgba(46,204,113,.35);
+}
+.btn-secondary:hover {
+  border-color: rgba(46,204,113,.7);
+  box-shadow: 0 4px 16px rgba(46,204,113,.18);
+}
+
+/* Inputs focus = vert au lieu de gold */
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  border-color: var(--green) !important;
+  box-shadow: 0 0 0 3px rgba(46,204,113,.18) !important;
+}
+
+/* Section cards et tables admin */
+.data-table-card,
+.bk-recap,
+.bk-process,
+.bk-frame-section {
+  border-color: rgba(46,204,113,.25);
+}
+

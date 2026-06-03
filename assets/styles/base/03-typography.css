@@ -1,15 +1,32 @@
-/* ── TYPOGRAPHIE GLOBALE ────────────────────────────────────── */
-p { font-family: var(--font-body); font-size: var(--fs-body); line-height: 1.7; color: var(--text); }
-li { font-family: var(--font-body); color: var(--text); }
-td, th { font-family: var(--font-body); }
+/* ── TYPOGRAPHIE GLOBALE — Inter partout pour la lisibilité ──────── */
 
-h1, h2, h3, h4, h5, h6 { font-family: var(--font-display); color: var(--white); line-height: 1.2; }
-h1 { font-size: clamp(36px, 5vw, 56px); font-weight: 900; letter-spacing: -0.5px; }
-h2 { font-size: clamp(26px, 3.5vw, 36px); font-weight: 700; }
-h3 { font-size: clamp(18px, 2.5vw, 22px); font-weight: 700; letter-spacing: 0.5px; }
+/* Override forcé : tous les éléments qui utilisaient Barlow Condensed
+   ou Cormorant Garamond passent à Inter. Cela couvre les nombreux
+   styles inline et classes qui hardcodaient ces polices. */
+* {
+  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif !important;
+}
+
+/* Mais on conserve les icônes Tabler qui ont leur propre font-family */
+.ti, [class*="ti-"]:before, [class*="ti-"]:after {
+  font-family: 'tabler-icons' !important;
+}
+
+p { font-size: var(--fs-body); line-height: 1.7; color: var(--text); }
+li { color: var(--text); }
+td, th { color: var(--text); }
+
+h1, h2, h3, h4, h5, h6 {
+  color: var(--white);
+  line-height: 1.2;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+}
+h1 { font-size: clamp(36px, 5vw, 56px); font-weight: 900; }
+h2 { font-size: clamp(26px, 3.5vw, 36px); font-weight: 800; }
+h3 { font-size: clamp(18px, 2.5vw, 22px); font-weight: 700; letter-spacing: 0.2px; }
 
 input, select, textarea, button {
-  font-family: var(--font-body);
   font-size: var(--fs-md);
 }
 
@@ -23,11 +40,9 @@ input, select, textarea {
 
 input::placeholder, textarea::placeholder {
   color: var(--text-dim);
-  font-style: italic;
 }
 
 label {
-  font-family: var(--font-body);
   font-size: var(--fs-sm);
   font-weight: 600;
   color: var(--text);

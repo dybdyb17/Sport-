@@ -16,10 +16,11 @@
           {# Header #}
           <tr>
             <td align="center" style="padding:32px 20px 24px;border-bottom:1px solid #2A2720;">
-              <div style="font-family:'Helvetica Neue',Arial,sans-serif;font-weight:900;font-size:34px;letter-spacing:-1px;color:#F4EFE6;">
-                SPORT<span style="color:#2ECC71;">+</span>
-              </div>
-              <div style="font-family:'Helvetica Neue',Arial,sans-serif;font-size:11px;letter-spacing:4px;color:#7A6228;margin-top:6px;text-transform:uppercase;">
+              <img src="{{ app.request is defined and app.request.schemeAndHttpHost ? (app.request.schemeAndHttpHost ~ '/img/sportplus-logo.png') : 'https://sport-production-ba11.up.railway.app/img/sportplus-logo.png' }}"
+                   alt="SPORT+ Centre d'Entraînement"
+                   width="200"
+                   style="display:block;margin:0 auto;max-width:200px;height:auto;">
+              <div style="font-family:'Helvetica Neue',Arial,sans-serif;font-size:11px;letter-spacing:4px;color:#7A6228;margin-top:12px;text-transform:uppercase;">
                 Coaching Premium Marseille
               </div>
             </td>

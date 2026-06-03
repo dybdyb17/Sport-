@@ -4,30 +4,32 @@
   --gold: #C8A951;
   --gold-dim: #7A6228;
   --green: #2ECC71;
+  --green-soft: rgba(46,204,113,.4);
+  --green-border: rgba(46,204,113,.35);
   --black: #060606;
   --panel: #121212;
 
-  /* Backgrounds — adoucis pour moins de noir agressif tout en gardant la DA premium */
+  /* Backgrounds */
   --bg: #0F0F13;
   --bg-2: #15151B;
   --bg-3: #1C1C24;
   --bg-card: #18181F;
   --border: #2F2C25;
 
-  /* Texte — tout en blanc/quasi-blanc */
-  --white: #FFFFFF;             /* blanc pur pour titres et impacts */
-  --text: #F2F2F2;              /* corps principal */
-  --text-soft: #E8E4DC;         /* hiérarchie secondaire — bien visible */
-  --muted-readable: #E8E4DC;    /* alias backward compat */
-  --muted: #D4D0C8;             /* annotations — plus blanc qu'avant */
-  --text-dim: #D4D0C8;          /* métadonnées */
+  /* Texte — tout en blanc lumineux */
+  --white: #FFFFFF;             /* blanc pur — titres et impacts */
+  --text: #FFFFFF;              /* corps principal — blanc pur aussi */
+  --text-soft: #F5F5F5;         /* à peine moins lumineux pour la hiérarchie */
+  --muted-readable: #F0F0F0;    /* alias */
+  --muted: #E5E5E5;             /* annotations — blanc cassé clair */
+  --text-dim: #E0E0E0;          /* métadonnées — toujours bien lisibles */
 
-  /* Polices */
-  --font-display: 'Barlow Condensed', sans-serif;
+  /* Polices — UNE seule police pour la lisibilité totale : Inter */
+  --font-display: 'Inter', system-ui, -apple-system, sans-serif;
   --font-body: 'Inter', system-ui, -apple-system, sans-serif;
-  --font-serif: 'Cormorant Garamond', Georgia, serif;
+  --font-serif: 'Inter', system-ui, -apple-system, sans-serif;
 
-  /* Tailles — juste milieu confortable */
+  /* Tailles */
   --fs-body: 17px;
   --fs-md: 16px;
   --fs-sm: 14px;

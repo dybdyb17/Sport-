@@ -297,43 +297,118 @@
   }
 }
 
-/* ── Hero pages avec photo en background bien visible ───────────────── */
-.pub-hero[data-bg] {
+/* ────────────────────────────────────────────────────────────────────
+   HERO PAGES — Style éditorial premium (inspiration Apple / Equinox)
+   ────────────────────────────────────────────────────────────────────
+   Principe : la photo est une AMBIANCE, pas le sujet.
+   • Photo dézoomée (background-size: cover sur grande hauteur 600px)
+   • Voile noir épais avec gradient pour lisibilité parfaite
+   • Texte massif centré au-dessus avec air et hiérarchie nette
+   • Accent vert subtil en haut + ligne décorative sous le titre
+   ──────────────────────────────────────────────────────────────────── */
+
+.pub-hero-bg {
   position: relative;
   overflow: hidden;
-  min-height: 380px;
+  min-height: 540px;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-color: var(--bg);
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: 100px 0 !important;       /* surcharge le padding inline pour respiration */
+  margin-bottom: 40px;               /* sépare le hero du contenu suivant */
 }
-.pub-hero[data-bg]::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background-image: var(--hero-bg);
-  background-size: cover;
-  background-position: center;
-  opacity: .55;
-  filter: saturate(1) contrast(1.05);
-  z-index: 0;
-}
-.pub-hero[data-bg]::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background:
-    radial-gradient(ellipse at center, rgba(15,15,19,.45) 0%, rgba(15,15,19,.75) 100%),
-    linear-gradient(180deg, transparent 0%, var(--bg) 100%);
-  z-index: 1;
-}
-.pub-hero[data-bg] > * { position: relative; z-index: 2; }
 
-/* Texte du hero plus contrasté pour rester lisible sur photo */
-.pub-hero[data-bg] .section-title,
-.pub-hero[data-bg] h1 {
-  text-shadow: 0 4px 20px rgba(0,0,0,.6);
+/* Overlay très dense — la photo reste perceptible mais en ambiance */
+.pub-hero-bg::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background:
+    /* 1. Voile noir uniforme dense partout */
+    linear-gradient(180deg, rgba(15,15,19,.78) 0%, rgba(15,15,19,.82) 50%, var(--bg) 100%),
+    /* 2. Vignette pour assombrir les bords et concentrer l'œil */
+    radial-gradient(ellipse 70% 70% at center, transparent 0%, rgba(0,0,0,.55) 100%);
 }
-.pub-hero[data-bg] .section-sub,
-.pub-hero[data-bg] .hero-badge {
-  text-shadow: 0 2px 10px rgba(0,0,0,.5);
+
+/* Ligne verte en haut + ligne dorée en bas — signature SPORT+ */
+.pub-hero-bg::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent 0%, var(--green) 30%, var(--green) 70%, transparent 100%);
+  opacity: .6;
+  z-index: 2;
+}
+
+.pub-hero-bg > .container,
+.pub-hero-bg > * {
+  position: relative;
+  z-index: 3;
+}
+
+/* Hero titles — XL, blanc pur, beaucoup d'espace */
+.pub-hero-bg .section-title,
+.pub-hero-bg h1 {
+  color: #FFFFFF !important;
+  text-shadow: 0 2px 16px rgba(0,0,0,.9), 0 1px 6px rgba(0,0,0,.8);
+  font-size: clamp(42px, 6.5vw, 72px) !important;
+  letter-spacing: -1.5px;
+  line-height: 1.05;
+  margin-top: 14px !important;
+  margin-bottom: 18px !important;
+  position: relative;
+}
+
+/* Petit séparateur décoratif sous le titre */
+.pub-hero-bg .section-title::after,
+.pub-hero-bg h1::after {
+  content: '';
+  display: block;
+  width: 56px;
+  height: 3px;
+  background: var(--green);
+  margin: 24px auto 0;
+  border-radius: 2px;
+  box-shadow: 0 0 12px rgba(46,204,113,.5);
+}
+
+.pub-hero-bg .section-sub {
+  color: #F5F5F5 !important;
+  text-shadow: 0 2px 8px rgba(0,0,0,.8);
+  max-width: 580px;
+  margin: 0 auto !important;
+  font-size: 17px !important;
+  line-height: 1.7;
+  font-style: italic;
+}
+
+/* Badge "Hero" : style glassmorphism floating */
+.pub-hero-bg .hero-badge {
+  background: rgba(15,15,19,.65) !important;
+  -webkit-backdrop-filter: blur(12px) saturate(1.2);
+  backdrop-filter: blur(12px) saturate(1.2);
+  border: 1px solid var(--green-border) !important;
+  color: var(--green) !important;
+  text-shadow: none;
+  padding: 8px 18px;
+  box-shadow: 0 4px 24px rgba(0,0,0,.5);
+}
+
+/* Responsive : hero plus court sur mobile */
+@media (max-width: 700px) {
+  .pub-hero-bg {
+    min-height: 400px;
+    padding: 70px 0 !important;
+  }
+  .pub-hero-bg .section-title,
+  .pub-hero-bg h1 {
+    font-size: clamp(36px, 9vw, 52px) !important;
+  }
 }
