@@ -186,9 +186,8 @@
             }, 4000);
         }
 
-        const topic = 'coach/{{ app.user.id }}/stream';
         const es = new EventSource(
-            "{{ mercure(topic)|escape('js') }}",
+            "{{ mercure('coach/' ~ app.user.id ~ '/stream')|escape('js') }}",
             { withCredentials: false }
         );
 

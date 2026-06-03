@@ -129,7 +129,8 @@
 <section class="night-banner-section" data-animate="fade-up">
   <div class="container">
     <div class="night-banner">
-      <div class="night-banner-bg" style="background-image:url('{{ asset('img/club-photos/cardio-vue.jpg') }}');"></div>
+
+      {# Colonne texte #}
       <div class="night-banner-content">
         <div class="night-banner-badge">
           <span class="night-banner-dot"></span>
@@ -168,6 +169,13 @@
           </a>
         </div>
       </div>
+
+      {# Colonne photo (cachée sur mobile, visible desktop) #}
+      <div class="night-banner-photo">
+        <img src="{{ asset('img/club-photos/cardio-vue.jpg') }}" alt="Night Coach SPORT+ — coaching privé de nuit" loading="lazy">
+        <div class="night-banner-photo-glow"></div>
+      </div>
+
     </div>
   </div>
 </section>

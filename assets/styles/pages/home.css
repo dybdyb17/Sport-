@@ -299,33 +299,48 @@ body {
   position: relative;
   border-radius: var(--radius-lg);
   overflow: hidden;
-  background: var(--bg-card);
-  border: 1px solid rgba(46,204,113,.25);
-  box-shadow: 0 20px 60px rgba(0,0,0,.4), 0 0 80px rgba(46,204,113,.05);
-}
-
-.night-banner-bg {
-  position: absolute;
-  inset: 0;
-  background-size: cover;
-  background-position: center;
-  filter: brightness(.22) saturate(.8) hue-rotate(180deg);
-  z-index: 0;
-}
-.night-banner-bg::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background:
-    radial-gradient(ellipse at 30% 40%, rgba(46,204,113,.15) 0%, transparent 50%),
-    linear-gradient(135deg, rgba(15,15,19,.85) 0%, rgba(15,15,19,.6) 100%);
+  background: linear-gradient(135deg, var(--bg-card) 0%, var(--bg-2) 100%);
+  border: 1px solid rgba(46,204,113,.3);
+  box-shadow: 0 20px 60px rgba(0,0,0,.4), 0 0 80px rgba(46,204,113,.06);
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  align-items: stretch;
+  min-height: 540px;
 }
 
 .night-banner-content {
   position: relative;
   z-index: 1;
   padding: 56px 48px;
-  max-width: 720px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+/* Photo à droite — bien visible */
+.night-banner-photo {
+  position: relative;
+  overflow: hidden;
+  min-height: 100%;
+}
+.night-banner-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  filter: saturate(1.05) contrast(1.05);
+  transition: transform 1s cubic-bezier(.2, .8, .2, 1);
+}
+.night-banner:hover .night-banner-photo img { transform: scale(1.04); }
+
+/* Glow vert sur la photo + fondu vers la gauche */
+.night-banner-photo-glow {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(90deg, rgba(15,15,19,.6) 0%, transparent 30%),
+    radial-gradient(ellipse at right, rgba(46,204,113,.18) 0%, transparent 50%);
 }
 
 .night-banner-badge {
@@ -427,12 +442,30 @@ body {
   flex-wrap: wrap;
 }
 
+/* Tablette et inférieur : layout vertical (photo en haut, texte en dessous) */
+@media (max-width: 900px) {
+  .night-banner {
+    grid-template-columns: 1fr;
+    min-height: auto;
+  }
+  .night-banner-photo {
+    min-height: 260px;
+    order: -1;
+  }
+  .night-banner-photo-glow {
+    background:
+      linear-gradient(180deg, transparent 0%, rgba(15,15,19,.5) 100%),
+      radial-gradient(ellipse at center, rgba(46,204,113,.15) 0%, transparent 60%);
+  }
+}
+
 @media (max-width: 700px) {
-  .night-banner-content { padding: 40px 28px; }
+  .night-banner-content { padding: 36px 24px; }
   .night-banner-meta { grid-template-columns: 1fr; gap: 10px; }
   .night-banner-meta-item { padding: 12px 14px; }
   .night-banner-meta-item strong { font-size: 14px; }
   .night-banner-sub { font-size: 17px; }
   .night-banner-cta .btn { width: 100%; justify-content: center; }
+  .night-banner-photo { min-height: 220px; }
 }
 

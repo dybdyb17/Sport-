@@ -11,12 +11,21 @@
       <div style="padding:32px 20px;text-align:center;">
         <i class="ti ti-message-off" style="font-size:40px;display:block;margin-bottom:14px;color:var(--text-dim);opacity:.4;"></i>
         <div style="font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;color:var(--white);margin-bottom:8px;">Aucune conversation</div>
-        <p style="font-size:14px;color:var(--muted-readable);line-height:1.6;margin-bottom:16px;">
-          Vos échanges s'ouvrent dès qu'un coach accepte une réservation.
-        </p>
-        <a href="{{ path('app_booking_new') }}" class="btn btn-primary btn-sm">
-          <i class="ti ti-calendar-plus"></i> Réserver
-        </a>
+        {% if is_granted('ROLE_COACH') %}
+          <p style="font-size:14px;color:var(--muted-readable);line-height:1.6;margin-bottom:16px;">
+            Vos échanges s'ouvrent dès qu'un client réserve une séance avec vous.
+          </p>
+          <a href="{{ path('app_coach_dashboard') }}" class="btn btn-primary btn-sm">
+            <i class="ti ti-layout-dashboard"></i> Mon dashboard
+          </a>
+        {% else %}
+          <p style="font-size:14px;color:var(--muted-readable);line-height:1.6;margin-bottom:16px;">
+            Vos échanges s'ouvrent dès qu'un coach accepte une réservation.
+          </p>
+          <a href="{{ path('app_booking_new') }}" class="btn btn-primary btn-sm">
+            <i class="ti ti-calendar-plus"></i> Réserver
+          </a>
+        {% endif %}
       </div>
     {% else %}
       {% for item in items %}
