@@ -46,7 +46,6 @@
       <a href="{{ path('app_coachs_list') }}" class="nav-link {% if app.request.attributes.get('_route') == 'app_coachs_list' %}active{% endif %}">Coachs</a>
       <a href="{{ path('app_concept') }}" class="nav-link {% if app.request.attributes.get('_route') == 'app_concept' %}active{% endif %}">Concept</a>
       <a href="{{ path('app_tarifs') }}" class="nav-link {% if app.request.attributes.get('_route') == 'app_tarifs' %}active{% endif %}">Tarifs</a>
-      <a href="{{ path('app_programmes') }}" class="nav-link {% if app.request.attributes.get('_route') == 'app_programmes' %}active{% endif %}">Programmes</a>
       <a href="{{ path('app_about') }}" class="nav-link {% if app.request.attributes.get('_route') == 'app_about' %}active{% endif %}">À propos</a>
       <a href="{{ path('app_faq') }}" class="nav-link {% if app.request.attributes.get('_route') == 'app_faq' %}active{% endif %}">FAQ</a>
       <a href="{{ path('app_contact') }}" class="nav-link {% if app.request.attributes.get('_route') == 'app_contact' %}active{% endif %}">Contact</a>
@@ -64,9 +63,6 @@
             <i class="ti ti-calendar-plus"></i> Réserver
           </a>
         {% endif %}
-        {% if app.user.foundingClaim %}
-          <span class="badge-founding-mini">{{ app.user.foundingClaim.foundingLabel }}</span>
-        {% endif %}
         <!-- Avatar + dropdown -->
         <div style="position:relative;">
           {% set initials %}
@@ -75,6 +71,10 @@
           {% endset %}
           <button class="user-avatar" aria-haspopup="true" aria-expanded="false" title="{{ app.user.nomComplet }}">
             {{- initials -}}
+            {% set unread = unread_messages_count() %}
+            {% if unread > 0 %}
+              <span class="user-avatar-badge" aria-label="{{ unread }} message(s) non lu(s)">{{ unread > 9 ? '9+' : unread }}</span>
+            {% endif %}
           </button>
           <div class="user-dropdown" role="menu">
             <div class="dropdown-header">
@@ -123,7 +123,6 @@
     <a href="{{ path('app_coachs_list') }}" class="nav-link">Coachs</a>
     <a href="{{ path('app_concept') }}" class="nav-link">Concept</a>
     <a href="{{ path('app_tarifs') }}" class="nav-link">Tarifs</a>
-    <a href="{{ path('app_programmes') }}" class="nav-link">Programmes</a>
     <a href="{{ path('app_about') }}" class="nav-link">À propos</a>
     <a href="{{ path('app_faq') }}" class="nav-link">FAQ</a>
     <a href="{{ path('app_contact') }}" class="nav-link">Contact</a>

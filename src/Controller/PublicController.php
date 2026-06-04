@@ -108,10 +108,4 @@ class PublicController extends AbstractController
     {
         return $this->render('public/concept.html.twig');
     }
-
-    #[Route('/programmes', name: 'app_programmes', methods: ['GET'])]
-    public function programmes(): Response
-    {
-        return $this->render('public/programmes.html.twig');
-    }
 }
