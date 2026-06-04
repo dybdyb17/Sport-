@@ -6,35 +6,41 @@
 {% block body %}
 
 {# ── Hero compact ── #}
-<section class="pub-hero pub-hero-bg" style="padding:80px 0 60px;text-align:center;background-image:url('{{ asset('img/club-photos/portrait-souriante.jpg') }}');">
-  <div style="position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse 60% 50% at 50% 0%, rgba(200,169,81,.08) 0%, transparent 70%);"></div>
-  <div class="container" style="position:relative;z-index:1;">
-    <div class="hero-badge">OFFRE LANCEMENT EXCLUSIVE</div>
-    <h1 style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:clamp(42px,6vw,80px);text-transform:uppercase;letter-spacing:-2px;color:var(--white);margin:16px 0 12px;line-height:.95;">
-      Devenez <span style="color:var(--gold);">Membre Fondateur</span><br>SPORT<span style="color:var(--gold);">+</span>
-    </h1>
-    <p style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:20px;color:var(--text-dim);max-width:560px;margin:0 auto 32px;line-height:1.6;">
-      Rejoignez les 50 premiers à façonner l'expérience SPORT+ et conservez votre badge à vie.
-    </p>
+<section class="pub-hero-split">
+  <div class="container">
+    <div class="pub-hero-split-grid">
+      <div class="pub-hero-split-text">
+        <div class="hero-badge">OFFRE LANCEMENT EXCLUSIVE</div>
+        <h1 style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:clamp(42px,6vw,80px);text-transform:uppercase;letter-spacing:-2px;color:var(--white);margin:0;line-height:.95;">
+          Devenez <span style="color:var(--gold);">Membre Fondateur</span><br>SPORT<span style="color:var(--gold);">+</span>
+        </h1>
+        <p style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:20px;color:var(--text-dim);line-height:1.6;margin:0;">
+          Rejoignez les 50 premiers à façonner l'expérience SPORT+ et conservez votre badge à vie.
+        </p>
 
-    {% if offer is null %}
-      <div class="alert alert-info" style="max-width:480px;margin:0 auto;">Aucune offre Founding active pour le moment.</div>
-    {% else %}
-      <div style="display:flex;justify-content:center;gap:24px;flex-wrap:wrap;margin-bottom:8px;">
-        <div style="display:flex;align-items:center;gap:8px;font-size:14px;color:var(--text-dim);">
-          <i class="ti ti-check" style="color:var(--green);"></i> {{ offer.placesTaken }} fondateurs déjà inscrits
-        </div>
-        <div style="display:flex;align-items:center;gap:8px;font-size:14px;color:var(--gold);">
-          <i class="ti ti-flame"></i> {{ offer.placesRemaining }} place{{ offer.placesRemaining > 1 ? 's' : '' }} restante{{ offer.placesRemaining > 1 ? 's' : '' }}
-        </div>
+        {% if offer is null %}
+          <div class="alert alert-info">Aucune offre Founding active pour le moment.</div>
+        {% else %}
+          <div style="display:flex;gap:24px;flex-wrap:wrap;margin-top:8px;">
+            <div style="display:flex;align-items:center;gap:8px;font-size:14px;color:var(--text-dim);">
+              <i class="ti ti-check" style="color:var(--green);"></i> {{ offer.placesTaken }} fondateurs déjà inscrits
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;font-size:14px;color:var(--gold);">
+              <i class="ti ti-flame"></i> {{ offer.placesRemaining }} place{{ offer.placesRemaining > 1 ? 's' : '' }} restante{{ offer.placesRemaining > 1 ? 's' : '' }}
+            </div>
+          </div>
+          <div>
+            <div class="founding-progress-bar">
+              <div class="founding-progress-fill" style="width:{{ offer.progressPercent }}%;"></div>
+            </div>
+            <div class="founding-progress-label">{{ offer.placesTaken }} / {{ offer.totalPlaces }} membres fondateurs</div>
+          </div>
+        {% endif %}
       </div>
-      <div style="max-width:480px;margin:0 auto 8px;">
-        <div class="founding-progress-bar">
-          <div class="founding-progress-fill" style="width:{{ offer.progressPercent }}%;"></div>
-        </div>
-        <div class="founding-progress-label">{{ offer.placesTaken }} / {{ offer.totalPlaces }} membres fondateurs</div>
+      <div class="pub-hero-split-photo">
+        <img src="{{ asset('img/club-photos/portrait-souriante.jpg') }}" alt="SPORT+ — Membre Fondateur" loading="lazy">
       </div>
-    {% endif %}
+    </div>
   </div>
 </section>
 

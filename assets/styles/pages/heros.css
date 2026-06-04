@@ -1,0 +1,199 @@
+/* ════════════════════════════════════════════════════════════════════════
+   HEROS PAGES PUBLIQUES — 2 patterns
+   ════════════════════════════════════════════════════════════════════════ */
+
+/* ═════════════════════════════════════════════════════════
+   PATTERN A — Hero sobre (pas de photo)
+   Pour contact, coachs, faq
+   ═════════════════════════════════════════════════════════ */
+.pub-hero-sober {
+  position: relative;
+  overflow: hidden;
+  padding: 80px 0 60px;
+  text-align: center;
+  background:
+    radial-gradient(ellipse 60% 50% at 50% 0%, rgba(200,169,81,.08) 0%, transparent 70%),
+    radial-gradient(ellipse 40% 40% at 50% 100%, rgba(46,204,113,.06) 0%, transparent 70%),
+    var(--bg);
+  min-height: 320px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Ligne verte signature en haut */
+.pub-hero-sober::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent 0%, var(--green) 30%, var(--green) 70%, transparent 100%);
+  opacity: .5;
+}
+
+.pub-hero-sober .hero-badge {
+  margin-bottom: 16px;
+}
+
+.pub-hero-sober .section-title {
+  font-size: clamp(40px, 6vw, 64px);
+  letter-spacing: -1px;
+  line-height: 1.05;
+  margin-bottom: 16px;
+}
+
+/* Petit séparateur vert sous le titre */
+.pub-hero-sober .section-title::after {
+  content: '';
+  display: block;
+  width: 56px;
+  height: 3px;
+  background: var(--green);
+  margin: 22px auto 0;
+  border-radius: 2px;
+  box-shadow: 0 0 12px rgba(46,204,113,.5);
+}
+
+.pub-hero-sober .section-sub {
+  max-width: 580px;
+  margin: 0 auto;
+  color: var(--text-soft);
+  font-size: 17px;
+  line-height: 1.7;
+}
+
+@media (max-width: 700px) {
+  .pub-hero-sober { padding: 60px 0 40px; min-height: 260px; }
+}
+
+
+/* ═════════════════════════════════════════════════════════
+   PATTERN B — Hero split (texte gauche, photo encadrée droite)
+   Pour tarifs, programmes, about, founding-detail
+   ═════════════════════════════════════════════════════════ */
+.pub-hero-split {
+  position: relative;
+  padding: 70px 0;
+  background:
+    radial-gradient(ellipse 50% 50% at 100% 50%, rgba(46,204,113,.04) 0%, transparent 70%),
+    var(--bg);
+  overflow: hidden;
+}
+
+.pub-hero-split::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent 0%, var(--green) 30%, var(--green) 70%, transparent 100%);
+  opacity: .5;
+}
+
+.pub-hero-split-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 56px;
+  align-items: center;
+}
+
+.pub-hero-split-text {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.pub-hero-split-text .hero-badge {
+  align-self: flex-start;
+}
+
+.pub-hero-split-text h1,
+.pub-hero-split-text .section-title {
+  text-align: left;
+  font-size: clamp(40px, 5.5vw, 64px);
+  letter-spacing: -1px;
+  line-height: 1.05;
+  margin: 0;
+}
+
+/* Petit séparateur vert SOUS le titre (aligné gauche) */
+.pub-hero-split-text h1::after,
+.pub-hero-split-text .section-title::after {
+  content: '';
+  display: block;
+  width: 56px;
+  height: 3px;
+  background: var(--green);
+  margin: 18px 0 0;
+  border-radius: 2px;
+  box-shadow: 0 0 12px rgba(46,204,113,.5);
+}
+
+.pub-hero-split-text .section-sub,
+.pub-hero-split-text > p {
+  text-align: left;
+  margin: 0;
+  color: var(--text-soft);
+  font-size: 17px;
+  line-height: 1.7;
+  max-width: none;
+}
+
+/* Cadre photo à droite */
+.pub-hero-split-photo {
+  position: relative;
+  aspect-ratio: 4 / 5;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  border: 1px solid rgba(46,204,113,.25);
+  box-shadow: 0 30px 60px rgba(0,0,0,.5), 0 0 60px rgba(46,204,113,.06);
+}
+
+.pub-hero-split-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 1s cubic-bezier(.2, .8, .2, 1);
+}
+
+.pub-hero-split:hover .pub-hero-split-photo img {
+  transform: scale(1.04);
+}
+
+/* Glow vert subtil en coin */
+.pub-hero-split-photo::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at top right, rgba(46,204,113,.12) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+/* Responsive : photo au-dessus, texte en dessous */
+@media (max-width: 900px) {
+  .pub-hero-split { padding: 50px 0; }
+  .pub-hero-split-grid {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+  .pub-hero-split-photo {
+    aspect-ratio: 16 / 10;
+    order: -1;
+  }
+  .pub-hero-split-text h1,
+  .pub-hero-split-text .section-title {
+    text-align: center;
+    font-size: clamp(36px, 8vw, 48px);
+  }
+  .pub-hero-split-text h1::after,
+  .pub-hero-split-text .section-title::after {
+    margin: 18px auto 0;
+  }
+  .pub-hero-split-text .section-sub,
+  .pub-hero-split-text > p {
+    text-align: center;
+  }
+  .pub-hero-split-text .hero-badge {
+    align-self: center;
+  }
+}

@@ -20,16 +20,21 @@
 </div>
 
 {# ── Hero ── #}
-<section class="pub-hero pub-hero-bg" style="padding:80px 0 60px;text-align:center;background-image:url('{{ asset('img/club-photos/cours-collectif-2.jpg') }}');">
+<section class="pub-hero-split">
   <div class="container">
-    <div class="hero-badge">Nos rituels de la semaine</div>
-    <h1 class="section-title" style="margin-top:16px;">
-      Nos <span style="color:var(--gold)">programmes</span>
-    </h1>
-    <p class="section-sub">
-      Chaque jour de la semaine a son rituel. Femmes, enfants, after-work, seniors —
-      un programme pensé pour chaque envie, chaque énergie.
-    </p>
+    <div class="pub-hero-split-grid">
+      <div class="pub-hero-split-text">
+        <div class="hero-badge">Nos rituels de la semaine</div>
+        <h1 class="section-title">Nos <span style="color:var(--gold)">programmes</span></h1>
+        <p class="section-sub">
+          Chaque jour de la semaine a son rituel. Femmes, enfants, after-work, seniors —
+          un programme pensé pour chaque envie, chaque énergie.
+        </p>
+      </div>
+      <div class="pub-hero-split-photo">
+        <img src="{{ asset('img/club-photos/cours-collectif-2.jpg') }}" alt="SPORT+ — Cours collectifs" loading="lazy">
+      </div>
+    </div>
   </div>
 </section>
 
