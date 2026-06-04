@@ -1,0 +1,87 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block admin_body %}
+<div class="page-header">
+  <div>
+    <h1><span style="color:var(--gold)">Paiements</span></h1>
+    <p class="page-subtitle">Suivi des paiements déclarés par les coachs — anti-magouille.</p>
+  </div>
+</div>
+
+{# ── RÉCAP PAR COACH ── #}
+{% if statsByCoach|length > 0 %}
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;margin-bottom:32px;">
+    {% for st in statsByCoach %}
+      <div class="form-card" style="padding:20px;">
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:800;color:var(--white);margin-bottom:12px;">{{ st.name }}</div>
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:900;color:var(--gold);margin-bottom:12px;">{{ st.total|number_format(2, ',', ' ') }} €</div>
+        <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;font-size:13px;">
+          <div><span style="color:var(--text-dim);">💵 Espèces</span> <strong style="color:var(--white);">{{ st.cash|number_format(2, ',', ' ') }} €</strong></div>
+          <div><span style="color:var(--text-dim);">💳 CB</span> <strong style="color:var(--white);">{{ st.card|number_format(2, ',', ' ') }} €</strong></div>
+          <div><span style="color:var(--text-dim);">🟢 Xplor</span> <strong style="color:var(--white);">{{ st.xplor|number_format(2, ',', ' ') }} €</strong></div>
+          <div><span style="color:#ff9966;">⚠ À déclarer</span> <strong style="color:#ff9966;">{{ st.pending|number_format(2, ',', ' ') }} €</strong></div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+{% endif %}
+
+<div class="filter-bar">
+  <a href="{{ path('app_admin_payments') }}" class="btn btn-sm {{ methodFilter is null ? 'btn-primary' : 'btn-secondary' }}">Tous</a>
+  <a href="{{ path('app_admin_payments', {method: 'pending'}) }}" class="btn btn-sm {{ methodFilter == 'pending' ? 'btn-primary' : 'btn-secondary' }}">⚠ Non déclarés</a>
+  <a href="{{ path('app_admin_payments', {method: 'cash'}) }}" class="btn btn-sm {{ methodFilter == 'cash' ? 'btn-primary' : 'btn-secondary' }}">💵 Espèces</a>
+  <a href="{{ path('app_admin_payments', {method: 'card'}) }}" class="btn btn-sm {{ methodFilter == 'card' ? 'btn-primary' : 'btn-secondary' }}">💳 CB</a>
+  <a href="{{ path('app_admin_payments', {method: 'xplor'}) }}" class="btn btn-sm {{ methodFilter == 'xplor' ? 'btn-primary' : 'btn-secondary' }}">🟢 Xplor</a>
+</div>
+
+<div class="data-table-card">
+  <div class="data-table-header"><h3>Toutes les séances confirmées</h3></div>
+  {% if rows is empty %}
+    <div class="empty-placeholder" style="padding:60px;text-align:center;">Aucun résultat.</div>
+  {% else %}
+    <table>
+      <thead>
+        <tr>
+          <th>Réf.</th>
+          <th>Date</th>
+          <th>Client</th>
+          <th>Coach</th>
+          <th>Montant</th>
+          <th>Paiement</th>
+          <th>Check-in</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for b in rows %}
+          <tr>
+            <td style="font-family:'Barlow Condensed',sans-serif;letter-spacing:1.5px;color:var(--gold);font-weight:700;">{{ b.reference }}</td>
+            <td style="color:var(--text-dim);">{{ b.startAt|date('d/m/Y H\\hi') }}</td>
+            <td style="color:var(--text-dim);">{{ b.client.nomComplet }}</td>
+            <td style="color:var(--text-dim);">{{ b.coach.nomComplet }}</td>
+            <td style="color:var(--gold);font-family:'Barlow Condensed',sans-serif;font-weight:700;">{{ b.prixFormatted }}</td>
+            <td>
+              {% if b.paymentMethod == 'cash' %}
+                💵 Espèces<div style="font-size:11px;color:var(--text-dim);">{{ b.paymentDeclaredAt|date('d/m H\\hi') }}</div>
+              {% elseif b.paymentMethod == 'card' %}
+                💳 CB<div style="font-size:11px;color:var(--text-dim);">{{ b.paymentDeclaredAt|date('d/m H\\hi') }}</div>
+              {% elseif b.paymentMethod == 'xplor' %}
+                <span style="color:var(--green);">🟢 Xplor</span><div style="font-size:11px;color:var(--text-dim);">{{ b.paymentDeclaredAt|date('d/m H\\hi') }}</div>
+              {% else %}
+                <span style="color:#ff9966;">⚠ Non déclaré</span>
+              {% endif %}
+            </td>
+            <td>
+              {% if b.checkinAt %}
+                <i class="ti ti-check" style="color:var(--green);"></i>
+                <span style="font-size:12px;color:var(--text-dim);">{{ b.checkinAt|date('d/m H\\hi') }}</span>
+              {% else %}
+                <span style="color:var(--text-dim);">—</span>
+              {% endif %}
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% endif %}
+</div>
+{% endblock %}

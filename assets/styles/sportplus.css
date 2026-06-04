@@ -39,6 +39,7 @@
 @import url('./pages/account.css');
 @import url('./pages/profil.css');
 @import url('./pages/dashboard-extras.css');
+@import url('./pages/mon-rdv.css');
 
 /* ── UTILITAIRES (en dernier — surchargent tout) ── */
 @import url('./utilities/helpers.css');

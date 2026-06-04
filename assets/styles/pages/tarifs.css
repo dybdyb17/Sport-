@@ -12,13 +12,14 @@
 
 .tarif-table th {
   background: var(--bg-3);
-  padding: 14px 20px;
+  padding: 18px 20px;
   font-family: 'Barlow Condensed', sans-serif;
-  font-weight: 700;
-  font-size: 13px;
-  letter-spacing: 1px;
+  font-weight: 800;
+  font-size: 20px;
+  letter-spacing: 1.5px;
   text-transform: uppercase;
-  color: var(--gold-dim);
+  color: #f0bd44 !important;
+  text-shadow: 0 0 18px rgba(240,189,68,.55), 0 0 4px rgba(240,189,68,.35);
   text-align: center;
   border-bottom: 1px solid var(--border);
 }
@@ -30,7 +31,8 @@
   color: var(--text-soft);
   letter-spacing: 0;
   text-transform: none;
-  margin-top: 2px;
+  margin-top: 4px;
+  text-shadow: none;
 }
 
 .tarif-table td {
@@ -48,12 +50,14 @@
   font-size: 16px;
 }
 
+.tarif-table td.tarif-price,
 .tarif-price {
   text-align: center;
   font-family: var(--font-display);
-  font-weight: 700;
-  font-size: 24px;
-  color: var(--gold);
+  font-weight: 800;
+  font-size: 26px;
+  color: #ffffff !important;
+  text-shadow: 0 0 24px rgba(255,255,255,.15);
 }
 
 .tarif-best {

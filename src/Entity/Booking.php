@@ -94,6 +94,27 @@ class Booking
     #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
     private ?\DateTimeImmutable $confirmedAt = null;
 
+    #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
+    private ?\DateTimeImmutable $checkinAt = null;
+
+    #[ORM\ManyToOne]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
+    private ?User $checkinBy = null;
+
+    #[ORM\Column(length: 20, nullable: true)]
+    private ?string $paymentMethod = null;
+    // Valeurs : 'cash', 'card', 'xplor'
+
+    #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
+    private ?\DateTimeImmutable $paymentDeclaredAt = null;
+
+    #[ORM\ManyToOne]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
+    private ?User $paymentDeclaredBy = null;
+
+    #[ORM\Column(length: 500, nullable: true)]
+    private ?string $paymentNote = null;
+
     /**
      * @var array<string, mixed>|null
      */
@@ -156,6 +177,24 @@ class Booking
 
     public function getConfirmedAt(): ?\DateTimeImmutable { return $this->confirmedAt; }
     public function setConfirmedAt(?\DateTimeImmutable $confirmedAt): static { $this->confirmedAt = $confirmedAt; return $this; }
+
+    public function getCheckinAt(): ?\DateTimeImmutable { return $this->checkinAt; }
+    public function setCheckinAt(?\DateTimeImmutable $checkinAt): static { $this->checkinAt = $checkinAt; return $this; }
+
+    public function getCheckinBy(): ?User { return $this->checkinBy; }
+    public function setCheckinBy(?User $checkinBy): static { $this->checkinBy = $checkinBy; return $this; }
+
+    public function getPaymentMethod(): ?string { return $this->paymentMethod; }
+    public function setPaymentMethod(?string $paymentMethod): static { $this->paymentMethod = $paymentMethod; return $this; }
+
+    public function getPaymentDeclaredAt(): ?\DateTimeImmutable { return $this->paymentDeclaredAt; }
+    public function setPaymentDeclaredAt(?\DateTimeImmutable $paymentDeclaredAt): static { $this->paymentDeclaredAt = $paymentDeclaredAt; return $this; }
+
+    public function getPaymentDeclaredBy(): ?User { return $this->paymentDeclaredBy; }
+    public function setPaymentDeclaredBy(?User $paymentDeclaredBy): static { $this->paymentDeclaredBy = $paymentDeclaredBy; return $this; }
+
+    public function getPaymentNote(): ?string { return $this->paymentNote; }
+    public function setPaymentNote(?string $paymentNote): static { $this->paymentNote = $paymentNote; return $this; }
 
     /** @return array<string, mixed>|null */
     public function getStripeData(): ?array { return $this->stripeData; }

@@ -238,6 +238,39 @@
             {{ form_errors(form.personsCount) }}
           </div>
 
+          {# ── MODAL "VOUS ÊTES COMBIEN ?" pour Group ── #}
+          <div id="group-modal" class="group-modal" hidden>
+            <div class="group-modal-overlay" data-close></div>
+            <div class="group-modal-card">
+              <button type="button" class="group-modal-close" data-close aria-label="Fermer">
+                <i class="ti ti-x"></i>
+              </button>
+              <div class="group-modal-head">
+                <div class="group-modal-icon"><i class="ti ti-users"></i></div>
+                <h3 class="group-modal-title">Vous êtes combien ?</h3>
+                <p class="group-modal-sub">Choisissez le nombre de participants. Le tarif est de <strong style="color:var(--gold)">22€ / personne</strong> pour Night Coach.</p>
+              </div>
+              <div class="group-modal-options">
+                <button type="button" class="group-modal-option" data-persons="4">
+                  <div class="group-modal-num">4</div>
+                  <div class="group-modal-label">personnes</div>
+                  <div class="group-modal-total">88€</div>
+                </button>
+                <button type="button" class="group-modal-option" data-persons="5">
+                  <div class="group-modal-num">5</div>
+                  <div class="group-modal-label">personnes</div>
+                  <div class="group-modal-total">110€</div>
+                </button>
+                <button type="button" class="group-modal-option" data-persons="6">
+                  <div class="group-modal-num">6</div>
+                  <div class="group-modal-label">personnes</div>
+                  <div class="group-modal-total">132€</div>
+                </button>
+              </div>
+              <p class="group-modal-foot">Total indicatif Night Coach (22€/pers). Le total exact se met à jour selon le créneau choisi.</p>
+            </div>
+          </div>
+
         </div>
 
         {# Option FullAccess #}

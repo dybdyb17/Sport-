@@ -165,4 +165,18 @@ class ClientController extends AbstractController
 
         return $this->redirectToRoute('app_espace_client');
     }
+
+    #[Route('/mon-espace/mon-rdv/{reference}', name: 'app_espace_client_rdv', methods: ['GET'])]
+    public function monRdv(string $reference, BookingRepository $bookings): Response
+    {
+        /** @var User $user */
+        $user = $this->getUser();
+        $booking = $bookings->findOneBy(['reference' => $reference, 'client' => $user]);
+        if (!$booking) {
+            throw $this->createNotFoundException('Réservation introuvable.');
+        }
+        return $this->render('client/mon-rdv.html.twig', [
+            'booking' => $booking,
+        ]);
+    }
 }

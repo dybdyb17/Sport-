@@ -308,3 +308,50 @@
   }
 
 })();
+
+// ── MODAL "VOUS ÊTES COMBIEN ?" pour Group ──
+(function() {
+  const modal = document.getElementById('group-modal');
+  if (!modal) return;
+
+  const personsSel = document.querySelector('[name="booking[personsCount]"]');
+  const groupCard  = document.querySelector('[data-selector="format"] [data-value="group"]');
+
+  function openModal() {
+    modal.hidden = false;
+    document.body.style.overflow = 'hidden';
+  }
+  function closeModal() {
+    modal.hidden = true;
+    document.body.style.overflow = '';
+  }
+
+  // Ouvre le modal quand on clique sur la card Group
+  if (groupCard) {
+    groupCard.addEventListener('click', () => {
+      setTimeout(openModal, 150);
+    });
+  }
+
+  // Clic sur une option → set personsCount + close
+  modal.querySelectorAll('.group-modal-option').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const n = btn.dataset.persons;
+      if (personsSel) {
+        personsSel.value = n;
+        personsSel.dispatchEvent(new Event('change', { bubbles: true }));
+      }
+      modal.querySelectorAll('.group-modal-option').forEach(b => b.classList.remove('is-selected'));
+      btn.classList.add('is-selected');
+      closeModal();
+    });
+  });
+
+  // Fermer
+  modal.querySelectorAll('[data-close]').forEach(el => {
+    el.addEventListener('click', closeModal);
+  });
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && !modal.hidden) closeModal();
+  });
+})();

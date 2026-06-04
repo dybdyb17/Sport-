@@ -1,0 +1,77 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mon RDV — {{ booking.reference }} — SPORT+{% endblock %}
+
+{% block body %}
+<div class="container" style="padding-top:32px;padding-bottom:80px;max-width:560px;">
+
+  <a href="{{ path('app_espace_client') }}" class="btn btn-ghost btn-sm" style="margin-bottom:20px;">
+    <i class="ti ti-arrow-left"></i> Mon espace
+  </a>
+
+  <div class="rdv-card" data-animate="fade-up">
+    <div class="rdv-head">
+      <span class="status-badge {{ booking.status }}">{{ booking.statutLabel }}</span>
+      <div class="rdv-ref">{{ booking.reference }}</div>
+    </div>
+
+    <h1 class="rdv-title">Mon rendez-vous</h1>
+    <p class="rdv-sub">Présente cet écran à l'accueil quand tu arrives à la salle.</p>
+
+    <div class="rdv-qr-wrap">
+      <div id="rdv-qr" data-checkin-url="{{ url('app_admin_checkin_validate', {reference: booking.reference}) }}"></div>
+    </div>
+    <p class="rdv-qr-help">L'accueil scanne ce code pour valider ton arrivée.</p>
+
+    <div class="rdv-details">
+      <div class="rdv-detail">
+        <div class="rdv-detail-label"><i class="ti ti-user-circle"></i> Coach</div>
+        <div class="rdv-detail-value">{{ booking.coach.nomComplet }}</div>
+      </div>
+      <div class="rdv-detail">
+        <div class="rdv-detail-label"><i class="ti ti-calendar"></i> Date</div>
+        <div class="rdv-detail-value">{{ booking.startAt|date('d/m/Y \\à H\\hi') }}</div>
+      </div>
+      <div class="rdv-detail">
+        <div class="rdv-detail-label"><i class="ti ti-clock"></i> Format</div>
+        <div class="rdv-detail-value">{{ booking.offerLabel }}</div>
+      </div>
+      <div class="rdv-detail rdv-detail-price">
+        <div class="rdv-detail-label"><i class="ti ti-cash"></i> À régler</div>
+        <div class="rdv-detail-value">{{ booking.prixFormatted }}</div>
+      </div>
+    </div>
+
+    <div class="rdv-payment-info">
+      <i class="ti ti-info-circle"></i>
+      <div>
+        <strong>Paiement sur place</strong> — Espèces ou CB à l'accueil ou avec ton coach.
+        <br><span style="opacity:.7;">Paiement en amont via Xplor Active SPORT+ bientôt disponible.</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
+<script>
+  (function() {
+    const wrap = document.getElementById('rdv-qr');
+    if (!wrap) return;
+    const url = wrap.dataset.checkinUrl;
+    const qr = qrcode(0, 'M');
+    qr.addData(url);
+    qr.make();
+    wrap.innerHTML = qr.createImgTag(6, 8);
+    const img = wrap.querySelector('img');
+    if (img) {
+      img.style.background = '#fff';
+      img.style.padding = '12px';
+      img.style.borderRadius = '12px';
+      img.style.display = 'block';
+      img.style.margin = '0 auto';
+      img.style.width = '100%';
+      img.style.height = 'auto';
+    }
+  })();
+</script>
+{% endblock %}

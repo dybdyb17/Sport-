@@ -1,0 +1,77 @@
+/* ════════════════════════════════════════════════════════════════════════
+   PAGE MON RDV
+   ════════════════════════════════════════════════════════════════════════ */
+.rdv-card {
+  background: linear-gradient(135deg, var(--bg-card) 0%, var(--bg-2) 100%);
+  border: 1px solid rgba(200,169,81,.25);
+  border-radius: var(--radius-lg);
+  padding: 32px 28px;
+  position: relative; overflow: hidden;
+}
+.rdv-card::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, transparent, var(--gold), var(--green), transparent);
+}
+.rdv-head {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 24px;
+}
+.rdv-ref {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 13px; font-weight: 700; letter-spacing: 2px;
+  color: var(--text-dim);
+}
+.rdv-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 32px; font-weight: 900;
+  text-transform: uppercase; letter-spacing: 1px;
+  color: var(--white); margin: 0 0 6px;
+  text-align: center;
+}
+.rdv-sub { font-size: 14px; color: var(--text-soft); margin: 0 0 28px; text-align: center; }
+
+.rdv-qr-wrap {
+  background: #fff; border-radius: 16px;
+  padding: 20px; margin: 0 auto 14px;
+  max-width: 280px;
+  box-shadow: 0 12px 32px rgba(0,0,0,.4);
+}
+.rdv-qr-help { font-size: 12px; color: var(--text-dim); text-align: center; margin: 0 0 28px; }
+
+.rdv-details {
+  background: rgba(0,0,0,.25);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 4px 16px; margin-bottom: 20px;
+}
+.rdv-detail {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 0; border-bottom: 1px solid var(--border);
+}
+.rdv-detail:last-child { border-bottom: none; }
+.rdv-detail-label {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 13px; color: var(--text-dim);
+}
+.rdv-detail-label i { color: var(--gold); font-size: 16px; }
+.rdv-detail-value { font-size: 15px; font-weight: 600; color: var(--white); text-align: right; }
+.rdv-detail-price .rdv-detail-value {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 22px; font-weight: 800; color: var(--gold);
+}
+
+.rdv-payment-info {
+  display: flex; align-items: flex-start; gap: 12px;
+  background: rgba(46,204,113,.06);
+  border: 1px solid rgba(46,204,113,.2);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  font-size: 13px; color: var(--text-soft); line-height: 1.55;
+}
+.rdv-payment-info i { color: var(--green); font-size: 20px; flex-shrink: 0; margin-top: 1px; }
+
+@media (max-width: 480px) {
+  .rdv-card { padding: 24px 20px; }
+  .rdv-title { font-size: 26px; }
+}

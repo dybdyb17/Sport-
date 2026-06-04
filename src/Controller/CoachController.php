@@ -123,4 +123,36 @@ class CoachController extends AbstractController
         $em->flush();
         return $this->redirectToRoute('app_coach_dashboard');
     }
+
+    #[Route('/booking/{id}/declare-payment', name: 'app_coach_declare_payment', methods: ['POST'])]
+    public function declarePayment(
+        int $id,
+        Request $request,
+        BookingRepository $bookings,
+        EntityManagerInterface $em,
+    ): Response {
+        /** @var \App\Entity\User $user */
+        $user = $this->getUser();
+        $coach = $user->getCoach();
+        $booking = $bookings->find($id);
+        if (!$booking || !$coach || $booking->getCoach() !== $coach) {
+            throw $this->createAccessDeniedException();
+        }
+        if (!$this->isCsrfTokenValid('declare_payment_'.$id, (string) $request->request->get('_token'))) {
+            $this->addFlash('danger', 'Jeton CSRF invalide.');
+            return $this->redirectToRoute('app_coach_dashboard');
+        }
+        $method = $request->request->get('method');
+        if (!in_array($method, ['cash', 'card', 'xplor'], true)) {
+            $this->addFlash('danger', 'Mode de paiement invalide.');
+            return $this->redirectToRoute('app_coach_dashboard');
+        }
+        $booking->setPaymentMethod($method);
+        $booking->setPaymentDeclaredAt(new \DateTimeImmutable());
+        $booking->setPaymentDeclaredBy($user);
+        $booking->setPaymentNote((string) $request->request->get('note'));
+        $em->flush();
+        $this->addFlash('success', '💰 Paiement déclaré.');
+        return $this->redirectToRoute('app_coach_dashboard');
+    }
 }

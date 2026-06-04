@@ -61,6 +61,47 @@
     </div>
   </div>
 
+  {# ── DÉCLARATIONS DE PAIEMENT EN ATTENTE ── #}
+  {% set sessionsAValider = [] %}
+  {% for b in historyBookings ?? [] %}
+    {% if b.status == 'confirmed' and b.startAt < date() and b.paymentMethod is null %}
+      {% set sessionsAValider = sessionsAValider|merge([b]) %}
+    {% endif %}
+  {% endfor %}
+
+  {% if sessionsAValider|length > 0 %}
+    <div class="form-card" style="margin-top:32px;border-left:3px solid var(--gold);">
+      <h2 style="font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--white);margin-bottom:8px;">
+        <i class="ti ti-cash" style="color:var(--gold);"></i> Paiements à déclarer
+      </h2>
+      <p style="font-size:14px;color:var(--text-dim);margin-bottom:20px;">
+        Pour chaque séance passée, indique comment le client t'a payé. Cette info est visible par l'administration.
+      </p>
+      {% for b in sessionsAValider %}
+        <div class="payment-decl-row">
+          <div class="payment-decl-info">
+            <div class="payment-decl-client">{{ b.client.nomComplet }}</div>
+            <div class="payment-decl-meta">
+              {{ b.startAt|date('d/m/Y \\à H\\hi') }} · {{ b.offerLabel }} · <strong style="color:var(--gold);">{{ b.prixFormatted }}</strong>
+            </div>
+          </div>
+          <form method="post" action="{{ path('app_coach_declare_payment', {id: b.id}) }}" class="payment-decl-form">
+            <input type="hidden" name="_token" value="{{ csrf_token('declare_payment_' ~ b.id) }}">
+            <select name="method" required>
+              <option value="">— Mode de paiement —</option>
+              <option value="cash">💵 Espèces</option>
+              <option value="card">💳 Carte bancaire</option>
+              <option value="xplor">🟢 Xplor Active</option>
+            </select>
+            <button type="submit" class="btn btn-primary btn-sm">
+              <i class="ti ti-check"></i> Déclarer
+            </button>
+          </form>
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+
   {# ── Demandes en attente ── #}
   <div class="section-label">
     <i class="ti ti-bell" style="margin-right:6px;"></i> Demandes en attente

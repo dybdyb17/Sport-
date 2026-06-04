@@ -53,6 +53,9 @@
         <div class="next-session-coach-name">avec {{ prochaine.coach.user.nomComplet }}</div>
         <div class="next-session-format">{{ prochaine.offerLabel }}</div>
         <div class="next-session-price">{{ prochaine.prixFormatted }}</div>
+        <a href="{{ path('app_espace_client_rdv', {reference: prochaine.reference}) }}" class="btn btn-secondary btn-sm" style="margin-top:12px;width:100%;justify-content:center;">
+          <i class="ti ti-qrcode"></i> Mon QR code
+        </a>
         {% if prochaine.conversation %}
           <a href="{{ path('app_conversation_show', {id: prochaine.conversation.id}) }}" class="btn btn-primary btn-sm" style="margin-top:12px;width:100%;justify-content:center;">
             <i class="ti ti-message"></i> Messagerie
@@ -216,6 +219,9 @@
               </div>
             </div>
             <div class="booking-card-actions">
+              <a href="{{ path('app_espace_client_rdv', {reference: booking.reference}) }}" class="action-btn">
+                <i class="ti ti-qrcode"></i> QR
+              </a>
               {% if booking.canBeCancelled %}
                 <form
                   action="{{ path('app_booking_cancel', {ref: booking.reference}) }}"

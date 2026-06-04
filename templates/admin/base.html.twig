@@ -46,8 +46,11 @@
       <a href="{{ path('app_admin_founding_list') }}" class="admin-nav-item {{ r starts with 'app_admin_founding' ? 'active' : '' }}">
         <i class="ti ti-medal"></i> Fondateurs
       </a>
-      <a href="{{ path('app_conversation_inbox') }}" class="admin-nav-item {{ r starts with 'app_conversation' ? 'active' : '' }}">
-        <i class="ti ti-message"></i> Messages
+      <a href="{{ path('app_admin_conversations') }}" class="admin-nav-item {{ r starts with 'app_admin_conversation' ? 'active' : '' }}">
+        <i class="ti ti-messages"></i> Conversations
+      </a>
+      <a href="{{ path('app_admin_payments') }}" class="admin-nav-item {{ r == 'app_admin_payments' ? 'active' : '' }}">
+        <i class="ti ti-cash"></i> Paiements
       </a>
       <div class="admin-nav-label" style="margin-top:8px;">Exports</div>
       <a href="{{ path('app_admin_export_revenue') }}" class="admin-nav-item" style="font-size:14px;padding:6px 12px;">

@@ -67,7 +67,7 @@ class BookingType extends AbstractType
                 'attr'         => ['class' => 'booking-select', 'id' => 'booking_packtype'],
             ])
             ->add('fullAccess', CheckboxType::class, [
-                'label'    => 'Ajouter l\'accès salle 24h/24 (+30€/mois, +25€ pour Group)',
+                'label'    => 'Ajouter l\'accès salle 24h/24 — Solo +30€ · Duo +30€/pers · Group +25€/pers',
                 'required' => false,
                 'mapped'   => false,
             ])
