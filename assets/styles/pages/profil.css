@@ -1,0 +1,189 @@
+/* ════════════════════════════════════════════════════════════════════════
+   PAGE PROFIL — Hero + tabs + sections
+   ════════════════════════════════════════════════════════════════════════ */
+
+/* ── Hero ───────────────────────────────────────── */
+.profile-hero {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 24px;
+  align-items: center;
+  padding: 32px;
+  background: linear-gradient(135deg, var(--bg-card) 0%, var(--bg-2) 100%);
+  border: 1px solid rgba(200,169,81,.2);
+  border-radius: var(--radius-lg);
+  margin-bottom: 32px;
+  position: relative;
+  overflow: hidden;
+}
+
+.profile-hero::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--gold), var(--green), transparent);
+  opacity: .6;
+}
+
+.profile-hero-avatar {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--gold), var(--gold-dim));
+  color: var(--black);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 36px;
+  font-weight: 800;
+  letter-spacing: -1px;
+  box-shadow: 0 8px 32px rgba(200,169,81,.3);
+  flex-shrink: 0;
+}
+
+.profile-hero-info { min-width: 0; }
+
+.profile-hero-name {
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--white);
+  margin-bottom: 4px;
+}
+
+.profile-hero-email {
+  font-size: 14px;
+  color: var(--text-soft);
+  margin-bottom: 14px;
+}
+
+.profile-hero-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.profile-hero-stat {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--text-dim);
+}
+
+.profile-hero-stat i { color: var(--gold); font-size: 16px; }
+.profile-hero-stat strong { color: var(--white); font-weight: 700; }
+
+.profile-hero-stat-founding i { color: var(--green); }
+
+@media (max-width: 760px) {
+  .profile-hero {
+    grid-template-columns: auto 1fr;
+    gap: 16px;
+    padding: 24px;
+  }
+  .profile-hero-back { grid-column: 1 / -1; justify-self: flex-start; }
+  .profile-hero-avatar { width: 72px; height: 72px; font-size: 28px; }
+  .profile-hero-name { font-size: 22px; }
+}
+
+/* ── Tabs (sticky) ───────────────────────────────── */
+.profile-tabs {
+  display: flex;
+  gap: 8px;
+  padding: 10px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  margin-bottom: 32px;
+  position: sticky;
+  top: 90px;
+  z-index: 50;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.profile-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  border-radius: 100px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-soft);
+  text-decoration: none;
+  transition: background .2s, color .2s;
+  white-space: nowrap;
+}
+
+.profile-tab:hover {
+  background: rgba(200,169,81,.08);
+  color: var(--white);
+}
+
+.profile-tab i { color: var(--gold-dim); font-size: 16px; }
+
+/* ── Sections ────────────────────────────────────── */
+.profile-section {
+  scroll-margin-top: 170px;
+  margin-bottom: 32px;
+}
+
+.profile-section-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  margin-bottom: 24px;
+}
+
+.profile-section-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: rgba(200,169,81,.1);
+  border: 1px solid rgba(200,169,81,.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  color: var(--gold);
+  flex-shrink: 0;
+}
+
+.profile-section-icon-green {
+  background: rgba(46,204,113,.1);
+  border-color: rgba(46,204,113,.3);
+  color: var(--green);
+}
+
+.profile-section-title {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--white);
+  margin: 0 0 4px;
+}
+
+.profile-section-sub {
+  font-size: 14px;
+  color: var(--text-dim);
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* ── Card spéciale "Préférences nocturnes" ─────── */
+.profile-card-night {
+  border-left: 3px solid var(--green);
+  background:
+    radial-gradient(ellipse at top right, rgba(46,204,113,.04) 0%, transparent 60%),
+    var(--bg-card);
+}
+
+.profile-pref-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 18px;
+  margin-bottom: 4px;
+}

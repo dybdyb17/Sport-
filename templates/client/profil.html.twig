@@ -3,80 +3,163 @@
 {% block title %}Mon profil — SPORT+{% endblock %}
 
 {% block body %}
-<div class="container" style="padding-top:60px;padding-bottom:80px;max-width:900px;">
+<div class="container" style="padding-top:48px;padding-bottom:80px;max-width:1000px;">
 
-  <div class="page-header" style="margin-bottom:40px;">
-    <div>
-      <div class="section-label">Mon compte</div>
-      <h1 style="margin-top:8px;">Mes <span style="color:var(--gold)">informations</span></h1>
-      <p class="page-subtitle">Mets à jour tes données personnelles et ton mot de passe</p>
+  {# ── HERO PROFIL ── #}
+  <div class="profile-hero" data-animate="fade-up">
+    <div class="profile-hero-avatar">
+      {%- set words = app.user.nomComplet|split(' ') -%}
+      {{- words[0]|first|upper -}}{%- if words|length > 1 -%}{{- words[1]|first|upper -}}{%- endif -%}
     </div>
-    <a href="{{ path('app_espace_client') }}" class="btn btn-secondary">
+    <div class="profile-hero-info">
+      <div class="profile-hero-name">{{ app.user.nomComplet }}</div>
+      <div class="profile-hero-email">{{ app.user.email }}</div>
+      <div class="profile-hero-stats">
+        <div class="profile-hero-stat">
+          <i class="ti ti-calendar"></i>
+          <span>Membre depuis <strong>{{ app.user.createdAt|date('M Y') }}</strong></span>
+        </div>
+        {% if app.user.bookings|length > 0 %}
+          <div class="profile-hero-stat">
+            <i class="ti ti-flame"></i>
+            <span><strong>{{ app.user.bookings|length }}</strong> réservation{{ app.user.bookings|length > 1 ? 's' : '' }}</span>
+          </div>
+        {% endif %}
+        {% if app.user.foundingClaim %}
+          <div class="profile-hero-stat profile-hero-stat-founding">
+            <i class="ti ti-crown"></i>
+            <span>{{ app.user.foundingClaim.foundingLabel }}</span>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+    <a href="{{ path('app_espace_client') }}" class="btn btn-secondary btn-sm profile-hero-back">
       <i class="ti ti-arrow-left"></i> Mon espace
     </a>
   </div>
 
-  {# Form 1 : Mes informations #}
-  <div class="form-card" style="margin-bottom:32px;">
-    <h2 style="font-family:var(--font-display);font-size:24px;font-weight:700;
-               text-transform:uppercase;letter-spacing:1px;margin-bottom:24px;">
-      <i class="ti ti-user" style="color:var(--gold);"></i> Mes informations
-    </h2>
+  {# ── TABS NAV ── #}
+  <nav class="profile-tabs">
+    <a href="#informations" class="profile-tab">
+      <i class="ti ti-user"></i> Informations
+    </a>
+    <a href="#preferences" class="profile-tab">
+      <i class="ti ti-moon-stars"></i> Préférences nocturnes
+    </a>
+    <a href="#securite" class="profile-tab">
+      <i class="ti ti-lock"></i> Sécurité
+    </a>
+  </nav>
 
-    {{ form_start(profilForm) }}
-      <div class="form-field">
-        {{ form_label(profilForm.nomComplet) }}
-        {{ form_widget(profilForm.nomComplet) }}
-        {{ form_errors(profilForm.nomComplet) }}
+  {# ── SECTION 1 : INFORMATIONS ── #}
+  <section id="informations" class="profile-section" data-animate="fade-up">
+    <div class="form-card">
+      <div class="profile-section-head">
+        <i class="ti ti-user profile-section-icon"></i>
+        <div>
+          <h2 class="profile-section-title">Mes informations</h2>
+          <p class="profile-section-sub">Tes données de contact, mises à jour quand tu veux.</p>
+        </div>
       </div>
-      <div class="form-field">
-        {{ form_label(profilForm.email) }}
-        {{ form_widget(profilForm.email) }}
-        {{ form_errors(profilForm.email) }}
-      </div>
-      <div class="form-field">
-        {{ form_label(profilForm.phone) }}
-        {{ form_widget(profilForm.phone) }}
-        {{ form_errors(profilForm.phone) }}
-      </div>
-      <button type="submit" class="btn btn-primary">
-        <i class="ti ti-device-floppy"></i> Enregistrer
-      </button>
-    {{ form_end(profilForm) }}
-  </div>
 
-  {# Form 2 : Changer mot de passe #}
-  <div class="form-card">
-    <h2 style="font-family:var(--font-display);font-size:24px;font-weight:700;
-               text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;">
-      <i class="ti ti-lock" style="color:var(--gold);"></i> Mot de passe
-    </h2>
-    <p style="color:var(--text-soft);font-size:14px;margin-bottom:24px;">
-      Pour ta sécurité, modifie ton mot de passe régulièrement.
-    </p>
+      {{ form_start(profilForm) }}
+        <div class="form-field">
+          {{ form_label(profilForm.nomComplet) }}
+          {{ form_widget(profilForm.nomComplet) }}
+          {{ form_errors(profilForm.nomComplet) }}
+        </div>
+        <div class="form-field">
+          {{ form_label(profilForm.email) }}
+          {{ form_widget(profilForm.email) }}
+          {{ form_errors(profilForm.email) }}
+        </div>
+        <div class="form-field">
+          {{ form_label(profilForm.phone) }}
+          {{ form_widget(profilForm.phone) }}
+          {{ form_errors(profilForm.phone) }}
+        </div>
+        <button type="submit" class="btn btn-primary">
+          <i class="ti ti-device-floppy"></i> Enregistrer mes infos
+        </button>
+      {{ form_end(profilForm) }}
+    </div>
+  </section>
 
-    {{ form_start(passwordForm) }}
-      <div class="form-field">
-        {{ form_label(passwordForm.currentPassword) }}
-        {{ form_widget(passwordForm.currentPassword) }}
-        {{ form_errors(passwordForm.currentPassword) }}
+  {# ── SECTION 2 : PRÉFÉRENCES NOCTURNES ── #}
+  <section id="preferences" class="profile-section" data-animate="fade-up">
+    <div class="form-card profile-card-night">
+      <div class="profile-section-head">
+        <i class="ti ti-moon-stars profile-section-icon profile-section-icon-green"></i>
+        <div>
+          <h2 class="profile-section-title">Préférences nocturnes</h2>
+          <p class="profile-section-sub">Aide-nous à personnaliser ton expérience. Ces infos sont visibles par tes coachs.</p>
+        </div>
       </div>
-      <div class="form-field">
-        {{ form_label(passwordForm.newPassword.first) }}
-        {{ form_widget(passwordForm.newPassword.first) }}
-        {{ form_errors(passwordForm.newPassword.first) }}
+
+      {{ form_start(preferencesForm) }}
+        <div class="profile-pref-grid">
+          <div class="form-field">
+            {{ form_label(preferencesForm.preferredTimeSlot) }}
+            {{ form_widget(preferencesForm.preferredTimeSlot) }}
+            {{ form_errors(preferencesForm.preferredTimeSlot) }}
+          </div>
+          <div class="form-field">
+            {{ form_label(preferencesForm.preferredCoach) }}
+            {{ form_widget(preferencesForm.preferredCoach) }}
+            {{ form_errors(preferencesForm.preferredCoach) }}
+          </div>
+          <div class="form-field">
+            {{ form_label(preferencesForm.goal) }}
+            {{ form_widget(preferencesForm.goal) }}
+            {{ form_errors(preferencesForm.goal) }}
+          </div>
+        </div>
+        <div class="form-field" style="margin-top:8px;">
+          {{ form_label(preferencesForm.coachNotes) }}
+          {{ form_widget(preferencesForm.coachNotes) }}
+          {{ form_errors(preferencesForm.coachNotes) }}
+        </div>
+        <button type="submit" class="btn btn-primary">
+          <i class="ti ti-moon"></i> Enregistrer mes préférences
+        </button>
+      {{ form_end(preferencesForm) }}
+    </div>
+  </section>
+
+  {# ── SECTION 3 : SÉCURITÉ ── #}
+  <section id="securite" class="profile-section" data-animate="fade-up">
+    <div class="form-card">
+      <div class="profile-section-head">
+        <i class="ti ti-lock profile-section-icon"></i>
+        <div>
+          <h2 class="profile-section-title">Mot de passe</h2>
+          <p class="profile-section-sub">Pour ta sécurité, modifie ton mot de passe régulièrement.</p>
+        </div>
       </div>
-      <div class="form-field">
-        {{ form_label(passwordForm.newPassword.second) }}
-        {{ form_widget(passwordForm.newPassword.second) }}
-        {{ form_errors(passwordForm.newPassword.second) }}
-      </div>
-      {{ form_errors(passwordForm.newPassword) }}
-      <button type="submit" class="btn btn-primary">
-        <i class="ti ti-key"></i> Changer le mot de passe
-      </button>
-    {{ form_end(passwordForm) }}
-  </div>
+
+      {{ form_start(passwordForm) }}
+        <div class="form-field">
+          {{ form_label(passwordForm.currentPassword) }}
+          {{ form_widget(passwordForm.currentPassword) }}
+          {{ form_errors(passwordForm.currentPassword) }}
+        </div>
+        <div class="form-field">
+          {{ form_label(passwordForm.newPassword.first) }}
+          {{ form_widget(passwordForm.newPassword.first) }}
+          {{ form_errors(passwordForm.newPassword.first) }}
+        </div>
+        <div class="form-field">
+          {{ form_label(passwordForm.newPassword.second) }}
+          {{ form_widget(passwordForm.newPassword.second) }}
+          {{ form_errors(passwordForm.newPassword.second) }}
+        </div>
+        {{ form_errors(passwordForm.newPassword) }}
+        <button type="submit" class="btn btn-primary">
+          <i class="ti ti-key"></i> Changer le mot de passe
+        </button>
+      {{ form_end(passwordForm) }}
+    </div>
+  </section>
 
 </div>
 {% endblock %}

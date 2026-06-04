@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Booking;
 use App\Repository\BookingRepository;
 use App\Service\BookingManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -90,5 +91,36 @@ class CoachController extends AbstractController
         if (!$this->isCsrfTokenValid($action . $booking->getId(), $token)) {
             throw $this->createAccessDeniedException('Jeton CSRF invalide.');
         }
+    }
+
+    #[Route('/toggle-available-tonight', name: 'app_coach_toggle_tonight', methods: ['POST'])]
+    public function toggleAvailableTonight(Request $request, EntityManagerInterface $em): Response
+    {
+        /** @var \App\Entity\User $user */
+        $user = $this->getUser();
+        $coach = $user->getCoach();
+
+        if (!$coach) {
+            throw $this->createAccessDeniedException();
+        }
+
+        if (!$this->isCsrfTokenValid('toggle_tonight', (string) $request->request->get('_token'))) {
+            $this->addFlash('danger', 'Action invalide.');
+            return $this->redirectToRoute('app_coach_dashboard');
+        }
+
+        // Toggle : si déjà actif et non expiré → off, sinon → on
+        if ($coach->isAvailableTonightNow()) {
+            $coach->setIsAvailableTonight(false);
+            $coach->setAvailableTonightSetAt(null);
+            $this->addFlash('success', 'Tu n\'es plus annoncé disponible cette nuit.');
+        } else {
+            $coach->setIsAvailableTonight(true);
+            $coach->setAvailableTonightSetAt(new \DateTimeImmutable());
+            $this->addFlash('success', '🌙 Tu es annoncé disponible cette nuit pour 24h.');
+        }
+
+        $em->flush();
+        return $this->redirectToRoute('app_coach_dashboard');
     }
 }

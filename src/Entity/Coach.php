@@ -37,6 +37,12 @@ class Coach
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $bio = null;
 
+    #[ORM\Column(options: ['default' => false])]
+    private bool $isAvailableTonight = false;
+
+    #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
+    private ?\DateTimeImmutable $availableTonightSetAt = null;
+
     /**
      * @var Collection<int, Booking>
      */
@@ -175,5 +181,38 @@ class Coach
         }
 
         return true;
+    }
+
+    public function getIsAvailableTonight(): bool { return $this->isAvailableTonight; }
+    public function setIsAvailableTonight(bool $isAvailableTonight): static { $this->isAvailableTonight = $isAvailableTonight; return $this; }
+
+    public function getAvailableTonightSetAt(): ?\DateTimeImmutable { return $this->availableTonightSetAt; }
+    public function setAvailableTonightSetAt(?\DateTimeImmutable $availableTonightSetAt): static { $this->availableTonightSetAt = $availableTonightSetAt; return $this; }
+
+    /**
+     * Le coach est "disponible cette nuit" uniquement si :
+     * - le flag est à true
+     * - ET la date d'activation est < 24h (sinon expiré, considéré comme false)
+     */
+    public function isAvailableTonightNow(): bool
+    {
+        if (!$this->isAvailableTonight || null === $this->availableTonightSetAt) {
+            return false;
+        }
+        $expiresAt = $this->availableTonightSetAt->modify('+24 hours');
+        return $expiresAt > new \DateTimeImmutable();
+    }
+
+    /**
+     * Le coach est "en ligne" si son user a un lastSeenAt < 5 minutes.
+     */
+    public function isOnline(): bool
+    {
+        $lastSeen = $this->user?->getLastSeenAt();
+        if (null === $lastSeen) {
+            return false;
+        }
+        $threshold = new \DateTimeImmutable('-5 minutes');
+        return $lastSeen > $threshold;
     }
 }

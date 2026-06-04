@@ -5,20 +5,95 @@
 {% block body %}
 <div class="container">
 
-  <div class="page-header">
+  <div class="page-header" data-animate="fade-up">
     <div>
-      <h1>Mon <span style="color:var(--gold)">Espace</span></h1>
-      <p class="page-subtitle">Bienvenue, {{ app.user.nomComplet }}</p>
+      <div class="section-label" style="color:var(--green);">{{ greeting }}</div>
+      <h1>{{ app.user.nomComplet|split(' ')|first }}, <span style="color:var(--gold)">prêt</span> ?</h1>
+      <p class="page-subtitle">Ton espace coaching premium.</p>
     </div>
     <div style="display:flex;gap:10px;flex-wrap:wrap;">
       <a href="{{ path('app_booking_new') }}" class="btn btn-primary">
         <i class="ti ti-calendar-plus"></i> Nouvelle réservation
       </a>
       <a href="{{ path('app_espace_client_profil') }}" class="btn btn-secondary">
-        <i class="ti ti-user-cog"></i> Modifier mon profil
+        <i class="ti ti-user-cog"></i> Mon profil
       </a>
     </div>
   </div>
+
+  {# ── CARD XL PROCHAINE SÉANCE ── #}
+  {% if prochaine %}
+    <div class="next-session-card {{ prochaine.status }}" data-animate="fade-up" data-start="{{ prochaine.startAt|date('c') }}">
+      <div class="next-session-left">
+        <div class="next-session-tag">
+          {% if prochaine.status == 'confirmed' %}
+            <span class="next-session-dot"></span> Confirmée
+          {% else %}
+            <span class="next-session-dot pending"></span> En attente du coach
+          {% endif %}
+        </div>
+        <div class="next-session-countdown" id="next-session-countdown">
+          <div class="countdown-block"><span class="countdown-num" data-unit="d">--</span><span class="countdown-label">jours</span></div>
+          <div class="countdown-sep">:</div>
+          <div class="countdown-block"><span class="countdown-num" data-unit="h">--</span><span class="countdown-label">heures</span></div>
+          <div class="countdown-sep">:</div>
+          <div class="countdown-block"><span class="countdown-num" data-unit="m">--</span><span class="countdown-label">min</span></div>
+          <div class="countdown-sep">:</div>
+          <div class="countdown-block"><span class="countdown-num" data-unit="s">--</span><span class="countdown-label">sec</span></div>
+        </div>
+        <div class="next-session-meta">
+          <i class="ti ti-calendar"></i> {{ prochaine.startAt|date('d/m/Y \\à H\\hi') }}
+        </div>
+      </div>
+      <div class="next-session-right">
+        <div class="next-session-coach-avatar">
+          {%- set cw = prochaine.coach.user.nomComplet|split(' ') -%}
+          {{- cw[0]|first|upper -}}{%- if cw|length > 1 -%}{{- cw[1]|first|upper -}}{%- endif -%}
+        </div>
+        <div class="next-session-coach-name">avec {{ prochaine.coach.user.nomComplet }}</div>
+        <div class="next-session-format">{{ prochaine.offerLabel }}</div>
+        <div class="next-session-price">{{ prochaine.prixFormatted }}</div>
+        {% if prochaine.conversation %}
+          <a href="{{ path('app_conversation_show', {id: prochaine.conversation.id}) }}" class="btn btn-primary btn-sm" style="margin-top:12px;width:100%;justify-content:center;">
+            <i class="ti ti-message"></i> Messagerie
+          </a>
+        {% endif %}
+      </div>
+    </div>
+
+    {# Countdown JS #}
+    <script>
+      (function() {
+        const card = document.querySelector('.next-session-card');
+        if (!card) return;
+        const target = new Date(card.dataset.start).getTime();
+
+        function tick() {
+          const now = Date.now();
+          const diff = target - now;
+          if (diff <= 0) {
+            card.querySelectorAll('.countdown-num').forEach(el => el.textContent = '0');
+            card.classList.add('imminent');
+            return;
+          }
+          const d = Math.floor(diff / 86400000);
+          const h = Math.floor((diff % 86400000) / 3600000);
+          const m = Math.floor((diff % 3600000) / 60000);
+          const s = Math.floor((diff % 60000) / 1000);
+          card.querySelector('[data-unit="d"]').textContent = d;
+          card.querySelector('[data-unit="h"]').textContent = String(h).padStart(2, '0');
+          card.querySelector('[data-unit="m"]').textContent = String(m).padStart(2, '0');
+          card.querySelector('[data-unit="s"]').textContent = String(s).padStart(2, '0');
+
+          // Classes selon urgence
+          if (diff < 2 * 3600000) card.classList.add('imminent');
+          else if (diff < 24 * 3600000) card.classList.add('soon');
+        }
+        tick();
+        setInterval(tick, 1000);
+      })();
+    </script>
+  {% endif %}
 
   {# ── Founding Member card ── #}
   {% if app.user.foundingClaim %}

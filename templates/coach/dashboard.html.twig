@@ -12,6 +12,35 @@
     </div>
   </div>
 
+  {# ── TOGGLE DISPONIBILITÉ NUIT ── #}
+  {% set coach = app.user.coach %}
+  {% if coach %}
+    <div class="night-toggle-card {{ coach.isAvailableTonightNow ? 'is-on' : 'is-off' }}">
+      <div class="night-toggle-icon">
+        <i class="ti ti-moon-stars"></i>
+      </div>
+      <div class="night-toggle-body">
+        <div class="night-toggle-title">Disponibilité cette nuit</div>
+        {% if coach.isAvailableTonightNow %}
+          <div class="night-toggle-status night-toggle-status-on">
+            <span class="night-toggle-dot"></span>
+            Tu es annoncé <strong>disponible cette nuit</strong> sur le site jusqu'à {{ coach.availableTonightSetAt|date_modify('+24 hours')|date('H:i') }} demain.
+          </div>
+        {% else %}
+          <div class="night-toggle-status night-toggle-status-off">
+            Active ce toggle pour annoncer aux clients que tu es dispo pour Night Coach / Astreinte cette nuit.
+          </div>
+        {% endif %}
+      </div>
+      <form method="post" action="{{ path('app_coach_toggle_tonight') }}" class="night-toggle-form">
+        <input type="hidden" name="_token" value="{{ csrf_token('toggle_tonight') }}">
+        <button type="submit" class="night-toggle-switch" aria-label="Toggle disponibilité cette nuit">
+          <span class="night-toggle-knob"></span>
+        </button>
+      </form>
+    </div>
+  {% endif %}
+
   {# ── Stat cards ── #}
   <div class="stats-grid">
     <div class="stat-card {{ nbPending > 0 ? 'success' : 'warning' }}">

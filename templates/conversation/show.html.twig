@@ -43,20 +43,61 @@
 
   <!-- Chat area -->
   <div class="chat-area">
+    {# ── BANDEAU SÉANCE ÉPINGLÉ ── #}
+    {% set booking = conversation.booking %}
+    <div class="chat-pinned-session {{ booking.status }}">
+      <div class="chat-pinned-icon">
+        {% if booking.timeSlot.value == 'astreinte' %}
+          <i class="ti ti-moon"></i>
+        {% elseif booking.timeSlot.value == 'night' %}
+          <i class="ti ti-moon-stars"></i>
+        {% else %}
+          <i class="ti ti-sun"></i>
+        {% endif %}
+      </div>
+      <div class="chat-pinned-body">
+        <div class="chat-pinned-status">
+          <span class="status-badge {{ booking.status }}">{{ booking.statutLabel }}</span>
+          <span class="chat-pinned-format">{{ booking.offerLabel }}</span>
+        </div>
+        <div class="chat-pinned-date">
+          <i class="ti ti-calendar" style="font-size:14px;"></i>
+          {{ booking.startAt|date('d/m/Y \\à H\\hi') }}
+        </div>
+      </div>
+      <div class="chat-pinned-price">{{ booking.prixFormatted }}</div>
+    </div>
+
     <!-- Header -->
     <div class="chat-header">
-      <div style="width:40px;height:40px;border-radius:50%;background:var(--bg-3);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;color:var(--gold);flex-shrink:0;">
+      <div class="chat-header-avatar-wrap">
+        <div class="chat-header-avatar">
+          {% if interlocuteur %}
+            {%- set words = interlocuteur.nomComplet|split(' ') -%}
+            {{- words[0]|first|upper -}}{%- if words|length > 1 -%}{{- words[1]|first|upper -}}{%- endif -%}
+          {% else %}?{% endif %}
+        </div>
+        {# ── INDICATEUR EN LIGNE ── #}
         {% if interlocuteur %}
-          {%- set words = interlocuteur.nomComplet|split(' ') -%}
-          {{- words[0]|first|upper -}}{%- if words|length > 1 -%}{{- words[1]|first|upper -}}{%- endif -%}
-        {% else %}?{% endif %}
+          {% set lastSeen = interlocuteur.lastSeenAt %}
+          {% set isOnline = lastSeen and lastSeen > date('-5 minutes') %}
+          <span class="chat-header-presence {{ isOnline ? 'is-online' : 'is-offline' }}"
+                title="{{ isOnline ? 'En ligne' : 'Hors ligne' }}"></span>
+        {% endif %}
       </div>
       <div>
-        <div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:16px;">
-          {{ interlocuteur ? interlocuteur.nomComplet : 'Coach' }}
-        </div>
-        <div style="font-size:13px;color:var(--text-dim);">
-          {{ conversation.booking.reference }} — {{ conversation.booking.offerLabel }}
+        <div class="chat-header-name">{{ interlocuteur ? interlocuteur.nomComplet : 'Coach' }}</div>
+        <div class="chat-header-sub">
+          {% if interlocuteur %}
+            {% set lastSeen = interlocuteur.lastSeenAt %}
+            {% if lastSeen and lastSeen > date('-5 minutes') %}
+              <span style="color:var(--green);">● En ligne</span>
+            {% elseif lastSeen %}
+              Vu {{ lastSeen|date('d/m \\à H\\hi') }}
+            {% else %}
+              {{ conversation.booking.reference }}
+            {% endif %}
+          {% endif %}
         </div>
       </div>
       <a href="{{ path('app_conversation_inbox') }}" class="btn btn-ghost btn-sm" style="margin-left:auto;">
@@ -83,11 +124,24 @@
       {% endif %}
     </div>
 
+    {# ── QUICK REPLIES (coach uniquement) ── #}
+    {% if is_granted('ROLE_COACH') %}
+      <div class="chat-quick-replies">
+        <span class="chat-quick-replies-label">Réponses rapides :</span>
+        <button type="button" class="chat-quick-reply" data-text="Ça marche, à ce soir 💪">Ça marche 💪</button>
+        <button type="button" class="chat-quick-reply" data-text="Petit retard de ~10 min, désolé !">Retard ~10 min</button>
+        <button type="button" class="chat-quick-reply" data-text="On peut reprogrammer ? Donne-moi tes dispos.">Reprogrammer ?</button>
+        <button type="button" class="chat-quick-reply" data-text="Pense à ramener une serviette et de l'eau.">Pense à tes affaires</button>
+        <button type="button" class="chat-quick-reply" data-text="Séance confirmée. Hâte de te voir 🔥">Confirme + Hâte 🔥</button>
+      </div>
+    {% endif %}
+
     <!-- Input -->
     <form class="chat-input"
           method="post"
           action="{{ path('app_conversation_send', {id: conversation.id}) }}">
       <textarea
+          id="chat-textarea"
           name="content"
           maxlength="2000"
           rows="1"
@@ -98,6 +152,17 @@
         <i class="ti ti-send"></i>
       </button>
     </form>
+
+    {# JS quick replies #}
+    <script>
+      document.querySelectorAll('.chat-quick-reply').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const ta = document.getElementById('chat-textarea');
+          ta.value = btn.dataset.text;
+          ta.focus();
+        });
+      });
+    </script>
   </div>
 
 </div>

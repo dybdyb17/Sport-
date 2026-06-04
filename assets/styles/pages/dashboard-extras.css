@@ -1,0 +1,448 @@
+/* ════════════════════════════════════════════════════════════════════════
+   EXTRAS DASHBOARD — Next session card / Night toggle / Pinned session / Quick replies
+   ════════════════════════════════════════════════════════════════════════ */
+
+/* ─── CARD XL PROCHAINE SÉANCE ─── */
+.next-session-card {
+  display: grid;
+  grid-template-columns: 1fr 280px;
+  gap: 32px;
+  align-items: center;
+  padding: 32px;
+  background: linear-gradient(135deg, var(--bg-card) 0%, var(--bg-2) 100%);
+  border: 1px solid rgba(46,204,113,.25);
+  border-radius: var(--radius-lg);
+  margin-bottom: 32px;
+  position: relative;
+  overflow: hidden;
+}
+
+.next-session-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at top right, rgba(46,204,113,.06) 0%, transparent 60%);
+  pointer-events: none;
+}
+
+.next-session-card.imminent { border-color: var(--gold); }
+.next-session-card.imminent::before {
+  background: radial-gradient(ellipse at top right, rgba(200,169,81,.12) 0%, transparent 60%);
+  animation: imminentPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes imminentPulse {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.5; }
+}
+
+.next-session-card.pending {
+  border-color: rgba(200,169,81,.25);
+}
+
+.next-session-left { position: relative; z-index: 1; }
+.next-session-right {
+  position: relative;
+  z-index: 1;
+  padding: 24px;
+  background: rgba(15,15,19,.4);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  text-align: center;
+}
+
+.next-session-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  background: rgba(46,204,113,.1);
+  border: 1px solid rgba(46,204,113,.3);
+  border-radius: 100px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--green);
+  margin-bottom: 20px;
+}
+
+.next-session-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--green);
+  box-shadow: 0 0 8px var(--green);
+  animation: nightDotPulse 1.6s ease-in-out infinite;
+}
+
+.next-session-dot.pending {
+  background: var(--gold);
+  box-shadow: 0 0 8px var(--gold);
+}
+
+@keyframes nightDotPulse {
+  0%, 100% { transform: scale(1);   opacity: 1; }
+  50%      { transform: scale(1.6); opacity: .5; }
+}
+
+.next-session-countdown {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 18px;
+}
+
+.countdown-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: rgba(0,0,0,.4);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 12px 14px;
+  min-width: 64px;
+}
+
+.countdown-num {
+  font-size: 32px;
+  font-weight: 800;
+  color: var(--white);
+  letter-spacing: -1px;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.countdown-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-top: 6px;
+}
+
+.countdown-sep {
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--gold);
+  align-self: flex-start;
+  margin-top: 4px;
+}
+
+.next-session-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 16px;
+  color: var(--text-soft);
+}
+
+.next-session-meta i { color: var(--gold); font-size: 18px; }
+
+.next-session-coach-avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--gold), var(--gold-dim));
+  color: var(--black);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  font-weight: 800;
+  margin: 0 auto 12px;
+}
+
+.next-session-coach-name {
+  font-size: 14px;
+  color: var(--text-dim);
+  margin-bottom: 4px;
+}
+
+.next-session-format {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--white);
+  margin-bottom: 8px;
+}
+
+.next-session-price {
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--gold);
+  letter-spacing: -0.5px;
+}
+
+@media (max-width: 880px) {
+  .next-session-card {
+    grid-template-columns: 1fr;
+    padding: 24px;
+  }
+  .next-session-countdown { flex-wrap: wrap; }
+  .countdown-block { min-width: 56px; padding: 10px; }
+  .countdown-num { font-size: 26px; }
+}
+
+/* ─── TOGGLE DISPONIBILITÉ NUIT (coach) ─── */
+.night-toggle-card {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 20px 24px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  margin-bottom: 32px;
+  transition: border-color .3s, box-shadow .3s;
+}
+
+.night-toggle-card.is-on {
+  border-color: rgba(46,204,113,.4);
+  box-shadow: 0 0 40px rgba(46,204,113,.08);
+  background: linear-gradient(135deg, var(--bg-card) 0%, rgba(46,204,113,.04) 100%);
+}
+
+.night-toggle-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 14px;
+  background: rgba(46,204,113,.1);
+  border: 1px solid rgba(46,204,113,.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  color: var(--green);
+  flex-shrink: 0;
+}
+
+.night-toggle-card.is-on .night-toggle-icon {
+  animation: nightIconPulse 2s ease-in-out infinite;
+}
+
+@keyframes nightIconPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(46,204,113,.4); }
+  50%      { box-shadow: 0 0 0 8px rgba(46,204,113,0); }
+}
+
+.night-toggle-body { flex: 1; min-width: 0; }
+
+.night-toggle-title {
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--white);
+  margin-bottom: 4px;
+}
+
+.night-toggle-status {
+  font-size: 14px;
+  color: var(--text-soft);
+  line-height: 1.5;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.night-toggle-status strong { color: var(--green); font-weight: 700; }
+
+.night-toggle-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--green);
+  box-shadow: 0 0 8px var(--green);
+  animation: nightDotPulse 1.6s ease-in-out infinite;
+  flex-shrink: 0;
+}
+
+/* Switch */
+.night-toggle-form { flex-shrink: 0; }
+
+.night-toggle-switch {
+  position: relative;
+  width: 64px;
+  height: 32px;
+  background: var(--bg-3);
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  cursor: pointer;
+  padding: 0;
+  transition: background .25s, border-color .25s;
+}
+
+.night-toggle-knob {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 24px;
+  height: 24px;
+  background: var(--text-dim);
+  border-radius: 50%;
+  transition: transform .25s, background .25s;
+}
+
+.night-toggle-card.is-on .night-toggle-switch {
+  background: var(--green);
+  border-color: var(--green);
+}
+
+.night-toggle-card.is-on .night-toggle-knob {
+  transform: translateX(32px);
+  background: var(--black);
+}
+
+@media (max-width: 600px) {
+  .night-toggle-card {
+    flex-wrap: wrap;
+    padding: 16px;
+  }
+  .night-toggle-body { flex: 1 1 100%; order: 3; }
+}
+
+/* ─── BANDEAU SÉANCE ÉPINGLÉ DANS LA MESSAGERIE ─── */
+.chat-pinned-session {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 20px;
+  background: linear-gradient(90deg, rgba(200,169,81,.08) 0%, transparent 100%);
+  border-bottom: 1px solid var(--border);
+  border-left: 3px solid var(--gold);
+}
+
+.chat-pinned-session.confirmed { border-left-color: var(--green); background: linear-gradient(90deg, rgba(46,204,113,.08) 0%, transparent 100%); }
+.chat-pinned-session.cancelled,
+.chat-pinned-session.refused   { border-left-color: #ff4444; opacity: .7; }
+
+.chat-pinned-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: rgba(200,169,81,.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  color: var(--gold);
+  flex-shrink: 0;
+}
+
+.chat-pinned-body { flex: 1; min-width: 0; }
+
+.chat-pinned-status {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 4px;
+  flex-wrap: wrap;
+}
+
+.chat-pinned-format {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--white);
+}
+
+.chat-pinned-date {
+  font-size: 13px;
+  color: var(--text-dim);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.chat-pinned-price {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--gold);
+  letter-spacing: -0.5px;
+  flex-shrink: 0;
+}
+
+/* ─── INDICATEUR EN LIGNE (chat header) ─── */
+.chat-header-avatar-wrap {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.chat-header-avatar {
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  background: var(--bg-3);
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--gold);
+}
+
+.chat-header-presence {
+  position: absolute;
+  bottom: -2px;
+  right: -2px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 2px solid var(--bg);
+}
+
+.chat-header-presence.is-online {
+  background: var(--green);
+  box-shadow: 0 0 8px var(--green);
+  animation: nightDotPulse 1.8s ease-in-out infinite;
+}
+
+.chat-header-presence.is-offline { background: var(--text-dim); }
+
+.chat-header-name {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--white);
+}
+
+.chat-header-sub {
+  font-size: 13px;
+  color: var(--text-dim);
+}
+
+/* ─── QUICK REPLIES (coach) ─── */
+.chat-quick-replies {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  background: var(--bg-2);
+  border-top: 1px solid var(--border);
+}
+
+.chat-quick-replies-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-right: 4px;
+}
+
+.chat-quick-reply {
+  padding: 6px 14px;
+  background: var(--bg-3);
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-soft);
+  cursor: pointer;
+  transition: all .2s;
+}
+
+.chat-quick-reply:hover {
+  background: rgba(200,169,81,.1);
+  border-color: rgba(200,169,81,.4);
+  color: var(--white);
+  transform: translateY(-1px);
+}

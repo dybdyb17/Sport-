@@ -2,12 +2,14 @@
 
 namespace App\Entity;
 
+use App\Entity\Enum\TimeSlot;
 use App\Entity\Enum\UserRole;
 use App\Entity\FoundingClaim;
 use App\Repository\UserRepository;
 use App\Entity\Subscription;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -43,6 +45,22 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(length: 20, nullable: true)]
     private ?string $phone = null;
+
+    #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
+    private ?\DateTimeImmutable $lastSeenAt = null;
+
+    #[ORM\Column(length: 20, nullable: true, enumType: TimeSlot::class)]
+    private ?TimeSlot $preferredTimeSlot = null;
+
+    #[ORM\ManyToOne]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
+    private ?Coach $preferredCoach = null;
+
+    #[ORM\Column(length: 50, nullable: true)]
+    private ?string $goal = null;
+
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $coachNotes = null;
 
     #[ORM\Column(enumType: UserRole::class)]
     private UserRole $role = UserRole::CLIENT;
@@ -172,6 +190,21 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
+
+    public function getLastSeenAt(): ?\DateTimeImmutable { return $this->lastSeenAt; }
+    public function setLastSeenAt(?\DateTimeImmutable $lastSeenAt): static { $this->lastSeenAt = $lastSeenAt; return $this; }
+
+    public function getPreferredTimeSlot(): ?TimeSlot { return $this->preferredTimeSlot; }
+    public function setPreferredTimeSlot(?TimeSlot $preferredTimeSlot): static { $this->preferredTimeSlot = $preferredTimeSlot; return $this; }
+
+    public function getPreferredCoach(): ?Coach { return $this->preferredCoach; }
+    public function setPreferredCoach(?Coach $preferredCoach): static { $this->preferredCoach = $preferredCoach; return $this; }
+
+    public function getGoal(): ?string { return $this->goal; }
+    public function setGoal(?string $goal): static { $this->goal = $goal; return $this; }
+
+    public function getCoachNotes(): ?string { return $this->coachNotes; }
+    public function setCoachNotes(?string $coachNotes): static { $this->coachNotes = $coachNotes; return $this; }
 
     public function getRole(): UserRole
     {

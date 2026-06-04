@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Booking;
 use App\Entity\User;
 use App\Form\PasswordChangeFormType;
+use App\Form\PreferencesFormType;
 use App\Form\ProfilFormType;
 use App\Repository\BookingRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -37,12 +38,31 @@ class ClientController extends AbstractController
         $nbConfirmees = count(array_filter($all, static fn (Booking $b): bool => $b->isConfirmed()));
         $nbEnAttente  = count(array_filter($all, static fn (Booking $b): bool => $b->isPending()));
 
+        // Trouver la prochaine séance à venir (pending ou confirmed)
+        $prochaine = null;
+        foreach ($reservationsAVenir as $b) {
+            if ($prochaine === null || $b->getStartAt() < $prochaine->getStartAt()) {
+                $prochaine = $b;
+            }
+        }
+
+        // Salutation selon l'heure
+        $hour = (int) (new \DateTime())->format('H');
+        $greeting = match (true) {
+            $hour >= 6  && $hour < 12 => 'Bonjour',
+            $hour >= 12 && $hour < 18 => 'Bon après-midi',
+            $hour >= 18 && $hour < 22 => 'Bonsoir',
+            default                   => 'Bonne nuit',
+        };
+
         return $this->render('client/espace.html.twig', [
             'reservationsAVenir'  => $reservationsAVenir,
             'reservationsPassees' => $reservationsPassees,
             'total'               => count($all),
             'nbConfirmees'        => $nbConfirmees,
             'nbEnAttente'         => $nbEnAttente,
+            'prochaine'           => $prochaine,
+            'greeting'            => $greeting,
         ]);
     }
 
@@ -89,9 +109,19 @@ class ClientController extends AbstractController
             return $this->redirectToRoute('app_espace_client_profil');
         }
 
+        $preferencesForm = $this->createForm(PreferencesFormType::class, $user);
+        $preferencesForm->handleRequest($request);
+
+        if ($preferencesForm->isSubmitted() && $preferencesForm->isValid()) {
+            $em->flush();
+            $this->addFlash('success', 'Tes préférences ont été enregistrées.');
+            return $this->redirectToRoute('app_espace_client_profil');
+        }
+
         return $this->render('client/profil.html.twig', [
-            'profilForm'   => $profilForm,
-            'passwordForm' => $passwordForm,
+            'profilForm'      => $profilForm,
+            'passwordForm'    => $passwordForm,
+            'preferencesForm' => $preferencesForm,
         ]);
     }
 

@@ -37,6 +37,8 @@
 @import url('./pages/heros.css');
 @import url('./pages/auth.css');
 @import url('./pages/account.css');
+@import url('./pages/profil.css');
+@import url('./pages/dashboard-extras.css');
 
 /* ── UTILITAIRES (en dernier — surchargent tout) ── */
 @import url('./utilities/helpers.css');
