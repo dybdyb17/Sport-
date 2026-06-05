@@ -179,4 +179,39 @@ class ClientController extends AbstractController
             'booking' => $booking,
         ]);
     }
+
+    /**
+     * Le client déclare lui-même avoir payé via Xplor Active.
+     * Ça débloque son QR check-in. Le coach peut corriger après la séance si besoin.
+     */
+    #[Route('/mon-espace/mon-rdv/{reference}/declare-xplor-paid', name: 'app_client_declare_xplor_paid', methods: ['POST'])]
+    public function declareXplorPaid(string $reference, Request $request, BookingRepository $bookings, EntityManagerInterface $em): Response
+    {
+        /** @var User $user */
+        $user = $this->getUser();
+        $booking = $bookings->findOneBy(['reference' => $reference, 'client' => $user]);
+        if (!$booking) {
+            throw $this->createNotFoundException('Réservation introuvable.');
+        }
+        if (!$this->isCsrfTokenValid('declare_xplor_' . $booking->getId(), (string) $request->request->get('_token'))) {
+            $this->addFlash('danger', 'Jeton CSRF invalide.');
+            return $this->redirectToRoute('app_espace_client_rdv', ['reference' => $reference]);
+        }
+        if ($booking->getStatus() !== Booking::STATUS_CONFIRMED) {
+            $this->addFlash('danger', 'Cette réservation n\'est pas confirmée.');
+            return $this->redirectToRoute('app_espace_client_rdv', ['reference' => $reference]);
+        }
+        if ($booking->getIntendedPaymentMethod() !== 'xplor') {
+            $this->addFlash('danger', 'Cette réservation n\'est pas en mode Xplor Active.');
+            return $this->redirectToRoute('app_espace_client_rdv', ['reference' => $reference]);
+        }
+        $booking->setPaymentMethod('xplor');
+        $booking->setPaymentDeclaredAt(new \DateTimeImmutable());
+        $booking->setPaymentDeclaredBy($user);
+        $booking->setPaymentNote('Déclaré par le client via Xplor Active');
+        $em->flush();
+
+        $this->addFlash('success', 'Paiement Xplor déclaré. Ton QR de check-in est maintenant actif.');
+        return $this->redirectToRoute('app_espace_client_rdv', ['reference' => $reference]);
+    }
 }

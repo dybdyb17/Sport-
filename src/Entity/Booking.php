@@ -228,11 +228,22 @@ class Booking
     public function getStatutLabel(): string
     {
         return match ($this->status) {
-            self::STATUS_PENDING   => '⏳ En attente du coach',
-            self::STATUS_CONFIRMED => '✅ Confirmée',
-            self::STATUS_REFUSED   => '❌ Refusée par le coach',
-            self::STATUS_CANCELLED => '🚫 Annulée',
+            self::STATUS_PENDING   => 'En attente du coach',
+            self::STATUS_CONFIRMED => 'Confirmée',
+            self::STATUS_REFUSED   => 'Refusée par le coach',
+            self::STATUS_CANCELLED => 'Annulée',
             default                => 'Inconnu',
+        };
+    }
+
+    public function getStatutIcon(): string
+    {
+        return match ($this->status) {
+            self::STATUS_PENDING   => 'ti-hourglass',
+            self::STATUS_CONFIRMED => 'ti-circle-check',
+            self::STATUS_REFUSED   => 'ti-circle-x',
+            self::STATUS_CANCELLED => 'ti-ban',
+            default                => 'ti-help',
         };
     }
 

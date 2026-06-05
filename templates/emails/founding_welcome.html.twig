@@ -1,7 +1,7 @@
 {% extends 'emails/base.html.twig' %}
 {% import 'emails/_macros.html.twig' as m %}
 
-{% block subject %}🏆 Bienvenue parmi les Membres Fondateurs #{{ '%02d'|format(claim.claimNumber) }}{% endblock %}
+{% block subject %}Bienvenue parmi les Membres Fondateurs SPORT+ — #{{ '%02d'|format(claim.claimNumber) }}{% endblock %}
 
 {% block content %}
 <p style="margin:0 0 20px;font-size:16px;color:#ECECEC;font-family:Arial,Helvetica,sans-serif;">
@@ -29,11 +29,11 @@
     <td style="padding:18px 20px;">
       <div style="font-weight:700;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#2ECC71;margin-bottom:12px;font-family:Arial,Helvetica,sans-serif;">Tes avantages fondateur</div>
       <div style="font-family:Arial,Helvetica,sans-serif;font-size:14px;color:#ECECEC;line-height:1.8;">
-        ✅ {{ offer.sessionsIncluded }} séances de coaching incluses<br>
-        ✅ Bilan forme offert lors de ta 1ère séance<br>
-        ✅ Badge Fondateur à vie sur ton profil<br>
-        ✅ Priorité de réservation sur les créneaux Night Coach<br>
-        ✅ Tarif de lancement : {{ offer.price }} € (au lieu de {{ offer.regularPrice ?? '175' }} €)
+        <span style="color:#2ECC71;font-weight:700;">&#10004;</span>{{ offer.sessionsIncluded }} séances de coaching incluses<br>
+        <span style="color:#2ECC71;font-weight:700;">&#10004;</span>Bilan forme offert lors de ta 1ère séance<br>
+        <span style="color:#2ECC71;font-weight:700;">&#10004;</span>Badge Fondateur à vie sur ton profil<br>
+        <span style="color:#2ECC71;font-weight:700;">&#10004;</span>Priorité de réservation sur les créneaux Night Coach<br>
+        <span style="color:#2ECC71;font-weight:700;">&#10004;</span>Tarif de lancement : {{ offer.price }} € (au lieu de {{ offer.regularPrice ?? '175' }} €)
       </div>
     </td>
   </tr>

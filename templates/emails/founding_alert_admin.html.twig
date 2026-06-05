@@ -1,7 +1,7 @@
 {% extends 'emails/base.html.twig' %}
 {% import 'emails/_macros.html.twig' as m %}
 
-{% block subject %}🏆 Nouveau Membre Fondateur — #{{ '%02d'|format(claim.claimNumber) }}{% endblock %}
+{% block subject %}Nouveau Membre Fondateur — #{{ '%02d'|format(claim.claimNumber) }}{% endblock %}
 
 {% block content %}
 <p style="margin:0 0 20px;font-size:16px;color:#ECECEC;font-family:Arial,Helvetica,sans-serif;">

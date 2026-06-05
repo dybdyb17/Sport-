@@ -59,6 +59,7 @@
   max-width: 100%;
   white-space: normal;
 }
+.status-badge i { font-size: 14px; flex-shrink: 0; }
 
 .status-badge.pending {
   background: rgba(200,169,81,.15);

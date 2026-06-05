@@ -11,17 +11,57 @@
 
   <div class="rdv-card" data-animate="fade-up">
     <div class="rdv-head">
-      <span class="status-badge {{ booking.status }}">{{ booking.statutLabel }}</span>
+      <span class="status-badge {{ booking.status }}"><i class="ti {{ booking.statutIcon }}"></i>{{ booking.statutLabel }}</span>
       <div class="rdv-ref">{{ booking.reference }}</div>
     </div>
 
     <h1 class="rdv-title">Mon rendez-vous</h1>
-    <p class="rdv-sub">Présente cet écran à l'accueil quand tu arrives à la salle.</p>
 
-    <div class="rdv-qr-wrap">
-      <div id="rdv-qr" data-checkin-url="{{ url('app_admin_checkin_validate', {reference: booking.reference}) }}"></div>
-    </div>
-    <p class="rdv-qr-help">L'accueil scanne ce code pour valider ton arrivée.</p>
+    {# ── Logique d'affichage du QR :
+       - Pending / Refused / Cancelled → pas de QR
+       - Confirmed + Xplor + non payé → QR bloqué, message "régler via Xplor"
+       - Sinon → QR visible
+    #}
+    {% set qrUnlocked = booking.status == 'confirmed' and (
+      booking.intendedPaymentMethod != 'xplor'
+      or booking.paymentMethod is not null
+    ) %}
+
+    {% if booking.status == 'pending' %}
+      <p class="rdv-sub">En attente de validation par le coach. Tu recevras une notification dès qu'il aura confirmé.</p>
+      <div class="rdv-qr-blocked">
+        <i class="ti ti-hourglass" style="font-size:48px;color:var(--gold);"></i>
+        <div class="rdv-qr-blocked-title">QR en attente</div>
+        <div class="rdv-qr-blocked-sub">Le QR de check-in apparaîtra ici une fois ta séance confirmée par le coach.</div>
+      </div>
+    {% elseif booking.status in ['refused', 'cancelled'] %}
+      <p class="rdv-sub">Cette séance n'aura pas lieu — aucun QR à présenter.</p>
+    {% elseif qrUnlocked %}
+      <p class="rdv-sub">Présente cet écran à l'accueil quand tu arrives à la salle.</p>
+      <div class="rdv-qr-wrap">
+        <div id="rdv-qr" data-checkin-url="{{ url('app_admin_checkin_validate', {reference: booking.reference}) }}"></div>
+      </div>
+      <p class="rdv-qr-help">L'accueil scanne ce code pour valider ton arrivée.</p>
+    {% else %}
+      {# Confirmed + Xplor + non payé : QR bloqué #}
+      <p class="rdv-sub">Ton QR sera débloqué une fois le paiement Xplor effectué.</p>
+      <div class="rdv-qr-blocked">
+        <i class="ti ti-lock" style="font-size:48px;color:var(--green);"></i>
+        <div class="rdv-qr-blocked-title">QR verrouillé — Paiement requis</div>
+        <div class="rdv-qr-blocked-sub">
+          Tu as choisi <strong>Xplor Active</strong>. Règle ta séance depuis ton espace Xplor pour débloquer ton QR de check-in.
+        </div>
+        <a href="{{ path('app_deciplus') }}" class="rdv-qr-blocked-cta">
+          <i class="ti ti-external-link"></i> Régler maintenant via Xplor
+        </a>
+        <form method="post" action="{{ path('app_client_declare_xplor_paid', {reference: booking.reference}) }}" class="rdv-qr-declare-form">
+          <input type="hidden" name="_token" value="{{ csrf_token('declare_xplor_' ~ booking.id) }}">
+          <button type="submit" class="rdv-qr-declare-btn" onclick="return confirm('Confirme que tu as bien payé ta séance via Xplor Active. Le coach vérifiera après la séance.');">
+            <i class="ti ti-check"></i> J'ai effectué le paiement Xplor
+          </button>
+        </form>
+      </div>
+    {% endif %}
 
     <div class="rdv-details">
       <div class="rdv-detail">

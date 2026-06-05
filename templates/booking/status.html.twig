@@ -15,7 +15,7 @@
   <div class="coach-card" style="align-items:flex-start;text-align:left;">
     <div style="display:flex;justify-content:space-between;align-items:flex-start;width:100%;margin-bottom:16px;">
       <div class="coach-name" style="font-size:20px;">{{ booking.offerLabel }}</div>
-      <span class="status-badge {{ booking.status }}" id="status-badge">{{ booking.statutLabel }}</span>
+      <span class="status-badge {{ booking.status }}" id="status-badge"><i class="ti {{ booking.statutIcon }}"></i>{{ booking.statutLabel }}</span>
     </div>
     <div style="width:100%;display:flex;flex-direction:column;gap:8px;">
       <div style="display:flex;align-items:center;gap:8px;font-size:14px;color:var(--text-dim);">

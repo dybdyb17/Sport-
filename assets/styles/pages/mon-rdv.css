@@ -187,6 +187,86 @@
 }
 .rdv-pay-help strong { color: var(--white); }
 
+/* ── QR bloqué (paiement Xplor requis OU séance pending) ── */
+.rdv-qr-blocked {
+  margin: 24px auto;
+  max-width: 420px;
+  padding: 28px 24px;
+  background: linear-gradient(180deg, rgba(46,204,113,.05) 0%, var(--bg-2) 100%);
+  border: 1.5px dashed rgba(46,204,113,.35);
+  border-radius: var(--radius-lg);
+  text-align: center;
+}
+
+.rdv-qr-blocked-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--white);
+  margin: 14px 0 8px;
+}
+
+.rdv-qr-blocked-sub {
+  font-size: 14px;
+  color: var(--text-soft);
+  line-height: 1.55;
+  margin-bottom: 18px;
+}
+.rdv-qr-blocked-sub strong { color: var(--green); }
+
+.rdv-qr-blocked-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 12px 22px;
+  background: var(--green);
+  color: var(--black);
+  border-radius: 100px;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: transform .2s, box-shadow .2s;
+  margin-bottom: 14px;
+}
+.rdv-qr-blocked-cta:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 26px rgba(46,204,113,.35);
+}
+
+.rdv-qr-declare-form {
+  margin-top: 12px;
+  padding-top: 14px;
+  border-top: 1px dashed rgba(255,255,255,.1);
+}
+
+.rdv-qr-declare-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 18px;
+  background: transparent;
+  color: var(--text-soft);
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: border-color .2s, color .2s, background .2s;
+}
+.rdv-qr-declare-btn:hover {
+  border-color: var(--gold);
+  color: var(--gold);
+  background: rgba(200,169,81,.05);
+}
+
 /* ── Bloc refus avec motif coach ── */
 .rdv-refusal {
   margin-top: 4px;

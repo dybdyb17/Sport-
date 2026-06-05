@@ -34,7 +34,7 @@ class AdminCheckinController extends AbstractController
             $booking->setCheckinAt(new \DateTimeImmutable());
             $booking->setCheckinBy($this->getUser());
             $em->flush();
-            $this->addFlash('success', '✅ Check-in validé pour '.$booking->getClient()->getNomComplet());
+            $this->addFlash('success', 'Check-in validé pour '.$booking->getClient()->getNomComplet());
             return $this->redirectToRoute('app_admin_checkin_validate', ['reference' => $reference]);
         }
 

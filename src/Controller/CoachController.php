@@ -153,7 +153,7 @@ class CoachController extends AbstractController
         $booking->setPaymentDeclaredBy($user);
         $booking->setPaymentNote((string) $request->request->get('note'));
         $em->flush();
-        $this->addFlash('success', '💰 Paiement déclaré.');
+        $this->addFlash('success', 'Paiement déclaré.');
         return $this->redirectToRoute('app_coach_dashboard');
     }
 }
