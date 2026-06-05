@@ -24,6 +24,7 @@
 @import url('./components/alerts.css');
 @import url('./components/tables.css');
 @import url('./components/animations.css');
+@import url('./components/accents.css');
 
 /* ── PAGES SPÉCIFIQUES ── */
 @import url('./pages/home.css');

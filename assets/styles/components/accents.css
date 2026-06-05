@@ -1,0 +1,331 @@
+/* ════════════════════════════════════════════════════════════════════════
+   SPORT+ — ACCENTS PREMIUM
+   ════════════════════════════════════════════════════════════════════════
+   Touches visuelles signature (vert + or) appliquées globalement
+   pour donner une cohérence premium subtile à toutes les pages.
+   ════════════════════════════════════════════════════════════════════════ */
+
+/* ── Section labels : ligne verte décorative à gauche ──────────────── */
+.section-label {
+  position: relative;
+  padding-left: 22px;
+}
+.section-label::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 12px;
+  height: 2px;
+  background: linear-gradient(90deg, var(--green) 0%, transparent 100%);
+  border-radius: 100px;
+}
+.section-label::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 5px;
+  height: 5px;
+  border-radius: 100px;
+  background: var(--green);
+  box-shadow: 0 0 12px var(--green);
+  animation: dotPulse 2.5s ease-in-out infinite;
+}
+@keyframes dotPulse {
+  0%, 100% { opacity: 1; transform: translateY(-50%) scale(1); }
+  50%      { opacity: .55; transform: translateY(-50%) scale(.85); }
+}
+
+/* ── Form cards : barre verte verticale signature à gauche ────────── */
+.form-card {
+  position: relative;
+  overflow: hidden;
+}
+.form-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 2px;
+  height: 100%;
+  background: linear-gradient(180deg,
+    transparent 0%,
+    var(--green) 30%,
+    var(--gold) 70%,
+    transparent 100%);
+  opacity: .6;
+  transition: opacity .3s, width .3s;
+}
+.form-card:hover::before {
+  opacity: 1;
+  width: 3px;
+}
+
+/* ── Data tables : ligne dégradée sous le header ──────────────────── */
+.data-table-card thead {
+  position: relative;
+}
+.data-table-card thead::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg,
+    transparent 0%,
+    rgba(46,204,113,.4) 20%,
+    rgba(200,169,81,.4) 50%,
+    rgba(46,204,113,.4) 80%,
+    transparent 100%);
+  pointer-events: none;
+}
+
+/* ── Page headers : underline doré animé sur le h1 ────────────────── */
+.page-header h1 {
+  position: relative;
+  display: inline-block;
+}
+.page-header h1::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 0;
+  width: 60px;
+  height: 3px;
+  border-radius: 100px;
+  background: linear-gradient(90deg, var(--gold) 0%, var(--green) 100%);
+  box-shadow: 0 0 16px rgba(200,169,81,.4);
+}
+
+/* ── Eyebrows : underline gradient subtil ──────────────────────────── */
+.bk-card-eyebrow,
+.bk-pay-eyebrow,
+.rdv-pay-eyebrow,
+.bk-detail-label {
+  position: relative;
+}
+.bk-card-eyebrow::after {
+  content: '';
+  display: inline-block;
+  width: 32px;
+  height: 1px;
+  margin-left: 10px;
+  vertical-align: middle;
+  background: linear-gradient(90deg, var(--gold) 0%, transparent 100%);
+}
+
+/* ── Boutons primaires : shine accentué + glow vert au hover ──────── */
+.btn-primary {
+  position: relative;
+  overflow: hidden;
+}
+.btn-primary::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg,
+    transparent 0%,
+    rgba(255,255,255,.25) 50%,
+    transparent 100%);
+  transition: left .6s ease;
+  pointer-events: none;
+}
+.btn-primary:hover::before { left: 100%; }
+
+/* ── Avatars : ring vert subtil ───────────────────────────────────── */
+.user-avatar {
+  position: relative;
+}
+.user-avatar::after {
+  content: '';
+  position: absolute;
+  inset: -3px;
+  border-radius: 100px;
+  border: 1px solid rgba(46,204,113,.3);
+  opacity: 0;
+  transition: opacity .3s, transform .3s;
+  pointer-events: none;
+}
+.user-avatar:hover::after {
+  opacity: 1;
+  transform: scale(1.05);
+}
+
+/* ── Inputs/textarea/select au focus : ring vert subtil ───────────── */
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus,
+input[type="tel"]:focus,
+input[type="number"]:focus,
+input[type="datetime-local"]:focus,
+input[type="date"]:focus,
+textarea:focus {
+  outline: none;
+}
+
+/* ── Hr séparateurs : remplacés par lignes gradient ───────────────── */
+hr {
+  border: none;
+  height: 1px;
+  background: linear-gradient(90deg,
+    transparent 0%,
+    rgba(200,169,81,.4) 30%,
+    rgba(46,204,113,.4) 70%,
+    transparent 100%);
+  margin: 28px 0;
+}
+
+/* ── Section dividers : utility class ──────────────────────────────── */
+.divider-premium {
+  position: relative;
+  height: 32px;
+  margin: 24px 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.divider-premium::before,
+.divider-premium::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--border) 50%, transparent);
+}
+.divider-premium::before { background: linear-gradient(90deg, transparent, var(--border)); }
+.divider-premium::after  { background: linear-gradient(90deg, var(--border), transparent); }
+.divider-premium .divider-dot {
+  width: 8px;
+  height: 8px;
+  margin: 0 14px;
+  border-radius: 100px;
+  background: var(--gold);
+  box-shadow: 0 0 14px rgba(200,169,81,.55);
+}
+
+/* ── Cards interactives : lueur verte au hover (subtile) ─────────── */
+.formule-card,
+.coach-card,
+.bk-choice,
+.pay-decl-card {
+  transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+}
+
+/* ── Footer : ligne verte en haut ─────────────────────────────────── */
+footer {
+  position: relative;
+}
+footer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg,
+    transparent 0%,
+    rgba(46,204,113,.3) 25%,
+    rgba(200,169,81,.5) 50%,
+    rgba(46,204,113,.3) 75%,
+    transparent 100%);
+}
+
+/* ── Hero / heros : corner accents discrets ───────────────────────── */
+.hero,
+[class*="hero-"] {
+  position: relative;
+}
+
+/* ── Premium chip / pill (utility) ─────────────────────────────────── */
+.chip-premium {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: 100px;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  background: linear-gradient(135deg, rgba(46,204,113,.12) 0%, rgba(200,169,81,.12) 100%);
+  border: 1px solid rgba(46,204,113,.3);
+  color: var(--green);
+}
+.chip-premium i { font-size: 12px; }
+
+/* ── Flash messages : barre signature ─────────────────────────────── */
+.alert {
+  position: relative;
+  overflow: hidden;
+}
+.alert::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+}
+.alert.alert-success::before { background: var(--green); box-shadow: 0 0 14px rgba(46,204,113,.4); }
+.alert.alert-info::before    { background: var(--gold); box-shadow: 0 0 14px rgba(200,169,81,.4); }
+.alert.alert-danger::before,
+.alert.alert-error::before   { background: #ff6b6b; box-shadow: 0 0 14px rgba(255,107,107,.4); }
+
+/* ── Liens or animés : effet underline subtil ────────────────────── */
+.link-gold,
+a.link-gold {
+  position: relative;
+  text-decoration: none;
+  color: var(--gold);
+}
+.link-gold::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background: linear-gradient(90deg, var(--gold), var(--green));
+  transition: width .3s ease;
+}
+.link-gold:hover::after { width: 100%; }
+
+/* ── Sidebar admin : ligne gradient verticale ─────────────────────── */
+.admin-sidebar {
+  position: relative;
+}
+.admin-sidebar::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 1px;
+  height: 100%;
+  background: linear-gradient(180deg,
+    transparent 0%,
+    rgba(46,204,113,.25) 30%,
+    rgba(200,169,81,.4) 50%,
+    rgba(46,204,113,.25) 70%,
+    transparent 100%);
+}
+
+/* ── Loader/skeleton subtil (utility) ─────────────────────────────── */
+@keyframes shimmerLine {
+  0%   { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+.shimmer-line {
+  background: linear-gradient(90deg,
+    transparent 0%,
+    rgba(46,204,113,.15) 50%,
+    transparent 100%);
+  background-size: 200% 100%;
+  animation: shimmerLine 2s linear infinite;
+}
