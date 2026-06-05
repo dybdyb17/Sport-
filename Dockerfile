@@ -47,8 +47,9 @@ RUN mkdir -p var/cache var/log && chmod -R 777 var
 # Warmup cache prod au build (plus rapide au démarrage)
 RUN APP_ENV=prod APP_DEBUG=0 php bin/console cache:warmup --no-debug || echo "warmup failed, continuing"
 
-# AssetMapper : compile les assets en prod
-RUN APP_ENV=prod APP_DEBUG=0 php bin/console asset-map:compile || echo "asset-map:compile failed, continuing"
+# AssetMapper : compile les assets en prod.
+# Si la compilation foire ici, on N'IGNORE PLUS l'erreur — sans assets, le site est inutilisable.
+RUN APP_ENV=prod APP_DEBUG=0 php bin/console asset-map:compile
 
 # start.sh exécutable
 RUN chmod +x start.sh

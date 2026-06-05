@@ -31,6 +31,18 @@ echo "[3/5] Cache prod..."
 php bin/console cache:clear --env=prod --no-debug 2>&1 || echo "WARN cache:clear failed"
 php bin/console cache:warmup --env=prod --no-debug 2>&1 || echo "WARN cache:warmup failed"
 
+# Filet de sécurité : si public/assets/ est manquant ou incomplet, on recompile au runtime.
+# Au build Docker on a déjà compilé, mais en cas de problème (volume monté, build raté en silence
+# avant le hotfix, etc.) on garantit que les CSS/JS soient présents avant le démarrage du serveur.
+if [ ! -d "public/assets" ] || [ -z "$(ls -A public/assets 2>/dev/null)" ]; then
+    echo "→ public/assets/ vide ou absent, compilation runtime..."
+    APP_ENV=prod APP_DEBUG=0 php bin/console asset-map:compile --no-debug 2>&1 || {
+        echo "✗ ERREUR : asset-map:compile a échoué au runtime. CSS/JS ne seront pas servis."
+    }
+else
+    echo "✓ public/assets/ présent ($(ls public/assets | wc -l) entrées top-level)"
+fi
+
 # Étape 4 : Créer admin par défaut s'il n'existe pas
 echo "[4/5] Vérification admin..."
 ADMIN_EXISTS=$(php bin/console doctrine:query:sql 'SELECT COUNT(*) FROM "user" WHERE roles LIKE '"'"'%ROLE_ADMIN%'"'"'' --env=prod --no-debug 2>/dev/null | grep -oE '[0-9]+' | tail -1 || echo "0")
