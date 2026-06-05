@@ -43,23 +43,21 @@
       </div>
       <p class="rdv-qr-help">L'accueil scanne ce code pour valider ton arrivée.</p>
     {% else %}
-      {# Confirmed + Xplor + non payé : QR bloqué #}
-      <p class="rdv-sub">Ton QR sera débloqué une fois le paiement Xplor effectué.</p>
+      {# Confirmed + Xplor + non payé : QR bloqué jusqu'à vérification réelle du paiement #}
+      <p class="rdv-sub">Ton QR sera débloqué dès que ton paiement Xplor sera vérifié.</p>
       <div class="rdv-qr-blocked">
         <i class="ti ti-lock" style="font-size:48px;color:var(--green);"></i>
         <div class="rdv-qr-blocked-title">QR verrouillé — Paiement requis</div>
         <div class="rdv-qr-blocked-sub">
-          Tu as choisi <strong>Xplor Active</strong>. Règle ta séance depuis ton espace Xplor pour débloquer ton QR de check-in.
+          Tu as choisi <strong>Xplor Active</strong>. Règle ta séance depuis ton espace Xplor — ton QR de check-in se débloquera automatiquement une fois le paiement validé côté SPORT+.
         </div>
         <a href="{{ path('app_deciplus') }}" class="rdv-qr-blocked-cta">
           <i class="ti ti-external-link"></i> Régler maintenant via Xplor
         </a>
-        <form method="post" action="{{ path('app_client_declare_xplor_paid', {reference: booking.reference}) }}" class="rdv-qr-declare-form">
-          <input type="hidden" name="_token" value="{{ csrf_token('declare_xplor_' ~ booking.id) }}">
-          <button type="submit" class="rdv-qr-declare-btn" onclick="return confirm('Confirme que tu as bien payé ta séance via Xplor Active. Le coach vérifiera après la séance.');">
-            <i class="ti ti-check"></i> J'ai effectué le paiement Xplor
-          </button>
-        </form>
+        <p style="margin-top:14px;font-size:12px;color:var(--text-dim);line-height:1.5;">
+          <i class="ti ti-info-circle" style="vertical-align:middle;"></i>
+          Après ton paiement Xplor, présente ta confirmation à l'accueil à ton arrivée.
+        </p>
       </div>
     {% endif %}
 
