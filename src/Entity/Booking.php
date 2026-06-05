@@ -105,6 +105,10 @@ class Booking
     private ?string $paymentMethod = null;
     // Valeurs : 'cash', 'card', 'xplor'
 
+    #[ORM\Column(length: 20, nullable: true)]
+    private ?string $intendedPaymentMethod = null;
+    // Choix annoncé par le client à la réservation. Valeurs : 'cash', 'card', 'xplor'
+
     #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
     private ?\DateTimeImmutable $paymentDeclaredAt = null;
 
@@ -186,6 +190,9 @@ class Booking
 
     public function getPaymentMethod(): ?string { return $this->paymentMethod; }
     public function setPaymentMethod(?string $paymentMethod): static { $this->paymentMethod = $paymentMethod; return $this; }
+
+    public function getIntendedPaymentMethod(): ?string { return $this->intendedPaymentMethod; }
+    public function setIntendedPaymentMethod(?string $intendedPaymentMethod): static { $this->intendedPaymentMethod = $intendedPaymentMethod; return $this; }
 
     public function getPaymentDeclaredAt(): ?\DateTimeImmutable { return $this->paymentDeclaredAt; }
     public function setPaymentDeclaredAt(?\DateTimeImmutable $paymentDeclaredAt): static { $this->paymentDeclaredAt = $paymentDeclaredAt; return $this; }

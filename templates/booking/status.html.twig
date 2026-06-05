@@ -59,9 +59,8 @@
 
 {% block mercure %}
     <script>
-        const topic = 'client/{{ app.user.id }}/stream';
         const es = new EventSource(
-            "{{ mercure(topic)|escape('js') }}",
+            "{{ mercure('client/' ~ app.user.id ~ '/stream')|escape('js') }}",
             { withCredentials: false }
         );
 

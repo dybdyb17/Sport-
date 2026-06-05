@@ -78,23 +78,43 @@
         Pour chaque séance passée, indique comment le client t'a payé. Cette info est visible par l'administration.
       </p>
       {% for b in sessionsAValider %}
-        <div class="payment-decl-row">
-          <div class="payment-decl-info">
-            <div class="payment-decl-client">{{ b.client.nomComplet }}</div>
-            <div class="payment-decl-meta">
-              {{ b.startAt|date('d/m/Y \\à H\\hi') }} · {{ b.offerLabel }} · <strong style="color:var(--gold);">{{ b.prixFormatted }}</strong>
+        {% set intent = b.intendedPaymentMethod %}
+        {% set intentLabels = {'cash': 'Espèces', 'card': 'Carte bancaire', 'xplor': 'Xplor Active'} %}
+        <div class="pay-decl-card">
+          <div class="pay-decl-head">
+            <div class="pay-decl-client">
+              <i class="ti ti-user"></i> {{ b.client.nomComplet }}
             </div>
+            <div class="pay-decl-amount">{{ b.prixFormatted }}</div>
           </div>
-          <form method="post" action="{{ path('app_coach_declare_payment', {id: b.id}) }}" class="payment-decl-form">
+          <div class="pay-decl-meta">
+            <span><i class="ti ti-calendar"></i> {{ b.startAt|date('d/m/Y \\à H\\hi') }}</span>
+            <span><i class="ti ti-tag"></i> {{ b.offerLabel }}</span>
+            {% if intent %}
+              <span class="pay-decl-intent"><i class="ti ti-flag"></i> Annoncé : <strong>{{ intentLabels[intent] }}</strong></span>
+            {% endif %}
+          </div>
+          <form method="post" action="{{ path('app_coach_declare_payment', {id: b.id}) }}" class="pay-decl-form">
             <input type="hidden" name="_token" value="{{ csrf_token('declare_payment_' ~ b.id) }}">
-            <select name="method" required>
-              <option value="">— Mode de paiement —</option>
-              <option value="cash">💵 Espèces</option>
-              <option value="card">💳 Carte bancaire</option>
-              <option value="xplor">🟢 Xplor Active</option>
-            </select>
-            <button type="submit" class="btn btn-primary btn-sm">
-              <i class="ti ti-check"></i> Déclarer
+            <div class="pay-decl-options">
+              <label class="pay-decl-chip" data-method="cash">
+                <input type="radio" name="method" value="cash" required {{ intent == 'cash' ? 'checked' : '' }}>
+                <i class="ti ti-cash"></i>
+                <span>Espèces</span>
+              </label>
+              <label class="pay-decl-chip" data-method="card">
+                <input type="radio" name="method" value="card" required {{ intent == 'card' ? 'checked' : '' }}>
+                <i class="ti ti-credit-card"></i>
+                <span>Carte bancaire</span>
+              </label>
+              <label class="pay-decl-chip" data-method="xplor">
+                <input type="radio" name="method" value="xplor" required {{ intent == 'xplor' ? 'checked' : '' }}>
+                <i class="ti ti-leaf"></i>
+                <span>Xplor Active</span>
+              </label>
+            </div>
+            <button type="submit" class="pay-decl-submit">
+              <i class="ti ti-check"></i> Confirmer l'encaissement
             </button>
           </form>
         </div>

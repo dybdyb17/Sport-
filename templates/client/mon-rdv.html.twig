@@ -42,12 +42,62 @@
       </div>
     </div>
 
-    <div class="rdv-payment-info">
-      <i class="ti ti-info-circle"></i>
-      <div>
-        <strong>Paiement sur place</strong> — Espèces ou CB à l'accueil ou avec ton coach.
-        <br><span style="opacity:.7;">Paiement en amont via Xplor Active SPORT+ bientôt disponible.</span>
+    {# ── Statut paiement ── #}
+    {% set intent = booking.intendedPaymentMethod %}
+    {% set declared = booking.paymentMethod %}
+    {% set methodLabels = {
+      'cash':  {'icon': 'ti-cash',        'name': 'Espèces',        'color': 'gold'},
+      'card':  {'icon': 'ti-credit-card', 'name': 'Carte bancaire', 'color': 'gold'},
+      'xplor': {'icon': 'ti-leaf',        'name': 'Xplor Active',   'color': 'green'}
+    } %}
+
+    <div class="rdv-pay">
+      <div class="rdv-pay-head">
+        <span class="rdv-pay-eyebrow"><i class="ti ti-credit-card"></i> Paiement</span>
+        {% if declared %}
+          <span class="rdv-pay-status rdv-pay-status-ok"><i class="ti ti-check"></i> Confirmé par le coach</span>
+        {% elseif booking.startAt < date() %}
+          <span class="rdv-pay-status rdv-pay-status-wait"><i class="ti ti-clock"></i> En attente de validation</span>
+        {% else %}
+          <span class="rdv-pay-status rdv-pay-status-todo"><i class="ti ti-hourglass"></i> À régler le jour J</span>
+        {% endif %}
       </div>
+
+      {% if intent %}
+        {% set lbl = methodLabels[intent] %}
+        <div class="rdv-pay-chip rdv-pay-chip-{{ lbl.color }}">
+          <i class="ti {{ lbl.icon }}"></i>
+          <div>
+            <div class="rdv-pay-chip-name">{{ lbl.name }}</div>
+            <div class="rdv-pay-chip-sub">
+              {% if intent == 'xplor' %}Paiement en ligne via Xplor Active{% else %}Sur place, au coach{% endif %}
+            </div>
+          </div>
+        </div>
+
+        {% if intent == 'xplor' %}
+          <a href="{{ path('app_deciplus') }}" class="rdv-pay-link">
+            <i class="ti ti-external-link"></i> Régler depuis mon espace Xplor
+          </a>
+          <p class="rdv-pay-help">Tu peux régler maintenant depuis ton espace Xplor Active (Paylib), ou présenter ta carte au coach à l'arrivée.</p>
+        {% else %}
+          <p class="rdv-pay-help">
+            <i class="ti ti-info-circle"></i>
+            Prévois <strong>{{ booking.prixFormatted }}</strong> {{ intent == 'cash' ? 'en espèces' : 'par carte' }} pour ton coach.
+          </p>
+        {% endif %}
+
+        {% if declared and declared != intent %}
+          <p class="rdv-pay-help" style="color:var(--text-dim);font-size:12px;">
+            Le coach a finalement encaissé en {{ methodLabels[declared].name }}.
+          </p>
+        {% endif %}
+      {% else %}
+        <p class="rdv-pay-help">
+          <i class="ti ti-info-circle"></i>
+          3 modes possibles : <strong>Espèces</strong>, <strong>CB</strong> (sur place avec le coach) ou <strong>Xplor Active</strong> (en ligne).
+        </p>
+      {% endif %}
     </div>
   </div>
 </div>

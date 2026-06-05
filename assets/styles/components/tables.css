@@ -9,7 +9,7 @@
 }
 
 .data-table-card table {
-  min-width: 560px;
+  min-width: 880px;
 }
 
 .data-table-header {
@@ -33,7 +33,7 @@
 .data-table-card table {
   width: 100%;
   border-collapse: collapse;
-  min-width: 560px;
+  min-width: 880px;
 }
 
 .data-table-card th {
@@ -54,6 +54,13 @@
   font-size: 14px;
   border-bottom: 1px solid var(--border);
   color: var(--white);
+  white-space: nowrap;
+  vertical-align: middle;
+}
+
+/* Permettre wrap propre sur cellules longues si la classe l'autorise */
+.data-table-card td.cell-wrap {
+  white-space: normal;
 }
 
 .data-table-card tr:last-child td {

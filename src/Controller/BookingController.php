@@ -9,6 +9,7 @@ use App\Form\BookingType;
 use App\Repository\BookingRepository;
 use App\Service\BookingManager;
 use App\Service\PricingCalculator;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -21,7 +22,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class BookingController extends AbstractController
 {
     #[Route('/new', name: 'app_booking_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, BookingManager $manager): Response
+    public function new(Request $request, BookingManager $manager, EntityManagerInterface $em): Response
     {
         $booking = new Booking();
 
@@ -71,6 +72,12 @@ class BookingController extends AbstractController
                     $booking->getMessage(),
                     $subscription,
                 );
+
+                $intended = $request->request->get('intended_payment_method');
+                if (in_array($intended, ['cash', 'card', 'xplor'], true)) {
+                    $created->setIntendedPaymentMethod($intended);
+                    $em->flush();
+                }
 
                 $this->addFlash('success', 'Demande envoyée au coach. Tu recevras une confirmation en temps réel.');
 

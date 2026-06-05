@@ -556,24 +556,175 @@
   .group-modal-num { font-size: 36px; }
 }
 
-/* ── DÉCLARATION PAIEMENT (coach) ── */
-.payment-decl-row {
-  display: flex; align-items: center; justify-content: space-between;
-  gap: 16px; padding: 14px 0;
-  border-bottom: 1px solid var(--border);
+/* ── DÉCLARATION PAIEMENT (coach) — refonte chips ── */
+.pay-decl-card {
+  background: linear-gradient(180deg, var(--bg-2) 0%, var(--bg-card) 100%);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 20px 22px;
+  margin-bottom: 16px;
+  transition: border-color .2s, transform .2s;
+}
+.pay-decl-card:hover {
+  border-color: rgba(200,169,81,.35);
+}
+.pay-decl-card:last-child { margin-bottom: 0; }
+
+.pay-decl-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 6px;
   flex-wrap: wrap;
 }
-.payment-decl-row:last-child { border-bottom: none; }
-.payment-decl-info { flex: 1; min-width: 180px; }
-.payment-decl-client { font-size: 15px; font-weight: 700; color: var(--white); margin-bottom: 4px; }
-.payment-decl-meta { font-size: 13px; color: var(--text-dim); }
-.payment-decl-form { display: flex; align-items: center; gap: 8px; }
-.payment-decl-form select {
-  background: var(--bg-3); border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  color: var(--white); padding: 8px 12px; font-size: 13px;
+.pay-decl-client {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 19px;
+  font-weight: 800;
+  color: var(--white);
+  letter-spacing: .3px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
-@media (max-width: 600px) {
-  .payment-decl-form { width: 100%; }
-  .payment-decl-form select { flex: 1; }
+.pay-decl-client i { color: var(--gold); font-size: 18px; }
+
+.pay-decl-amount {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--gold);
+  letter-spacing: .5px;
+}
+
+.pay-decl-meta {
+  display: flex;
+  gap: 18px;
+  flex-wrap: wrap;
+  font-size: 13px;
+  color: var(--text-dim);
+  padding-bottom: 16px;
+  margin-bottom: 16px;
+  border-bottom: 1px dashed var(--border);
+}
+.pay-decl-meta span { display: inline-flex; align-items: center; gap: 5px; }
+.pay-decl-meta i { color: var(--text-soft); font-size: 14px; }
+
+.pay-decl-intent {
+  padding: 3px 9px;
+  background: rgba(200,169,81,.10);
+  border: 1px solid rgba(200,169,81,.3);
+  border-radius: 100px;
+  color: var(--gold);
+  font-size: 12px;
+}
+.pay-decl-intent i { color: var(--gold); }
+.pay-decl-intent strong { color: var(--white); font-weight: 700; }
+
+.pay-decl-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.pay-decl-options {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.pay-decl-chip {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 14px 10px;
+  background: var(--bg-3);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: all .2s ease;
+  user-select: none;
+  text-align: center;
+}
+.pay-decl-chip input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+.pay-decl-chip i {
+  font-size: 24px;
+  color: var(--text-soft);
+  transition: color .2s, transform .2s;
+}
+.pay-decl-chip span {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--text);
+}
+.pay-decl-chip:hover {
+  border-color: rgba(200,169,81,.4);
+  background: rgba(200,169,81,.04);
+  transform: translateY(-1px);
+}
+.pay-decl-chip:hover i { color: var(--gold); }
+
+.pay-decl-chip:has(input:checked) {
+  border-color: var(--gold);
+  background: rgba(200,169,81,.10);
+  box-shadow: 0 0 0 1px var(--gold), 0 8px 20px rgba(200,169,81,.18);
+}
+.pay-decl-chip:has(input:checked) i {
+  color: var(--gold);
+  transform: scale(1.1);
+}
+.pay-decl-chip:has(input:checked) span { color: var(--white); }
+
+.pay-decl-chip[data-method="cash"]:has(input:checked) i { color: #c8e6a8; }
+.pay-decl-chip[data-method="card"]:has(input:checked) i { color: #a8c8e6; }
+.pay-decl-chip[data-method="xplor"]:has(input:checked) {
+  border-color: var(--green);
+  background: rgba(46,204,113,.10);
+  box-shadow: 0 0 0 1px var(--green), 0 8px 20px rgba(46,204,113,.2);
+}
+.pay-decl-chip[data-method="xplor"]:has(input:checked) i { color: var(--green); }
+
+.pay-decl-submit {
+  width: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px 20px;
+  background: linear-gradient(135deg, var(--gold) 0%, #d4b557 100%);
+  color: var(--black);
+  border: none;
+  border-radius: var(--radius);
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: transform .2s, box-shadow .2s, filter .2s;
+}
+.pay-decl-submit:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 28px rgba(200,169,81,.35);
+  filter: brightness(1.05);
+}
+.pay-decl-submit:active { transform: translateY(0); }
+.pay-decl-submit i { font-size: 18px; }
+
+@media (max-width: 560px) {
+  .pay-decl-options { grid-template-columns: 1fr; }
+  .pay-decl-chip { flex-direction: row; justify-content: flex-start; padding: 12px 16px; gap: 12px; }
+  .pay-decl-chip i { font-size: 22px; }
+  .pay-decl-amount { font-size: 20px; }
 }

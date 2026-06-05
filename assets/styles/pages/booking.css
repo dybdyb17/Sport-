@@ -325,3 +325,273 @@
   font-size: 15px;
   margin-bottom: 12px;
 }
+
+/* ── ÉTAPE 4 — Détails (coach + date) refonte ─────────────────────── */
+.bk-detail-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+}
+@media (max-width: 760px) {
+  .bk-detail-grid { grid-template-columns: 1fr; }
+}
+
+.bk-detail-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.bk-detail-label {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--gold-dim);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.bk-detail-label i {
+  font-size: 16px;
+  color: var(--gold);
+}
+
+.bk-detail-field input[type="text"],
+.bk-detail-field input[type="datetime-local"],
+.bk-detail-field input[type="date"],
+.bk-detail-field input[type="number"],
+.bk-detail-field textarea,
+.bk-detail-field select {
+  width: 100%;
+  background: linear-gradient(180deg, var(--bg-3) 0%, rgba(15,15,19,.85) 100%);
+  border: 1.5px solid var(--border);
+  color: var(--white);
+  padding: 14px 18px;
+  border-radius: var(--radius);
+  font-family: var(--font-body);
+  font-size: 15px;
+  transition: border-color .2s, box-shadow .2s, background .2s;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+
+.bk-detail-field select {
+  padding-right: 44px;
+  cursor: pointer;
+  background-image:
+    linear-gradient(180deg, var(--bg-3) 0%, rgba(15,15,19,.85) 100%),
+    url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23C8A951' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat, no-repeat;
+  background-position: 0 0, right 16px center;
+  background-size: auto, 14px;
+}
+
+.bk-detail-field select option {
+  background: var(--bg-2);
+  color: var(--white);
+  padding: 8px;
+}
+
+.bk-detail-field input:hover,
+.bk-detail-field textarea:hover,
+.bk-detail-field select:hover {
+  border-color: rgba(200,169,81,.45);
+}
+
+.bk-detail-field input:focus,
+.bk-detail-field textarea:focus,
+.bk-detail-field select:focus {
+  outline: none;
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(200,169,81,.18), 0 8px 24px rgba(200,169,81,.1);
+}
+
+.bk-detail-field textarea {
+  min-height: 96px;
+  resize: vertical;
+  font-family: var(--font-body);
+  line-height: 1.55;
+}
+
+.bk-detail-hint {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--text-dim);
+  margin-top: 2px;
+}
+.bk-detail-hint i {
+  font-size: 14px;
+  color: var(--gold-dim);
+}
+
+/* Input date custom icon (Webkit) */
+.bk-detail-field input[type="datetime-local"]::-webkit-calendar-picker-indicator,
+.bk-detail-field input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(0.7) sepia(1) saturate(3) hue-rotate(20deg);
+  cursor: pointer;
+  opacity: .8;
+  transition: opacity .2s;
+}
+.bk-detail-field input[type="datetime-local"]:hover::-webkit-calendar-picker-indicator,
+.bk-detail-field input[type="date"]:hover::-webkit-calendar-picker-indicator {
+  opacity: 1;
+}
+
+/* ── BLOC PAIEMENT (étape 4 — choix mode prévu) ────────────────────── */
+.bk-pay-block {
+  margin-top: 24px;
+  padding: 22px 24px;
+  background: linear-gradient(180deg, rgba(200,169,81,.04) 0%, var(--bg-card) 100%);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--gold);
+  border-radius: var(--radius-lg);
+}
+
+.bk-pay-head { margin-bottom: 18px; }
+.bk-pay-eyebrow {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--gold);
+  display: inline-flex; align-items: center; gap: 8px;
+  margin-bottom: 6px;
+}
+.bk-pay-eyebrow i { font-size: 18px; }
+.bk-pay-help {
+  font-size: 13.5px;
+  color: var(--text-soft);
+  line-height: 1.55;
+}
+
+.bk-pay-options {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+@media (max-width: 600px) {
+  .bk-pay-options { grid-template-columns: 1fr; }
+}
+
+.bk-pay-chip {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 16px 12px;
+  background: var(--bg-3);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: all .2s ease;
+  user-select: none;
+  text-align: center;
+}
+.bk-pay-chip input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+.bk-pay-chip i {
+  font-size: 26px;
+  color: var(--text-soft);
+  transition: color .2s, transform .2s;
+}
+.bk-pay-name {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--text);
+}
+.bk-pay-loc {
+  font-size: 11px;
+  color: var(--text-dim);
+  letter-spacing: .3px;
+}
+
+.bk-pay-chip:hover {
+  border-color: rgba(200,169,81,.45);
+  background: rgba(200,169,81,.05);
+  transform: translateY(-2px);
+}
+.bk-pay-chip:hover i { color: var(--gold); }
+
+.bk-pay-chip:has(input:checked) {
+  border-color: var(--gold);
+  background: rgba(200,169,81,.10);
+  box-shadow: 0 0 0 1px var(--gold), 0 10px 24px rgba(200,169,81,.18);
+}
+.bk-pay-chip:has(input:checked) i {
+  color: var(--gold);
+  transform: scale(1.1);
+}
+.bk-pay-chip:has(input:checked) .bk-pay-name { color: var(--white); }
+
+.bk-pay-chip-xplor:has(input:checked) {
+  border-color: var(--green);
+  background: rgba(46,204,113,.10);
+  box-shadow: 0 0 0 1px var(--green), 0 10px 24px rgba(46,204,113,.22);
+}
+.bk-pay-chip-xplor:has(input:checked) i { color: var(--green); }
+
+.bk-pay-info {
+  margin-top: 14px;
+  padding: 14px 16px;
+  background: rgba(255,255,255,.02);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  font-size: 13.5px;
+  color: var(--text-soft);
+  line-height: 1.6;
+  animation: bkPayFade .25s ease;
+}
+.bk-pay-info[hidden] { display: none; }
+.bk-pay-info i {
+  color: var(--gold);
+  margin-right: 6px;
+  font-size: 16px;
+  vertical-align: middle;
+}
+.bk-pay-info-xplor {
+  border-color: rgba(46,204,113,.3);
+  background: rgba(46,204,113,.05);
+}
+.bk-pay-info-xplor i { color: var(--green); }
+.bk-pay-info-xplor strong { color: var(--white); }
+
+.bk-pay-info-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 10px;
+  padding: 8px 14px;
+  background: var(--green);
+  color: var(--black);
+  border-radius: 100px;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: transform .2s, box-shadow .2s;
+}
+.bk-pay-info-link:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px rgba(46,204,113,.3);
+}
+
+@keyframes bkPayFade {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}

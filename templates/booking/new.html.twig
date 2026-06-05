@@ -286,6 +286,49 @@
           {{ form_widget(form.fullAccess, {'attr': {'id': 'booking_fullAccess', 'class': 'bk-fullaccess-checkbox'}}) }}
         </label>
 
+        {# ── Choix mode de paiement (annoncé par le client) ── #}
+        <div class="bk-pay-block">
+          <div class="bk-pay-head">
+            <div class="bk-pay-eyebrow"><i class="ti ti-credit-card"></i> Comment paieras-tu ?</div>
+            <div class="bk-pay-help">Choisis ton mode prévu. Le coach confirmera l'encaissement après la séance.</div>
+          </div>
+          <div class="bk-pay-options">
+            <label class="bk-pay-chip" data-method="cash">
+              <input type="radio" name="intended_payment_method" value="cash">
+              <i class="ti ti-cash"></i>
+              <span class="bk-pay-name">Espèces</span>
+              <span class="bk-pay-loc">Sur place, au coach</span>
+            </label>
+            <label class="bk-pay-chip" data-method="card">
+              <input type="radio" name="intended_payment_method" value="card">
+              <i class="ti ti-credit-card"></i>
+              <span class="bk-pay-name">Carte bancaire</span>
+              <span class="bk-pay-loc">Sur place, au coach</span>
+            </label>
+            <label class="bk-pay-chip bk-pay-chip-xplor" data-method="xplor">
+              <input type="radio" name="intended_payment_method" value="xplor">
+              <i class="ti ti-leaf"></i>
+              <span class="bk-pay-name">Xplor Active</span>
+              <span class="bk-pay-loc">En ligne, depuis ton espace</span>
+            </label>
+          </div>
+          <div class="bk-pay-info bk-pay-info-cash" data-show-for="cash" hidden>
+            <i class="ti ti-info-circle"></i>
+            Pense à prévoir le montant exact si possible. Le coach te remet un reçu si tu le demandes.
+          </div>
+          <div class="bk-pay-info bk-pay-info-card" data-show-for="card" hidden>
+            <i class="ti ti-info-circle"></i>
+            Paiement directement auprès du coach à la fin de la séance (TPE ou paiement mobile).
+          </div>
+          <div class="bk-pay-info bk-pay-info-xplor" data-show-for="xplor" hidden>
+            <i class="ti ti-leaf"></i>
+            Tu paieras cette séance depuis ton <strong>espace Xplor Active</strong> (lié au Deciplus SPORT+, paiement sécurisé via Paylib). Présente ta carte ou ton QR au coach à l'arrivée.
+            <a href="{{ path('app_deciplus') }}" class="bk-pay-info-link">
+              <i class="ti ti-external-link"></i> Accéder à mon Deciplus / Xplor
+            </a>
+          </div>
+        </div>
+
         {# Message au coach #}
         <div class="bk-detail-field" style="margin-top:20px;">
           <label class="bk-detail-label"><i class="ti ti-message"></i> Un mot pour ton coach <span style="color:var(--text-dim);font-weight:400;">(optionnel)</span></label>
@@ -393,6 +436,22 @@
 <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/fr.js" defer></script>
 <script src="{{ asset('js/booking-form.js') }}" defer></script>
 
+<script>
+// ── Choix mode de paiement (étape 4) : afficher l'info contextuelle
+(function() {
+  document.addEventListener('DOMContentLoaded', function() {
+    var radios = document.querySelectorAll('.bk-pay-chip input[type="radio"]');
+    var infos  = document.querySelectorAll('.bk-pay-info');
+    radios.forEach(function(r) {
+      r.addEventListener('change', function() {
+        infos.forEach(function(info) {
+          info.hidden = (info.dataset.showFor !== r.value);
+        });
+      });
+    });
+  });
+})();
+</script>
 <script>
 // ── Stepper visuel : marque les étapes complétées au scroll
 (function() {

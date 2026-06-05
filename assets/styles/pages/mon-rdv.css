@@ -61,15 +61,131 @@
   font-size: 22px; font-weight: 800; color: var(--gold);
 }
 
-.rdv-payment-info {
-  display: flex; align-items: flex-start; gap: 12px;
-  background: rgba(46,204,113,.06);
-  border: 1px solid rgba(46,204,113,.2);
-  border-radius: var(--radius);
-  padding: 14px 16px;
-  font-size: 13px; color: var(--text-soft); line-height: 1.55;
+/* ── Bloc paiement Mon RDV ── */
+.rdv-pay {
+  margin-top: 8px;
+  padding: 18px 20px;
+  background: linear-gradient(180deg, rgba(200,169,81,.04) 0%, var(--bg-2) 100%);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
 }
-.rdv-payment-info i { color: var(--green); font-size: 20px; flex-shrink: 0; margin-top: 1px; }
+
+.rdv-pay-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+
+.rdv-pay-eyebrow {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--gold);
+  display: inline-flex; align-items: center; gap: 6px;
+}
+.rdv-pay-eyebrow i { font-size: 16px; }
+
+.rdv-pay-status {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 5px 11px;
+  border-radius: 100px;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+}
+.rdv-pay-status i { font-size: 14px; }
+.rdv-pay-status-ok {
+  background: rgba(46,204,113,.15);
+  color: var(--green);
+  border: 1px solid rgba(46,204,113,.35);
+}
+.rdv-pay-status-wait {
+  background: rgba(255,180,80,.12);
+  color: #ffb450;
+  border: 1px solid rgba(255,180,80,.3);
+}
+.rdv-pay-status-todo {
+  background: rgba(200,169,81,.10);
+  color: var(--gold);
+  border: 1px solid rgba(200,169,81,.3);
+}
+
+.rdv-pay-chip {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  background: var(--bg-3);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+}
+.rdv-pay-chip i { font-size: 28px; }
+.rdv-pay-chip-name {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 17px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--white);
+}
+.rdv-pay-chip-sub {
+  font-size: 12px;
+  color: var(--text-dim);
+  margin-top: 2px;
+}
+.rdv-pay-chip-gold {
+  border-color: rgba(200,169,81,.4);
+  background: rgba(200,169,81,.06);
+}
+.rdv-pay-chip-gold i { color: var(--gold); }
+.rdv-pay-chip-green {
+  border-color: rgba(46,204,113,.4);
+  background: rgba(46,204,113,.06);
+}
+.rdv-pay-chip-green i { color: var(--green); }
+
+.rdv-pay-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 12px;
+  padding: 10px 16px;
+  background: var(--green);
+  color: var(--black);
+  border-radius: 100px;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: transform .2s, box-shadow .2s;
+}
+.rdv-pay-link:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 22px rgba(46,204,113,.32);
+}
+
+.rdv-pay-help {
+  margin-top: 10px;
+  font-size: 13px;
+  color: var(--text-soft);
+  line-height: 1.6;
+}
+.rdv-pay-help i {
+  color: var(--gold);
+  margin-right: 4px;
+  font-size: 14px;
+  vertical-align: middle;
+}
+.rdv-pay-help strong { color: var(--white); }
 
 @media (max-width: 480px) {
   .rdv-card { padding: 24px 20px; }

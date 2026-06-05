@@ -210,7 +210,7 @@
 
 /* Prévention overflow horizontal sur mobile */
 body { overflow-x: hidden; }
-* { overflow-wrap: break-word; word-break: break-word; }
+* { overflow-wrap: break-word; }
 img, video, iframe { max-width: 100%; }
 
 /* Admin burger mobile ─────────────────────────────────────── */
