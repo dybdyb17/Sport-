@@ -89,7 +89,7 @@
               {{ sub.endsAt|date('d/m/Y') }}
               {% if isExpiringSoon %}<i class="ti ti-alert-triangle"></i>{% endif %}
             </td>
-            <td><span class="status-badge {{ sub.status }}">{{ sub.status }}</span></td>
+            <td class="cell-wrap" style="min-width:110px;"><span class="status-badge {{ sub.status }}">{{ sub.status }}</span></td>
           </tr>
         {% endfor %}
       </tbody>

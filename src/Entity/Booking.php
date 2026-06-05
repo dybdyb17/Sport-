@@ -109,6 +109,10 @@ class Booking
     private ?string $intendedPaymentMethod = null;
     // Choix annoncé par le client à la réservation. Valeurs : 'cash', 'card', 'xplor'
 
+    #[ORM\Column(length: 500, nullable: true)]
+    private ?string $refusalReason = null;
+    // Motif du refus saisi par le coach (visible par le client sur Mon RDV)
+
     #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
     private ?\DateTimeImmutable $paymentDeclaredAt = null;
 
@@ -163,7 +167,7 @@ class Booking
     public function setSubscription(?Subscription $subscription): static { $this->subscription = $subscription; return $this; }
 
     public function getStartAt(): ?\DateTimeImmutable { return $this->startAt; }
-    public function setStartAt(\DateTimeImmutable $startAt): static { $this->startAt = $startAt; return $this; }
+    public function setStartAt(?\DateTimeImmutable $startAt): static { $this->startAt = $startAt; return $this; }
 
     public function getEndAt(): ?\DateTimeImmutable { return $this->endAt; }
     public function setEndAt(\DateTimeImmutable $endAt): static { $this->endAt = $endAt; return $this; }
@@ -193,6 +197,9 @@ class Booking
 
     public function getIntendedPaymentMethod(): ?string { return $this->intendedPaymentMethod; }
     public function setIntendedPaymentMethod(?string $intendedPaymentMethod): static { $this->intendedPaymentMethod = $intendedPaymentMethod; return $this; }
+
+    public function getRefusalReason(): ?string { return $this->refusalReason; }
+    public function setRefusalReason(?string $refusalReason): static { $this->refusalReason = $refusalReason; return $this; }
 
     public function getPaymentDeclaredAt(): ?\DateTimeImmutable { return $this->paymentDeclaredAt; }
     public function setPaymentDeclaredAt(?\DateTimeImmutable $paymentDeclaredAt): static { $this->paymentDeclaredAt = $paymentDeclaredAt; return $this; }

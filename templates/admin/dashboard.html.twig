@@ -269,7 +269,7 @@
             <td style="color:var(--text-dim);">{{ booking.startAt|date('d/m/Y') }}</td>
             <td style="color:var(--text-dim);">{{ booking.client.nomComplet }}</td>
             <td style="color:var(--text-dim);">{{ booking.coach.nomComplet }}</td>
-            <td><span class="status-badge {{ booking.status }}">{{ booking.statutLabel }}</span></td>
+            <td class="cell-wrap" style="min-width:140px;"><span class="status-badge {{ booking.status }}">{{ booking.statutLabel }}</span></td>
             <td style="color:var(--gold);font-family:'Barlow Condensed',sans-serif;font-weight:700;">{{ booking.prixFormatted }}</td>
           </tr>
         {% endfor %}

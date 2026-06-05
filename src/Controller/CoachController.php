@@ -76,8 +76,9 @@ class CoachController extends AbstractController
         $user = $this->getUser();
 
         try {
-            $manager->refuse($booking, $user);
-            $this->addFlash('info', 'Réservation refusée.');
+            $reason = (string) $request->request->get('reason', '');
+            $manager->refuse($booking, $user, $reason !== '' ? $reason : null);
+            $this->addFlash('info', 'Réservation refusée. Le client a été notifié.');
         } catch (\Exception $e) {
             $this->addFlash('error', $e->getMessage());
         }

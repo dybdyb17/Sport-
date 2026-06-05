@@ -323,9 +323,10 @@
           <div class="bk-pay-info bk-pay-info-xplor" data-show-for="xplor" hidden>
             <i class="ti ti-leaf"></i>
             Tu paieras cette séance depuis ton <strong>espace Xplor Active</strong> (lié au Deciplus SPORT+, paiement sécurisé via Paylib). Présente ta carte ou ton QR au coach à l'arrivée.
-            <a href="{{ path('app_deciplus') }}" class="bk-pay-info-link">
-              <i class="ti ti-external-link"></i> Accéder à mon Deciplus / Xplor
-            </a>
+            <div style="margin-top:10px;padding:10px 12px;background:rgba(200,169,81,.08);border-left:2px solid var(--gold);border-radius:6px;font-size:12.5px;line-height:1.5;color:var(--text-soft);">
+              <i class="ti ti-lock" style="color:var(--gold);margin-right:4px;"></i>
+              <strong style="color:var(--white);">Important :</strong> le lien de paiement ne sera actif qu'<strong>après confirmation du coach</strong>. Tu seras notifié dès qu'il valide ta séance.
+            </div>
           </div>
         </div>
 
@@ -948,6 +949,39 @@
   accent-color: var(--green) !important;
   cursor: pointer;
 }
+
+/* État désactivé : pack = single (séance unique) */
+.bk-fullaccess.is-disabled {
+  opacity: .5;
+  cursor: not-allowed;
+  background: var(--bg-3);
+  border-color: var(--border);
+  border-left-color: var(--border);
+}
+.bk-fullaccess.is-disabled:hover {
+  background: var(--bg-3);
+}
+.bk-fullaccess.is-disabled .bk-fullaccess-checkbox {
+  cursor: not-allowed;
+  pointer-events: none;
+}
+.bk-fullaccess.is-disabled::after {
+  content: 'Disponible avec un pack mensuel';
+  position: absolute;
+  bottom: -10px;
+  right: 14px;
+  background: var(--bg-card);
+  color: var(--gold-dim);
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  padding: 3px 10px;
+  border-radius: 100px;
+  border: 1px solid var(--border);
+}
+.bk-fullaccess { position: relative; }
 
 /* ── CTA submit ────────────────────────────────────────────────────────── */
 .bk-submit {

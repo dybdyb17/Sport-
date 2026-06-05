@@ -170,11 +170,62 @@
                 <i class="ti ti-check"></i> Accepter
               </button>
             </form>
-            <form action="{{ path('app_coach_refuse', {id: booking.id}) }}" method="post" style="display:inline;">
+            <button type="button" class="action-btn action-btn--danger" data-refuse-open="{{ booking.id }}">
+              <i class="ti ti-x"></i> Refuser
+            </button>
+          </div>
+
+          {# ── Modal "Pourquoi refuses-tu ?" ── #}
+          <div class="refuse-modal" id="refuse-modal-{{ booking.id }}" hidden>
+            <div class="refuse-modal-overlay" data-refuse-close="{{ booking.id }}"></div>
+            <form action="{{ path('app_coach_refuse', {id: booking.id}) }}" method="post" class="refuse-modal-card">
               <input type="hidden" name="_token" value="{{ csrf_token('refuse' ~ booking.id) }}">
-              <button type="submit" class="action-btn action-btn--danger">
-                <i class="ti ti-x"></i> Refuser
+              <button type="button" class="refuse-modal-close" data-refuse-close="{{ booking.id }}" aria-label="Fermer">
+                <i class="ti ti-x"></i>
               </button>
+              <div class="refuse-modal-head">
+                <div class="refuse-modal-icon"><i class="ti ti-mood-sad"></i></div>
+                <h3 class="refuse-modal-title">Pourquoi refuses-tu ?</h3>
+                <p class="refuse-modal-sub">
+                  Le client <strong>{{ booking.client.nomComplet }}</strong> verra ton message sur sa page de suivi. Sois clair et bienveillant.
+                </p>
+              </div>
+
+              <div class="refuse-modal-presets">
+                <button type="button" class="refuse-preset" data-reason="Désolé, je ne suis pas disponible sur ce créneau.">
+                  <i class="ti ti-calendar-x"></i> Indisponible sur ce créneau
+                </button>
+                <button type="button" class="refuse-preset" data-reason="Le créneau demandé est en dehors de mes horaires habituels.">
+                  <i class="ti ti-clock-off"></i> Hors de mes horaires
+                </button>
+                <button type="button" class="refuse-preset" data-reason="Je ne prends plus de nouveaux clients pour le moment, je suis complet.">
+                  <i class="ti ti-users-off"></i> Planning complet
+                </button>
+                <button type="button" class="refuse-preset" data-reason="Ce format de séance n'est pas dans mes spécialités. Je te conseille un autre coach.">
+                  <i class="ti ti-bulb"></i> Pas mon format
+                </button>
+              </div>
+
+              <label class="refuse-modal-label" for="refuse-reason-{{ booking.id }}">
+                Ton message au client <span style="color:var(--text-dim);font-weight:400;">(optionnel mais recommandé)</span>
+              </label>
+              <textarea
+                id="refuse-reason-{{ booking.id }}"
+                name="reason"
+                rows="3"
+                maxlength="500"
+                class="refuse-modal-textarea"
+                placeholder="Ex : Désolé, je ne suis pas disponible ce jour-là. N'hésite pas à proposer un autre créneau."
+              ></textarea>
+
+              <div class="refuse-modal-actions">
+                <button type="button" class="action-btn action-btn--ghost" data-refuse-close="{{ booking.id }}">
+                  Annuler
+                </button>
+                <button type="submit" class="action-btn action-btn--danger">
+                  <i class="ti ti-x"></i> Confirmer le refus
+                </button>
+              </div>
             </form>
           </div>
         </div>
@@ -290,5 +341,46 @@
                 showToast('Nouvelle demande de ' + data.client + ' pour le ' + data.start);
             }
         };
+
+        // ── Modal refus : ouvre / ferme / presets ────────────────────────────
+        document.querySelectorAll('[data-refuse-open]').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const id = btn.dataset.refuseOpen;
+                const modal = document.getElementById('refuse-modal-' + id);
+                if (!modal) return;
+                modal.hidden = false;
+                document.body.style.overflow = 'hidden';
+                const ta = modal.querySelector('textarea[name="reason"]');
+                if (ta) setTimeout(() => ta.focus(), 50);
+            });
+        });
+        document.querySelectorAll('[data-refuse-close]').forEach(el => {
+            el.addEventListener('click', () => {
+                const id = el.dataset.refuseClose;
+                const modal = document.getElementById('refuse-modal-' + id);
+                if (!modal) return;
+                modal.hidden = true;
+                document.body.style.overflow = '';
+            });
+        });
+        document.querySelectorAll('.refuse-preset').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const ta = btn.closest('.refuse-modal-card').querySelector('textarea[name="reason"]');
+                if (ta) {
+                    ta.value = btn.dataset.reason;
+                    ta.focus();
+                    btn.closest('.refuse-modal-presets').querySelectorAll('.refuse-preset').forEach(b => b.classList.remove('is-selected'));
+                    btn.classList.add('is-selected');
+                }
+            });
+        });
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape') {
+                document.querySelectorAll('.refuse-modal:not([hidden])').forEach(m => {
+                    m.hidden = true;
+                    document.body.style.overflow = '';
+                });
+            }
+        });
     </script>
 {% endblock %}

@@ -97,6 +97,11 @@
       updatePersonsFromFormat(value);
     }
 
+    // Synchroniser l'option FullAccess selon le pack
+    if (type === 'pack') {
+      syncFullAccessAvailability();
+    }
+
     updatePricing();
   }
 
@@ -138,6 +143,28 @@
       }
       updatePricing();
     });
+  }
+
+  // FullAccess n'a de sens que sur un pack mensuel — désactivé en single.
+  function syncFullAccessAvailability() {
+    if (!fullAccessCheckbox || !fullAccessToggle) return;
+    const isSingle = state.pack === 'single';
+    if (isSingle) {
+      if (fullAccessCheckbox.checked) {
+        fullAccessCheckbox.checked = false;
+        state.fullAccess = false;
+        fullAccessToggle.classList.remove('checked');
+      }
+      fullAccessCheckbox.disabled = true;
+      fullAccessToggle.classList.add('is-disabled');
+      fullAccessToggle.setAttribute('aria-disabled', 'true');
+      fullAccessToggle.title = 'Disponible uniquement avec un pack mensuel (4, 8 ou 12 séances)';
+    } else {
+      fullAccessCheckbox.disabled = false;
+      fullAccessToggle.classList.remove('is-disabled');
+      fullAccessToggle.removeAttribute('aria-disabled');
+      fullAccessToggle.removeAttribute('title');
+    }
   }
 
   // ── Appel API pricing ────────────────────────────────────────────────────────
@@ -292,6 +319,7 @@
   // ── Initialisation au chargement ─────────────────────────────────────────────
   syncCardsFromSelects();
   updatePersonsFromFormat(state.format);
+  syncFullAccessAvailability();
   updatePricing();
   fetchPackPrices();
 

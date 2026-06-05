@@ -131,13 +131,16 @@ class BookingManager
     /**
      * Refuse une réservation (action du coach).
      */
-    public function refuse(Booking $booking, User $coachUser): Booking
+    public function refuse(Booking $booking, User $coachUser, ?string $reason = null): Booking
     {
         if ($booking->getCoach()?->getUser() !== $coachUser) {
             throw new \LogicException('Vous ne pouvez pas refuser cette réservation');
         }
 
         $booking->setStatus(Booking::STATUS_REFUSED);
+        if ($reason !== null && trim($reason) !== '') {
+            $booking->setRefusalReason(mb_substr(trim($reason), 0, 500));
+        }
         $this->em->flush();
         $this->mailer->sendBookingRefusedToClient($booking);
 

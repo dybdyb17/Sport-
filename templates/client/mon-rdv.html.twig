@@ -51,11 +51,19 @@
       'xplor': {'icon': 'ti-leaf',        'name': 'Xplor Active',   'color': 'green'}
     } %}
 
+    {% set isPending   = booking.status == 'pending' %}
+    {% set isConfirmed = booking.status == 'confirmed' %}
+    {% set isRefused   = booking.status == 'refused' or booking.status == 'cancelled' %}
+
     <div class="rdv-pay">
       <div class="rdv-pay-head">
         <span class="rdv-pay-eyebrow"><i class="ti ti-credit-card"></i> Paiement</span>
         {% if declared %}
           <span class="rdv-pay-status rdv-pay-status-ok"><i class="ti ti-check"></i> Confirmé par le coach</span>
+        {% elseif isRefused %}
+          <span class="rdv-pay-status rdv-pay-status-wait"><i class="ti ti-x"></i> Séance annulée</span>
+        {% elseif isPending %}
+          <span class="rdv-pay-status rdv-pay-status-todo"><i class="ti ti-hourglass"></i> Bloqué — en attente du coach</span>
         {% elseif booking.startAt < date() %}
           <span class="rdv-pay-status rdv-pay-status-wait"><i class="ti ti-clock"></i> En attente de validation</span>
         {% else %}
@@ -75,12 +83,39 @@
           </div>
         </div>
 
-        {% if intent == 'xplor' %}
+        {# ── Tant que le coach n'a pas validé, on n'autorise PAS le paiement ── #}
+        {% if isPending %}
+          <p class="rdv-pay-help" style="background:rgba(200,169,81,.06);border:1px dashed rgba(200,169,81,.3);border-radius:var(--radius);padding:12px 14px;margin-top:12px;">
+            <i class="ti ti-lock" style="color:var(--gold);"></i>
+            <strong>Le paiement sera disponible une fois ton coach aura confirmé la séance.</strong> Tu recevras une notification dès validation et tu pourras
+            {% if intent == 'xplor' %}régler en ligne depuis ton espace Xplor Active{% else %}{{ intent == 'cash' ? 'prévoir ton paiement en espèces' : 'préparer ton paiement par carte' }}{% endif %}.
+          </p>
+        {% elseif isRefused %}
+          {% if booking.refusalReason and booking.status == 'refused' %}
+            <div class="rdv-refusal">
+              <div class="rdv-refusal-head">
+                <i class="ti ti-message-circle-2"></i>
+                <strong>Message de {{ booking.coach.nomComplet }}</strong>
+              </div>
+              <p class="rdv-refusal-msg">« {{ booking.refusalReason }} »</p>
+              <a href="{{ path('app_booking_new') }}" class="rdv-refusal-cta">
+                <i class="ti ti-calendar-plus"></i> Proposer un autre créneau
+              </a>
+            </div>
+          {% else %}
+            <p class="rdv-pay-help" style="color:var(--text-dim);">
+              <i class="ti ti-info-circle"></i>
+              La séance a été {{ booking.status == 'refused' ? 'refusée par le coach' : 'annulée' }}, aucun paiement n'est attendu.
+            </p>
+          {% endif %}
+        {% elseif intent == 'xplor' %}
+          {# Confirmed + Xplor → on autorise le règlement en ligne #}
           <a href="{{ path('app_deciplus') }}" class="rdv-pay-link">
             <i class="ti ti-external-link"></i> Régler depuis mon espace Xplor
           </a>
           <p class="rdv-pay-help">Tu peux régler maintenant depuis ton espace Xplor Active (Paylib), ou présenter ta carte au coach à l'arrivée.</p>
         {% else %}
+          {# Confirmed + cash/card → instructions sur place #}
           <p class="rdv-pay-help">
             <i class="ti ti-info-circle"></i>
             Prévois <strong>{{ booking.prixFormatted }}</strong> {{ intent == 'cash' ? 'en espèces' : 'par carte' }} pour ton coach.
@@ -96,6 +131,7 @@
         <p class="rdv-pay-help">
           <i class="ti ti-info-circle"></i>
           3 modes possibles : <strong>Espèces</strong>, <strong>CB</strong> (sur place avec le coach) ou <strong>Xplor Active</strong> (en ligne).
+          {% if isPending %}<br>Le paiement sera ouvert une fois la séance confirmée.{% endif %}
         </p>
       {% endif %}
     </div>
