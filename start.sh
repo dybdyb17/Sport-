@@ -70,8 +70,10 @@ else
     echo "✓ Offre Founding déjà présente"
 fi
 
-# Lancement du serveur PHP intégré sur le port fourni par Railway
-# IMPORTANT : on passe public/index.php comme router, sinon les URL Symfony
-# (ex /tarifs, /coachs, /admin) ne sont pas routées → 404 → Railway timeout
-echo "=== Démarrage du serveur HTTP sur 0.0.0.0:${PORT:-8080} (router=public/index.php) ==="
-exec php -S 0.0.0.0:${PORT:-8080} -t public/ public/index.php
+# Lancement du serveur PHP intégré sur le port fourni par Railway.
+# On utilise public/router.php (et NON public/index.php directement) :
+# - router.php sert les fichiers statiques (assets/, img/, js/, favicon...) en priorité
+# - et délègue à index.php (Symfony) pour les vraies routes.
+# Sans router.php, toutes les requêtes /assets/...css partiraient à Symfony → 404 → CSS manquants.
+echo "=== Démarrage du serveur HTTP sur 0.0.0.0:${PORT:-8080} (router=public/router.php) ==="
+exec php -S 0.0.0.0:${PORT:-8080} -t public/ public/router.php
