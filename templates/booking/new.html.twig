@@ -981,8 +981,11 @@
   width: 100%; height: 100%;
   background: linear-gradient(90deg, transparent, rgba(255,255,255,.4), transparent);
   transition: left .8s ease;
+  pointer-events: none;
 }
 .bk-submit:hover::before { left: 100%; }
+.bk-submit-text, .bk-submit-price { pointer-events: none; }
+.bk-submit-text i { pointer-events: none; }
 .bk-submit:hover {
   transform: translateY(-3px);
   box-shadow: 0 16px 36px rgba(200,169,81,.45), 0 4px 12px rgba(46,204,113,.2);

@@ -59,5 +59,7 @@ else
 fi
 
 # Lancement du serveur PHP intégré sur le port fourni par Railway
-echo "=== Démarrage du serveur HTTP sur 0.0.0.0:${PORT:-8080} ==="
-exec php -S 0.0.0.0:${PORT:-8080} -t public/
+# IMPORTANT : on passe public/index.php comme router, sinon les URL Symfony
+# (ex /tarifs, /coachs, /admin) ne sont pas routées → 404 → Railway timeout
+echo "=== Démarrage du serveur HTTP sur 0.0.0.0:${PORT:-8080} (router=public/index.php) ==="
+exec php -S 0.0.0.0:${PORT:-8080} -t public/ public/index.php
