@@ -31,7 +31,13 @@
   }
 
   function setSelectValue(selectorType, value) {
-    const selectEl = $(getSelectId(selectorType));
+    // Essaye 1 : par ID forcé dans BookingType
+    let selectEl = $(getSelectId(selectorType));
+    // Essaye 2 : par name="booking[timeSlot]" si l'ID a été ré-écrit par Symfony
+    if (!selectEl) {
+      const nameMap = { format: 'booking[format]', slot: 'booking[timeSlot]', pack: 'booking[packType]' };
+      selectEl = document.querySelector(`[name="${nameMap[selectorType]}"]`);
+    }
     if (selectEl) {
       selectEl.value = value;
       selectEl.dispatchEvent(new Event('change', { bubbles: true }));

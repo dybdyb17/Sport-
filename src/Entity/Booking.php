@@ -135,7 +135,9 @@ class Booking
     #[ORM\Column(length: 30, nullable: true)]
     private ?string $coveredBy = null;
 
-    #[ORM\OneToOne(mappedBy: 'booking', targetEntity: Conversation::class)]
+    // ManyToOne : plusieurs bookings (du même client/coach) peuvent partager la même conv.
+    #[ORM\ManyToOne(targetEntity: Conversation::class)]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
     private ?Conversation $conversation = null;
 
     public function __construct()
@@ -219,6 +221,7 @@ class Booking
     public function setCoveredBy(?string $coveredBy): static { $this->coveredBy = $coveredBy; return $this; }
 
     public function getConversation(): ?Conversation { return $this->conversation; }
+    public function setConversation(?Conversation $conversation): static { $this->conversation = $conversation; return $this; }
 
     // ─── Helpers ──────────────────────────────────────────────────────────
 

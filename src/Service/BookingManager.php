@@ -10,6 +10,7 @@ use App\Entity\Enum\PackType;
 use App\Entity\Enum\TimeSlot;
 use App\Entity\Subscription;
 use App\Entity\User;
+use App\Repository\ConversationRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
 
@@ -24,6 +25,7 @@ class BookingManager
         private readonly PricingCalculator      $pricing,
         private readonly FoundingOfferService   $foundingService,
         private readonly MailerService          $mailer,
+        private readonly ConversationRepository $conversationRepo,
     ) {}
 
     /**
@@ -105,11 +107,20 @@ class BookingManager
             ->setStatus(Booking::STATUS_CONFIRMED)
             ->setConfirmedAt(new \DateTimeImmutable());
 
-        // Ouvrir la conversation dès la confirmation
+        // Ouvrir/réutiliser la conversation entre ce client et ce coach.
+        // Une seule conv par couple (client, coach) — les bookings suivants partagent la même.
         if ($booking->getConversation() === null) {
-            $conversation = new Conversation();
-            $conversation->setBooking($booking);
-            $this->em->persist($conversation);
+            $existing = $this->conversationRepo->findForPair($booking->getClient(), $booking->getCoach());
+            if ($existing !== null) {
+                $booking->setConversation($existing);
+            } else {
+                $conversation = new Conversation();
+                $conversation->setClient($booking->getClient());
+                $conversation->setCoach($booking->getCoach());
+                $conversation->setBooking($booking);
+                $this->em->persist($conversation);
+                $booking->setConversation($conversation);
+            }
         }
 
         // Priorité couverte : Founding > Subscription > paiement normal

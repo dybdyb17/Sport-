@@ -16,9 +16,19 @@ class Conversation
     #[ORM\Column]
     private ?int $id = null;
 
+    // Booking historique (rétro-compat). Pour les nouvelles conv, on s'appuie sur client + coach.
     #[ORM\OneToOne(inversedBy: 'conversation')]
-    #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
     private ?Booking $booking = null;
+
+    // Identité d'une conversation = couple (client, coach). Une seule conv par couple.
+    #[ORM\ManyToOne]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'CASCADE')]
+    private ?User $client = null;
+
+    #[ORM\ManyToOne]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'CASCADE')]
+    private ?Coach $coach = null;
 
     #[ORM\Column(type: Types::DATETIME_IMMUTABLE)]
     private \DateTimeImmutable $createdAt;
@@ -50,10 +60,18 @@ class Conversation
         return $this->booking;
     }
 
-    public function setBooking(Booking $booking): static
+    public function setBooking(?Booking $booking): static
     {
         $this->booking = $booking;
-
+        // Si on attache un booking, on synchronise automatiquement client + coach
+        if ($booking !== null) {
+            if ($this->client === null) {
+                $this->client = $booking->getClient();
+            }
+            if ($this->coach === null) {
+                $this->coach = $booking->getCoach();
+            }
+        }
         return $this;
     }
 
@@ -64,12 +82,25 @@ class Conversation
 
     public function getClient(): ?User
     {
-        return $this->booking?->getClient();
+        // Source de vérité : champ direct. Fallback sur booking pour les anciennes conv non migrées.
+        return $this->client ?? $this->booking?->getClient();
+    }
+
+    public function setClient(?User $client): static
+    {
+        $this->client = $client;
+        return $this;
     }
 
     public function getCoach(): ?Coach
     {
-        return $this->booking?->getCoach();
+        return $this->coach ?? $this->booking?->getCoach();
+    }
+
+    public function setCoach(?Coach $coach): static
+    {
+        $this->coach = $coach;
+        return $this;
     }
 
     /**

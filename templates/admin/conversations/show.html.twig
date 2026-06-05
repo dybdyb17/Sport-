@@ -8,15 +8,14 @@
 <div class="form-card" style="margin-bottom:20px;">
   <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:16px;">
     <div>
-      <div style="font-family:'Barlow Condensed',sans-serif;font-size:13px;letter-spacing:2px;color:var(--gold);">{{ conversation.booking.reference }}</div>
+      <div style="font-family:'Barlow Condensed',sans-serif;font-size:13px;letter-spacing:2px;color:var(--gold);">CONV-{{ conversation.id }}</div>
       <h1 style="font-family:'Barlow Condensed',sans-serif;font-size:26px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--white);margin:6px 0 4px;">
-        {{ conversation.booking.client.nomComplet }} ↔ {{ conversation.booking.coach.nomComplet }}
+        {{ conversation.client ? conversation.client.nomComplet : '—' }} ↔ {{ conversation.coach ? conversation.coach.nomComplet : '—' }}
       </h1>
       <div style="color:var(--text-dim);font-size:13px;">
-        {{ conversation.booking.offerLabel }} · {{ conversation.booking.startAt|date('d/m/Y \\à H\\hi') }}
+        Conversation ouverte le {{ conversation.createdAt|date('d/m/Y \\à H\\hi') }} · {{ conversation.messages|length }} message(s)
       </div>
     </div>
-    <span class="status-badge {{ conversation.booking.status }}">{{ conversation.booking.statutLabel }}</span>
   </div>
 </div>
 
@@ -26,7 +25,7 @@
       <p style="color:var(--text-dim);text-align:center;padding:32px 0;">Aucun message dans cette conversation.</p>
     {% else %}
       {% for msg in conversation.messages %}
-        {% set isClient = msg.author.id == conversation.booking.client.id %}
+        {% set isClient = conversation.client and msg.author.id == conversation.client.id %}
         <div style="margin-bottom:20px;padding:14px 18px;background:{{ isClient ? 'rgba(200,169,81,.06)' : 'rgba(46,204,113,.06)' }};border-radius:var(--radius);border-left:3px solid {{ isClient ? 'var(--gold)' : 'var(--green)' }};">
           <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
             <strong style="color:var(--white);font-size:14px;">{{ msg.author.nomComplet }}</strong>

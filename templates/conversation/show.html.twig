@@ -25,7 +25,7 @@
           <div class="conv-body">
             <span class="conv-name">{{ inter ? inter.nomComplet : 'Inconnu' }}</span>
             <span class="conv-preview">
-              {% if last %}{{ last.content }}{% else %}{{ conv.booking.offerLabel }}{% endif %}
+              {% if last %}{{ last.content }}{% else %}Aucun message{% endif %}
             </span>
           </div>
           <div class="conv-meta">
