@@ -243,6 +243,27 @@ if (document.readyState === 'loading') {
 
 function setup() {
 
+  // ── Dropdown Tarifs ───────────────────────────────────────────
+  var pricingToggle = document.querySelector('.nav-dropdown-toggle');
+  var pricingMenu = document.querySelector('.nav-dropdown-menu');
+
+  if (pricingToggle && pricingMenu) {
+    pricingToggle.addEventListener('click', function(e) {
+      e.stopPropagation();
+      var open = pricingMenu.classList.toggle('is-open');
+      pricingToggle.setAttribute('aria-expanded', String(open));
+    });
+
+    pricingMenu.addEventListener('click', function(e) {
+      e.stopPropagation();
+    });
+
+    document.addEventListener('click', function() {
+      pricingMenu.classList.remove('is-open');
+      pricingToggle.setAttribute('aria-expanded', 'false');
+    });
+  }
+
   // ── User dropdown ─────────────────────────────────────────────
   var avatar   = document.querySelector('.user-avatar');
   var dropdown = document.querySelector('.user-dropdown');
