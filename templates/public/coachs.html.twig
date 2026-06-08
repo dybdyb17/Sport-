@@ -4,6 +4,8 @@
 {% block meta_description %}<meta name="description" content="Rencontrez les coachs SPORT+ Marseille : experts certifiés, disponibles de jour comme de nuit pour un coaching personnalisé en salle privative.">{% endblock %}
 
 {% block body %}
+{% set primaryBookingPath = app.user ? path('app_booking_new') : path('app_register') %}
+{% set coachBookingPath = app.user ? path('app_booking_new') : path('app_login') %}
 
 <section class="coach-page-hero">
   <div class="coach-page-orb coach-page-orb-gold" aria-hidden="true"></div>
@@ -11,10 +13,10 @@
   <div class="container coach-page-hero-inner">
     <div class="coach-page-hero-copy" data-animate="fade-up">
       <div class="hero-badge">L'équipe SPORT+</div>
-      <h1 class="section-title">Choisis ton <span style="color:var(--gold)">coach</span></h1>
+      <h1 class="section-title">Choisis ton <span class="coach-page-accent">coach</span></h1>
       <p class="section-sub">Des professionnels certifiés, disponibles de jour comme de nuit pour t'accompagner vers tes objectifs.</p>
       <div class="coach-page-hero-actions">
-        <a href="{{ app.user ? path('app_booking_new') : path('app_register') }}" class="btn btn-primary btn-lg">
+        <a href="{{ primaryBookingPath }}" class="btn btn-primary btn-lg">
           <i class="ti ti-calendar-plus"></i> Réserver une séance
         </a>
         <a href="{{ path('app_tarifs') }}" class="btn btn-secondary btn-lg">
@@ -69,7 +71,7 @@
           <span class="coach-live-strip-dot"></span>
           <strong>{{ availableTonightCount }} coach{% if availableTonightCount > 1 %}s{% endif %}</strong>
           prêt{% if availableTonightCount > 1 %}s{% endif %} pour le Night Coach maintenant.
-          <a href="{{ app.user ? path('app_booking_new') : path('app_register') }}">Réserver →</a>
+          <a href="{{ primaryBookingPath }}">Réserver →</a>
         </div>
       {% endif %}
 
@@ -135,7 +137,7 @@
                 <div class="coach-team-format">
                   <i class="ti ti-users-group"></i> Solo · Duo · Groupe
                 </div>
-                <a href="{{ app.user ? path('app_booking_new') : path('app_login') }}"
+                <a href="{{ coachBookingPath }}"
                    class="btn btn-primary coach-pro-cta">
                   <i class="ti ti-calendar-plus"></i> Réserver
                 </a>

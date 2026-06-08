@@ -304,20 +304,17 @@
 }
 
 
-/* Responsive du tableau admin ajouté séparément pour ne pas modifier
-   le bloc mobile historique des cartes coachs. */
-@media (max-width: 640px) {
-  .admin-coach-bio {
-    min-width: 180px;
-    max-width: 240px;
-  }
-}
-
+/* Responsive commun : cartes publiques et tableau admin. */
 @media (max-width: 640px) {
   .coach-pro-grid { grid-template-columns: 1fr; gap: 20px; }
   .coach-pro-photo-wrap { aspect-ratio: 3 / 2; }
   .coach-pro-initials { font-size: 52px; }
   .coach-availability-note { align-items: flex-start; text-align: left; }
+
+  .admin-coach-bio {
+    min-width: 180px;
+    max-width: 240px;
+  }
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
@@ -385,6 +382,10 @@
 
 .coach-page-hero-copy .section-title {
   max-width: 680px;
+}
+
+.coach-page-accent {
+  color: var(--gold);
 }
 
 .coach-page-hero-copy .section-sub {
