@@ -14,6 +14,19 @@
   }
 
   ready(function() {
+    // Les effets les plus coûteux restent disponibles sur les machines
+    // confortables, mais sont coupés automatiquement sur les appareils
+    // modestes, en économie de données ou avec animations réduites.
+    var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var precisePointer = window.matchMedia && window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+    var saveData = navigator.connection && navigator.connection.saveData;
+    var lowMemory = typeof navigator.deviceMemory === 'number' && navigator.deviceMemory <= 4;
+    var lowCpu = typeof navigator.hardwareConcurrency === 'number' && navigator.hardwareConcurrency <= 4;
+    var performanceLite = reduceMotion || saveData || lowMemory || lowCpu;
+
+    if (performanceLite) {
+      document.documentElement.classList.add('performance-lite');
+    }
 
     // ── 1. Intersection Observer : reveal au scroll ────────────────
     if ('IntersectionObserver' in window) {
@@ -75,7 +88,8 @@
     }
 
     // ── 3. Tilt 3D sur les cards coachs ─────────────────────────────
-    document.querySelectorAll('.coach-pro-card').forEach(function(card) {
+    if (!performanceLite && precisePointer) {
+      document.querySelectorAll('.coach-pro-card').forEach(function(card) {
       var bounds;
       function onMove(e) {
         if (!bounds) bounds = card.getBoundingClientRect();
@@ -97,15 +111,13 @@
       card.addEventListener('mouseenter', onEnter);
       card.addEventListener('mousemove', onMove);
       card.addEventListener('mouseleave', onLeave);
-    });
+      });
+    }
 
     // ── 4. Lumière interactive sur les surfaces premium ──────────────
-    // Mouvement léger uniquement avec une souris précise et si les animations
-    // ne sont pas désactivées par le système.
-    var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    var precisePointer = window.matchMedia && window.matchMedia('(hover: hover) and (pointer: fine)').matches;
-
-    if (!reduceMotion && precisePointer) {
+    // Mouvement léger uniquement avec une souris précise et une machine
+    // suffisamment confortable pour ne pas dégrader le scroll.
+    if (!performanceLite && precisePointer) {
       var ambientFrame = null;
       document.addEventListener('pointermove', function(e) {
         if (ambientFrame) return;
@@ -128,9 +140,11 @@
     }
 
     // Les statuts Night Coach actifs gardent une pulsation discrète et lisible.
-    document.querySelectorAll('.coach-pro-status-live, .night-banner-dot').forEach(function(el) {
-      el.classList.add('performance-pulse');
-    });
+    if (!performanceLite) {
+      document.querySelectorAll('.coach-pro-status-live, .night-banner-dot').forEach(function(el) {
+        el.classList.add('performance-pulse');
+      });
+    }
 
     // ── 5. Bouton scroll-to-top ─────────────────────────────────────
     var scrollTop = document.createElement('button');

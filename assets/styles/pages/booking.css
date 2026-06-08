@@ -29,15 +29,6 @@
   margin: 0 auto;
   line-height: 1.6;
 }
-.bk-hero-sub {
-  font-family: 'Cormorant Garamond', serif;
-  font-style: italic;
-  font-size: 18px;
-  color: var(--text-soft);
-  max-width: 520px;
-  margin: 0 auto;
-  line-height: 1.6;
-}
 .bk-step-dot.is-done .bk-step-name { color: var(--green); }
 .bk-step-dot.is-done .bk-step-num::before {
   content: '\2713'; /* check */
@@ -698,6 +689,7 @@
   border-radius: 100px;
   display: inline-block;
 }
+.bk-process-head i { color: var(--gold); font-size: 16px; }
 
 /* ── Process info ──────────────────────────────────────────────────────── */
 .bk-process {
