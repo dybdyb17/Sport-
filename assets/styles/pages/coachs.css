@@ -125,6 +125,70 @@
   letter-spacing: -2px;
 }
 
+
+.coach-pro-card-live {
+  border-color: rgba(46,204,113,.45);
+  box-shadow: 0 0 0 1px rgba(46,204,113,.08), 0 16px 44px rgba(46,204,113,.08);
+}
+
+.coach-availability-note {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  max-width: 760px;
+  margin: 0 auto 28px;
+  padding: 14px 18px;
+  border: 1px solid rgba(46,204,113,.22);
+  border-radius: var(--radius-md);
+  background: rgba(46,204,113,.07);
+  color: var(--text-soft);
+  font-size: 14px;
+  line-height: 1.5;
+  text-align: center;
+}
+
+.coach-availability-note i,
+.coach-availability-note strong {
+  color: var(--green);
+}
+
+.coach-pro-topline {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.coach-pro-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  width: fit-content;
+  padding: 5px 10px;
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 999px;
+  color: var(--text-soft);
+  background: rgba(255,255,255,.04);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .3px;
+}
+
+.coach-pro-status-live {
+  border-color: rgba(46,204,113,.35);
+  color: var(--green);
+  background: rgba(46,204,113,.10);
+  box-shadow: 0 0 20px rgba(46,204,113,.08);
+}
+
+.coach-pro-status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: currentColor;
+  box-shadow: 0 0 10px currentColor;
+}
+
 .coach-pro-body {
   padding: 24px;
   display: flex;
@@ -179,4 +243,5 @@
   .coach-pro-grid { grid-template-columns: 1fr; gap: 20px; }
   .coach-pro-photo-wrap { aspect-ratio: 3 / 2; }
   .coach-pro-initials { font-size: 52px; }
+  .coach-availability-note { align-items: flex-start; text-align: left; }
 }

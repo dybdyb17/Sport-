@@ -21,9 +21,14 @@
         Aucun coach disponible pour le moment.
       </div>
     {% else %}
+      <div class="coach-availability-note" data-animate="fade-up">
+        <i class="ti ti-moon-stars"></i>
+        Les coachs marqués <strong>en ligne cette nuit</strong> ont activé leur disponibilité Night Coach.
+      </div>
+
       <div class="coach-pro-grid" data-stagger data-animate="fade-up">
         {% for coach in coaches %}
-          <div class="coach-pro-card">
+          <div class="coach-pro-card {{ coach.availableTonightNow ? 'coach-pro-card-live' : '' }}">
 
             {# Photo ou avatar initiales #}
             <div class="coach-pro-photo-wrap">
@@ -41,7 +46,18 @@
 
             {# Infos #}
             <div class="coach-pro-body">
-              <div class="coach-pro-name">{{ coach.nomComplet }}</div>
+              <div class="coach-pro-topline">
+                <div class="coach-pro-name">{{ coach.nomComplet }}</div>
+                {% if coach.availableTonightNow %}
+                  <span class="coach-pro-status coach-pro-status-live">
+                    <span class="coach-pro-status-dot"></span> En ligne cette nuit
+                  </span>
+                {% elseif coach.online %}
+                  <span class="coach-pro-status">
+                    <span class="coach-pro-status-dot"></span> Connecté récemment
+                  </span>
+                {% endif %}
+              </div>
 
               {% if coach.bio %}
                 <p class="coach-pro-bio">{{ coach.bio }}</p>
