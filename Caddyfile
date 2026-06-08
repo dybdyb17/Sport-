@@ -1,0 +1,12 @@
+:{$PORT:8080} {
+    root * {$RAILPACK_PHP_ROOT_DIR:/app/public}
+    encode zstd br gzip
+
+    @fingerprintedAssets path /assets/*
+    header @fingerprintedAssets Cache-Control "public, max-age=31536000, immutable"
+
+    @images path /img/* /favicon.svg
+    header @images Cache-Control "public, max-age=2592000"
+
+    php_server
+}

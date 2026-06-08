@@ -24,8 +24,10 @@
   {% endblock %}
 
   <link rel="icon" href="{{ asset('favicon.svg') }}" type="image/svg+xml">
+  {% block preload_assets %}{% endblock %}
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Barlow+Condensed:wght@500;700;900&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.11.0/dist/tabler-icons.min.css">
   {% block stylesheets %}<link rel="stylesheet" href="{{ asset('styles/sportplus.css') }}">{% endblock %}
@@ -45,7 +47,21 @@
       <a href="{{ path('app_home') }}" class="nav-link {% if app.request.attributes.get('_route') == 'app_home' %}active{% endif %}">Accueil</a>
       <a href="{{ path('app_coachs_list') }}" class="nav-link {% if app.request.attributes.get('_route') == 'app_coachs_list' %}active{% endif %}">Coachs</a>
       <a href="{{ path('app_concept') }}" class="nav-link {% if app.request.attributes.get('_route') == 'app_concept' %}active{% endif %}">Concept</a>
-      <a href="{{ path('app_tarifs') }}" class="nav-link {% if app.request.attributes.get('_route') == 'app_tarifs' %}active{% endif %}">Tarifs</a>
+      <div class="nav-dropdown">
+        <button type="button" class="nav-link nav-dropdown-toggle {% if app.request.attributes.get('_route') == 'app_tarifs' %}active{% endif %}" aria-haspopup="true" aria-expanded="false">
+          Tarifs <i class="ti ti-chevron-down"></i>
+        </button>
+        <div class="nav-dropdown-menu" role="menu">
+          <a href="{{ path('app_tarifs') }}#coaching" class="nav-dropdown-item" role="menuitem">
+            <i class="ti ti-moon-stars"></i>
+            <span><strong>Formules Coaching</strong><small>Night Coach, journée et packs</small></span>
+          </a>
+          <a href="{{ path('app_tarifs') }}#abonnements" class="nav-dropdown-item" role="menuitem">
+            <i class="ti ti-id-badge-2"></i>
+            <span><strong>Formules Abonnement</strong><small>Accès salle et offres Deciplus</small></span>
+          </a>
+        </div>
+      </div>
       <a href="{{ path('app_about') }}" class="nav-link {% if app.request.attributes.get('_route') == 'app_about' %}active{% endif %}">À propos</a>
       <a href="{{ path('app_faq') }}" class="nav-link {% if app.request.attributes.get('_route') == 'app_faq' %}active{% endif %}">FAQ</a>
       <a href="{{ path('app_contact') }}" class="nav-link {% if app.request.attributes.get('_route') == 'app_contact' %}active{% endif %}">Contact</a>
@@ -122,7 +138,11 @@
     <a href="{{ path('app_home') }}" class="nav-link">Accueil</a>
     <a href="{{ path('app_coachs_list') }}" class="nav-link">Coachs</a>
     <a href="{{ path('app_concept') }}" class="nav-link">Concept</a>
-    <a href="{{ path('app_tarifs') }}" class="nav-link">Tarifs</a>
+    <div class="mobile-nav-group">
+      <span class="mobile-nav-label">Tarifs</span>
+      <a href="{{ path('app_tarifs') }}#coaching" class="mobile-nav-sub"><i class="ti ti-moon-stars"></i> Formules Coaching</a>
+      <a href="{{ path('app_tarifs') }}#abonnements" class="mobile-nav-sub"><i class="ti ti-id-badge-2"></i> Formules Abonnement</a>
+    </div>
     <a href="{{ path('app_about') }}" class="nav-link">À propos</a>
     <a href="{{ path('app_faq') }}" class="nav-link">FAQ</a>
     <a href="{{ path('app_contact') }}" class="nav-link">Contact</a>

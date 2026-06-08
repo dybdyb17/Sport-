@@ -107,7 +107,7 @@ input[type="radio"] {
 .chip:hover {
   border-color: var(--gold-dim);
   color: var(--text);
-  background: rgba(200, 169, 81, 0.06);
+  background: rgba(var(--gold-rgb), 0.06);
 }
 
 /* Masquer la checkbox/radio native tout en la gardant accessible */
@@ -126,11 +126,11 @@ input[type="radio"] {
   border-color: var(--gold);
   color: var(--black);
   font-weight: 700;
-  box-shadow: 0 4px 14px rgba(200, 169, 81, 0.25);
+  box-shadow: 0 4px 14px rgba(var(--gold-rgb), 0.25);
 }
 
 .chip:has(input:checked):hover {
-  background: #d4b766;
+  background: #FFE08A;
 }
 
 /* Check visuel quand sélectionné */
