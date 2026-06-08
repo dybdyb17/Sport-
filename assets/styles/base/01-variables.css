@@ -1,8 +1,8 @@
 /* ── TOKENS ─────────────────────────────────────────────────── */
 :root {
   /* Couleurs accent */
-  --gold: #C8A951;
-  --gold-dim: #7A6228;
+  --gold: #FFD166;
+  --gold-dim: #C99A32;
   --green: #2ECC71;
   --green-soft: rgba(46,204,113,.4);
   --green-border: rgba(46,204,113,.35);
@@ -46,7 +46,7 @@
 
 /* ── Motion & lumière — Night Performance ─────────────────────────── */
 :root {
-  --gold-rgb: 200, 169, 81;
+  --gold-rgb: 255, 209, 102;
   --green-rgb: 46, 204, 113;
   --surface-glass: rgba(24, 24, 31, .78);
   --surface-highlight: rgba(255, 255, 255, .055);

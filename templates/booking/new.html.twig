@@ -297,43 +297,63 @@
         {# ── Choix mode de paiement (annoncé par le client) ── #}
         <div class="bk-pay-block">
           <div class="bk-pay-head">
-            <div class="bk-pay-eyebrow"><i class="ti ti-credit-card"></i> Comment paieras-tu ?</div>
-            <div class="bk-pay-help">Choisis ton mode prévu. Le coach confirmera l'encaissement après la séance.</div>
+            <div>
+              <div class="bk-pay-eyebrow"><i class="ti ti-credit-card"></i> Comment paieras-tu ?</div>
+              <div class="bk-pay-help">Indique simplement le mode prévu. Aucun paiement n'est demandé maintenant.</div>
+            </div>
+            <span class="bk-pay-secure"><i class="ti ti-shield-check"></i> Choix modifiable</span>
           </div>
+
           <div class="bk-pay-options">
-            <label class="bk-pay-chip" data-method="cash">
+            <label class="bk-pay-card" data-method="cash">
               <input type="radio" name="intended_payment_method" value="cash">
-              <i class="ti ti-cash"></i>
-              <span class="bk-pay-name">Espèces</span>
-              <span class="bk-pay-loc">Sur place, au coach</span>
+              <span class="bk-pay-icon"><i class="ti ti-cash"></i></span>
+              <span class="bk-pay-copy">
+                <strong>Espèces</strong>
+                <small>À remettre au coach sur place</small>
+              </span>
+              <span class="bk-pay-select"><i class="ti ti-check"></i></span>
             </label>
-            <label class="bk-pay-chip" data-method="card">
+
+            <label class="bk-pay-card" data-method="card">
               <input type="radio" name="intended_payment_method" value="card">
-              <i class="ti ti-credit-card"></i>
-              <span class="bk-pay-name">Carte bancaire</span>
-              <span class="bk-pay-loc">Sur place, au coach</span>
+              <span class="bk-pay-icon"><i class="ti ti-credit-card"></i></span>
+              <span class="bk-pay-copy">
+                <strong>Carte bancaire</strong>
+                <small>TPE ou paiement mobile sur place</small>
+              </span>
+              <span class="bk-pay-select"><i class="ti ti-check"></i></span>
             </label>
-            <label class="bk-pay-chip bk-pay-chip-xplor" data-method="xplor">
+
+            <label class="bk-pay-card bk-pay-card-xplor" data-method="xplor">
               <input type="radio" name="intended_payment_method" value="xplor">
-              <i class="ti ti-leaf"></i>
-              <span class="bk-pay-name">Xplor Active</span>
-              <span class="bk-pay-loc">En ligne, depuis ton espace</span>
+              <span class="bk-pay-icon"><i class="ti ti-device-mobile-dollar"></i></span>
+              <span class="bk-pay-copy">
+                <strong>Xplor Active</strong>
+                <small>Paiement sécurisé depuis ton espace</small>
+              </span>
+              <span class="bk-pay-online">En ligne</span>
+              <span class="bk-pay-select"><i class="ti ti-check"></i></span>
             </label>
           </div>
-          <div class="bk-pay-info bk-pay-info-cash" data-show-for="cash" hidden>
+
+          <div class="bk-pay-info" data-show-for="cash" hidden>
             <i class="ti ti-info-circle"></i>
-            Pense à prévoir le montant exact si possible. Le coach te remet un reçu si tu le demandes.
+            <span>Pense à prévoir le montant exact si possible. Le coach pourra te remettre un reçu.</span>
           </div>
-          <div class="bk-pay-info bk-pay-info-card" data-show-for="card" hidden>
+          <div class="bk-pay-info" data-show-for="card" hidden>
             <i class="ti ti-info-circle"></i>
-            Paiement directement auprès du coach à la fin de la séance (TPE ou paiement mobile).
+            <span>Le règlement se fera directement auprès du coach à la fin de la séance.</span>
           </div>
           <div class="bk-pay-info bk-pay-info-xplor" data-show-for="xplor" hidden>
-            <i class="ti ti-leaf"></i>
-            Tu paieras cette séance depuis ton <strong>espace Xplor Active</strong> (lié au Deciplus SPORT+, paiement sécurisé via Paylib). Présente ta carte ou ton QR au coach à l'arrivée.
-            <div style="margin-top:10px;padding:10px 12px;background:rgba(200,169,81,.08);border-left:2px solid var(--gold);border-radius:6px;font-size:12.5px;line-height:1.5;color:var(--text-soft);">
-              <i class="ti ti-lock" style="color:var(--gold);margin-right:4px;"></i>
-              <strong style="color:var(--white);">Important :</strong> le lien de paiement ne sera actif qu'<strong>après confirmation du coach</strong>. Tu seras notifié dès qu'il valide ta séance.
+            <i class="ti ti-device-mobile-dollar"></i>
+            <div>
+              <strong>Paiement Xplor Active</strong>
+              <p>Après validation du coach, ton lien sécurisé apparaîtra dans ton espace SPORT+. Tu pourras alors régler en ligne via Xplor/Deciplus.</p>
+              <div class="bk-pay-important">
+                <i class="ti ti-lock"></i>
+                <span><strong>Important :</strong> le lien ne devient actif qu'après confirmation de la séance.</span>
+              </div>
             </div>
           </div>
         </div>

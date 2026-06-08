@@ -14,8 +14,8 @@
   inset: 0;
   z-index: 0;
   background:
-    radial-gradient(ellipse 50% 40% at 80% 20%, rgba(200,169,81,.06) 0%, transparent 60%),
-    radial-gradient(ellipse 40% 40% at 20% 80%, rgba(200,169,81,.04) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 40% at 80% 20%, rgba(var(--gold-rgb),.06) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 40% at 20% 80%, rgba(var(--gold-rgb),.04) 0%, transparent 60%),
     radial-gradient(ellipse 30% 20% at 50% 30%, rgba(46,204,113,.015) 0%, transparent 60%);
 }
 
@@ -39,8 +39,8 @@
   display: inline-flex;
   align-items: center;
   padding: 8px 18px;
-  background: rgba(200,169,81,.1);
-  border: 1px solid rgba(200,169,81,.3);
+  background: rgba(var(--gold-rgb),.1);
+  border: 1px solid rgba(var(--gold-rgb),.3);
   border-radius: 100px;
   color: var(--gold);
   font-family: 'Barlow Condensed', sans-serif;
@@ -130,8 +130,8 @@
   width: 48px;
   height: 48px;
   border-radius: 50%;
-  background: rgba(200,169,81,.1);
-  border: 1px solid rgba(200,169,81,.2);
+  background: rgba(var(--gold-rgb),.1);
+  border: 1px solid rgba(var(--gold-rgb),.2);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -166,7 +166,7 @@
 /* ── BODY : gradient subtil pour donner de la profondeur ───────────────── */
 body {
   background:
-    radial-gradient(ellipse 80% 40% at 50% 0%, rgba(200,169,81,.04) 0%, transparent 60%),
+    radial-gradient(ellipse 80% 40% at 50% 0%, rgba(var(--gold-rgb),.04) 0%, transparent 60%),
     radial-gradient(ellipse 60% 50% at 100% 50%, rgba(46,204,113,.025) 0%, transparent 60%),
     var(--bg);
   background-attachment: fixed;
@@ -183,7 +183,7 @@ body {
 .club-gallery-section {
   padding: 80px 0;
   background:
-    linear-gradient(180deg, transparent 0%, rgba(200,169,81,.03) 50%, transparent 100%),
+    linear-gradient(180deg, transparent 0%, rgba(var(--gold-rgb),.03) 50%, transparent 100%),
     var(--bg);
 }
 
@@ -500,7 +500,7 @@ body {
 }
 
 .hero-title .gold {
-  background: linear-gradient(120deg, #a88734 0%, #f2dc91 46%, var(--gold) 100%);
+  background: linear-gradient(120deg, #D99E2B 0%, #FFE8A6 46%, var(--gold) 100%);
   background-clip: text;
   -webkit-background-clip: text;
   color: transparent;

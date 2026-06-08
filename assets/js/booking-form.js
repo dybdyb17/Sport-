@@ -393,15 +393,23 @@
 // ── Choix mode de paiement (étape 4) : afficher l'info contextuelle
 (function() {
   document.addEventListener('DOMContentLoaded', function() {
-    var radios = document.querySelectorAll('.bk-pay-chip input[type="radio"]');
+    var radios = document.querySelectorAll('.bk-pay-card input[type="radio"]');
     var infos  = document.querySelectorAll('.bk-pay-info');
-    radios.forEach(function(r) {
-      r.addEventListener('change', function() {
-        infos.forEach(function(info) {
-          info.hidden = (info.dataset.showFor !== r.value);
-        });
+
+    function syncPaymentInfo(value) {
+      infos.forEach(function(info) {
+        info.hidden = (info.dataset.showFor !== value);
+      });
+    }
+
+    radios.forEach(function(radio) {
+      radio.addEventListener('change', function() {
+        syncPaymentInfo(radio.value);
       });
     });
+
+    var selectedPayment = document.querySelector('.bk-pay-card input[type="radio"]:checked');
+    if (selectedPayment) syncPaymentInfo(selectedPayment.value);
   });
 })();
 

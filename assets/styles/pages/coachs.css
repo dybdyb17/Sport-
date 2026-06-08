@@ -21,7 +21,7 @@
   width: 80px;
   height: 80px;
   border-radius: 50%;
-  background: linear-gradient(135deg, rgba(200,169,81,.2), rgba(200,169,81,.05));
+  background: linear-gradient(135deg, rgba(var(--gold-rgb),.2), rgba(var(--gold-rgb),.05));
   border: 1px solid var(--gold-dim);
   display: flex;
   align-items: center;
@@ -121,7 +121,7 @@
   font-size: 64px;
   font-weight: 900;
   color: var(--gold);
-  background: linear-gradient(135deg, rgba(200,169,81,.1) 0%, rgba(200,169,81,.03) 100%);
+  background: linear-gradient(135deg, rgba(var(--gold-rgb),.1) 0%, rgba(var(--gold-rgb),.03) 100%);
   letter-spacing: -2px;
 }
 
@@ -223,8 +223,8 @@
 .coach-pro-chip {
   display: inline-block;
   padding: 4px 12px;
-  background: rgba(200,169,81,.1);
-  border: 1px solid rgba(200,169,81,.25);
+  background: rgba(var(--gold-rgb),.1);
+  border: 1px solid rgba(var(--gold-rgb),.25);
   border-radius: 100px;
   font-size: 12px;
   font-weight: 600;
@@ -261,7 +261,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, rgba(200,169,81,.2), rgba(200,169,81,.05));
+  background: linear-gradient(135deg, rgba(var(--gold-rgb),.2), rgba(var(--gold-rgb),.05));
   border-color: var(--gold-dim);
   color: var(--gold);
   font-family: 'Barlow Condensed', sans-serif;

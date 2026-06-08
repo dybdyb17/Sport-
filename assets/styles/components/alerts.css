@@ -23,7 +23,7 @@
 }
 
 .alert-info {
-  background: rgba(200,169,81,.08);
-  border-color: rgba(200,169,81,.2);
+  background: rgba(var(--gold-rgb),.08);
+  border-color: rgba(var(--gold-rgb),.2);
   color: var(--gold);
 }

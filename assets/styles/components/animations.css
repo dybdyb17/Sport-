@@ -73,7 +73,7 @@ html { scroll-behavior: smooth; }
   transform: translateY(20px);
   transition: opacity .3s, transform .3s, visibility .3s, box-shadow .25s;
   z-index: 100;
-  box-shadow: 0 8px 24px rgba(200,169,81,.4);
+  box-shadow: 0 8px 24px rgba(var(--gold-rgb),.4);
 }
 .scroll-top.is-visible {
   opacity: 1;
@@ -82,7 +82,7 @@ html { scroll-behavior: smooth; }
 }
 .scroll-top:hover {
   transform: translateY(-4px);
-  box-shadow: 0 14px 32px rgba(200,169,81,.55), 0 0 24px rgba(46,204,113,.2);
+  box-shadow: 0 14px 32px rgba(var(--gold-rgb),.55), 0 0 24px rgba(46,204,113,.2);
 }
 
 @media (max-width: 640px) {
@@ -162,7 +162,7 @@ html { scroll-behavior: smooth; }
   width: 0%;
   z-index: 999;
   transition: width .1s ease-out;
-  box-shadow: 0 0 8px rgba(200,169,81,.5);
+  box-shadow: 0 0 8px rgba(var(--gold-rgb),.5);
 }
 
 /* ── Shine effect sur boutons primary au hover ────────────────────────── */
