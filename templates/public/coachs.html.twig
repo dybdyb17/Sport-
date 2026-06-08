@@ -77,11 +77,11 @@
 
       <div class="coach-pro-grid coach-team-grid" data-stagger data-animate="fade-up">
         {% for coach in coaches %}
-          {% set coachPhoto = coach.photoSrc %}
           {% set isLive = coach.availableTonightNow %}
           <article class="coach-pro-card coach-team-card {{ isLive ? 'coach-pro-card-live coach-team-card-live' : '' }}">
 
             {# Photo ou avatar initiales #}
+            {% set coachPhoto = coach.photoSrc %}
             <div class="coach-pro-photo-wrap coach-team-photo-wrap">
               {% if coachPhoto %}
                 <img src="{{ coachPhoto }}"
