@@ -29,6 +29,12 @@
   margin: 0 auto;
   line-height: 1.6;
 }
+.bk-step-dot.is-done .bk-step-name { color: var(--green); }
+.bk-step-dot.is-done .bk-step-num::before {
+  content: '\2713'; /* check */
+}
+.bk-step-dot.is-done .bk-step-num { font-size: 0; }
+.bk-step-dot.is-done .bk-step-num::before { font-size: 18px; }
 
 /* ── Stepper ──────────────────────────────────────────────────────────── */
 .bk-stepper {
@@ -314,6 +320,14 @@
   text-transform: uppercase;
   padding: 3px 8px;
   border-radius: 100px;
+  white-space: nowrap;
+}
+
+/* ── Étape 4 : champs détails ──────────────────────────────────────────── */
+.bk-detail-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
 }
 .bk-tag-base      { background: rgba(255,255,255,.08); color: var(--text-soft); }
 .bk-tag-night     { background: rgba(46,204,113,.15); color: var(--green); }
@@ -564,6 +578,20 @@
 @media (max-width: 1024px) {
   .bk-sidebar { position: static; }
 }
+.bk-process-step strong {
+  display: block;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--white);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.bk-process-step span {
+  font-size: 12px;
+  color: var(--text-soft);
+  line-height: 1.4;
+}
 
 .bk-recap {
   background: linear-gradient(180deg, var(--bg-card) 0%, var(--bg-3) 100%);
@@ -638,6 +666,7 @@
   text-align: right;
   transition: color .25s;
 }
+.bk-process-badge i { color: var(--green); font-size: 16px; flex-shrink: 0; }
 
 .bk-recap-total {
   margin-top: 18px;
@@ -1200,6 +1229,7 @@
   height: 1px;
   opacity: 0;
   pointer-events: none;
+  background: radial-gradient(circle, rgba(var(--gold-rgb), .1), transparent 68%);
 }
 
 .bk-pay-icon {
