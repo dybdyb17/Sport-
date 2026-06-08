@@ -3,7 +3,7 @@
    ════════════════════════════════════════════════════════════════════════ */
 .rdv-card {
   background: linear-gradient(135deg, var(--bg-card) 0%, var(--bg-2) 100%);
-  border: 1px solid rgba(200,169,81,.25);
+  border: 1px solid rgba(var(--gold-rgb),.25);
   border-radius: var(--radius-lg);
   padding: 32px 28px;
   position: relative; overflow: hidden;
@@ -65,7 +65,7 @@
 .rdv-pay {
   margin-top: 8px;
   padding: 18px 20px;
-  background: linear-gradient(180deg, rgba(200,169,81,.04) 0%, var(--bg-2) 100%);
+  background: linear-gradient(180deg, rgba(var(--gold-rgb),.04) 0%, var(--bg-2) 100%);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
 }
@@ -112,9 +112,9 @@
   border: 1px solid rgba(255,180,80,.3);
 }
 .rdv-pay-status-todo {
-  background: rgba(200,169,81,.10);
+  background: rgba(var(--gold-rgb),.10);
   color: var(--gold);
-  border: 1px solid rgba(200,169,81,.3);
+  border: 1px solid rgba(var(--gold-rgb),.3);
 }
 
 .rdv-pay-chip {
@@ -141,8 +141,8 @@
   margin-top: 2px;
 }
 .rdv-pay-chip-gold {
-  border-color: rgba(200,169,81,.4);
-  background: rgba(200,169,81,.06);
+  border-color: rgba(var(--gold-rgb),.4);
+  background: rgba(var(--gold-rgb),.06);
 }
 .rdv-pay-chip-gold i { color: var(--gold); }
 .rdv-pay-chip-green {
@@ -264,7 +264,7 @@
 .rdv-qr-declare-btn:hover {
   border-color: var(--gold);
   color: var(--gold);
-  background: rgba(200,169,81,.05);
+  background: rgba(var(--gold-rgb),.05);
 }
 
 /* ── Bloc refus avec motif coach ── */
@@ -317,7 +317,7 @@
 }
 .rdv-refusal-cta:hover {
   transform: translateY(-1px);
-  box-shadow: 0 8px 22px rgba(200,169,81,.35);
+  box-shadow: 0 8px 22px rgba(var(--gold-rgb),.35);
 }
 
 @media (max-width: 480px) {

@@ -223,12 +223,12 @@
   width: 100%;
   justify-content: center;
   animation: infoSlideIn .4s ease .6s both;
-  box-shadow: 0 8px 24px rgba(200,169,81,.3);
+  box-shadow: 0 8px 24px rgba(var(--gold-rgb),.3);
 }
 
 .formule-modal-cta:hover {
   transform: translateY(-2px);
-  box-shadow: 0 12px 32px rgba(200,169,81,.4), 0 4px 16px rgba(46,204,113,.2);
+  box-shadow: 0 12px 32px rgba(var(--gold-rgb),.4), 0 4px 16px rgba(46,204,113,.2);
 }
 
 .formule-modal-hint {
@@ -331,7 +331,7 @@
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   padding: 36px;
-  box-shadow: 0 40px 100px rgba(0,0,0,.8), 0 0 80px rgba(200,169,81,.08);
+  box-shadow: 0 40px 100px rgba(0,0,0,.8), 0 0 80px rgba(var(--gold-rgb),.08);
   animation: modalSlideUp .4s cubic-bezier(.2, .8, .2, 1);
 }
 
@@ -441,7 +441,7 @@
 }
 .start-path-gold:hover {
   border-color: var(--gold);
-  box-shadow: 0 16px 40px rgba(200,169,81,.2);
+  box-shadow: 0 16px 40px rgba(var(--gold-rgb),.2);
 }
 .start-path-gold .start-path-tag,
 .start-path-gold .start-path-cta { color: var(--gold); }
@@ -461,7 +461,7 @@
   color: var(--green);
 }
 .start-path-gold .start-path-icon {
-  background: rgba(200,169,81,.12);
+  background: rgba(var(--gold-rgb),.12);
   color: var(--gold);
 }
 .start-path-body { display: flex; flex-direction: column; gap: 8px; }
