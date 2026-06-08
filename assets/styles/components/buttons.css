@@ -83,3 +83,57 @@
   width: 100%;
   justify-content: center;
 }
+
+/* ── Night Performance : interactions globales ───────────────────── */
+.btn {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  transform: translateZ(0);
+  transition:
+    transform var(--motion-fast) var(--ease-snap),
+    box-shadow var(--motion-base) var(--ease-performance),
+    background var(--motion-fast) ease,
+    border-color var(--motion-fast) ease,
+    color var(--motion-fast) ease;
+}
+
+.btn::after {
+  content: '';
+  position: absolute;
+  inset: auto 14% -1px;
+  height: 1px;
+  z-index: -1;
+  opacity: 0;
+  background: linear-gradient(90deg, transparent, currentColor, transparent);
+  transition: opacity var(--motion-fast) ease, inset var(--motion-base) var(--ease-snap);
+}
+
+.btn:hover::after,
+.btn:focus-visible::after {
+  inset-inline: 6%;
+  opacity: .45;
+}
+
+.btn:active {
+  transform: translateY(0) scale(.975);
+}
+
+.btn i {
+  transition: transform var(--motion-fast) var(--ease-snap);
+}
+
+.btn:hover i {
+  transform: translateX(2px) scale(1.06);
+}
+
+.btn-primary {
+  background-image: linear-gradient(120deg, #b9973d 0%, var(--gold) 44%, #e3c976 100%);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.25), 0 8px 24px rgba(var(--gold-rgb), .12);
+}
+
+.btn-secondary,
+.btn-outline {
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}

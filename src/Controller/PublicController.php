@@ -16,8 +16,34 @@ class PublicController extends AbstractController
     #[Route('/coachs', name: 'app_coachs_list', methods: ['GET'])]
     public function coachs(CoachRepository $repo): Response
     {
+        $coaches = $repo->findAllWithUser();
+
+        usort($coaches, static function ($a, $b): int {
+            return (int) $b->isAvailableTonightNow() <=> (int) $a->isAvailableTonightNow();
+        });
+
+        $availableTonightCount = 0;
+        $onlineCount = 0;
+        $specialties = [];
+
+        foreach ($coaches as $coach) {
+            if ($coach->isAvailableTonightNow()) {
+                ++$availableTonightCount;
+            }
+            if ($coach->isOnline()) {
+                ++$onlineCount;
+            }
+            foreach ($coach->getSpecialties() as $specialty) {
+                $specialties[$specialty] = ucfirst((string) $specialty);
+            }
+        }
+        asort($specialties);
+
         return $this->render('public/coachs.html.twig', [
-            'coaches' => $repo->findAllWithUser(),
+            'coaches'                => $coaches,
+            'availableTonightCount' => $availableTonightCount,
+            'onlineCount'           => $onlineCount,
+            'specialties'           => $specialties,
         ]);
     }
 
