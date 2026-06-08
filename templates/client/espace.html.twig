@@ -223,7 +223,7 @@
                 <i class="ti ti-qrcode"></i> QR
               </a>
               {% if booking.status == 'confirmed' and booking.intendedPaymentMethod == 'xplor' and not booking.paymentMethod %}
-                <a href="{{ path('app_deciplus') }}" class="action-btn action-btn--confirm" style="background:var(--green);color:var(--black);">
+                <a href="{{ path('app_booking_pay_xplor', {ref: booking.reference}) }}" class="action-btn action-btn--confirm" style="background:var(--green);color:var(--black);">
                   <i class="ti ti-leaf"></i> Régler Xplor
                 </a>
               {% endif %}
