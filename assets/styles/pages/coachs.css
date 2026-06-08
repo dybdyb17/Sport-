@@ -239,6 +239,80 @@
   margin-top: auto;
 }
 
+/* ── Admin coachs : tableau propre même avec bios longues ───────────── */
+.admin-coach-cell {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 180px;
+}
+
+.admin-coach-avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid var(--border);
+  flex-shrink: 0;
+  background: var(--bg-3);
+}
+
+.admin-coach-avatar-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, rgba(200,169,81,.2), rgba(200,169,81,.05));
+  border-color: var(--gold-dim);
+  color: var(--gold);
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.admin-coach-name {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 800;
+  letter-spacing: .4px;
+  white-space: normal;
+}
+
+.admin-coach-email,
+.admin-coach-specialties,
+.admin-coach-bio {
+  color: var(--text-dim);
+}
+
+.admin-coach-specialties {
+  max-width: 180px;
+  font-style: italic;
+  line-height: 1.45;
+}
+
+.admin-coach-bio {
+  max-width: 320px;
+  min-width: 220px;
+  font-size: 13px;
+  line-height: 1.55;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: normal;
+}
+
+.admin-empty-value {
+  opacity: .45;
+  font-size: 12px;
+}
+
+
+/* Responsive du tableau admin ajouté séparément pour ne pas modifier
+   le bloc mobile historique des cartes coachs. */
+@media (max-width: 640px) {
+  .admin-coach-bio {
+    min-width: 180px;
+    max-width: 240px;
+  }
+}
+
 @media (max-width: 640px) {
   .coach-pro-grid { grid-template-columns: 1fr; gap: 20px; }
   .coach-pro-photo-wrap { aspect-ratio: 3 / 2; }

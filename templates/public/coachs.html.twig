@@ -31,9 +31,10 @@
           <div class="coach-pro-card {{ coach.availableTonightNow ? 'coach-pro-card-live' : '' }}">
 
             {# Photo ou avatar initiales #}
+            {% set coachPhoto = coach.photoSrc %}
             <div class="coach-pro-photo-wrap">
-              {% if coach.photoFilename %}
-                <img src="{{ asset('img/coaches/' ~ coach.photoFilename) }}"
+              {% if coachPhoto %}
+                <img src="{{ coachPhoto }}"
                      alt="{{ coach.nomComplet }}"
                      class="coach-pro-photo">
               {% else %}
