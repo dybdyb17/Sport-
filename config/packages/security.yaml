@@ -36,7 +36,7 @@ security:
     access_control:
         - { path: ^/login, roles: PUBLIC_ACCESS }
         - { path: ^/register, roles: PUBLIC_ACCESS }
-        - { path: ^/coach, roles: ROLE_COACH }
+        - { path: ^/coach(/|$), roles: ROLE_COACH }
         - { path: ^/admin, roles: ROLE_ADMIN }
         - { path: ^/reservation, roles: ROLE_CLIENT }
 
