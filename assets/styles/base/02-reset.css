@@ -47,3 +47,46 @@ main {
   position: relative;
   z-index: 1;
 }
+
+/* ── Atmosphère Night Performance ─────────────────────────────────── */
+body {
+  isolation: isolate;
+  overflow-x: hidden;
+}
+
+body::before {
+  animation: ambientDrift 18s ease-in-out infinite alternate;
+  transform: translate3d(calc(var(--ambient-x, 0) * 1px), calc(var(--ambient-y, 0) * 1px), 0);
+  transition: transform 1.2s var(--ease-performance);
+}
+
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: .24;
+  background-image:
+    linear-gradient(rgba(255,255,255,.018) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.014) 1px, transparent 1px);
+  background-size: 72px 72px;
+  mask-image: linear-gradient(to bottom, rgba(0,0,0,.7), transparent 78%);
+  -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,.7), transparent 78%);
+}
+
+::selection {
+  color: var(--black);
+  background: var(--gold);
+}
+
+:focus-visible {
+  outline: 2px solid var(--green);
+  outline-offset: 4px;
+  box-shadow: 0 0 0 5px rgba(var(--green-rgb), .14);
+}
+
+@keyframes ambientDrift {
+  0% { background-position: 0 0, 0 0, 0 0; }
+  100% { background-position: 30px -18px, -24px 24px, 12px 10px; }
+}

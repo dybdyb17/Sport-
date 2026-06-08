@@ -150,21 +150,31 @@ class AdminCoachController extends AbstractController
             return;
         }
 
-        // Supprimer l'ancienne photo
+        $content = file_get_contents($file->getPathname());
+        if (false !== $content) {
+            $coach->setPhotoData(base64_encode($content));
+            $coach->setPhotoMimeType($file->getMimeType() ?: 'image/jpeg');
+        }
+
+        // Garder aussi une copie dans public/img/coaches quand le disque est persistant
+        // ou en local. En production Railway, la source fiable reste la BDD ci-dessus.
+        $uploadDir = $this->getParameter('kernel.project_dir') . '/public/img/coaches';
+        if (!is_dir($uploadDir)) {
+            mkdir($uploadDir, 0775, true);
+        }
+
+        // Supprimer l'ancienne copie locale si elle existe.
         if ($coach->getPhotoFilename()) {
-            $oldPath = $this->getParameter('kernel.project_dir') . '/public/img/coaches/' . $coach->getPhotoFilename();
-            if (file_exists($oldPath)) {
+            $oldPath = $uploadDir . '/' . $coach->getPhotoFilename();
+            if (is_file($oldPath)) {
                 unlink($oldPath);
             }
         }
 
         $safeNom  = $slugger->slug($coach->getNomComplet() ?? 'coach');
-        $filename = $safeNom . '-' . uniqid() . '.' . $file->guessExtension();
+        $filename = strtolower($safeNom . '-' . uniqid() . '.' . ($file->guessExtension() ?: 'jpg'));
 
-        $file->move(
-            $this->getParameter('kernel.project_dir') . '/public/img/coaches',
-            $filename
-        );
+        $file->move($uploadDir, $filename);
 
         $coach->setPhotoFilename($filename);
         $em->flush();
