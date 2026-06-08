@@ -389,3 +389,114 @@
     if (e.key === 'Escape' && !modal.hidden) closeModal();
   });
 })();
+
+// ── Choix mode de paiement (étape 4) : afficher l'info contextuelle
+(function() {
+  document.addEventListener('DOMContentLoaded', function() {
+    var radios = document.querySelectorAll('.bk-pay-card input[type="radio"]');
+    var infos  = document.querySelectorAll('.bk-pay-info');
+
+    function syncPaymentInfo(value) {
+      infos.forEach(function(info) {
+        info.hidden = (info.dataset.showFor !== value);
+      });
+    }
+
+    radios.forEach(function(radio) {
+      radio.addEventListener('change', function() {
+        syncPaymentInfo(radio.value);
+      });
+    });
+
+    var selectedPayment = document.querySelector('.bk-pay-card input[type="radio"]:checked');
+    if (selectedPayment) syncPaymentInfo(selectedPayment.value);
+  });
+})();
+
+// ── Stepper visuel : marque les étapes complétées au scroll
+(function() {
+  document.addEventListener('DOMContentLoaded', function() {
+    var steps = document.querySelectorAll('.bk-step-dot');
+    var sections = ['step-1', 'step-2', 'step-3', 'step-4'];
+    var cards = sections.map(function(id) { return document.getElementById(id); });
+    var progressFill = document.getElementById('bk-step-progress-fill');
+    var recapStep = document.getElementById('bk-recap-step');
+    var mobilePrice = document.getElementById('bk-mobile-price');
+    var mobileAction = document.getElementById('bk-mobile-action');
+    var currentStep = 0;
+
+    // Active une étape au clic
+    steps.forEach(function(dot) {
+      function goToStep() {
+        var target = document.getElementById(dot.dataset.target);
+        if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+      dot.addEventListener('click', goToStep);
+      dot.addEventListener('keydown', function(event) {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          goToStep();
+        }
+      });
+    });
+
+    // Marque les étapes au scroll
+    function updateStepper() {
+      var scrollY = window.scrollY + window.innerHeight * 0.4;
+      var lastVisible = 0;
+      sections.forEach(function(id, idx) {
+        var el = document.getElementById(id);
+        if (el && el.offsetTop <= scrollY) lastVisible = idx;
+      });
+      currentStep = lastVisible;
+      steps.forEach(function(dot, idx) {
+        dot.classList.toggle('is-active', idx === lastVisible);
+        dot.classList.toggle('is-done', idx < lastVisible);
+        dot.setAttribute('aria-current', idx === lastVisible ? 'step' : 'false');
+      });
+      cards.forEach(function(card, idx) {
+        if (!card) return;
+        card.classList.toggle('is-current', idx === lastVisible);
+        card.classList.toggle('is-complete', idx < lastVisible);
+      });
+      if (progressFill) progressFill.style.width = (lastVisible / (sections.length - 1) * 100) + '%';
+      if (recapStep) recapStep.textContent = 'Étape ' + (lastVisible + 1) + '/' + sections.length;
+      if (mobileAction) {
+        mobileAction.innerHTML = lastVisible === sections.length - 1
+          ? 'Finaliser <i class="ti ti-arrow-right"></i>'
+          : 'Continuer <i class="ti ti-arrow-down"></i>';
+      }
+    }
+
+    window.addEventListener('scroll', updateStepper, { passive: true });
+    updateStepper();
+
+    // Pulse le récap quand une valeur change
+    var recap = document.getElementById('bk-recap');
+    var sumPrice = document.getElementById('sum-price');
+    var observer = new MutationObserver(function() {
+      if (recap) {
+        recap.classList.remove('is-pulse');
+        void recap.offsetWidth;
+        recap.classList.add('is-pulse');
+      }
+      if (mobilePrice && sumPrice) mobilePrice.textContent = sumPrice.textContent;
+    });
+    document.querySelectorAll('#sum-format,#sum-slot,#sum-pack,#sum-fullaccess,#sum-price').forEach(function(el) {
+      observer.observe(el, { childList: true, characterData: true, subtree: true });
+    });
+
+    if (mobilePrice && sumPrice) mobilePrice.textContent = sumPrice.textContent;
+    if (mobileAction) {
+      mobileAction.addEventListener('click', function() {
+        if (currentStep < sections.length - 1) {
+          var next = cards[currentStep + 1];
+          if (next) next.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          return;
+        }
+        var submit = document.querySelector('#booking-form .bk-submit');
+        if (submit) submit.click();
+      });
+    }
+  });
+})();

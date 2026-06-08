@@ -77,7 +77,7 @@ class AdminCoachType extends AbstractType
                 ],
             ])
             ->add('photoFile', FileType::class, [
-                'label'    => 'Photo de profil (JPEG/PNG, max 2 Mo)',
+                'label'    => 'Photo de profil (JPEG/PNG/WebP, max 2 Mo — conservée après redéploiement)',
                 'required' => false,
                 'mapped'   => false,
                 'constraints' => [

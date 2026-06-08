@@ -4,31 +4,87 @@
 {% block meta_description %}<meta name="description" content="Rencontrez les coachs SPORT+ Marseille : experts certifiés, disponibles de jour comme de nuit pour un coaching personnalisé en salle privative.">{% endblock %}
 
 {% block body %}
+{% set primaryBookingPath = app.user ? path('app_booking_new') : path('app_register') %}
+{% set coachBookingPath = app.user ? path('app_booking_new') : path('app_login') %}
 
-<section class="pub-hero-sober">
-  <div class="container">
-    <div class="hero-badge">L'équipe</div>
-    <h1 class="section-title">Nos <span style="color:var(--gold)">Coachs</span></h1>
-    <p class="section-sub">Des professionnels certifiés, disponibles 24h/24 pour t'accompagner vers tes objectifs.</p>
+<section class="coach-page-hero">
+  <div class="coach-page-orb coach-page-orb-gold" aria-hidden="true"></div>
+  <div class="coach-page-orb coach-page-orb-green" aria-hidden="true"></div>
+  <div class="container coach-page-hero-inner">
+    <div class="coach-page-hero-copy" data-animate="fade-up">
+      <div class="hero-badge">L'équipe SPORT+</div>
+      <h1 class="section-title">Choisis ton <span class="coach-page-accent">coach</span></h1>
+      <p class="section-sub">Des professionnels certifiés, disponibles de jour comme de nuit pour t'accompagner vers tes objectifs.</p>
+      <div class="coach-page-hero-actions">
+        <a href="{{ primaryBookingPath }}" class="btn btn-primary btn-lg">
+          <i class="ti ti-calendar-plus"></i> Réserver une séance
+        </a>
+        <a href="{{ path('app_tarifs') }}" class="btn btn-secondary btn-lg">
+          Voir les tarifs
+        </a>
+      </div>
+    </div>
+
+    <div class="coach-page-stats" data-stagger data-animate="fade-left" aria-label="Statistiques coachs SPORT+">
+      <div class="coach-page-stat">
+        <strong>{{ coaches|length }}</strong>
+        <span>Coach{% if coaches|length > 1 %}s{% endif %} SPORT+</span>
+      </div>
+      <div class="coach-page-stat coach-page-stat-live">
+        <strong>{{ availableTonightCount }}</strong>
+        <span>Disponible{% if availableTonightCount > 1 %}s{% endif %} cette nuit</span>
+      </div>
+      <div class="coach-page-stat">
+        <strong>{{ onlineCount }}</strong>
+        <span>Connecté{% if onlineCount > 1 %}s{% endif %} récemment</span>
+      </div>
+    </div>
   </div>
 </section>
 
-<section class="section" style="padding-top:0;">
+<section class="section coach-page-section" style="padding-top:0;">
   <div class="container">
     {% if coaches is empty %}
-      <div class="empty-placeholder">
+      <div class="empty-placeholder coach-empty-state">
         <i class="ti ti-users" style="font-size:48px;display:block;margin-bottom:16px;opacity:.3;"></i>
         Aucun coach disponible pour le moment.
       </div>
     {% else %}
-      <div class="coach-pro-grid" data-stagger data-animate="fade-up">
+      <div class="coach-team-toolbar" data-animate="fade-up">
+        <div class="coach-availability-note">
+          <i class="ti ti-moon-stars"></i>
+          Les coachs marqués <strong>en ligne cette nuit</strong> ont activé leur disponibilité Night Coach.
+        </div>
+
+        {% if specialties is not empty %}
+          <div class="coach-specialty-cloud" aria-label="Spécialités disponibles">
+            <span>Spécialités</span>
+            {% for specialty in specialties %}
+              <span class="coach-specialty-pill">{{ specialty }}</span>
+            {% endfor %}
+          </div>
+        {% endif %}
+      </div>
+
+      {% if availableTonightCount > 0 %}
+        <div class="coach-live-strip" data-animate="fade-up">
+          <span class="coach-live-strip-dot"></span>
+          <strong>{{ availableTonightCount }} coach{% if availableTonightCount > 1 %}s{% endif %}</strong>
+          prêt{% if availableTonightCount > 1 %}s{% endif %} pour le Night Coach maintenant.
+          <a href="{{ primaryBookingPath }}">Réserver →</a>
+        </div>
+      {% endif %}
+
+      <div class="coach-pro-grid coach-team-grid" data-stagger data-animate="fade-up">
         {% for coach in coaches %}
-          <div class="coach-pro-card">
+          {% set isLive = coach.availableTonightNow %}
+          <article class="coach-pro-card coach-team-card {{ isLive ? 'coach-pro-card-live coach-team-card-live' : '' }}">
 
             {# Photo ou avatar initiales #}
-            <div class="coach-pro-photo-wrap">
-              {% if coach.photoFilename %}
-                <img src="{{ asset('img/coaches/' ~ coach.photoFilename) }}"
+            {% set coachPhoto = coach.photoSrc %}
+            <div class="coach-pro-photo-wrap coach-team-photo-wrap">
+              {% if coachPhoto %}
+                <img src="{{ coachPhoto }}"
                      alt="{{ coach.nomComplet }}"
                      class="coach-pro-photo">
               {% else %}
@@ -37,14 +93,37 @@
                   {{- words[0]|first|upper -}}{%- if words|length > 1 -%}{{- words[1]|first|upper -}}{%- endif -%}
                 </div>
               {% endif %}
+
+              <div class="coach-photo-gradient"></div>
+              <div class="coach-team-photo-badges">
+                {% if isLive %}
+                  <span class="coach-pro-status coach-pro-status-live">
+                    <span class="coach-pro-status-dot"></span> En ligne cette nuit
+                  </span>
+                {% elseif coach.online %}
+                  <span class="coach-pro-status">
+                    <span class="coach-pro-status-dot"></span> Connecté récemment
+                  </span>
+                {% else %}
+                  <span class="coach-pro-status coach-pro-status-muted">
+                    <span class="coach-pro-status-dot"></span> Sur demande
+                  </span>
+                {% endif %}
+              </div>
             </div>
 
-            {# Infos #}
-            <div class="coach-pro-body">
-              <div class="coach-pro-name">{{ coach.nomComplet }}</div>
+            <div class="coach-pro-body coach-team-body">
+              <div class="coach-pro-topline">
+                <div>
+                  <div class="coach-pro-name">{{ coach.nomComplet }}</div>
+                  <div class="coach-team-role">Coach SPORT+ · {{ coach.specialtiesLabel }}</div>
+                </div>
+              </div>
 
               {% if coach.bio %}
-                <p class="coach-pro-bio">{{ coach.bio }}</p>
+                <p class="coach-pro-bio">{{ coach.bio|striptags|slice(0,170) }}{% if coach.bio|length > 170 %}…{% endif %}</p>
+              {% else %}
+                <p class="coach-pro-bio">Coach SPORT+ disponible pour construire une séance adaptée à ton objectif et à ton rythme.</p>
               {% endif %}
 
               {% if coach.specialties is not empty %}
@@ -55,19 +134,24 @@
                 </div>
               {% endif %}
 
-              <a href="{{ app.user ? path('app_booking_new') : path('app_login') }}"
-                 class="btn btn-primary coach-pro-cta">
-                <i class="ti ti-calendar-plus"></i> Réserver une séance
-              </a>
+              <div class="coach-team-card-footer">
+                <div class="coach-team-format">
+                  <i class="ti ti-users-group"></i> Solo · Duo · Groupe
+                </div>
+                <a href="{{ coachBookingPath }}"
+                   class="btn btn-primary coach-pro-cta">
+                  <i class="ti ti-calendar-plus"></i> Réserver
+                </a>
+              </div>
 
               {% if not app.user %}
-                <p style="font-size:12px;color:var(--text-dim);text-align:center;margin-top:8px;">
+                <p class="coach-login-hint">
                   Connexion requise pour réserver
                 </p>
               {% endif %}
             </div>
 
-          </div>
+          </article>
         {% endfor %}
       </div>
     {% endif %}

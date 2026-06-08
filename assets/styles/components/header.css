@@ -215,7 +215,7 @@
 
 .user-avatar:hover {
   transform: scale(1.06);
-  box-shadow: 0 0 0 3px rgba(200,169,81,.25);
+  box-shadow: 0 0 0 3px rgba(var(--gold-rgb),.25);
 }
 
 /* Badge messagerie sur l'avatar */

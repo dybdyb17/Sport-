@@ -51,7 +51,7 @@
         <div class="rdv-qr-blocked-sub">
           Tu as choisi <strong>Xplor Active</strong>. Règle ta séance depuis ton espace Xplor — ton QR de check-in se débloquera automatiquement une fois le paiement validé côté SPORT+.
         </div>
-        <a href="{{ path('app_deciplus') }}" class="rdv-qr-blocked-cta">
+        <a href="{{ path('app_booking_pay_xplor', {ref: booking.reference}) }}" class="rdv-qr-blocked-cta">
           <i class="ti ti-external-link"></i> Régler maintenant via Xplor
         </a>
         <p style="margin-top:14px;font-size:12px;color:var(--text-dim);line-height:1.5;">
@@ -148,7 +148,7 @@
           {% endif %}
         {% elseif intent == 'xplor' %}
           {# Confirmed + Xplor → on autorise le règlement en ligne #}
-          <a href="{{ path('app_deciplus') }}" class="rdv-pay-link">
+          <a href="{{ path('app_booking_pay_xplor', {ref: booking.reference}) }}" class="rdv-pay-link">
             <i class="ti ti-external-link"></i> Régler depuis mon espace Xplor
           </a>
           <p class="rdv-pay-help">Tu peux régler maintenant depuis ton espace Xplor Active (Paylib), ou présenter ta carte au coach à l'arrivée.</p>

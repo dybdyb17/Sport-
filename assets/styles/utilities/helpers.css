@@ -157,8 +157,8 @@
 .price-summary {
   margin-top: 16px;
   padding: 16px;
-  background: rgba(200,169,81,.06);
-  border: 1px solid rgba(200,169,81,.15);
+  background: rgba(var(--gold-rgb),.06);
+  border: 1px solid rgba(var(--gold-rgb),.15);
   border-radius: var(--radius);
   font-size: 13px;
   color: var(--text-dim);

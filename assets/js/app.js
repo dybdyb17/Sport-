@@ -99,7 +99,40 @@
       card.addEventListener('mouseleave', onLeave);
     });
 
-    // ── 4. Bouton scroll-to-top ─────────────────────────────────────
+    // ── 4. Lumière interactive sur les surfaces premium ──────────────
+    // Mouvement léger uniquement avec une souris précise et si les animations
+    // ne sont pas désactivées par le système.
+    var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var precisePointer = window.matchMedia && window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+
+    if (!reduceMotion && precisePointer) {
+      var ambientFrame = null;
+      document.addEventListener('pointermove', function(e) {
+        if (ambientFrame) return;
+        ambientFrame = requestAnimationFrame(function() {
+          var x = ((e.clientX / window.innerWidth) - 0.5) * 12;
+          var y = ((e.clientY / window.innerHeight) - 0.5) * 10;
+          document.body.style.setProperty('--ambient-x', x.toFixed(2));
+          document.body.style.setProperty('--ambient-y', y.toFixed(2));
+          ambientFrame = null;
+        });
+      }, { passive: true });
+
+      document.querySelectorAll('.feature-card, .service-card, .coach-pro-card, .programme-card, .formule-card').forEach(function(card) {
+        card.addEventListener('pointermove', function(e) {
+          var rect = card.getBoundingClientRect();
+          card.style.setProperty('--card-x', (((e.clientX - rect.left) / rect.width) * 100).toFixed(1) + '%');
+          card.style.setProperty('--card-y', (((e.clientY - rect.top) / rect.height) * 100).toFixed(1) + '%');
+        });
+      });
+    }
+
+    // Les statuts Night Coach actifs gardent une pulsation discrète et lisible.
+    document.querySelectorAll('.coach-pro-status-live, .night-banner-dot').forEach(function(el) {
+      el.classList.add('performance-pulse');
+    });
+
+    // ── 5. Bouton scroll-to-top ─────────────────────────────────────
     var scrollTop = document.createElement('button');
     scrollTop.className = 'scroll-top';
     scrollTop.setAttribute('aria-label', 'Retour en haut');
@@ -110,7 +143,7 @@
       window.scrollTo({ top: 0, behavior: 'smooth' });
     });
 
-    // ── 5. Indicateur de progression scroll ─────────────────────────
+    // ── 6. Indicateur de progression scroll ─────────────────────────
     var progress = document.createElement('div');
     progress.className = 'scroll-progress';
     document.body.appendChild(progress);
