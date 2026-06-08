@@ -18,8 +18,9 @@
 <div style="max-width:800px;margin:0 auto 32px;">
 <div style="display:flex;gap:20px;align-items:center;padding:20px;
             background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);">
-  {% if coach.photoFilename %}
-    <img src="{{ asset('img/coaches/' ~ coach.photoFilename) }}"
+  {% set coachPhoto = coach.photoSrc %}
+  {% if coachPhoto %}
+    <img src="{{ coachPhoto }}"
          alt="{{ coach.nomComplet }}"
          style="width:60px;height:60px;border-radius:50%;object-fit:cover;border:2px solid var(--gold-dim);flex-shrink:0;">
   {% else %}
@@ -88,9 +89,9 @@
 
       <div class="form-field">
         {{ form_label(form.photoFile) }}
-        {% if coach.photoFilename %}
+        {% if coachPhoto %}
           <div style="margin-bottom:10px;display:flex;align-items:center;gap:12px;">
-            <img src="{{ asset('img/coaches/' ~ coach.photoFilename) }}"
+            <img src="{{ coachPhoto }}"
                  alt="Photo actuelle"
                  style="width:80px;height:80px;border-radius:10px;object-fit:cover;border:1px solid var(--border);">
             <span style="font-size:13px;color:var(--text-dim);">Photo actuelle — uploader une nouvelle pour la remplacer</span>

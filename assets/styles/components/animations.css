@@ -73,7 +73,7 @@ html { scroll-behavior: smooth; }
   transform: translateY(20px);
   transition: opacity .3s, transform .3s, visibility .3s, box-shadow .25s;
   z-index: 100;
-  box-shadow: 0 8px 24px rgba(200,169,81,.4);
+  box-shadow: 0 8px 24px rgba(var(--gold-rgb),.4);
 }
 .scroll-top.is-visible {
   opacity: 1;
@@ -82,7 +82,7 @@ html { scroll-behavior: smooth; }
 }
 .scroll-top:hover {
   transform: translateY(-4px);
-  box-shadow: 0 14px 32px rgba(200,169,81,.55), 0 0 24px rgba(46,204,113,.2);
+  box-shadow: 0 14px 32px rgba(var(--gold-rgb),.55), 0 0 24px rgba(46,204,113,.2);
 }
 
 @media (max-width: 640px) {
@@ -162,7 +162,7 @@ html { scroll-behavior: smooth; }
   width: 0%;
   z-index: 999;
   transition: width .1s ease-out;
-  box-shadow: 0 0 8px rgba(200,169,81,.5);
+  box-shadow: 0 0 8px rgba(var(--gold-rgb),.5);
 }
 
 /* ── Shine effect sur boutons primary au hover ────────────────────────── */
@@ -261,3 +261,69 @@ body {
   transform: rotate(180deg);
 }
 
+
+/* ── Night Performance : accents animés inspirés de l'entraînement ─ */
+.section-title,
+.page-header h1 {
+  text-wrap: balance;
+}
+
+.section-title::selection,
+.page-header h1::selection {
+  text-shadow: none;
+}
+
+.performance-pulse {
+  position: relative;
+}
+
+.performance-pulse::after {
+  content: '';
+  position: absolute;
+  inset: -7px;
+  border: 1px solid rgba(var(--green-rgb), .32);
+  border-radius: inherit;
+  opacity: 0;
+  animation: performancePulse 2.6s var(--ease-performance) infinite;
+  pointer-events: none;
+}
+
+@keyframes performancePulse {
+  0%, 42% { opacity: 0; transform: scale(.96); }
+  55% { opacity: .55; }
+  78%, 100% { opacity: 0; transform: scale(1.12); }
+}
+
+/* Trait d'énergie discret au-dessus des grandes sections. */
+main > section {
+  position: relative;
+}
+
+main > section:not(:first-child)::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: min(760px, 72vw);
+  height: 1px;
+  opacity: .52;
+  transform: translateX(-50%);
+  background: linear-gradient(90deg, transparent, rgba(var(--gold-rgb), .32), rgba(var(--green-rgb), .24), transparent);
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body::before,
+  .brand-plus,
+  .performance-pulse::after {
+    animation: none !important;
+    transform: none !important;
+  }
+
+  [data-animate],
+  [data-stagger] > * {
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+  }
+}

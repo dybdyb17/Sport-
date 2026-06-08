@@ -24,8 +24,10 @@
   {% endblock %}
 
   <link rel="icon" href="{{ asset('favicon.svg') }}" type="image/svg+xml">
+  {% block preload_assets %}{% endblock %}
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Barlow+Condensed:wght@500;700;900&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.11.0/dist/tabler-icons.min.css">
   {% block stylesheets %}<link rel="stylesheet" href="{{ asset('styles/sportplus.css') }}">{% endblock %}

@@ -11,35 +11,43 @@
 
 {# ── Hero pleine largeur avec progression visible ── #}
 <section class="bk-hero">
+  <div class="bk-hero-orb bk-hero-orb-gold" aria-hidden="true"></div>
+  <div class="bk-hero-orb bk-hero-orb-green" aria-hidden="true"></div>
   <div class="container">
     <div class="bk-hero-content">
       <div class="hero-badge">Réservation en 4 étapes</div>
       <h1 class="bk-hero-title">
-        Réserve ta <span style="color:var(--gold);">séance</span>
+        Réserve ta <span class="bk-accent">séance</span>
       </h1>
       <p class="bk-hero-sub">
         Tu choisis, le coach valide, tu t'entraînes. Aucun engagement, paiement uniquement si confirmé.
       </p>
+      <div class="bk-hero-trust" aria-label="Garanties de réservation">
+        <span><i class="ti ti-shield-check"></i> Aucun paiement immédiat</span>
+        <span><i class="ti ti-bolt"></i> Réponse du coach en temps réel</span>
+        <span><i class="ti ti-calendar-check"></i> Annulation jusqu'à 2h avant</span>
+      </div>
     </div>
 
     {# Stepper visible en permanence #}
-    <div class="bk-stepper" id="bk-stepper">
-      <div class="bk-step-dot is-active" data-target="step-1">
+    <div class="bk-stepper" id="bk-stepper" aria-label="Progression de la réservation">
+      <div class="bk-step-progress" aria-hidden="true"><span id="bk-step-progress-fill"></span></div>
+      <div class="bk-step-dot is-active" data-target="step-1" role="button" tabindex="0" aria-label="Aller à l’étape 1 : Format">
         <span class="bk-step-num">1</span>
         <span class="bk-step-name">Format</span>
       </div>
       <div class="bk-step-line"></div>
-      <div class="bk-step-dot" data-target="step-2">
+      <div class="bk-step-dot" data-target="step-2" role="button" tabindex="0" aria-label="Aller à l’étape 2 : Créneau">
         <span class="bk-step-num">2</span>
         <span class="bk-step-name">Créneau</span>
       </div>
       <div class="bk-step-line"></div>
-      <div class="bk-step-dot" data-target="step-3">
+      <div class="bk-step-dot" data-target="step-3" role="button" tabindex="0" aria-label="Aller à l’étape 3 : Engagement">
         <span class="bk-step-num">3</span>
         <span class="bk-step-name">Engagement</span>
       </div>
       <div class="bk-step-line"></div>
-      <div class="bk-step-dot" data-target="step-4">
+      <div class="bk-step-dot" data-target="step-4" role="button" tabindex="0" aria-label="Aller à l’étape 4 : Détails">
         <span class="bk-step-num">4</span>
         <span class="bk-step-name">Détails</span>
       </div>
@@ -47,11 +55,11 @@
   </div>
 </section>
 
-<div class="container" style="padding-bottom:80px;">
+<div class="container bk-page-container">
 
   {% for label, messages in app.flashes %}
     {% for message in messages %}
-      <div class="alert alert-{{ label }}" style="margin-bottom:20px;">{{ message }}</div>
+      <div class="alert alert-{{ label }} bk-alert">{{ message }}</div>
     {% endfor %}
   {% endfor %}
 
@@ -63,12 +71,12 @@
     <div class="bk-main">
 
       {# ── ÉTAPE 1 : Format ── #}
-      <section class="bk-card" id="step-1">
+      <section class="bk-card" id="step-1" data-step="1">
         <div class="bk-card-head">
           <div class="bk-card-num">1</div>
           <div>
             <div class="bk-card-eyebrow">Étape 1 — Format</div>
-            <h2 class="bk-card-title">Tu viens à <span style="color:var(--gold);">combien</span> ?</h2>
+            <h2 class="bk-card-title">Tu viens à <span class="bk-accent">combien</span> ?</h2>
             <p class="bk-card-sub">Solo, en duo avec un proche, ou en groupe entre amis.</p>
           </div>
         </div>
@@ -105,12 +113,12 @@
       </section>
 
       {# ── ÉTAPE 2 : Créneau ── #}
-      <section class="bk-card" id="step-2">
+      <section class="bk-card" id="step-2" data-step="2">
         <div class="bk-card-head">
           <div class="bk-card-num">2</div>
           <div>
             <div class="bk-card-eyebrow">Étape 2 — Créneau horaire</div>
-            <h2 class="bk-card-title">Tu préfères <span style="color:var(--gold);">quand</span> ?</h2>
+            <h2 class="bk-card-title">Tu préfères <span class="bk-accent">quand</span> ?</h2>
             <p class="bk-card-sub">Journée standard, ou avec une prime nocturne pour les couche-tard.</p>
           </div>
         </div>
@@ -150,12 +158,12 @@
       </section>
 
       {# ── ÉTAPE 3 : Engagement ── #}
-      <section class="bk-card" id="step-3">
+      <section class="bk-card" id="step-3" data-step="3">
         <div class="bk-card-head">
           <div class="bk-card-num">3</div>
           <div>
             <div class="bk-card-eyebrow">Étape 3 — Engagement</div>
-            <h2 class="bk-card-title">À l'<span style="color:var(--gold);">unité</span> ou en <span style="color:var(--gold);">pack</span> ?</h2>
+            <h2 class="bk-card-title">À l'<span class="bk-accent">unité</span> ou en <span class="bk-accent">pack</span> ?</h2>
             <p class="bk-card-sub">Plus tu prends de séances, plus le tarif baisse. Sans engagement dans tous les cas.</p>
           </div>
         </div>
@@ -204,12 +212,12 @@
       </section>
 
       {# ── ÉTAPE 4 : Détails ── #}
-      <section class="bk-card" id="step-4">
+      <section class="bk-card" id="step-4" data-step="4">
         <div class="bk-card-head">
           <div class="bk-card-num">4</div>
           <div>
             <div class="bk-card-eyebrow">Étape 4 — Derniers détails</div>
-            <h2 class="bk-card-title">Avec <span style="color:var(--gold);">qui</span>, <span style="color:var(--gold);">quand</span> ?</h2>
+            <h2 class="bk-card-title">Avec <span class="bk-accent">qui</span>, <span class="bk-accent">quand</span> ?</h2>
             <p class="bk-card-sub">Choisis ton coach et la date qui te convient. Optionnel : un mot pour le coach.</p>
           </div>
         </div>
@@ -289,43 +297,63 @@
         {# ── Choix mode de paiement (annoncé par le client) ── #}
         <div class="bk-pay-block">
           <div class="bk-pay-head">
-            <div class="bk-pay-eyebrow"><i class="ti ti-credit-card"></i> Comment paieras-tu ?</div>
-            <div class="bk-pay-help">Choisis ton mode prévu. Le coach confirmera l'encaissement après la séance.</div>
+            <div>
+              <div class="bk-pay-eyebrow"><i class="ti ti-credit-card"></i> Comment paieras-tu ?</div>
+              <div class="bk-pay-help">Indique simplement le mode prévu. Aucun paiement n'est demandé maintenant.</div>
+            </div>
+            <span class="bk-pay-secure"><i class="ti ti-shield-check"></i> Choix modifiable</span>
           </div>
+
           <div class="bk-pay-options">
-            <label class="bk-pay-chip" data-method="cash">
+            <label class="bk-pay-card" data-method="cash">
               <input type="radio" name="intended_payment_method" value="cash">
-              <i class="ti ti-cash"></i>
-              <span class="bk-pay-name">Espèces</span>
-              <span class="bk-pay-loc">Sur place, au coach</span>
+              <span class="bk-pay-icon"><i class="ti ti-cash"></i></span>
+              <span class="bk-pay-copy">
+                <strong>Espèces</strong>
+                <small>À remettre au coach sur place</small>
+              </span>
+              <span class="bk-pay-select"><i class="ti ti-check"></i></span>
             </label>
-            <label class="bk-pay-chip" data-method="card">
+
+            <label class="bk-pay-card" data-method="card">
               <input type="radio" name="intended_payment_method" value="card">
-              <i class="ti ti-credit-card"></i>
-              <span class="bk-pay-name">Carte bancaire</span>
-              <span class="bk-pay-loc">Sur place, au coach</span>
+              <span class="bk-pay-icon"><i class="ti ti-credit-card"></i></span>
+              <span class="bk-pay-copy">
+                <strong>Carte bancaire</strong>
+                <small>TPE ou paiement mobile sur place</small>
+              </span>
+              <span class="bk-pay-select"><i class="ti ti-check"></i></span>
             </label>
-            <label class="bk-pay-chip bk-pay-chip-xplor" data-method="xplor">
+
+            <label class="bk-pay-card bk-pay-card-xplor" data-method="xplor">
               <input type="radio" name="intended_payment_method" value="xplor">
-              <i class="ti ti-leaf"></i>
-              <span class="bk-pay-name">Xplor Active</span>
-              <span class="bk-pay-loc">En ligne, depuis ton espace</span>
+              <span class="bk-pay-icon"><i class="ti ti-device-mobile-dollar"></i></span>
+              <span class="bk-pay-copy">
+                <strong>Xplor Active</strong>
+                <small>Paiement sécurisé depuis ton espace</small>
+              </span>
+              <span class="bk-pay-online">En ligne</span>
+              <span class="bk-pay-select"><i class="ti ti-check"></i></span>
             </label>
           </div>
-          <div class="bk-pay-info bk-pay-info-cash" data-show-for="cash" hidden>
+
+          <div class="bk-pay-info" data-show-for="cash" hidden>
             <i class="ti ti-info-circle"></i>
-            Pense à prévoir le montant exact si possible. Le coach te remet un reçu si tu le demandes.
+            <span>Pense à prévoir le montant exact si possible. Le coach pourra te remettre un reçu.</span>
           </div>
-          <div class="bk-pay-info bk-pay-info-card" data-show-for="card" hidden>
+          <div class="bk-pay-info" data-show-for="card" hidden>
             <i class="ti ti-info-circle"></i>
-            Paiement directement auprès du coach à la fin de la séance (TPE ou paiement mobile).
+            <span>Le règlement se fera directement auprès du coach à la fin de la séance.</span>
           </div>
           <div class="bk-pay-info bk-pay-info-xplor" data-show-for="xplor" hidden>
-            <i class="ti ti-leaf"></i>
-            Tu paieras cette séance depuis ton <strong>espace Xplor Active</strong> (lié au Deciplus SPORT+, paiement sécurisé via Paylib). Présente ta carte ou ton QR au coach à l'arrivée.
-            <div style="margin-top:10px;padding:10px 12px;background:rgba(200,169,81,.08);border-left:2px solid var(--gold);border-radius:6px;font-size:12.5px;line-height:1.5;color:var(--text-soft);">
-              <i class="ti ti-lock" style="color:var(--gold);margin-right:4px;"></i>
-              <strong style="color:var(--white);">Important :</strong> le lien de paiement ne sera actif qu'<strong>après confirmation du coach</strong>. Tu seras notifié dès qu'il valide ta séance.
+            <i class="ti ti-device-mobile-dollar"></i>
+            <div>
+              <strong>Paiement Xplor Active</strong>
+              <p>Après validation du coach, ton lien sécurisé apparaîtra dans ton espace SPORT+. Tu pourras alors régler en ligne via Xplor/Deciplus.</p>
+              <div class="bk-pay-important">
+                <i class="ti ti-lock"></i>
+                <span><strong>Important :</strong> le lien ne devient actif qu'après confirmation de la séance.</span>
+              </div>
             </div>
           </div>
         </div>
@@ -361,6 +389,7 @@
         <div class="bk-recap-head">
           <i class="ti ti-receipt-2"></i>
           <span>Récap en direct</span>
+          <span class="bk-recap-step" id="bk-recap-step">Étape 1/4</span>
           <span class="bk-recap-pulse"></span>
         </div>
 
@@ -429,6 +458,16 @@
 
   </div>
 
+  <div class="bk-mobile-recap" id="bk-mobile-recap">
+    <div>
+      <span>Estimation</span>
+      <strong id="bk-mobile-price">40 €</strong>
+    </div>
+    <button type="button" class="bk-mobile-action" id="bk-mobile-action">
+      Continuer <i class="ti ti-arrow-down"></i>
+    </button>
+  </div>
+
   {{ form_end(form) }}
 
 </div>
@@ -437,872 +476,5 @@
 <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/fr.js" defer></script>
 <script src="{{ asset('js/booking-form.js') }}" defer></script>
 
-<script>
-// ── Choix mode de paiement (étape 4) : afficher l'info contextuelle
-(function() {
-  document.addEventListener('DOMContentLoaded', function() {
-    var radios = document.querySelectorAll('.bk-pay-chip input[type="radio"]');
-    var infos  = document.querySelectorAll('.bk-pay-info');
-    radios.forEach(function(r) {
-      r.addEventListener('change', function() {
-        infos.forEach(function(info) {
-          info.hidden = (info.dataset.showFor !== r.value);
-        });
-      });
-    });
-  });
-})();
-</script>
-<script>
-// ── Stepper visuel : marque les étapes complétées au scroll
-(function() {
-  document.addEventListener('DOMContentLoaded', function() {
-    var steps = document.querySelectorAll('.bk-step-dot');
-    var sections = ['step-1', 'step-2', 'step-3', 'step-4'];
 
-    // Active une étape au clic
-    steps.forEach(function(dot) {
-      dot.addEventListener('click', function() {
-        var target = document.getElementById(dot.dataset.target);
-        if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      });
-    });
-
-    // Marque les étapes au scroll
-    function updateStepper() {
-      var scrollY = window.scrollY + window.innerHeight * 0.4;
-      var lastVisible = 0;
-      sections.forEach(function(id, idx) {
-        var el = document.getElementById(id);
-        if (el && el.offsetTop <= scrollY) lastVisible = idx;
-      });
-      steps.forEach(function(dot, idx) {
-        dot.classList.toggle('is-active', idx === lastVisible);
-        dot.classList.toggle('is-done', idx < lastVisible);
-      });
-    }
-
-    window.addEventListener('scroll', updateStepper, { passive: true });
-    updateStepper();
-
-    // Pulse le récap quand une valeur change
-    var recap = document.getElementById('bk-recap');
-    var observer = new MutationObserver(function() {
-      recap.classList.remove('is-pulse');
-      void recap.offsetWidth;
-      recap.classList.add('is-pulse');
-    });
-    document.querySelectorAll('#sum-format,#sum-slot,#sum-pack,#sum-fullaccess,#sum-price').forEach(function(el) {
-      observer.observe(el, { childList: true, characterData: true, subtree: true });
-    });
-  });
-})();
-</script>
-
-<style>
-/* ═══════════════════════════════════════════════════════════════════════
-   PAGE RÉSERVATION — Style "Wizard" SPORT+
-   ═══════════════════════════════════════════════════════════════════════ */
-
-/* ── Hero ─────────────────────────────────────────────────────────────── */
-.bk-hero {
-  position: relative;
-  padding: 60px 0 32px;
-  background:
-    radial-gradient(ellipse 50% 60% at 50% 0%, rgba(200,169,81,.08) 0%, transparent 60%),
-    var(--bg);
-}
-.bk-hero-content { text-align: center; max-width: 720px; margin: 0 auto 36px; }
-.bk-hero-title {
-  font-family: 'Barlow Condensed', sans-serif;
-  font-weight: 900;
-  font-size: clamp(36px, 5vw, 56px);
-  text-transform: uppercase;
-  letter-spacing: -1px;
-  margin: 14px 0 12px;
-  color: var(--white);
-}
-.bk-hero-sub {
-  font-family: 'Cormorant Garamond', serif;
-  font-style: italic;
-  font-size: 18px;
-  color: var(--text-soft);
-  max-width: 520px;
-  margin: 0 auto;
-  line-height: 1.6;
-}
-
-/* ── Stepper ──────────────────────────────────────────────────────────── */
-.bk-stepper {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  max-width: 700px;
-  margin: 0 auto;
-  padding: 0 12px;
-}
-.bk-step-dot {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-  cursor: pointer;
-  user-select: none;
-  flex-shrink: 0;
-  transition: transform .2s;
-}
-.bk-step-dot:hover { transform: translateY(-2px); }
-.bk-step-num {
-  width: 42px; height: 42px;
-  border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
-  background: var(--bg-card);
-  border: 2px solid var(--border);
-  color: var(--text-dim);
-  font-family: 'Barlow Condensed', sans-serif;
-  font-weight: 900;
-  font-size: 18px;
-  transition: all .3s cubic-bezier(.2, .8, .2, 1);
-}
-.bk-step-name {
-  font-family: 'Barlow Condensed', sans-serif;
-  font-weight: 700;
-  font-size: 12px;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  color: var(--text-dim);
-  transition: color .3s;
-}
-.bk-step-dot.is-active .bk-step-num {
-  background: var(--gold);
-  border-color: var(--gold);
-  color: var(--black);
-  box-shadow: 0 0 0 6px rgba(200,169,81,.18), 0 8px 20px rgba(200,169,81,.4);
-  animation: stepPulse 2s ease-in-out infinite;
-}
-.bk-step-dot.is-active .bk-step-name { color: var(--gold); }
-.bk-step-dot.is-done .bk-step-num {
-  background: var(--green);
-  border-color: var(--green);
-  color: var(--black);
-}
-.bk-step-dot.is-done .bk-step-name { color: var(--green); }
-.bk-step-dot.is-done .bk-step-num::before {
-  content: '\2713'; /* check */
-}
-.bk-step-dot.is-done .bk-step-num { font-size: 0; }
-.bk-step-dot.is-done .bk-step-num::before { font-size: 18px; }
-
-@keyframes stepPulse {
-  0%, 100% { box-shadow: 0 0 0 6px rgba(200,169,81,.18), 0 8px 20px rgba(200,169,81,.4); }
-  50%      { box-shadow: 0 0 0 10px rgba(200,169,81,.08), 0 8px 24px rgba(200,169,81,.5); }
-}
-
-.bk-step-line {
-  flex: 1;
-  height: 2px;
-  background: linear-gradient(90deg, var(--border) 0%, var(--border) 100%);
-  margin-bottom: 26px;
-  max-width: 60px;
-}
-
-@media (max-width: 640px) {
-  .bk-step-name { font-size: 10px; letter-spacing: 1px; }
-  .bk-step-num { width: 36px; height: 36px; font-size: 16px; }
-  .bk-step-line { max-width: 28px; }
-}
-
-/* ── Layout 2 colonnes ────────────────────────────────────────────────── */
-.bk-layout {
-  display: grid;
-  grid-template-columns: 1fr 380px;
-  gap: 24px;
-  align-items: start;
-  margin-top: 32px;
-}
-@media (max-width: 1024px) {
-  .bk-layout { grid-template-columns: 1fr; }
-}
-
-/* ── Cards d'étapes ───────────────────────────────────────────────────── */
-.bk-card {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  padding: 32px;
-  margin-bottom: 20px;
-  scroll-margin-top: 100px;
-  position: relative;
-  transition: border-color .3s, box-shadow .3s;
-}
-.bk-card:hover {
-  border-color: rgba(200,169,81,.25);
-  box-shadow: 0 8px 30px rgba(0,0,0,.3);
-}
-
-.bk-card-head {
-  display: flex;
-  align-items: flex-start;
-  gap: 18px;
-  margin-bottom: 28px;
-}
-.bk-card-num {
-  width: 56px; height: 56px;
-  border-radius: 14px;
-  background: linear-gradient(135deg, var(--gold) 0%, #b89844 100%);
-  color: var(--black);
-  font-family: 'Barlow Condensed', sans-serif;
-  font-weight: 900;
-  font-size: 28px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  box-shadow: 0 8px 20px rgba(200,169,81,.25);
-}
-.bk-card-eyebrow {
-  font-family: 'Barlow Condensed', sans-serif;
-  font-weight: 700;
-  font-size: 12px;
-  letter-spacing: 3px;
-  text-transform: uppercase;
-  color: var(--gold);
-  margin-bottom: 6px;
-}
-.bk-card-title {
-  font-family: 'Barlow Condensed', sans-serif;
-  font-weight: 900;
-  font-size: clamp(24px, 3vw, 32px);
-  text-transform: uppercase;
-  color: var(--white);
-  letter-spacing: -0.5px;
-  margin: 0 0 6px;
-  line-height: 1.1;
-}
-.bk-card-sub {
-  font-size: 14px;
-  color: var(--text-soft);
-  margin: 0;
-  line-height: 1.5;
-}
-
-@media (max-width: 640px) {
-  .bk-card { padding: 22px 18px; }
-  .bk-card-num { width: 44px; height: 44px; font-size: 22px; }
-  .bk-card-head { gap: 12px; margin-bottom: 20px; }
-}
-
-/* ── Cards de choix ───────────────────────────────────────────────────── */
-.bk-choice-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
-}
-.bk-grid-4 { grid-template-columns: repeat(4, 1fr); }
-
-@media (max-width: 800px) {
-  .bk-choice-grid,
-  .bk-grid-4 { grid-template-columns: repeat(2, 1fr); }
-}
-@media (max-width: 480px) {
-  .bk-choice-grid,
-  .bk-grid-4 { grid-template-columns: 1fr; }
-}
-
-.bk-choice {
-  position: relative;
-  background: var(--bg-3);
-  border: 2px solid var(--border);
-  border-radius: var(--radius);
-  padding: 22px 18px 18px;
-  text-align: center;
-  cursor: pointer;
-  transition: all .25s cubic-bezier(.2, .8, .2, 1);
-  user-select: none;
-}
-.bk-choice:hover {
-  border-color: var(--gold-dim);
-  transform: translateY(-3px);
-  background: rgba(200,169,81,.04);
-}
-.bk-choice.selected {
-  border-color: var(--gold);
-  background: linear-gradient(180deg, rgba(200,169,81,.08) 0%, rgba(200,169,81,.02) 100%);
-  box-shadow: 0 12px 28px rgba(200,169,81,.15), inset 0 0 0 1px rgba(200,169,81,.4);
-  animation: choiceSelected .35s cubic-bezier(.2, 1.4, .4, 1);
-}
-@keyframes choiceSelected {
-  0%   { transform: scale(1);    }
-  40%  { transform: scale(1.06); }
-  100% { transform: scale(1);    }
-}
-
-.bk-choice-tick {
-  position: absolute;
-  top: 10px; right: 10px;
-  width: 26px; height: 26px;
-  border-radius: 50%;
-  background: var(--gold);
-  color: var(--black);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 14px;
-  opacity: 0;
-  transform: scale(.4);
-  transition: opacity .25s, transform .35s cubic-bezier(.2, 1.4, .4, 1);
-}
-.bk-choice.selected .bk-choice-tick {
-  opacity: 1;
-  transform: scale(1);
-}
-
-.bk-choice-ico {
-  font-size: 36px;
-  color: var(--gold);
-  margin-bottom: 10px;
-  display: inline-block;
-  transition: transform .3s;
-}
-.bk-choice:hover .bk-choice-ico { transform: scale(1.1) rotate(-4deg); }
-
-.bk-choice-name {
-  font-family: 'Barlow Condensed', sans-serif;
-  font-weight: 900;
-  font-size: 18px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  color: var(--white);
-  margin-bottom: 4px;
-}
-.bk-choice-meta {
-  font-size: 12px;
-  color: var(--text-soft);
-  margin-bottom: 10px;
-}
-.bk-choice-price {
-  font-family: 'Barlow Condensed', sans-serif;
-  font-weight: 700;
-  font-size: 16px;
-  color: var(--gold);
-  letter-spacing: 0.5px;
-}
-.bk-choice-price small { font-size: 11px; color: var(--text-dim); }
-.bk-choice-multi {
-  font-family: 'Barlow Condensed', sans-serif;
-  font-weight: 700;
-  font-size: 13px;
-  letter-spacing: 2px;
-  color: var(--text-dim);
-}
-.bk-choice-eco {
-  margin-top: 6px;
-  font-size: 11px;
-  font-weight: 700;
-  color: var(--green);
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-
-/* Tags en haut des cards de créneau */
-.bk-choice-tag {
-  position: absolute;
-  top: 10px; left: 10px;
-  font-family: 'Barlow Condensed', sans-serif;
-  font-size: 10px;
-  font-weight: 800;
-  letter-spacing: 1.5px;
-  text-transform: uppercase;
-  padding: 3px 8px;
-  border-radius: 100px;
-}
-.bk-tag-base      { background: rgba(255,255,255,.08); color: var(--text-soft); }
-.bk-tag-night     { background: rgba(46,204,113,.15); color: var(--green); }
-.bk-tag-astreinte { background: rgba(255,138,77,.15); color: #ff8a4d; }
-
-/* Featured pack 12 */
-.bk-choice-featured {
-  border-color: var(--green);
-  background: linear-gradient(180deg, rgba(46,204,113,.06) 0%, rgba(46,204,113,.01) 100%);
-}
-.bk-choice-featured.selected {
-  border-color: var(--green);
-  background: linear-gradient(180deg, rgba(46,204,113,.12) 0%, rgba(46,204,113,.02) 100%);
-  box-shadow: 0 12px 28px rgba(46,204,113,.18), inset 0 0 0 1px rgba(46,204,113,.4);
-}
-.bk-choice-featured .bk-choice-ico { color: var(--green); }
-.bk-choice-crown {
-  position: absolute;
-  top: -10px; left: 50%; transform: translateX(-50%);
-  background: var(--green);
-  color: var(--black);
-  font-family: 'Barlow Condensed', sans-serif;
-  font-size: 11px;
-  font-weight: 800;
-  letter-spacing: 1.5px;
-  text-transform: uppercase;
-  padding: 4px 12px;
-  border-radius: 100px;
-  white-space: nowrap;
-}
-
-/* ── Étape 4 : champs détails ──────────────────────────────────────────── */
-.bk-detail-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-}
-@media (max-width: 640px) { .bk-detail-grid { grid-template-columns: 1fr; } }
-
-.bk-detail-field {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-.bk-detail-label {
-  font-family: var(--font-body);
-  font-weight: 600;
-  font-size: 13px;
-  color: var(--white);
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  text-transform: none;
-  letter-spacing: 0;
-}
-.bk-detail-label i { color: var(--gold); font-size: 16px; }
-.bk-detail-field select,
-.bk-detail-field input,
-.bk-detail-field textarea {
-  width: 100%;
-  padding: 12px 14px !important;
-  background: var(--bg-3) !important;
-  border: 1px solid var(--border) !important;
-  border-radius: var(--radius) !important;
-  color: var(--white) !important;
-  font-family: var(--font-body) !important;
-  font-size: 15px !important;
-  transition: border-color .2s, box-shadow .2s;
-}
-.bk-detail-field select:focus,
-.bk-detail-field input:focus,
-.bk-detail-field textarea:focus {
-  outline: none;
-  border-color: var(--gold) !important;
-  box-shadow: 0 0 0 3px rgba(200,169,81,.15);
-}
-.bk-detail-hint {
-  font-size: 12px;
-  color: var(--text-soft);
-  margin-top: 4px;
-  display: flex;
-  align-items: flex-start;
-  gap: 6px;
-  line-height: 1.4;
-}
-.bk-detail-hint i { color: var(--gold-dim); margin-top: 1px; flex-shrink: 0; }
-
-/* ── FullAccess toggle ─────────────────────────────────────────────────── */
-.bk-fullaccess {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  padding: 18px 22px;
-  background: linear-gradient(135deg, rgba(46,204,113,.08) 0%, rgba(46,204,113,.02) 100%);
-  border: 1px solid rgba(46,204,113,.25);
-  border-left: 3px solid var(--green);
-  border-radius: var(--radius);
-  cursor: pointer;
-  margin-top: 24px;
-  transition: background .25s, border-color .25s;
-}
-.bk-fullaccess:hover {
-  background: linear-gradient(135deg, rgba(46,204,113,.14) 0%, rgba(46,204,113,.04) 100%);
-}
-.bk-fullaccess.checked {
-  background: linear-gradient(135deg, rgba(46,204,113,.18) 0%, rgba(46,204,113,.06) 100%);
-  border-color: var(--green);
-  box-shadow: inset 0 0 0 1px rgba(46,204,113,.3);
-}
-.bk-fullaccess-text { flex: 1; }
-.bk-fullaccess-title {
-  font-family: 'Barlow Condensed', sans-serif;
-  font-weight: 800;
-  font-size: 16px;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  color: var(--white);
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-.bk-fullaccess-title i { color: var(--green); font-size: 20px; }
-.bk-fullaccess-sub {
-  font-size: 13px;
-  color: var(--text-soft);
-  margin-top: 4px;
-}
-.bk-fullaccess-checkbox {
-  width: 22px !important;
-  height: 22px !important;
-  accent-color: var(--green) !important;
-  cursor: pointer;
-}
-
-/* État désactivé : pack = single (séance unique) */
-.bk-fullaccess.is-disabled {
-  opacity: .5;
-  cursor: not-allowed;
-  background: var(--bg-3);
-  border-color: var(--border);
-  border-left-color: var(--border);
-}
-.bk-fullaccess.is-disabled:hover {
-  background: var(--bg-3);
-}
-.bk-fullaccess.is-disabled .bk-fullaccess-checkbox {
-  cursor: not-allowed;
-  pointer-events: none;
-}
-.bk-fullaccess.is-disabled::after {
-  content: 'Disponible avec un pack mensuel';
-  position: absolute;
-  bottom: -10px;
-  right: 14px;
-  background: var(--bg-card);
-  color: var(--gold-dim);
-  font-family: 'Barlow Condensed', sans-serif;
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 1.5px;
-  text-transform: uppercase;
-  padding: 3px 10px;
-  border-radius: 100px;
-  border: 1px solid var(--border);
-}
-.bk-fullaccess { position: relative; }
-
-/* ── CTA submit ────────────────────────────────────────────────────────── */
-.bk-submit {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  padding: 18px 28px;
-  background: linear-gradient(135deg, var(--gold) 0%, #d4b766 100%);
-  color: var(--black);
-  border: none;
-  border-radius: var(--radius);
-  font-family: 'Barlow Condensed', sans-serif;
-  font-weight: 800;
-  font-size: 18px;
-  text-transform: uppercase;
-  letter-spacing: 1.5px;
-  cursor: pointer;
-  margin-top: 32px;
-  box-shadow: 0 12px 30px rgba(200,169,81,.35);
-  transition: transform .25s, box-shadow .25s;
-  animation: ctaPulse 3s ease-in-out infinite;
-  position: relative;
-  overflow: hidden;
-}
-.bk-submit::before {
-  content: '';
-  position: absolute;
-  top: 0; left: -100%;
-  width: 100%; height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,.4), transparent);
-  transition: left .8s ease;
-  pointer-events: none;
-}
-.bk-submit:hover::before { left: 100%; }
-.bk-submit-text, .bk-submit-price { pointer-events: none; }
-.bk-submit-text i { pointer-events: none; }
-.bk-submit:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 16px 36px rgba(200,169,81,.45), 0 4px 12px rgba(46,204,113,.2);
-  animation: none;
-}
-.bk-submit-text { display: flex; align-items: center; gap: 10px; }
-.bk-submit-text i { font-size: 22px; }
-.bk-submit-price {
-  font-size: 22px;
-  background: rgba(6,6,6,.18);
-  padding: 4px 14px;
-  border-radius: 100px;
-}
-@keyframes ctaPulse {
-  0%, 100% { box-shadow: 0 12px 30px rgba(200,169,81,.35); }
-  50%      { box-shadow: 0 16px 40px rgba(200,169,81,.55), 0 0 24px rgba(200,169,81,.3); }
-}
-
-.bk-submit-note {
-  text-align: center;
-  font-size: 13px;
-  color: var(--text-soft);
-  margin-top: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-}
-.bk-submit-note i { color: var(--green); }
-
-@media (max-width: 640px) {
-  .bk-submit { padding: 16px 18px; font-size: 16px; flex-direction: column; gap: 8px; }
-  .bk-submit-price { font-size: 20px; }
-}
-
-/* ── Sidebar récap ─────────────────────────────────────────────────────── */
-.bk-sidebar {
-  position: sticky;
-  top: 90px;
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
-}
-@media (max-width: 1024px) {
-  .bk-sidebar { position: static; }
-}
-
-.bk-recap {
-  background: linear-gradient(180deg, var(--bg-card) 0%, var(--bg-3) 100%);
-  border: 1px solid var(--border);
-  border-top: 3px solid var(--gold);
-  border-radius: var(--radius-lg);
-  padding: 24px;
-  transition: box-shadow .3s;
-}
-.bk-recap.is-pulse {
-  animation: recapPulse .5s ease;
-}
-@keyframes recapPulse {
-  0%   { box-shadow: 0 0 0 0 rgba(200,169,81,0); }
-  40%  { box-shadow: 0 0 0 8px rgba(200,169,81,.15); }
-  100% { box-shadow: 0 0 0 0 rgba(200,169,81,0); }
-}
-
-.bk-recap-head {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-family: 'Barlow Condensed', sans-serif;
-  font-weight: 800;
-  font-size: 13px;
-  letter-spacing: 2.5px;
-  text-transform: uppercase;
-  color: var(--gold);
-  margin-bottom: 18px;
-  padding-bottom: 14px;
-  border-bottom: 1px solid var(--border);
-}
-.bk-recap-head i { font-size: 18px; }
-.bk-recap-pulse {
-  margin-left: auto;
-  width: 8px; height: 8px;
-  border-radius: 50%;
-  background: var(--green);
-  box-shadow: 0 0 8px var(--green);
-  animation: greenDotPulse 1.8s ease-in-out infinite;
-}
-@keyframes greenDotPulse {
-  0%, 100% { transform: scale(1);   opacity: .9; }
-  50%      { transform: scale(1.4); opacity: .5; }
-}
-
-.bk-recap-line {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  padding: 8px 0;
-  border-bottom: 1px dashed rgba(255,255,255,.05);
-}
-.bk-recap-line:last-of-type { border-bottom: none; }
-.bk-recap-key {
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--text-soft);
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-.bk-recap-key i { color: var(--gold-dim); font-size: 14px; }
-.bk-recap-val {
-  font-family: 'Barlow Condensed', sans-serif;
-  font-weight: 700;
-  font-size: 14px;
-  color: var(--white);
-  text-align: right;
-  transition: color .25s;
-}
-
-.bk-recap-total {
-  margin-top: 18px;
-  padding-top: 18px;
-  border-top: 1px solid var(--border);
-  text-align: center;
-}
-.bk-recap-total-price {
-  font-family: 'Barlow Condensed', sans-serif;
-  font-weight: 900;
-  font-size: 52px;
-  color: var(--gold);
-  line-height: 1;
-  letter-spacing: -1px;
-  text-shadow: 0 0 20px rgba(200,169,81,.2);
-  transition: transform .3s;
-}
-.bk-recap.is-pulse .bk-recap-total-price {
-  animation: priceBump .35s cubic-bezier(.2, 1.4, .4, 1);
-}
-@keyframes priceBump {
-  0%   { transform: scale(1);    }
-  50%  { transform: scale(1.08); }
-  100% { transform: scale(1);    }
-}
-.bk-recap-total-period {
-  font-size: 12px;
-  color: var(--text-soft);
-  text-transform: uppercase;
-  letter-spacing: 1.5px;
-  margin-top: 6px;
-}
-.bk-recap-savings {
-  margin-top: 8px;
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--green);
-  background: rgba(46,204,113,.1);
-  padding: 4px 10px;
-  border-radius: 100px;
-  display: inline-block;
-}
-
-/* ── Process info ──────────────────────────────────────────────────────── */
-.bk-process {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  padding: 22px;
-}
-.bk-process-head {
-  font-family: 'Barlow Condensed', sans-serif;
-  font-weight: 800;
-  font-size: 13px;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  color: var(--white);
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 16px;
-  padding-bottom: 12px;
-  border-bottom: 1px solid var(--border);
-}
-.bk-process-head i { color: var(--gold); font-size: 16px; }
-
-.bk-process-step {
-  display: flex;
-  gap: 12px;
-  margin-bottom: 14px;
-  align-items: flex-start;
-}
-.bk-process-num {
-  width: 28px; height: 28px;
-  border-radius: 50%;
-  background: rgba(200,169,81,.12);
-  border: 1px solid rgba(200,169,81,.3);
-  color: var(--gold);
-  font-family: 'Barlow Condensed', sans-serif;
-  font-weight: 900;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 14px;
-  flex-shrink: 0;
-}
-.bk-process-step strong {
-  display: block;
-  font-family: 'Barlow Condensed', sans-serif;
-  font-weight: 700;
-  font-size: 14px;
-  color: var(--white);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-.bk-process-step span {
-  font-size: 12px;
-  color: var(--text-soft);
-  line-height: 1.4;
-}
-
-.bk-process-badge {
-  margin-top: 14px;
-  padding: 12px 14px;
-  background: rgba(46,204,113,.06);
-  border: 1px solid rgba(46,204,113,.2);
-  border-radius: var(--radius-sm);
-  font-size: 12px;
-  color: var(--text);
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  line-height: 1.4;
-}
-.bk-process-badge i { color: var(--green); font-size: 16px; flex-shrink: 0; }
-
-/* ── Flatpickr thème SPORT+ dark ───────────────────────────────────────── */
-.flatpickr-calendar {
-  background: var(--bg-card) !important;
-  border: 1px solid var(--border) !important;
-  border-radius: 12px !important;
-  box-shadow: 0 20px 50px rgba(0,0,0,.6) !important;
-  font-family: 'Inter', sans-serif !important;
-  color: var(--text) !important;
-}
-.flatpickr-months { background: var(--bg-card); border-radius: 12px 12px 0 0; }
-.flatpickr-current-month { font-size: 16px !important; font-weight: 700; color: var(--gold) !important; }
-.flatpickr-current-month .cur-month,
-.flatpickr-current-month input.cur-year { color: var(--gold) !important; }
-.flatpickr-prev-month svg, .flatpickr-next-month svg { fill: var(--gold) !important; }
-.flatpickr-weekday { color: var(--gold-dim) !important; font-size: 12px !important; font-weight: 700 !important; }
-.flatpickr-day { color: var(--text) !important; border-radius: 8px !important; font-size: 14px !important; }
-.flatpickr-day:hover { background: rgba(200,169,81,0.15) !important; border-color: transparent !important; }
-.flatpickr-day.selected {
-  background: var(--gold) !important;
-  border-color: var(--gold) !important;
-  color: var(--black) !important;
-  font-weight: 700 !important;
-}
-.flatpickr-day.today { border-color: var(--gold) !important; color: var(--gold) !important; }
-.flatpickr-day.flatpickr-disabled, .flatpickr-day.prevMonthDay, .flatpickr-day.nextMonthDay {
-  color: var(--border) !important;
-}
-.flatpickr-time { background: var(--bg-card) !important; border-top: 1px solid var(--border) !important; border-radius: 0 0 12px 12px !important; }
-.flatpickr-time input { color: var(--gold) !important; font-size: 18px !important; font-weight: 700 !important; font-family: 'Barlow Condensed', sans-serif !important; }
-.flatpickr-time .flatpickr-time-separator { color: var(--gold) !important; }
-.flatpickr-input[readonly] {
-  background: var(--bg-3) !important;
-  border: 1px solid var(--border) !important;
-  color: var(--white) !important;
-  padding: 12px 14px !important;
-  border-radius: var(--radius) !important;
-  font-family: var(--font-body) !important;
-  font-size: 15px !important;
-  width: 100% !important;
-  cursor: pointer !important;
-}
-.flatpickr-input[readonly]:focus-visible {
-  outline: 2px solid var(--gold) !important;
-  border-color: var(--gold) !important;
-}
-
-/* ── Cacher selects natifs (fallback) ─────────────────────────────────── */
-.booking-fallback-field { display: none; }
-</style>
 {% endblock %}
