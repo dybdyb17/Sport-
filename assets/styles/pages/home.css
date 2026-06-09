@@ -812,3 +812,200 @@ body {
     transform: none !important;
   }
 }
+
+/* ── Membre Fondateur confirmé — teaser premium propre à la home ───── */
+.home-founding-section { padding: 40px 0 0; }
+
+.home-founding-welcome {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: clamp(20px, 3vw, 38px);
+  padding: clamp(24px, 3vw, 38px);
+  border: 1px solid rgba(var(--green-rgb), .28);
+  border-radius: 24px;
+  background:
+    linear-gradient(120deg, rgba(var(--green-rgb), .09), transparent 42%),
+    linear-gradient(145deg, rgba(var(--gold-rgb), .055), transparent 58%),
+    var(--bg-card);
+  box-shadow: 0 22px 52px rgba(0,0,0,.24), inset 0 1px 0 rgba(255,255,255,.045);
+}
+
+.home-founding-welcome::before {
+  content: '';
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 3px;
+  background: linear-gradient(180deg, transparent, var(--green), var(--gold), transparent);
+  box-shadow: 0 0 24px rgba(var(--green-rgb), .45);
+}
+
+.home-founding-welcome-glow {
+  position: absolute;
+  z-index: -1;
+  top: -140px;
+  right: 7%;
+  width: 360px;
+  height: 280px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(var(--green-rgb), .16), transparent 68%);
+  pointer-events: none;
+}
+
+.home-founding-emblem {
+  display: grid;
+  place-items: center;
+  width: 82px;
+  height: 82px;
+  border: 1px solid rgba(var(--gold-rgb), .32);
+  border-radius: 22px;
+  color: var(--gold);
+  background: linear-gradient(145deg, rgba(var(--gold-rgb), .16), rgba(var(--gold-rgb), .035));
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.07), 0 12px 28px rgba(0,0,0,.2);
+}
+
+.home-founding-emblem i { font-size: 38px; }
+.home-founding-copy { min-width: 0; }
+
+.home-founding-kicker {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 7px;
+  color: var(--green);
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 1.8px;
+  text-transform: uppercase;
+}
+
+.home-founding-live-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--green);
+  box-shadow: 0 0 12px rgba(var(--green-rgb), .85);
+}
+
+.home-founding-title-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.home-founding-greeting {
+  display: block;
+  margin-bottom: 3px;
+  color: var(--text-soft);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.home-founding-title-row h2 {
+  margin: 0;
+  color: var(--white);
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: clamp(27px, 3vw, 39px);
+  font-weight: 900;
+  letter-spacing: -.6px;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.home-founding-badge {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 11px;
+  border: 1px solid rgba(var(--gold-rgb), .28);
+  border-radius: 999px;
+  color: var(--gold);
+  background: rgba(var(--gold-rgb), .075);
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 1.1px;
+  text-transform: uppercase;
+}
+
+.home-founding-copy > p {
+  max-width: 720px;
+  margin: 10px 0 17px;
+  color: var(--text-dim);
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+.home-founding-benefits {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.home-founding-benefit {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 36px;
+  padding: 8px 11px;
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 10px;
+  color: var(--text-soft);
+  background: rgba(255,255,255,.025);
+  font-size: 11px;
+}
+
+.home-founding-benefit i { color: var(--gold); font-size: 16px; }
+.home-founding-benefit strong { color: var(--white); }
+.home-founding-benefit.is-complete i,
+.home-founding-benefit.is-night i { color: var(--green); }
+
+.home-founding-action {
+  display: grid;
+  justify-items: end;
+  gap: 11px;
+  min-width: 210px;
+}
+
+.home-founding-action > span {
+  color: var(--text-dim);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1.15px;
+  text-align: right;
+  text-transform: uppercase;
+}
+
+@media (max-width: 900px) {
+  .home-founding-welcome { grid-template-columns: auto minmax(0, 1fr); }
+  .home-founding-action {
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding-top: 4px;
+  }
+}
+
+@media (max-width: 640px) {
+  .home-founding-welcome {
+    grid-template-columns: 1fr;
+    gap: 18px;
+    padding: 24px 20px;
+    text-align: left;
+  }
+  .home-founding-emblem { width: 64px; height: 64px; border-radius: 18px; }
+  .home-founding-emblem i { font-size: 30px; }
+  .home-founding-title-row { display: grid; justify-content: start; }
+  .home-founding-badge { width: fit-content; }
+  .home-founding-benefits { display: grid; }
+  .home-founding-benefit { width: 100%; }
+  .home-founding-action { display: grid; justify-items: stretch; min-width: 0; }
+  .home-founding-action > span { text-align: left; }
+  .home-founding-action .btn { width: 100%; justify-content: center; }
+}

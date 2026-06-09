@@ -119,18 +119,56 @@
 
 {# ── Founding Member teaser ── #}
 {% set fo = foundingOffer ?? current_founding_offer() %}
-{% if fo and fo.isStillRunning %}
-  <section style="padding:40px 0 0;">
+{% if fo and (fo.isStillRunning or (app.user and app.user.foundingClaim)) %}
+  <section class="home-founding-section">
     <div class="container">
       {% if app.user and app.user.foundingClaim %}
-        {# Variante : déjà membre fondateur #}
-        <div class="founding-teaser" style="cursor:default;">
-          <div class="founding-title">{{ app.user.foundingClaim.foundingLabel }}</div>
-          <div class="founding-sub">
-            {{ app.user.foundingClaim.sessionsRemaining }}/{{ fo.sessionsIncluded }} séances incluses restantes
-            · Bilan {{ app.user.foundingClaim.isBilanDone ? '✓ effectué' : 'à programmer' }}
+        {# Variante compacte réservée à la home : valoriser le statut après paiement. #}
+        {% set foundingClaim = app.user.foundingClaim %}
+        <div class="home-founding-welcome" data-animate="fade-up">
+          <div class="home-founding-welcome-glow" aria-hidden="true"></div>
+          <div class="home-founding-emblem" aria-hidden="true">
+            <i class="ti ti-crown"></i>
           </div>
-          <a href="{{ path('app_espace_client') }}" class="btn btn-secondary btn-sm">Voir mon espace →</a>
+
+          <div class="home-founding-copy">
+            <div class="home-founding-kicker">
+              <span class="home-founding-live-dot"></span>
+              Statut membre activé
+            </div>
+            <div class="home-founding-title-row">
+              <div>
+                <span class="home-founding-greeting">Bienvenue dans l'histoire SPORT+</span>
+                <h2>{{ foundingClaim.foundingLabel }}</h2>
+              </div>
+              <span class="home-founding-badge"><i class="ti ti-rosette-discount-check"></i> Fondateur</span>
+            </div>
+            <p>Ta place est confirmée. Tes avantages fondateur sont disponibles directement depuis ton espace membre.</p>
+
+            <div class="home-founding-benefits" aria-label="Avantages Membre Fondateur">
+              <div class="home-founding-benefit">
+                <i class="ti ti-barbell"></i>
+                <span><strong>{{ foundingClaim.sessionsRemaining }}/{{ fo.sessionsIncluded }}</strong> séances restantes</span>
+              </div>
+              <div class="home-founding-benefit {{ foundingClaim.isBilanDone ? 'is-complete' : '' }}">
+                <i class="ti {{ foundingClaim.isBilanDone ? 'ti-circle-check' : 'ti-calendar-event' }}"></i>
+                <span><strong>Bilan forme</strong> {{ foundingClaim.isBilanDone ? 'effectué' : 'à programmer' }}</span>
+              </div>
+              {% if fo.includesPriorityNight %}
+                <div class="home-founding-benefit is-night">
+                  <i class="ti ti-moon-stars"></i>
+                  <span><strong>Priorité</strong> Night Coach</span>
+                </div>
+              {% endif %}
+            </div>
+          </div>
+
+          <div class="home-founding-action">
+            <span>Ton aventure commence maintenant</span>
+            <a href="{{ path('app_espace_client') }}" class="btn btn-primary">
+              <i class="ti ti-layout-dashboard"></i> Ouvrir mon espace
+            </a>
+          </div>
         </div>
       {% elseif fo.hasPlacesLeft %}
         {# Variante : places disponibles #}
