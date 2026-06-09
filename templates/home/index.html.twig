@@ -171,22 +171,76 @@
           </div>
         </div>
       {% elseif fo.hasPlacesLeft %}
-        {# Variante : places disponibles #}
-        <a href="{{ path('app_founding_detail') }}" class="founding-teaser">
-          <span class="badge-launch">Offre Lancement</span>
-          <div class="founding-title">Devenez Membre Fondateur</div>
-          <div class="founding-sub">3 séances pour {{ fo.price }}€ · Bilan forme offert · Valeur {{ fo.regularPrice }}€</div>
-          <div class="founding-progress-bar">
-            <div class="founding-progress-fill" style="width:{{ fo.progressPercent }}%;"></div>
+        {# Carte commerciale propre à la home, inspirée de la mise en scène de la page Tarifs. #}
+        <article class="home-founding-offer" data-animate="fade-up">
+          <a href="{{ path('app_founding_detail') }}" class="home-founding-offer-media" aria-label="Découvrir l'offre Membre Fondateur">
+            <img
+              src="{{ asset('img/club-photos/portrait-souriante.jpg') }}"
+              alt="Un membre SPORT+ heureux après son entraînement"
+              loading="lazy"
+              decoding="async"
+            >
+            <span class="home-founding-offer-shade" aria-hidden="true"></span>
+            <span class="home-founding-offer-badge"><i class="ti ti-crown"></i> Offre lancement</span>
+            <span class="home-founding-offer-photo-caption">
+              <strong>Une place à part.</strong>
+              <small>Parmi les {{ fo.totalPlaces }} premiers membres SPORT+</small>
+            </span>
+          </a>
+
+          <div class="home-founding-offer-content">
+            <div class="home-founding-offer-kicker">
+              <span></span>
+              Série limitée · {{ fo.placesRemaining }} places restantes
+            </div>
+            <h2>Deviens membre<br><em>fondateur</em></h2>
+            <p class="home-founding-offer-lead">
+              Rejoins les premiers à écrire l'histoire de SPORT+ avec une expérience coaching complète à tarif privilégié.
+            </p>
+
+            <div class="home-founding-offer-price">
+              <div>
+                <strong>{{ fo.price }}<sup>€</sup></strong>
+                <span>pour {{ fo.sessionsIncluded }} séances</span>
+              </div>
+              <span class="home-founding-offer-value">Valeur {{ fo.regularPrice }}€</span>
+            </div>
+
+            <div class="home-founding-offer-benefits" aria-label="Avantages de l'offre Membre Fondateur">
+              <span><i class="ti ti-check"></i> Bilan forme offert</span>
+              <span><i class="ti ti-check"></i> Coaching personnalisé</span>
+              {% if fo.includesPriorityNight %}
+                <span><i class="ti ti-moon-stars"></i> Priorité Night Coach</span>
+              {% endif %}
+            </div>
+
+            <div class="home-founding-offer-progress">
+              <div class="home-founding-offer-progress-label">
+                <span><strong>{{ fo.placesTaken }}</strong> membres déjà inscrits</span>
+                <span>{{ fo.placesRemaining }} places disponibles</span>
+              </div>
+              <div class="home-founding-offer-progress-track" role="progressbar" aria-valuenow="{{ fo.placesTaken }}" aria-valuemin="0" aria-valuemax="{{ fo.totalPlaces }}" aria-label="Places Membre Fondateur réservées">
+                <span style="width: {{ fo.progressPercent }}%;"></span>
+              </div>
+            </div>
+
+            <div class="home-founding-offer-actions">
+              <a href="{{ path('app_founding_detail') }}" class="btn btn-primary">
+                Découvrir l'offre <i class="ti ti-arrow-right"></i>
+              </a>
+              <small><i class="ti ti-lock"></i> Paiement sécurisé par Stripe</small>
+            </div>
           </div>
-          <div class="founding-progress-label">{{ fo.placesTaken }} / {{ fo.totalPlaces }} membres fondateurs</div>
-          <div class="founding-teaser-footer">Voir l'offre complète →</div>
-        </a>
+        </article>
       {% else %}
         {# Variante : complet #}
-        <div class="founding-teaser" style="border-left-color:var(--border);cursor:default;">
-          <div class="founding-title" style="color:var(--text-dim);">Offre lancement complète</div>
-          <div class="founding-sub">Merci aux {{ fo.totalPlaces }} premiers fondateurs.</div>
+        <div class="home-founding-soldout" data-animate="fade-up">
+          <span class="home-founding-soldout-icon"><i class="ti ti-crown"></i></span>
+          <div>
+            <span>Les {{ fo.totalPlaces }} places ont été attribuées</span>
+            <h2>La promotion fondatrice est complète</h2>
+            <p>Merci aux premiers membres qui écrivent l'histoire de SPORT+ avec nous.</p>
+          </div>
         </div>
       {% endif %}
     </div>
