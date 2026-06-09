@@ -35,6 +35,12 @@ class Coach
     private ?string $photoFilename = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $photoData = null;
+
+    #[ORM\Column(length: 80, nullable: true)]
+    private ?string $photoMimeType = null;
+
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $bio = null;
 
     #[ORM\Column(options: ['default' => false])]
@@ -133,6 +139,21 @@ class Coach
     public function getPhotoFilename(): ?string { return $this->photoFilename; }
     public function setPhotoFilename(?string $photoFilename): static { $this->photoFilename = $photoFilename; return $this; }
 
+    public function getPhotoData(): ?string { return $this->photoData; }
+    public function setPhotoData(?string $photoData): static { $this->photoData = $photoData; return $this; }
+
+    public function getPhotoMimeType(): ?string { return $this->photoMimeType; }
+    public function setPhotoMimeType(?string $photoMimeType): static { $this->photoMimeType = $photoMimeType; return $this; }
+
+    public function getPhotoSrc(): ?string
+    {
+        if ($this->photoData && $this->photoMimeType) {
+            return sprintf('data:%s;base64,%s', $this->photoMimeType, $this->photoData);
+        }
+
+        return $this->photoFilename ? '/img/coaches/' . $this->photoFilename : null;
+    }
+
     public function getBio(): ?string { return $this->bio; }
     public function setBio(?string $bio): static { $this->bio = $bio; return $this; }
 
@@ -140,9 +161,7 @@ class Coach
 
     public function getPhotoUrl(): string
     {
-        return $this->photoFilename
-            ? '/img/coaches/' . $this->photoFilename
-            : '';
+        return $this->getPhotoSrc() ?? '';
     }
 
     public function getNomComplet(): ?string
