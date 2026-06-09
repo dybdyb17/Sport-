@@ -144,13 +144,13 @@
                 <td class="tarif-price">270 €</td>
               </tr>
               <tr>
-                <td class="tarif-label">Pack 8 séances / mois <span class="tarif-best">Meilleur rapport</span></td>
+                <td class="tarif-label">Pack 8 séances / mois</td>
                 <td class="tarif-price">240 €</td>
                 <td class="tarif-price">335 €</td>
                 <td class="tarif-price">430 €</td>
               </tr>
               <tr>
-                <td class="tarif-label">Pack 12 séances / mois</td>
+                <td class="tarif-label">Pack 12 séances / mois <span class="tarif-best">Meilleur rapport</span></td>
                 <td class="tarif-price">320 €</td>
                 <td class="tarif-price">450 €</td>
                 <td class="tarif-price">575 €</td>
@@ -165,7 +165,7 @@
           <i class="ti ti-users"></i>
           <div>
             <h3>Duo</h3>
-            <p>2 personnes · tarif par personne</p>
+            <p>2 personnes · chacun paye sa part</p>
           </div>
         </header>
         <div class="pricing-table-scroll">
@@ -186,13 +186,13 @@
                 <td class="tarif-price">189 €</td>
               </tr>
               <tr>
-                <td class="tarif-label">Pack 8 séances / mois <span class="tarif-best">Meilleur rapport</span></td>
+                <td class="tarif-label">Pack 8 séances / mois</td>
                 <td class="tarif-price">168 €</td>
                 <td class="tarif-price">235 €</td>
                 <td class="tarif-price">302 €</td>
               </tr>
               <tr>
-                <td class="tarif-label">Pack 12 séances / mois</td>
+                <td class="tarif-label">Pack 12 séances / mois <span class="tarif-best">Meilleur rapport</span></td>
                 <td class="tarif-price">224 €</td>
                 <td class="tarif-price">314 €</td>
                 <td class="tarif-price">403 €</td>
@@ -228,13 +228,13 @@
                 <td class="tarif-price">108 €</td>
               </tr>
               <tr>
-                <td class="tarif-label">Pack 8 séances / mois <span class="tarif-best">Meilleur rapport</span></td>
+                <td class="tarif-label">Pack 8 séances / mois</td>
                 <td class="tarif-price">96 €</td>
                 <td class="tarif-price">134 €</td>
                 <td class="tarif-price">173 €</td>
               </tr>
               <tr>
-                <td class="tarif-label">Pack 12 séances / mois</td>
+                <td class="tarif-label">Pack 12 séances / mois <span class="tarif-best">Meilleur rapport</span></td>
                 <td class="tarif-price">128 €</td>
                 <td class="tarif-price">179 €</td>
                 <td class="tarif-price">230 €</td>
@@ -292,6 +292,7 @@
 
   </div>
 </section>
+{% endif %}
 
 {# ── Formules Abonnement — second parcours #}
 <section id="abonnements" class="section pricing-section pricing-section-abonnements">
@@ -334,8 +335,8 @@
         </button>
       </article>
 
-      {# Premium+ #}
-      <article class="formule-card"
+      {# Premium+ — formule la plus populaire #}
+      <article class="formule-card formule-card-featured"
                data-img="{{ asset('img/formules/premium-plus.jpg') }}"
                data-name="Premium +"
                data-price="45"
@@ -343,6 +344,7 @@
                data-tag="Solo"
                data-fees="50€ frais d'inscription"
                data-features='["Sans engagement","Accès 24/24","1 semaine d''accès à offrir","Bilan forme offert","Cours collectif avec coach"]'>
+        <div class="formule-badge-top">Le plus populaire</div>
         <div class="formule-tag">Solo</div>
         <div class="formule-badge-top">Le plus populaire</div>
         <div class="formule-name">Premium <span style="color:var(--green);">+</span></div>
@@ -356,13 +358,13 @@
           <li><i class="ti ti-check"></i> Cours collectif avec coach</li>
         </ul>
         <div class="formule-fees">+ 50€ frais d'inscription</div>
-        <button type="button" class="btn btn-outline formule-btn">
+        <button type="button" class="btn btn-primary formule-btn">
           <i class="ti ti-photo"></i> Voir la formule
         </button>
       </article>
 
-      {# Duo+ — mis en avant #}
-      <article class="formule-card formule-card-featured"
+      {# Duo+ #}
+      <article class="formule-card"
                data-img="{{ asset('img/formules/duo-plus.jpg') }}"
                data-name="Duo +"
                data-price="55"
@@ -383,7 +385,7 @@
           <li><i class="ti ti-check"></i> Cours collectif avec coach</li>
         </ul>
         <div class="formule-fees">+ 50€ frais d'inscription</div>
-        <button type="button" class="btn btn-primary formule-btn">
+        <button type="button" class="btn btn-outline formule-btn">
           <i class="ti ti-photo"></i> Voir la formule
         </button>
       </article>
