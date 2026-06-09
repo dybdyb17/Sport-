@@ -50,7 +50,7 @@ class PublicController extends AbstractController
     #[Route('/tarifs', name: 'app_tarifs', methods: ['GET'])]
     public function tarifs(FoundingOfferService $foundingOfferService): Response
     {
-        return $this->render('public/tarifs.html.twig', [
+        return $this->render('public/tarifs_v2.html.twig', [
             'deciplusSlug'  => $this->getParameter('deciplus_slug'),
             'foundingOffer' => $foundingOfferService->getActive(),
         ]);
