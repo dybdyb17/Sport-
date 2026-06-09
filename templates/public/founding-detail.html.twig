@@ -132,13 +132,13 @@
         </div>
         <a href="{{ path('app_espace_client') }}" class="btn btn-secondary" style="margin-top:16px;justify-content:center;">Voir mon espace →</a>
       {% elseif offer.hasPlacesLeft %}
-        <form method="post" action="{{ path('app_founding_claim') }}">
-          <input type="hidden" name="_token" value="{{ csrf_token('founding-claim') }}">
+        <form method="post" action="{{ path('app_founding_checkout') }}">
+          <input type="hidden" name="_token" value="{{ csrf_token('founding-checkout') }}">
           <button type="submit" class="btn btn-primary btn-lg" style="width:100%;justify-content:center;">
-            <i class="ti ti-bolt"></i> Réclamer ma place — {{ offer.price }}€
+            <i class="ti ti-brand-stripe"></i> Payer {{ offer.price }}€ avec Stripe
           </button>
         </form>
-        <div style="font-size:13px;color:var(--text-dim);margin-top:12px;">{{ offer.placesRemaining }} place{{ offer.placesRemaining > 1 ? 's' : '' }} restante{{ offer.placesRemaining > 1 ? 's' : '' }} · Non renouvelable</div>
+        <div style="font-size:13px;color:var(--text-dim);margin-top:12px;">Paiement unique et sécurisé par Stripe · {{ offer.placesRemaining }} place{{ offer.placesRemaining > 1 ? 's' : '' }} restante{{ offer.placesRemaining > 1 ? 's' : '' }}</div>
       {% else %}
         <div style="color:var(--text-dim);font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;">Offre complète — Merci aux {{ offer.totalPlaces }} fondateurs.</div>
       {% endif %}

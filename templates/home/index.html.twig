@@ -4,6 +4,7 @@
 {% block meta_description %}<meta name="description" content="Coaching premium à Marseille — Day Pass dès 40€, Night Coach dès 20h, accès salle 24h/24. 164 Chemin Saint-Jean du Désert, 13005.">{% endblock %}
 {% block og_title %}SPORT+ — Coaching Premium Marseille{% endblock %}
 {% block og_description %}Day Pass dès 40€ · Night Coach 60€ · Astreinte 80€. Accès salle 24h/24 à Marseille. Sans engagement.{% endblock %}
+{% block preload_assets %}<link rel="preload" as="image" href="{{ asset('img/club-photos/cours-collectif-1.jpg') }}" fetchpriority="high">{% endblock %}
 
 {% block body %}
 <script type="application/ld+json">
@@ -35,7 +36,8 @@
 {# ── HERO ── #}
 <section class="hero">
   <div class="hero-bg-photo" style="background-image:url('{{ asset('img/club-photos/cours-collectif-1.jpg') }}');"></div>
-  <div class="hero-inner" style="position:relative;z-index:1;">
+  <div class="hero-noise" aria-hidden="true"></div>
+  <div class="hero-inner">
     <div class="hero-content">
       <div class="hero-badge" data-animate="fade-down">Marseille — Ouvert 24h/24</div>
       <h1 class="hero-title">
@@ -48,6 +50,11 @@
         Coaching privé, small group ou accès salle. Sans engagement, sans compromis.
         Disponible même à 4h du matin.
       </p>
+      <div class="hero-proof" data-stagger data-animate="fade-up" aria-label="Les engagements SPORT+">
+        <span><i class="ti ti-shield-check"></i> Coachs certifiés</span>
+        <span><i class="ti ti-clock-24"></i> Salle 24h/24</span>
+        <span><i class="ti ti-lock-open"></i> Sans engagement</span>
+      </div>
       <div data-animate="fade-up" style="margin-bottom:32px;">
         <div class="brand-pioneers">À jamais les pionniers</div>
         <div class="brand-slogan">Pour le meilleur & pour le <span class="brand-plus">+</span></div>
@@ -84,23 +91,84 @@
         </div>
       </div>
     </div>
+
+    <div class="hero-performance" data-animate="fade-left" aria-hidden="true">
+      <div class="hero-orbit hero-orbit-one"></div>
+      <div class="hero-orbit hero-orbit-two"></div>
+      <div class="hero-performance-card">
+        <div class="hero-performance-head">
+          <span class="hero-live-dot"></span>
+          Night performance
+          <span>Marseille</span>
+        </div>
+        <div class="hero-performance-time">24<span>/7</span></div>
+        <div class="hero-heartbeat">
+          <span></span><span></span><span></span><span></span><span></span>
+        </div>
+        <div class="hero-performance-copy">Ton rythme. Ton coach.<br>Même quand la ville dort.</div>
+        <div class="hero-performance-tags">
+          <span>Solo</span><span>Duo</span><span>Groupe</span>
+        </div>
+      </div>
+    </div>
   </div>
+  <a href="#night-coach" class="hero-scroll-cue" aria-label="Découvrir le Night Coach">
+    <span>Découvrir</span><i class="ti ti-arrow-down"></i>
+  </a>
 </section>
 
 {# ── Founding Member teaser ── #}
 {% set fo = foundingOffer ?? current_founding_offer() %}
-{% if fo and fo.isStillRunning %}
-  <section style="padding:40px 0 0;">
+{% if fo and (fo.isStillRunning or (app.user and app.user.foundingClaim)) %}
+  <section class="home-founding-section">
     <div class="container">
       {% if app.user and app.user.foundingClaim %}
-        {# Variante : déjà membre fondateur #}
-        <div class="founding-teaser" style="cursor:default;">
-          <div class="founding-title">{{ app.user.foundingClaim.foundingLabel }}</div>
-          <div class="founding-sub">
-            {{ app.user.foundingClaim.sessionsRemaining }}/{{ fo.sessionsIncluded }} séances incluses restantes
-            · Bilan {{ app.user.foundingClaim.isBilanDone ? '✓ effectué' : 'à programmer' }}
+        {# Variante compacte réservée à la home : valoriser le statut après paiement. #}
+        {% set foundingClaim = app.user.foundingClaim %}
+        <div class="home-founding-welcome" data-animate="fade-up">
+          <div class="home-founding-welcome-glow" aria-hidden="true"></div>
+          <div class="home-founding-emblem" aria-hidden="true">
+            <i class="ti ti-crown"></i>
           </div>
-          <a href="{{ path('app_espace_client') }}" class="btn btn-secondary btn-sm">Voir mon espace →</a>
+
+          <div class="home-founding-copy">
+            <div class="home-founding-kicker">
+              <span class="home-founding-live-dot"></span>
+              Statut membre activé
+            </div>
+            <div class="home-founding-title-row">
+              <div>
+                <span class="home-founding-greeting">Bienvenue dans l'histoire SPORT+</span>
+                <h2>{{ foundingClaim.foundingLabel }}</h2>
+              </div>
+              <span class="home-founding-badge"><i class="ti ti-rosette-discount-check"></i> Fondateur</span>
+            </div>
+            <p>Ta place est confirmée. Tes avantages fondateur sont disponibles directement depuis ton espace membre.</p>
+
+            <div class="home-founding-benefits" aria-label="Avantages Membre Fondateur">
+              <div class="home-founding-benefit">
+                <i class="ti ti-barbell"></i>
+                <span><strong>{{ foundingClaim.sessionsRemaining }}/{{ fo.sessionsIncluded }}</strong> séances restantes</span>
+              </div>
+              <div class="home-founding-benefit {{ foundingClaim.isBilanDone ? 'is-complete' : '' }}">
+                <i class="ti {{ foundingClaim.isBilanDone ? 'ti-circle-check' : 'ti-calendar-event' }}"></i>
+                <span><strong>Bilan forme</strong> {{ foundingClaim.isBilanDone ? 'effectué' : 'à programmer' }}</span>
+              </div>
+              {% if fo.includesPriorityNight %}
+                <div class="home-founding-benefit is-night">
+                  <i class="ti ti-moon-stars"></i>
+                  <span><strong>Priorité</strong> Night Coach</span>
+                </div>
+              {% endif %}
+            </div>
+          </div>
+
+          <div class="home-founding-action">
+            <span>Ton aventure commence maintenant</span>
+            <a href="{{ path('app_espace_client') }}" class="btn btn-primary">
+              <i class="ti ti-layout-dashboard"></i> Ouvrir mon espace
+            </a>
+          </div>
         </div>
       {% elseif fo.hasPlacesLeft %}
         {# Variante : places disponibles #}
@@ -126,9 +194,10 @@
 {% endif %}
 
 {# ── NIGHT COACH — Bannière signature SPORT+ ── #}
-<section class="night-banner-section" data-animate="fade-up">
+<section class="night-banner-section" id="night-coach" data-animate="fade-up">
   <div class="container">
     <div class="night-banner">
+      <div class="night-energy-lines" aria-hidden="true"><span></span><span></span><span></span></div>
 
       {# Colonne texte #}
       <div class="night-banner-content">
@@ -189,17 +258,20 @@
     <h2 class="section-title" data-animate="fade-up">Pourquoi <span style="color:var(--gold)">SPORT+</span></h2>
     <p class="section-sub" data-animate="fade-up">Une approche premium du coaching sportif, pensée pour les exigeants.</p>
     <div class="cards-grid" data-stagger data-animate="fade-up">
-      <div class="feature-card">
+      <div class="feature-card home-feature-card">
+        <span class="home-card-index">01</span>
         <div class="feature-icon"><i class="ti ti-bolt"></i></div>
         <div class="feature-title">Performance sans compromis</div>
         <p class="feature-text">Des coachs certifiés, des programmes sur-mesure, des résultats mesurables. Chaque séance est conçue pour te faire progresser.</p>
       </div>
-      <div class="feature-card">
+      <div class="feature-card home-feature-card">
+        <span class="home-card-index">02</span>
         <div class="feature-icon"><i class="ti ti-clock"></i></div>
         <div class="feature-title">Disponible 24h/24</div>
         <p class="feature-text">Night Coach dès 20h, accès salle à toute heure. Ton emploi du temps ne dicte plus ta progression.</p>
       </div>
-      <div class="feature-card">
+      <div class="feature-card home-feature-card">
+        <span class="home-card-index">03</span>
         <div class="feature-icon"><i class="ti ti-shield-check"></i></div>
         <div class="feature-title">Zéro engagement</div>
         <p class="feature-text">Réserve quand tu veux, annule jusqu'à 2h avant sans frais. Tu paies uniquement si le coach confirme.</p>
@@ -219,7 +291,8 @@
     {# ── 3 Day Pass ── #}
     <div class="cards-grid" style="margin-bottom:20px;" data-stagger data-animate="scale-in">
 
-      <div class="service-card">
+      <div class="service-card home-service-card">
+        <span class="service-window">06h — 20h</span>
         <div class="service-icon"><i class="ti ti-sun"></i></div>
         <div class="service-name">Day Pass Journée</div>
         <div class="service-price">40 € / séance</div>
@@ -227,7 +300,7 @@
         <a href="{{ app.user ? path('app_booking_new') : path('app_register') }}" class="btn btn-outline">Réserver</a>
       </div>
 
-      <div class="service-card" style="border-left:3px solid var(--green);position:relative;">
+      <div class="service-card home-service-card home-service-card-featured">
         <div style="position:absolute;top:-1px;right:16px;background:var(--green);color:var(--black);
                     font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;
                     letter-spacing:2px;text-transform:uppercase;padding:4px 10px;
@@ -241,7 +314,8 @@
         <a href="{{ app.user ? path('app_booking_new') : path('app_register') }}" class="btn btn-outline">Réserver</a>
       </div>
 
-      <div class="service-card">
+      <div class="service-card home-service-card">
+        <span class="service-window">00h — 06h</span>
         <div class="service-icon"><i class="ti ti-moon-stars"></i></div>
         <div class="service-name">Day Pass Astreinte</div>
         <div class="service-price">80 € / séance</div>
@@ -252,8 +326,7 @@
     </div>
 
     {# ── Packs mensuels — pleine largeur ── #}
-    <div class="service-card" style="display:flex;align-items:center;justify-content:space-between;
-                gap:32px;flex-wrap:wrap;border-left:3px solid var(--gold);">
+    <div class="service-card home-pack-card">
       <div style="display:flex;align-items:center;gap:20px;flex:1;min-width:220px;">
         <div class="service-icon" style="flex-shrink:0;"><i class="ti ti-calendar-repeat"></i></div>
         <div>
@@ -284,89 +357,49 @@
 
       <div class="club-gallery-item is-large">
         <img src="{{ asset('img/club-photos/cours-collectif-1.jpg') }}" alt="Cours collectif de musculation chez SPORT+" loading="lazy">
+        <span class="club-gallery-caption">Énergie collective</span>
       </div>
 
       <div class="club-gallery-item">
         <img src="{{ asset('img/club-photos/muscu-homme.jpg') }}" alt="Séance musculation homme chez SPORT+" loading="lazy">
+        <span class="club-gallery-caption">Dépassement</span>
       </div>
 
       <div class="club-gallery-item is-tall">
         <img src="{{ asset('img/club-photos/portrait-souriante.jpg') }}" alt="Membre souriante chez SPORT+" loading="lazy">
+        <span class="club-gallery-caption">Confiance</span>
       </div>
 
       <div class="club-gallery-item">
         <img src="{{ asset('img/club-photos/bench-orange.jpg') }}" alt="Espace musculation premium SPORT+" loading="lazy">
+        <span class="club-gallery-caption">Équipement premium</span>
       </div>
 
       <div class="club-gallery-item">
         <img src="{{ asset('img/club-photos/duo-rire-nuit.jpg') }}" alt="Séance duo motivation SPORT+" loading="lazy">
+        <span class="club-gallery-caption">Duo Night</span>
       </div>
 
       <div class="club-gallery-item">
         <img src="{{ asset('img/club-photos/cardio-vue.jpg') }}" alt="Coaching cardio avec vue SPORT+" loading="lazy">
+        <span class="club-gallery-caption">Cardio</span>
       </div>
 
       <div class="club-gallery-item">
         <img src="{{ asset('img/club-photos/coaching-halteres.jpg') }}" alt="Coaching haltères SPORT+" loading="lazy">
+        <span class="club-gallery-caption">Coaching privé</span>
       </div>
 
       <div class="club-gallery-item">
         <img src="{{ asset('img/club-photos/back-extension.jpg') }}" alt="Renforcement musculaire SPORT+" loading="lazy">
+        <span class="club-gallery-caption">Renforcement</span>
       </div>
 
     </div>
   </div>
 </section>
 
-{# ── NOS COACHS ── #}
-<section class="section" style="background:var(--bg-2);">
-  <div class="container">
-    <div style="text-align:center;">
-      <div class="section-badge">L'équipe</div>
-    </div>
-    <h2 class="section-title" data-animate="fade-up">Nos <span style="color:var(--gold)">Coachs</span></h2>
-    <p class="section-sub" data-animate="fade-up">Des professionnels certifiés, passionnés, disponibles pour toi.</p>
-    {% if coaches is empty %}
-      <div class="empty-placeholder">Nos coachs arrivent bientôt.</div>
-    {% else %}
-      <div class="coach-pro-grid" data-stagger data-animate="fade-up">
-        {% for coach in coaches %}
-          <div class="coach-pro-card">
-            <div class="coach-pro-photo-wrap">
-              {% if coach.photoFilename %}
-                <img src="{{ asset('img/coaches/' ~ coach.photoFilename) }}" alt="{{ coach.nomComplet }}" class="coach-pro-photo">
-              {% else %}
-                <div class="coach-pro-initials">
-                  {%- set words = coach.nomComplet|split(' ') -%}
-                  {{- words[0]|first|upper -}}{%- if words|length > 1 -%}{{- words[1]|first|upper -}}{%- endif -%}
-                </div>
-              {% endif %}
-            </div>
-            <div class="coach-pro-body">
-              <div class="coach-pro-name">{{ coach.nomComplet }}</div>
-              {% if coach.bio %}
-                <p class="coach-pro-bio">{{ coach.bio|slice(0,120) }}{% if coach.bio|length > 120 %}…{% endif %}</p>
-              {% endif %}
-              {% if coach.specialties is not empty %}
-                <div class="coach-pro-chips">
-                  {% for specialty in coach.specialties %}
-                    <span class="coach-pro-chip">{{ specialty|capitalize }}</span>
-                  {% endfor %}
-                </div>
-              {% endif %}
-              <a href="{{ app.user ? path('app_booking_new') : path('app_login') }}" class="btn btn-primary coach-pro-cta">
-                <i class="ti ti-calendar-plus"></i> Réserver
-              </a>
-            </div>
-          </div>
-        {% endfor %}
-      </div>
-      <div style="text-align:center;margin-top:40px;">
-        <a href="{{ path('app_coachs_list') }}" class="btn btn-outline">Voir tous les coachs</a>
-      </div>
-    {% endif %}
-  </div>
-</section>
+{# La liste complète des coachs est maintenant centralisée sur la page /coachs. #}
 
 {# ── FAQ ── #}
 <section class="section">
@@ -407,8 +440,8 @@
 </section>
 
 {# ── CTA BOTTOM ── #}
-<section class="section" style="background:var(--bg-2);text-align:center;">
-  <div class="container">
+<section class="section home-final-cta">
+  <div class="container home-final-cta-inner">
     <div class="hero-badge" style="margin-bottom:24px;">Prêt à commencer ?</div>
     <h2 class="section-title">Réserve ta<br><span style="color:var(--gold)">première séance</span></h2>
     <p class="section-sub">Sans engagement, sans risque. Juste toi et ton coach.</p>
@@ -425,6 +458,10 @@
           Se connecter
         </a>
       {% endif %}
+    </div>
+    <div class="home-final-trust" aria-label="Garanties">
+      <span><i class="ti ti-check"></i> Aucun paiement avant confirmation</span>
+      <span><i class="ti ti-check"></i> Annulation jusqu'à 2h avant</span>
     </div>
   </div>
 </section>

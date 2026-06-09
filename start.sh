@@ -7,7 +7,7 @@ echo "PORT: ${PORT:-8080}"
 echo "APP_ENV: ${APP_ENV:-prod}"
 
 # Étape 1 : Vérifier la connexion BDD avec retry (Railway parfois lent à provisionner)
-echo "[1/5] Vérification connexion BDD..."
+echo "[1/6] Vérification connexion BDD..."
 for i in 1 2 3 4 5; do
     if php bin/console doctrine:query:sql "SELECT 1" --env=prod --no-debug > /dev/null 2>&1; then
         echo "✓ BDD accessible"
@@ -21,13 +21,13 @@ for i in 1 2 3 4 5; do
 done
 
 # Étape 2 : Schema update depuis les entités (compatible MySQL local + Postgres prod)
-echo "[2/5] Mise à jour du schéma BDD..."
+echo "[2/6] Mise à jour du schéma BDD..."
 php bin/console doctrine:schema:update --force --env=prod --no-debug 2>&1 || {
     echo "WARN schema:update a échoué, on continue"
 }
 
 # Étape 3 : Cache prod
-echo "[3/5] Cache prod..."
+echo "[3/6] Cache prod..."
 php bin/console cache:clear --env=prod --no-debug 2>&1 || echo "WARN cache:clear failed"
 php bin/console cache:warmup --env=prod --no-debug 2>&1 || echo "WARN cache:warmup failed"
 
@@ -43,8 +43,17 @@ else
     echo "✓ public/assets/ présent ($(ls public/assets | wc -l) entrées top-level)"
 fi
 
-# Étape 4 : Créer admin par défaut s'il n'existe pas
-echo "[4/5] Vérification admin..."
+# Étape 4 : Valider le template réellement utilisé par la route /tarifs.
+# Cette vérification est volontairement bloquante : mieux vaut arrêter un déploiement
+# avec un message précis que démarrer Railway avec une page publique en erreur 500.
+echo "[4/6] Validation du template Tarifs..."
+php bin/console lint:twig \
+    templates/public/tarifs_v2.html.twig \
+    templates/public/_founding_offer.html.twig \
+    --env=prod --no-debug
+
+# Étape 5 : Créer admin par défaut s'il n'existe pas
+echo "[5/6] Vérification admin..."
 ADMIN_EXISTS=$(php bin/console doctrine:query:sql 'SELECT COUNT(*) FROM "user" WHERE roles LIKE '"'"'%ROLE_ADMIN%'"'"'' --env=prod --no-debug 2>/dev/null | grep -oE '[0-9]+' | tail -1 || echo "0")
 
 if [ "$ADMIN_EXISTS" = "0" ]; then
@@ -59,8 +68,8 @@ else
     echo "✓ Admin déjà présent"
 fi
 
-# Étape 5 : Seed Founding Offer si absente
-echo "[5/5] Vérification offre Founding..."
+# Étape 6 : Seed Founding Offer si absente
+echo "[6/6] Vérification offre Founding..."
 FOUNDING_EXISTS=$(php bin/console doctrine:query:sql 'SELECT COUNT(*) FROM founding_offer' --env=prod --no-debug 2>/dev/null | grep -oE '[0-9]+' | tail -1 || echo "0")
 
 if [ "$FOUNDING_EXISTS" = "0" ]; then
