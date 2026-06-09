@@ -77,7 +77,7 @@ class AdminCoachType extends AbstractType
                 ],
             ])
             ->add('photoFile', FileType::class, [
-                'label'    => 'Photo de profil (JPEG/PNG, max 2 Mo)',
+                'label'    => 'Photo de profil (JPEG/PNG/WebP, max 2 Mo — conservée après redéploiement)',
                 'required' => false,
                 'mapped'   => false,
                 'constraints' => [
@@ -96,8 +96,13 @@ class AdminCoachType extends AbstractType
                     'Nutrition'   => 'nutrition',
                     'Crossfit'    => 'crossfit',
                     'Boxe'        => 'boxe',
-                    'Yoga'        => 'yoga',
-                    'Mobilité'    => 'mobilite',
+                    'Yoga'                  => 'yoga',
+                    'Mobilité'              => 'mobilite',
+                    'Préparation physique'  => 'preparation physique',
+                    'Prise de masse'         => 'prise de masse',
+                    'Prise de poids'         => 'prise de poids',
+                    'Pilates'                => 'pilates',
+                    'Body Sensation'         => 'body sensation',
                 ],
                 'multiple' => true,
                 'expanded' => true,

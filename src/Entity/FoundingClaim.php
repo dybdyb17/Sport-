@@ -34,6 +34,15 @@ class FoundingClaim
     #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
     private ?\DateTimeImmutable $expiresAt = null;
 
+    #[ORM\Column(length: 255, nullable: true, unique: true)]
+    private ?string $stripeCheckoutSessionId = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $stripePaymentIntentId = null;
+
+    #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
+    private ?\DateTimeImmutable $paidAt = null;
+
     public function __construct()
     {
         $this->claimedAt = new \DateTimeImmutable();
@@ -52,6 +61,12 @@ class FoundingClaim
     public function getClaimedAt(): \DateTimeImmutable { return $this->claimedAt; }
     public function getExpiresAt(): ?\DateTimeImmutable { return $this->expiresAt; }
     public function setExpiresAt(?\DateTimeImmutable $d): static { $this->expiresAt = $d; return $this; }
+    public function getStripeCheckoutSessionId(): ?string { return $this->stripeCheckoutSessionId; }
+    public function setStripeCheckoutSessionId(?string $id): static { $this->stripeCheckoutSessionId = $id; return $this; }
+    public function getStripePaymentIntentId(): ?string { return $this->stripePaymentIntentId; }
+    public function setStripePaymentIntentId(?string $id): static { $this->stripePaymentIntentId = $id; return $this; }
+    public function getPaidAt(): ?\DateTimeImmutable { return $this->paidAt; }
+    public function setPaidAt(?\DateTimeImmutable $paidAt): static { $this->paidAt = $paidAt; return $this; }
 
     public function getSessionsRemaining(): int { return max(0, ($this->offer?->getSessionsIncluded() ?? 3) - $this->sessionsUsed); }
     public function hasSessionsLeft(): bool { return $this->getSessionsRemaining() > 0; }

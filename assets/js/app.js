@@ -14,6 +14,19 @@
   }
 
   ready(function() {
+    // Les effets les plus coûteux restent disponibles sur les machines
+    // confortables, mais sont coupés automatiquement sur les appareils
+    // modestes, en économie de données ou avec animations réduites.
+    var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var precisePointer = window.matchMedia && window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+    var saveData = navigator.connection && navigator.connection.saveData;
+    var lowMemory = typeof navigator.deviceMemory === 'number' && navigator.deviceMemory <= 4;
+    var lowCpu = typeof navigator.hardwareConcurrency === 'number' && navigator.hardwareConcurrency <= 4;
+    var performanceLite = reduceMotion || saveData || lowMemory || lowCpu;
+
+    if (performanceLite) {
+      document.documentElement.classList.add('performance-lite');
+    }
 
     // ── 1. Intersection Observer : reveal au scroll ────────────────
     if ('IntersectionObserver' in window) {
@@ -75,7 +88,8 @@
     }
 
     // ── 3. Tilt 3D sur les cards coachs ─────────────────────────────
-    document.querySelectorAll('.coach-pro-card').forEach(function(card) {
+    if (!performanceLite && precisePointer) {
+      document.querySelectorAll('.coach-pro-card').forEach(function(card) {
       var bounds;
       function onMove(e) {
         if (!bounds) bounds = card.getBoundingClientRect();
@@ -97,9 +111,42 @@
       card.addEventListener('mouseenter', onEnter);
       card.addEventListener('mousemove', onMove);
       card.addEventListener('mouseleave', onLeave);
-    });
+      });
+    }
 
-    // ── 4. Bouton scroll-to-top ─────────────────────────────────────
+    // ── 4. Lumière interactive sur les surfaces premium ──────────────
+    // Mouvement léger uniquement avec une souris précise et une machine
+    // suffisamment confortable pour ne pas dégrader le scroll.
+    if (!performanceLite && precisePointer) {
+      var ambientFrame = null;
+      document.addEventListener('pointermove', function(e) {
+        if (ambientFrame) return;
+        ambientFrame = requestAnimationFrame(function() {
+          var x = ((e.clientX / window.innerWidth) - 0.5) * 12;
+          var y = ((e.clientY / window.innerHeight) - 0.5) * 10;
+          document.body.style.setProperty('--ambient-x', x.toFixed(2));
+          document.body.style.setProperty('--ambient-y', y.toFixed(2));
+          ambientFrame = null;
+        });
+      }, { passive: true });
+
+      document.querySelectorAll('.feature-card, .service-card, .coach-pro-card, .programme-card, .formule-card').forEach(function(card) {
+        card.addEventListener('pointermove', function(e) {
+          var rect = card.getBoundingClientRect();
+          card.style.setProperty('--card-x', (((e.clientX - rect.left) / rect.width) * 100).toFixed(1) + '%');
+          card.style.setProperty('--card-y', (((e.clientY - rect.top) / rect.height) * 100).toFixed(1) + '%');
+        });
+      });
+    }
+
+    // Les statuts Night Coach actifs gardent une pulsation discrète et lisible.
+    if (!performanceLite) {
+      document.querySelectorAll('.coach-pro-status-live, .night-banner-dot').forEach(function(el) {
+        el.classList.add('performance-pulse');
+      });
+    }
+
+    // ── 5. Bouton scroll-to-top ─────────────────────────────────────
     var scrollTop = document.createElement('button');
     scrollTop.className = 'scroll-top';
     scrollTop.setAttribute('aria-label', 'Retour en haut');
@@ -110,7 +157,7 @@
       window.scrollTo({ top: 0, behavior: 'smooth' });
     });
 
-    // ── 5. Indicateur de progression scroll ─────────────────────────
+    // ── 6. Indicateur de progression scroll ─────────────────────────
     var progress = document.createElement('div');
     progress.className = 'scroll-progress';
     document.body.appendChild(progress);
@@ -195,6 +242,27 @@ if (document.readyState === 'loading') {
 })();
 
 function setup() {
+
+  // ── Dropdown Tarifs ───────────────────────────────────────────
+  var pricingToggle = document.querySelector('.nav-dropdown-toggle');
+  var pricingMenu = document.querySelector('.nav-dropdown-menu');
+
+  if (pricingToggle && pricingMenu) {
+    pricingToggle.addEventListener('click', function(e) {
+      e.stopPropagation();
+      var open = pricingMenu.classList.toggle('is-open');
+      pricingToggle.setAttribute('aria-expanded', String(open));
+    });
+
+    pricingMenu.addEventListener('click', function(e) {
+      e.stopPropagation();
+    });
+
+    document.addEventListener('click', function() {
+      pricingMenu.classList.remove('is-open');
+      pricingToggle.setAttribute('aria-expanded', 'false');
+    });
+  }
 
   // ── User dropdown ─────────────────────────────────────────────
   var avatar   = document.querySelector('.user-avatar');
