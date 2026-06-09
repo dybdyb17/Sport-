@@ -29,6 +29,15 @@
   margin: 0 auto;
   line-height: 1.6;
 }
+.bk-hero-sub {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 18px;
+  color: var(--text-soft);
+  max-width: 520px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
 .bk-step-dot.is-done .bk-step-name { color: var(--green); }
 .bk-step-dot.is-done .bk-step-num::before {
   content: '\2713'; /* check */
@@ -617,9 +626,6 @@
   0%, 100% { transform: scale(1);   opacity: .9; }
   50%      { transform: scale(1.4); opacity: .5; }
 }
-@media (max-width: 1024px) {
-  .bk-sidebar { position: static; }
-}
 .bk-submit-note i { color: var(--green); }
 
 .bk-recap-line {
@@ -670,6 +676,28 @@
 }
 .bk-recap.is-pulse .bk-recap-total-price {
   animation: priceBump .35s cubic-bezier(.2, 1.4, .4, 1);
+}
+@keyframes priceBump {
+  0%   { transform: scale(1);    }
+  50%  { transform: scale(1.08); }
+  100% { transform: scale(1);    }
+}
+.bk-recap-total-period {
+  font-size: 12px;
+  color: var(--text-soft);
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  margin-top: 6px;
+}
+.bk-recap-savings {
+  margin-top: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--green);
+  background: rgba(46,204,113,.1);
+  padding: 4px 10px;
+  border-radius: 100px;
+  display: inline-block;
 }
 @keyframes priceBump {
   0%   { transform: scale(1);    }
