@@ -1,0 +1,44 @@
+<section class="pricing-founding-section" aria-labelledby="pricing-founding-title">
+  <div class="container">
+    <div class="pricing-founding-card" data-animate="fade-up">
+      <div class="pricing-founding-photo">
+        <img src="{{ asset('img/club-photos/heureux-fondateur.jpg') }}"
+             onerror="this.onerror=null;this.src='{{ asset('img/club-photos/portrait-souriante.jpg') }}';"
+             alt="Membre fondateur SPORT+ heureux après son entraînement">
+        <span class="pricing-founding-photo-badge"><i class="ti ti-heart"></i> Offre lancement</span>
+      </div>
+      <div class="pricing-founding-content">
+        {% if app.user and app.user.foundingClaim %}
+          <div class="pricing-founding-eyebrow">{{ app.user.foundingClaim.foundingLabel }}</div>
+          <h2 id="pricing-founding-title">Tu fais partie de l'aventure SPORT+</h2>
+          <p>{{ app.user.foundingClaim.sessionsRemaining }}/{{ fo.sessionsIncluded }} séances incluses restantes · bilan {{ app.user.foundingClaim.isBilanDone ? 'effectué' : 'à programmer' }}.</p>
+          <a href="{{ path('app_espace_client') }}" class="btn btn-primary"><i class="ti ti-user"></i> Voir mon espace</a>
+        {% elseif fo.hasPlacesLeft %}
+          <div class="pricing-founding-eyebrow">Deviens Membre Fondateur</div>
+          <h2 id="pricing-founding-title">Commence avec une offre qui te ressemble</h2>
+          <p class="pricing-founding-lead">Rejoins les premiers membres SPORT+ et profite d'un accompagnement privilégié dès ton arrivée.</p>
+          <div class="pricing-founding-price"><strong>{{ fo.sessionsIncluded }} séances · {{ fo.price }}€</strong><span>Valeur habituelle {{ fo.regularPrice }}€</span></div>
+          <ul class="pricing-founding-benefits">
+            <li><i class="ti ti-circle-check"></i> {{ fo.sessionsIncluded }} séances de coaching incluses</li>
+            {% if fo.includesFreeBilan %}
+              <li><i class="ti ti-circle-check"></i> Bilan forme offert</li>
+            {% endif %}
+            {% if fo.includesPriorityNight %}
+              <li><i class="ti ti-circle-check"></i> Priorité sur les créneaux Night Coach</li>
+            {% endif %}
+          </ul>
+          <div class="pricing-founding-progress" aria-label="{{ fo.placesTaken }} places prises sur {{ fo.totalPlaces }}">
+            <div><span>Déjà {{ fo.placesTaken }} membres</span><strong>{{ fo.placesRemaining }} places restantes</strong></div>
+            <div class="pricing-founding-progress-track"><span style="width:{{ fo.progressPercent }}%;"></span></div>
+          </div>
+          <a href="{{ path('app_founding_detail') }}" class="btn btn-primary btn-lg"><i class="ti ti-sparkles"></i> Découvrir l'offre</a>
+        {% else %}
+          <div class="pricing-founding-eyebrow">Merci aux fondateurs</div>
+          <h2 id="pricing-founding-title">L'offre lancement est complète</h2>
+          <p>Les {{ fo.totalPlaces }} places ont été attribuées. Découvre maintenant nos formules de coaching.</p>
+          <a href="#coaching" class="btn btn-secondary"><i class="ti ti-arrow-down"></i> Voir le coaching</a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>

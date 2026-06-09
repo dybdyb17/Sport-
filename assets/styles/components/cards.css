@@ -24,8 +24,8 @@
   width: 56px;
   height: 56px;
   border-radius: 50%;
-  background: rgba(200,169,81,.1);
-  border: 1px solid rgba(200,169,81,.2);
+  background: rgba(var(--gold-rgb),.1);
+  border: 1px solid rgba(var(--gold-rgb),.2);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -48,4 +48,49 @@
   font-size: 15px;
   color: var(--text-dim);
   line-height: 1.6;
+}
+
+/* ── Night Performance : profondeur commune des surfaces ─────────── */
+.feature-card,
+.service-card,
+.form-card,
+.data-table-card,
+.coach-pro-card,
+.bk-card,
+.rdv-card,
+.programme-card,
+.formule-card {
+  position: relative;
+  isolation: isolate;
+  background-color: var(--bg-card);
+  background-image:
+    linear-gradient(145deg, var(--surface-highlight), transparent 38%),
+    radial-gradient(circle at var(--card-x, 80%) var(--card-y, 0%), rgba(var(--green-rgb), .055), transparent 36%);
+  border-color: var(--border-soft);
+}
+
+.feature-card::after,
+.service-card::after,
+.coach-pro-card::after,
+.programme-card::after,
+.formule-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  border-radius: inherit;
+  opacity: 0;
+  background: linear-gradient(115deg, transparent 20%, rgba(255,255,255,.055) 48%, transparent 72%);
+  transform: translateX(-35%);
+  transition: opacity var(--motion-base) ease, transform var(--motion-slow) var(--ease-performance);
+}
+
+.feature-card:hover::after,
+.service-card:hover::after,
+.coach-pro-card:hover::after,
+.programme-card:hover::after,
+.formule-card:hover::after {
+  opacity: 1;
+  transform: translateX(35%);
 }

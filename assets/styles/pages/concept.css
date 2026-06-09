@@ -56,3 +56,74 @@
   .concept-photos-grid { grid-template-columns: 1fr; gap: 12px; }
 }
 
+
+/* ── Partenaires Matrix & Vitalfit ───────────────────────────────── */
+.concept-partner-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 22px;
+  margin-top: 38px;
+}
+
+.concept-partner-card {
+  position: relative;
+  overflow: hidden;
+  min-height: 300px;
+  padding: 34px;
+  border: 1px solid rgba(var(--gold-rgb),.22);
+  border-radius: var(--radius-lg);
+  background: linear-gradient(145deg, rgba(var(--gold-rgb),.07), transparent 45%), var(--bg-card);
+}
+
+.concept-partner-card-vitalfit {
+  border-color: rgba(var(--green-rgb),.25);
+  background: linear-gradient(145deg, rgba(var(--green-rgb),.07), transparent 45%), var(--bg-card);
+}
+
+.concept-partner-icon {
+  display: grid;
+  place-items: center;
+  width: 54px;
+  height: 54px;
+  margin-bottom: 24px;
+  border: 1px solid rgba(var(--gold-rgb),.24);
+  border-radius: 15px;
+  background: rgba(var(--gold-rgb),.08);
+  color: var(--gold);
+  font-size: 26px;
+}
+
+.concept-partner-card-vitalfit .concept-partner-icon {
+  border-color: rgba(var(--green-rgb),.26);
+  background: rgba(var(--green-rgb),.08);
+  color: var(--green);
+}
+
+.concept-partner-kicker {
+  color: var(--text-dim);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1.3px;
+  text-transform: uppercase;
+}
+
+.concept-partner-card h3 {
+  margin: 7px 0 12px;
+  color: var(--white);
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 38px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.concept-partner-card p {
+  color: var(--text-soft);
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+@media (max-width: 720px) {
+  .concept-partner-grid {
+    grid-template-columns: 1fr;
+  }
+}
