@@ -29,6 +29,15 @@
   margin: 0 auto;
   line-height: 1.6;
 }
+.bk-hero-sub {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 18px;
+  color: var(--text-soft);
+  max-width: 520px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
 .bk-step-dot.is-done .bk-step-num { font-size: 0; }
 .bk-step-dot.is-done .bk-step-num::before { font-size: 18px; }
 
@@ -668,6 +677,23 @@
   0%   { transform: scale(1);    }
   50%  { transform: scale(1.08); }
   100% { transform: scale(1);    }
+}
+.bk-recap-total-period {
+  font-size: 12px;
+  color: var(--text-soft);
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  margin-top: 6px;
+}
+.bk-recap-savings {
+  margin-top: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--green);
+  background: rgba(46,204,113,.1);
+  padding: 4px 10px;
+  border-radius: 100px;
+  display: inline-block;
 }
 .bk-recap-total-period {
   font-size: 12px;

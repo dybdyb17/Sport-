@@ -3,13 +3,11 @@
 namespace App\Controller;
 
 use App\Repository\CoachRepository;
-use App\Repository\FoundingClaimRepository;
 use App\Service\FoundingOfferService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class PublicController extends AbstractController
 {
@@ -85,29 +83,6 @@ class PublicController extends AbstractController
         return $this->render('public/founding-detail.html.twig', [
             'offer' => $offer,
         ]);
-    }
-
-    #[Route('/offre/founding/claim', name: 'app_founding_claim', methods: ['POST'])]
-    #[IsGranted('ROLE_CLIENT')]
-    public function foundingClaim(Request $request, FoundingOfferService $foundingOfferService): Response
-    {
-        if (!$this->isCsrfTokenValid('founding-claim', $request->request->get('_token'))) {
-            $this->addFlash('error', 'Token de sécurité invalide. Veuillez réessayer.');
-            return $this->redirectToRoute('app_founding_detail');
-        }
-
-        try {
-            $claim = $foundingOfferService->claim($this->getUser());
-            $this->addFlash('success', sprintf(
-                'Bienvenue, %s ! Vous êtes maintenant %s. Vos 3 séances sont prêtes.',
-                $this->getUser()->getNomComplet(),
-                $claim->getFoundingLabel()
-            ));
-        } catch (\LogicException $e) {
-            $this->addFlash('error', $e->getMessage());
-        }
-
-        return $this->redirectToRoute('app_founding_detail');
     }
 
     #[Route('/a-propos', name: 'app_about', methods: ['GET'])]
