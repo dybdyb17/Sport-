@@ -4,31 +4,303 @@
 {% block meta_description %}<meta name="description" content="Grille tarifaire officielle SPORT+ Marseille : séances uniques et packs mensuels Solo, Duo et Groupe. Journée, Night Coach, Astreinte.">{% endblock %}
 
 {% block body %}
+{% set bookingPath = app.user ? path('app_booking_new') : path('app_register') %}
 
-{# ── Hero #}
-<section class="pub-hero-split">
+{# ── Hero : priorité au coaching #}
+<section class="pub-hero-split pricing-hero">
+  <div class="pricing-hero-orb pricing-hero-orb-gold" aria-hidden="true"></div>
+  <div class="pricing-hero-orb pricing-hero-orb-green" aria-hidden="true"></div>
   <div class="container">
-    <div class="pub-hero-split-grid">
-      <div class="pub-hero-split-text">
-        <div class="hero-badge">Tarification officielle</div>
-        <h1 class="section-title">Nos <span style="color:var(--gold)">Tarifs</span></h1>
-        <p class="section-sub">Des formules transparentes, adaptées à ton rythme. Day Pass à l'unité ou packs mensuels.</p>
+    <div class="pub-hero-split-grid pricing-hero-grid">
+      <div class="pub-hero-split-text pricing-hero-copy" data-animate="fade-up">
+        <div class="hero-badge">Coaching de jour comme de nuit</div>
+        <h1 class="section-title">Ton coaching, <span class="pricing-accent">à ton rythme</span></h1>
+        <p class="section-sub">Découvre en priorité le Night Coach SPORT+, puis nos séances, packs et abonnements pour accéder à la salle 24h/24.</p>
+        <div class="pricing-hero-actions">
+          <a href="#coaching" class="btn btn-primary btn-lg"><i class="ti ti-moon-stars"></i> Voir le coaching</a>
+          <a href="#abonnements" class="btn btn-secondary btn-lg"><i class="ti ti-id-badge-2"></i> Voir les abonnements</a>
+        </div>
       </div>
-      <div class="pub-hero-split-photo">
-        <img src="{{ asset('img/club-photos/bench-orange.jpg') }}" alt="SPORT+ — Salle de coaching premium Marseille" loading="lazy">
+      <div class="pub-hero-split-photo pricing-hero-photo" data-animate="fade-left">
+        <img src="{{ asset('img/club-photos/sport-nuit.jpeg') }}" alt="Night Coach SPORT+ Marseille" fetchpriority="high">
+        <div class="pricing-hero-panel pricing-hero-panel-night" aria-label="Night Coach SPORT+">
+          <span>La signature SPORT+</span>
+          <strong>Night Coach</strong>
+          <small>20h → minuit · dès 60€</small>
+        </div>
       </div>
     </div>
   </div>
 </section>
 
-{# ── Section : Abonnements officiels SPORT+ ── #}
-<section class="section" style="padding-top:0;padding-bottom:60px;">
+{# ── Offre Membre Fondateur #}
+{% set fo = foundingOffer ?? current_founding_offer() %}
+{% if fo and fo.isStillRunning %}
+<section class="pricing-founding-section" aria-labelledby="pricing-founding-title">
   <div class="container">
-    <div class="section-label" style="text-align:center;display:block;margin-bottom:8px;">Nos abonnements</div>
-    <h2 class="section-title" style="font-size:clamp(28px,4vw,42px);margin-bottom:14px;">
-      Formules <span style="color:var(--gold)">officielles</span>
+    <div class="pricing-founding-card" data-animate="fade-up">
+      <div class="pricing-founding-photo">
+        <img src="{{ asset('img/club-photos/heureux-fondateur.jpg') }}"
+             onerror="this.onerror=null;this.src='{{ asset('img/club-photos/portrait-souriante.jpg') }}';"
+             alt="Membre fondateur SPORT+ heureux après son entraînement">
+        <span class="pricing-founding-photo-badge"><i class="ti ti-heart"></i> Offre lancement</span>
+      </div>
+      <div class="pricing-founding-content">
+        {% if app.user and app.user.foundingClaim %}
+          <div class="pricing-founding-eyebrow">{{ app.user.foundingClaim.foundingLabel }}</div>
+          <h2 id="pricing-founding-title">Tu fais partie de l'aventure SPORT+</h2>
+          <p>{{ app.user.foundingClaim.sessionsRemaining }}/{{ fo.sessionsIncluded }} séances incluses restantes · bilan {{ app.user.foundingClaim.isBilanDone ? 'effectué' : 'à programmer' }}.</p>
+          <a href="{{ path('app_espace_client') }}" class="btn btn-primary"><i class="ti ti-user"></i> Voir mon espace</a>
+        {% elseif fo.hasPlacesLeft %}
+          <div class="pricing-founding-eyebrow">Deviens Membre Fondateur</div>
+          <h2 id="pricing-founding-title">Commence avec une offre qui te ressemble</h2>
+          <p class="pricing-founding-lead">Rejoins les premiers membres SPORT+ et profite d'un accompagnement privilégié dès ton arrivée.</p>
+          <div class="pricing-founding-price"><strong>{{ fo.sessionsIncluded }} séances · {{ fo.price }}€</strong><span>Valeur habituelle {{ fo.regularPrice }}€</span></div>
+          <ul class="pricing-founding-benefits">
+            <li><i class="ti ti-circle-check"></i> {{ fo.sessionsIncluded }} séances de coaching incluses</li>
+            {% if fo.includesFreeBilan %}<li><i class="ti ti-circle-check"></i> Bilan forme offert</li>{% endif %}
+            {% if fo.includesPriorityNight %}<li><i class="ti ti-circle-check"></i> Priorité sur les créneaux Night Coach</li>{% endif %}
+          </ul>
+          <div class="pricing-founding-progress" aria-label="{{ fo.placesTaken }} places prises sur {{ fo.totalPlaces }}">
+            <div><span>Déjà {{ fo.placesTaken }} membres</span><strong>{{ fo.placesRemaining }} places restantes</strong></div>
+            <div class="pricing-founding-progress-track"><span style="width:{{ fo.progressPercent }}%;"></span></div>
+          </div>
+          <a href="{{ path('app_founding_detail') }}" class="btn btn-primary btn-lg"><i class="ti ti-sparkles"></i> Découvrir l'offre</a>
+        {% else %}
+          <div class="pricing-founding-eyebrow">Merci aux fondateurs</div>
+          <h2 id="pricing-founding-title">L'offre lancement est complète</h2>
+          <p>Les {{ fo.totalPlaces }} places ont été attribuées. Découvre maintenant nos formules de coaching.</p>
+          <a href="#coaching" class="btn btn-secondary"><i class="ti ti-arrow-down"></i> Voir le coaching</a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+{% endif %}
+
+{# ── Formules Coaching — priorité Night Coach #}
+<section id="coaching" class="section pricing-section pricing-coaching-section">
+  <div class="container">
+    <div class="pricing-section-heading" data-animate="fade-up">
+      <div class="section-label pricing-section-label">Coaching SPORT+</div>
+      <h2 class="section-title pricing-section-title">Le coaching <span class="pricing-accent">quand les autres ferment</span></h2>
+      <p class="pricing-section-intro">Night Coach est la signature SPORT+ : entraîne-toi avec ton coach le soir ou en pleine nuit, sans renoncer aux créneaux de journée.</p>
+    </div>
+
+    <div id="day-pass" class="pricing-day-pass-grid" data-stagger data-animate="fade-up">
+      <article class="pricing-day-card">
+        <div class="pricing-day-icon pricing-day-icon-gold"><i class="ti ti-sun"></i></div>
+        <div class="pricing-day-label">Journée</div>
+        <div class="pricing-day-price">40<span>€</span></div>
+        <div class="pricing-day-time">6h – 20h</div>
+      </article>
+
+      <article class="pricing-day-card pricing-day-card-featured">
+        <div class="pricing-day-ribbon">Le plus populaire</div>
+        <div class="pricing-day-icon pricing-day-icon-live"><i class="ti ti-moon"></i></div>
+        <div class="pricing-day-label">Night Coach</div>
+        <div class="pricing-day-price">60<span>€</span></div>
+        <div class="pricing-day-time">20h – minuit</div>
+      </article>
+
+      <article class="pricing-day-card">
+        <div class="pricing-day-icon pricing-day-icon-gold"><i class="ti ti-moon-stars"></i></div>
+        <div class="pricing-day-label">Astreinte</div>
+        <div class="pricing-day-price">80<span>€</span></div>
+        <div class="pricing-day-time">minuit – 6h</div>
+      </article>
+    </div>
+
+    {# ── Section 2 : Packs mensuels #}
+    <div id="packs" class="pricing-section-heading pricing-pack-heading" data-animate="fade-up">
+      <div class="section-label pricing-section-label">Packs mensuels</div>
+      <h2 class="section-title pricing-section-title">Tarifs <span class="pricing-accent">par personne / mois</span></h2>
+    </div>
+
+    <div class="pricing-pack-list">
+      <section class="pricing-pack-block" data-animate="fade-up">
+        <header class="pricing-pack-header">
+          <i class="ti ti-user"></i>
+          <div>
+            <h3>Solo</h3>
+            <p>1 personne · accompagnement individuel</p>
+          </div>
+        </header>
+        <div class="pricing-table-scroll">
+          <table class="tarif-table">
+            <thead>
+              <tr>
+                <th></th>
+                <th><i class="ti ti-sun"></i> Journée</th>
+                <th><i class="ti ti-moon"></i> Night Coach</th>
+                <th><i class="ti ti-moon-stars"></i> Astreinte</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="tarif-label">Pack 4 séances / mois</td>
+                <td class="tarif-price">150 €</td>
+                <td class="tarif-price">210 €</td>
+                <td class="tarif-price">270 €</td>
+              </tr>
+              <tr>
+                <td class="tarif-label">Pack 8 séances / mois</td>
+                <td class="tarif-price">240 €</td>
+                <td class="tarif-price">335 €</td>
+                <td class="tarif-price">430 €</td>
+              </tr>
+              <tr>
+                <td class="tarif-label">Pack 12 séances / mois <span class="tarif-best">Meilleur rapport</span></td>
+                <td class="tarif-price">320 €</td>
+                <td class="tarif-price">450 €</td>
+                <td class="tarif-price">575 €</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="pricing-pack-block" data-animate="fade-up">
+        <header class="pricing-pack-header">
+          <i class="ti ti-users"></i>
+          <div>
+            <h3>Duo</h3>
+            <p>2 personnes · chacun paye sa part</p>
+          </div>
+        </header>
+        <div class="pricing-table-scroll">
+          <table class="tarif-table">
+            <thead>
+              <tr>
+                <th></th>
+                <th><i class="ti ti-sun"></i> Journée</th>
+                <th><i class="ti ti-moon"></i> Night Coach</th>
+                <th><i class="ti ti-moon-stars"></i> Astreinte</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="tarif-label">Pack 4 séances / mois par personne</td>
+                <td class="tarif-price">105 €</td>
+                <td class="tarif-price">147 €</td>
+                <td class="tarif-price">189 €</td>
+              </tr>
+              <tr>
+                <td class="tarif-label">Pack 8 séances / mois</td>
+                <td class="tarif-price">168 €</td>
+                <td class="tarif-price">235 €</td>
+                <td class="tarif-price">302 €</td>
+              </tr>
+              <tr>
+                <td class="tarif-label">Pack 12 séances / mois <span class="tarif-best">Meilleur rapport</span></td>
+                <td class="tarif-price">224 €</td>
+                <td class="tarif-price">314 €</td>
+                <td class="tarif-price">403 €</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="pricing-pack-block" data-animate="fade-up">
+        <header class="pricing-pack-header">
+          <i class="ti ti-users-group"></i>
+          <div>
+            <h3>Groupe</h3>
+            <p>4 à 6 personnes · tarif par personne</p>
+          </div>
+        </header>
+        <div class="pricing-table-scroll">
+          <table class="tarif-table">
+            <thead>
+              <tr>
+                <th></th>
+                <th><i class="ti ti-sun"></i> Journée</th>
+                <th><i class="ti ti-moon"></i> Night Coach</th>
+                <th><i class="ti ti-moon-stars"></i> Astreinte</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="tarif-label">Pack 4 séances / mois</td>
+                <td class="tarif-price">60 €</td>
+                <td class="tarif-price">84 €</td>
+                <td class="tarif-price">108 €</td>
+              </tr>
+              <tr>
+                <td class="tarif-label">Pack 8 séances / mois</td>
+                <td class="tarif-price">96 €</td>
+                <td class="tarif-price">134 €</td>
+                <td class="tarif-price">173 €</td>
+              </tr>
+              <tr>
+                <td class="tarif-label">Pack 12 séances / mois <span class="tarif-best">Meilleur rapport</span></td>
+                <td class="tarif-price">128 €</td>
+                <td class="tarif-price">179 €</td>
+                <td class="tarif-price">230 €</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+
+    {# ── Section 3 : FullAccess #}
+    <section id="fullaccess" class="pricing-fullaccess" data-animate="fade-up">
+      <div class="pricing-fullaccess-copy">
+        <div class="pricing-fullaccess-title"><i class="ti ti-24-hours"></i> Option FullAccess</div>
+        <p>Accès salle 24h/24 pour t'entraîner en autonomie entre tes séances coachées : cardio, musculation ou stretching.</p>
+      </div>
+      <div class="pricing-fullaccess-grid">
+        <div class="pricing-fullaccess-price">
+          <span>Solo</span>
+          <strong>+30 €</strong>
+          <small>/ mois</small>
+        </div>
+        <div class="pricing-fullaccess-price">
+          <span>Duo</span>
+          <strong>+30 €</strong>
+          <small>/ mois / personne</small>
+        </div>
+        <div class="pricing-fullaccess-price">
+          <span>Groupe</span>
+          <strong>+25 €</strong>
+          <small>/ mois / personne</small>
+        </div>
+      </div>
+      <div class="pricing-fullaccess-note">
+        <i class="ti ti-info-circle"></i>
+        <span><strong>Exemple Groupe :</strong> 5 personnes × 25 € = <strong>125 € / mois</strong>. Chaque membre paye sa part.</span>
+      </div>
+    </section>
+
+    {# ── CTA #}
+    <div class="pricing-final-cta" data-animate="fade-up">
+      <span class="pricing-final-kicker">Ton prochain objectif commence ici</span>
+      <h2>Prêt à passer à l'action ?</h2>
+      <p>Réserve ta première séance et choisis le coach, l'horaire et le format qui te correspondent.</p>
+      <a href="{{ bookingPath }}" class="btn btn-primary btn-lg">
+        <i class="ti ti-calendar-plus"></i>
+        Réserver une séance
+      </a>
+    </div>
+
+    {# Slogan bas de page #}
+    <div class="pricing-signature">
+      <p>Avance, progresse, dépasse — <strong>SPORT<span>+</span></strong></p>
+    </div>
+
+  </div>
+</section>
+
+{# ── Formules Abonnement — second parcours #}
+<section id="abonnements" class="section pricing-section pricing-section-abonnements">
+  <div class="container">
+    <div class="section-label pricing-section-label">Accès salle 24h/24</div>
+    <h2 class="section-title pricing-section-title">
+      Formules <span class="pricing-accent">abonnement</span>
     </h2>
-    <p style="text-align:center;color:var(--text-soft);font-size:15px;max-width:600px;margin:0 auto 32px;line-height:1.6;">
+    <p class="pricing-section-intro">
       Inscription &amp; paiement <strong style="color:var(--green);">Paylib</strong> directement sur
       <strong style="color:var(--white);">Deciplus</strong> — le système officiel de gestion du club.
       Pas de double compte, pas de double saisie.
@@ -62,8 +334,8 @@
         </button>
       </article>
 
-      {# Premium+ #}
-      <article class="formule-card"
+      {# Premium+ — formule la plus populaire #}
+      <article class="formule-card formule-card-featured"
                data-img="{{ asset('img/formules/premium-plus.jpg') }}"
                data-name="Premium +"
                data-price="45"
@@ -71,6 +343,7 @@
                data-tag="Solo"
                data-fees="50€ frais d'inscription"
                data-features='["Sans engagement","Accès 24/24","1 semaine d''accès à offrir","Bilan forme offert","Cours collectif avec coach"]'>
+        <div class="formule-badge-top">Le plus populaire</div>
         <div class="formule-tag">Solo</div>
         <div class="formule-name">Premium <span style="color:var(--green);">+</span></div>
         <div class="formule-price">45 <span>€</span></div>
@@ -83,13 +356,13 @@
           <li><i class="ti ti-check"></i> Cours collectif avec coach</li>
         </ul>
         <div class="formule-fees">+ 50€ frais d'inscription</div>
-        <button type="button" class="btn btn-outline formule-btn">
+        <button type="button" class="btn btn-primary formule-btn">
           <i class="ti ti-photo"></i> Voir la formule
         </button>
       </article>
 
-      {# Duo+ — mis en avant #}
-      <article class="formule-card formule-card-featured"
+      {# Duo+ #}
+      <article class="formule-card"
                data-img="{{ asset('img/formules/duo-plus.jpg') }}"
                data-name="Duo +"
                data-price="55"
@@ -97,7 +370,6 @@
                data-tag="Duo"
                data-fees="50€ frais d'inscription"
                data-features='["Sans engagement","Accès 24/24","1 semaine d''accès à offrir","Entraînement avec un invité","Bilan forme offert","Cours collectif avec coach"]'>
-        <div class="formule-badge-top">Le plus populaire</div>
         <div class="formule-tag">Duo</div>
         <div class="formule-name">Duo <span style="color:var(--green);">+</span></div>
         <div class="formule-price">55 <span>€</span></div>
@@ -111,7 +383,7 @@
           <li><i class="ti ti-check"></i> Cours collectif avec coach</li>
         </ul>
         <div class="formule-fees">+ 50€ frais d'inscription</div>
-        <button type="button" class="btn btn-primary formule-btn">
+        <button type="button" class="btn btn-outline formule-btn">
           <i class="ti ti-photo"></i> Voir la formule
         </button>
       </article>
@@ -144,10 +416,7 @@
 
     </div>
 
-    <p style="text-align:center;font-family:'Cormorant Garamond',serif;font-style:italic;
-              font-size:17px;color:var(--text-soft);margin-top:32px;">
-      Toutes les formules incluent l'accès libre 24h/24 à la salle.
-    </p>
+    <p class="pricing-formule-note">Toutes les formules incluent l'accès libre 24h/24 à la salle.</p>
 
     {# Encart explicatif : 2 systèmes complémentaires #}
     <div class="dual-system-info">
@@ -310,207 +579,5 @@
 })();
 </script>
 
-{# ── Section 1 : Séances uniques #}
-<section class="section" style="padding-top:0;">
-  <div class="container">
-    <div class="section-label" style="text-align:center;display:block;margin-bottom:32px;">Day Pass — séance à l'unité</div>
-
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-bottom:48px;">
-
-      {# Day Pass Journée #}
-      <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:32px 24px;text-align:center;">
-        <div style="width:44px;height:44px;background:rgba(200,169,81,0.1);border-radius:10px;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;">
-          <i class="ti ti-sun" style="font-size:22px;color:var(--gold);"></i>
-        </div>
-        <div style="font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);margin-bottom:8px;">Journée</div>
-        <div style="font-family:'Barlow Condensed',sans-serif;font-size:56px;font-weight:900;color:var(--white);line-height:1;text-shadow:0 0 24px rgba(255,255,255,.15);">40<span style="font-size:28px;color:var(--gold);">€</span></div>
-        <div style="font-size:13px;color:var(--text-dim);margin-top:10px;">6h – 20h</div>
-      </div>
-
-      {# Day Pass Night #}
-      <div style="background:var(--bg-card);border:1px solid rgba(46,204,113,.35);border-radius:var(--radius-lg);padding:32px 24px;text-align:center;position:relative;box-shadow:0 0 24px rgba(46,204,113,.06);">
-        <div style="position:absolute;top:-1px;left:50%;transform:translateX(-50%);background:var(--gold);color:var(--black);font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:4px 12px;border-radius:0 0 8px 8px;">Le plus populaire</div>
-        <div style="width:44px;height:44px;background:rgba(200,169,81,0.1);border-radius:10px;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;">
-          <i class="ti ti-moon" style="font-size:22px;color:var(--gold);"></i>
-        </div>
-        <div style="font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);margin-bottom:8px;">Night Coach</div>
-        <div style="font-family:'Barlow Condensed',sans-serif;font-size:56px;font-weight:900;color:var(--white);line-height:1;text-shadow:0 0 24px rgba(255,255,255,.15);">60<span style="font-size:28px;color:var(--gold);">€</span></div>
-        <div style="font-size:13px;color:var(--text-dim);margin-top:10px;">20h – minuit</div>
-      </div>
-
-      {# Day Pass Astreinte #}
-      <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:32px 24px;text-align:center;">
-        <div style="width:44px;height:44px;background:rgba(200,169,81,0.1);border-radius:10px;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;">
-          <i class="ti ti-moon-stars" style="font-size:22px;color:var(--gold);"></i>
-        </div>
-        <div style="font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);margin-bottom:8px;">Astreinte</div>
-        <div style="font-family:'Barlow Condensed',sans-serif;font-size:56px;font-weight:900;color:var(--white);line-height:1;text-shadow:0 0 24px rgba(255,255,255,.15);">80<span style="font-size:28px;color:var(--gold);">€</span></div>
-        <div style="font-size:13px;color:var(--text-dim);margin-top:10px;">minuit – 6h</div>
-      </div>
-
-    </div>
-
-    {# ── Section 2 : Packs mensuels #}
-    <div class="section-label" style="text-align:center;display:block;margin-bottom:32px;">Packs mensuels — par personne / mois</div>
-
-    {# Solo #}
-    <h3 style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:20px;letter-spacing:2px;text-transform:uppercase;margin-bottom:16px;color:var(--gold);">
-      <i class="ti ti-user"></i> Solo (1 personne)
-    </h3>
-    <div style="overflow-x:auto;-webkit-overflow-scrolling:touch;margin-bottom:32px;">
-      <table class="tarif-table">
-        <thead>
-          <tr>
-            <th></th>
-            <th><i class="ti ti-sun"></i> Journée</th>
-            <th><i class="ti ti-moon"></i> Night Coach</th>
-            <th><i class="ti ti-moon-stars"></i> Astreinte</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td class="tarif-label">Pack 4 séances / mois</td>
-            <td class="tarif-price">150 €</td>
-            <td class="tarif-price">210 €</td>
-            <td class="tarif-price">270 €</td>
-          </tr>
-          <tr>
-            <td class="tarif-label">Pack 8 séances / mois</td>
-            <td class="tarif-price">240 €</td>
-            <td class="tarif-price">335 €</td>
-            <td class="tarif-price">430 €</td>
-          </tr>
-          <tr>
-            <td class="tarif-label">Pack 12 séances / mois <span class="tarif-best">Meilleur rapport</span></td>
-            <td class="tarif-price">320 €</td>
-            <td class="tarif-price">450 €</td>
-            <td class="tarif-price">575 €</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-
-    {# Duo #}
-    <h3 style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:20px;letter-spacing:2px;text-transform:uppercase;margin-bottom:16px;color:var(--gold);">
-      <i class="ti ti-users"></i> Duo (2 personnes) — par personne (Chacun paye sa part)
-    </h3>
-    <div style="overflow-x:auto;-webkit-overflow-scrolling:touch;margin-bottom:32px;">
-      <table class="tarif-table">
-        <thead>
-          <tr>
-            <th></th>
-            <th><i class="ti ti-sun"></i> Journée</th>
-            <th><i class="ti ti-moon"></i> Night Coach</th>
-            <th><i class="ti ti-moon-stars"></i> Astreinte</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td class="tarif-label">Pack 4 séances /mois par personnes</td>
-            <td class="tarif-price">105 €</td>
-            <td class="tarif-price">147 €</td>
-            <td class="tarif-price">189 €</td>
-          </tr>
-          <tr>
-            <td class="tarif-label">Pack 8 séances / mois</td>
-            <td class="tarif-price">168 €</td>
-            <td class="tarif-price">235 €</td>
-            <td class="tarif-price">302 €</td>
-          </tr>
-          <tr>
-            <td class="tarif-label">Pack 12 séances / mois <span class="tarif-best">Meilleur rapport</span></td>
-            <td class="tarif-price">224 €</td>
-            <td class="tarif-price">314 €</td>
-            <td class="tarif-price">403 €</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-
-    {# Group #}
-    <h3 style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:20px;letter-spacing:2px;text-transform:uppercase;margin-bottom:16px;color:var(--gold);">
-      <i class="ti ti-users-group"></i> Groupe (4-6 personnes) — par personne
-    </h3>
-    <div style="overflow-x:auto;-webkit-overflow-scrolling:touch;margin-bottom:48px;">
-      <table class="tarif-table">
-        <thead>
-          <tr>
-            <th></th>
-            <th><i class="ti ti-sun"></i> Journée</th>
-            <th><i class="ti ti-moon"></i> Night Coach</th>
-            <th><i class="ti ti-moon-stars"></i> Astreinte</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td class="tarif-label">Pack 4 séances / mois</td>
-            <td class="tarif-price">60 €</td>
-            <td class="tarif-price">84 €</td>
-            <td class="tarif-price">108 €</td>
-          </tr>
-          <tr>
-            <td class="tarif-label">Pack 8 séances / mois</td>
-            <td class="tarif-price">96 €</td>
-            <td class="tarif-price">134 €</td>
-            <td class="tarif-price">173 €</td>
-          </tr>
-          <tr>
-            <td class="tarif-label">Pack 12 séances / mois <span class="tarif-best">Meilleur rapport</span></td>
-            <td class="tarif-price">128 €</td>
-            <td class="tarif-price">179 €</td>
-            <td class="tarif-price">230 €</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-
-    {# ── Section 3 : FullAccess #}
-    <div class="fullaccess-block" style="background:var(--bg-card);border:1px solid var(--border);border-left:3px solid var(--green);border-radius:var(--radius-lg);padding:28px 32px;margin-bottom:48px;">
-      <div style="font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:800;letter-spacing:1px;color:var(--green);margin-bottom:8px;">
-        <i class="ti ti-24-hours"></i> Option FullAccess — Accès salle 24h/24
-      </div>
-      <p style="color:var(--text-soft);margin-bottom:24px;font-size:15px;max-width:720px;line-height:1.6;">
-        Entraîne-toi en totale autonomie, même sans coach. Idéal pour les séances cardio, musculation ou stretching entre tes séances coachées.
-      </p>
-      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;">
-        <div style="background:rgba(46,204,113,.06);border:1px solid rgba(46,204,113,.2);border-radius:var(--radius);padding:16px 18px;">
-          <div style="font-size:11px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);margin-bottom:6px;">Solo (1 personne)</div>
-          <div style="font-family:'Barlow Condensed',sans-serif;font-size:32px;font-weight:800;color:var(--white);line-height:1;">+30 €<span style="font-size:14px;color:var(--text-soft);font-weight:600;"> / mois</span></div>
-        </div>
-        <div style="background:rgba(46,204,113,.06);border:1px solid rgba(46,204,113,.2);border-radius:var(--radius);padding:16px 18px;">
-          <div style="font-size:11px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);margin-bottom:6px;">Duo (par personne)</div>
-          <div style="font-family:'Barlow Condensed',sans-serif;font-size:32px;font-weight:800;color:var(--white);line-height:1;">+30 €<span style="font-size:14px;color:var(--text-soft);font-weight:600;"> / mois</span></div>
-        </div>
-        <div style="background:rgba(46,204,113,.06);border:1px solid rgba(46,204,113,.2);border-radius:var(--radius);padding:16px 18px;">
-          <div style="font-size:11px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);margin-bottom:6px;">Groupe (4–6 pers)</div>
-          <div style="font-family:'Barlow Condensed',sans-serif;font-size:32px;font-weight:800;color:var(--white);line-height:1;">+25 €<span style="font-size:14px;color:var(--text-soft);font-weight:600;"> / mois / personne</span></div>
-        </div>
-      </div>
-      <div style="margin-top:18px;padding:12px 14px;background:rgba(46,204,113,.04);border:1px dashed rgba(46,204,113,.25);border-radius:var(--radius);font-size:13px;color:var(--text-soft);line-height:1.55;">
-        <i class="ti ti-info-circle" style="color:var(--green);margin-right:6px;"></i>
-        <strong style="color:var(--white);">Exemple Groupe :</strong> 5 personnes × 25 € = <strong style="color:var(--green);">125 € / mois</strong>. Le tarif Groupe est <strong>par personne</strong>, chaque membre du groupe paye sa part.
-      </div>
-    </div>
-
-    {# ── CTA #}
-    <div style="text-align:center;padding:48px 0 24px;">
-      <p style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:20px;color:var(--text-dim);margin-bottom:24px;">
-        Prêt à commencer ? Réservez votre première séance.
-      </p>
-      <a href="{{ app.user ? path('app_booking_new') : path('app_register') }}" class="btn btn-primary btn-lg">
-        <i class="ti ti-calendar-plus"></i>
-        Réserver une séance
-      </a>
-    </div>
-
-    {# Slogan bas de page #}
-    <div style="text-align:center;margin-top:40px;padding-top:40px;border-top:1px solid var(--border);">
-      <p style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:16px;color:var(--text-dim);">
-        Avance, progresse, dépasse — <strong style="color:var(--gold)">SPORT<span style="color:var(--green)">+</span></strong>
-      </p>
-    </div>
-
-  </div>
-</section>
 
 {% endblock %}

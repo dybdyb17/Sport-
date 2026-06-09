@@ -127,7 +127,7 @@
 }
 
 .admin-nav-item.active {
-  background: rgba(200,169,81,.12);
+  background: rgba(var(--gold-rgb),.12);
   color: var(--gold);
   border-left-color: var(--gold);
 }
@@ -200,7 +200,7 @@
 }
 
 .conv-list-item.is-active {
-  background: rgba(200,169,81,.08);
+  background: rgba(var(--gold-rgb),.08);
 }
 
 .conv-list-item.is-unread .conv-name {
@@ -432,7 +432,7 @@
   font-family: var(--font-body);
 }
 .founding-member-card {
-  background: linear-gradient(135deg, rgba(200,169,81,.08), transparent);
+  background: linear-gradient(135deg, rgba(var(--gold-rgb),.08), transparent);
   border: 1px solid var(--border);
   border-left: 3px solid var(--green);
   border-radius: var(--radius-lg);
@@ -519,7 +519,7 @@
 .error-icon {
   font-size: 64px;
   color: var(--gold);
-  text-shadow: 0 0 24px rgba(200,169,81,.3);
+  text-shadow: 0 0 24px rgba(var(--gold-rgb),.3);
   margin-bottom: 24px;
   line-height: 1;
 }
@@ -662,7 +662,7 @@
 
 .calendar-event {
   display: block;
-  background: rgba(200, 169, 81, 0.12);
+  background: rgba(var(--gold-rgb), 0.12);
   border-left: 2px solid var(--gold);
   padding: 4px 6px;
   border-radius: 4px;
@@ -675,7 +675,7 @@
 }
 
 .calendar-event:hover {
-  background: rgba(200, 169, 81, 0.22);
+  background: rgba(var(--gold-rgb), 0.22);
 }
 
 .calendar-event.night {
