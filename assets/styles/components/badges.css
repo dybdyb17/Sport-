@@ -7,8 +7,8 @@
   display: inline-flex;
   align-items: center;
   padding: 6px 14px;
-  background: rgba(200,169,81,.1);
-  border: 1px solid rgba(200,169,81,.3);
+  background: rgba(var(--gold-rgb),.1);
+  border: 1px solid rgba(var(--gold-rgb),.3);
   border-radius: 100px;
   color: var(--gold);
   font-family: 'Barlow Condensed', sans-serif;
@@ -62,7 +62,7 @@
 .status-badge i { font-size: 14px; flex-shrink: 0; }
 
 .status-badge.pending {
-  background: rgba(200,169,81,.15);
+  background: rgba(var(--gold-rgb),.15);
   color: var(--gold);
 }
 
