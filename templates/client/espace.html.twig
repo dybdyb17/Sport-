@@ -3,17 +3,101 @@
 {% block title %}Mon espace — SPORT+{% endblock %}
 
 {% block body %}
-<div class="container">
+<div class="container espace-page">
 
-  <div class="page-header" data-animate="fade-up">
-    <div>
-      <div class="section-label" style="color:var(--green);">{{ greeting }}</div>
-      <h1>{{ app.user.nomComplet|split(' ')|first }}, <span style="color:var(--gold)">prêt</span> ?</h1>
-      <p class="page-subtitle">Ton espace coaching premium.</p>
+  {# ── DÉCOR SPORT animé en flanc (silhouettes haltères + speed lines) ── #}
+  <div class="espace-decor" aria-hidden="true">
+    <svg class="decor-svg decor-svg-left" viewBox="0 0 200 800" preserveAspectRatio="xMidYMid slice">
+      <defs>
+        <linearGradient id="speedGreen" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stop-color="#2ECC71" stop-opacity="0"/>
+          <stop offset="50%" stop-color="#2ECC71" stop-opacity=".55"/>
+          <stop offset="100%" stop-color="#2ECC71" stop-opacity="0"/>
+        </linearGradient>
+        <linearGradient id="speedGold" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stop-color="#C8A951" stop-opacity="0"/>
+          <stop offset="50%" stop-color="#C8A951" stop-opacity=".55"/>
+          <stop offset="100%" stop-color="#C8A951" stop-opacity="0"/>
+        </linearGradient>
+      </defs>
+      {# 6 lignes de vitesse qui glissent #}
+      <g class="speed-lines">
+        <line x1="-200" y1="120"  x2="80"  y2="120"  stroke="url(#speedGreen)" stroke-width="1" />
+        <line x1="-200" y1="220"  x2="120" y2="220"  stroke="url(#speedGold)"  stroke-width="1" />
+        <line x1="-200" y1="340"  x2="60"  y2="340"  stroke="url(#speedGreen)" stroke-width="1" />
+        <line x1="-200" y1="460"  x2="100" y2="460"  stroke="url(#speedGold)"  stroke-width="1" />
+        <line x1="-200" y1="580"  x2="40"  y2="580"  stroke="url(#speedGreen)" stroke-width="1" />
+        <line x1="-200" y1="700"  x2="90"  y2="700"  stroke="url(#speedGold)"  stroke-width="1" />
+      </g>
+      {# Haltère stylisé en contour, très subtil #}
+      <g class="decor-dumbbell" transform="translate(60 400)">
+        <rect x="-30" y="-4" width="60" height="8" rx="2" fill="none" stroke="#2ECC71" stroke-opacity=".18" stroke-width="1.2"/>
+        <rect x="-44" y="-14" width="10" height="28" rx="2" fill="none" stroke="#C8A951" stroke-opacity=".22" stroke-width="1.2"/>
+        <rect x="34"  y="-14" width="10" height="28" rx="2" fill="none" stroke="#C8A951" stroke-opacity=".22" stroke-width="1.2"/>
+      </g>
+    </svg>
+
+    <svg class="decor-svg decor-svg-right" viewBox="0 0 200 800" preserveAspectRatio="xMidYMid slice">
+      <g class="speed-lines speed-lines-reverse">
+        <line x1="280" y1="160"  x2="0"   y2="160"  stroke="url(#speedGold)"  stroke-width="1" />
+        <line x1="280" y1="260"  x2="40"  y2="260"  stroke="url(#speedGreen)" stroke-width="1" />
+        <line x1="280" y1="380"  x2="80"  y2="380"  stroke="url(#speedGold)"  stroke-width="1" />
+        <line x1="280" y1="500"  x2="20"  y2="500"  stroke="url(#speedGreen)" stroke-width="1" />
+        <line x1="280" y1="620"  x2="100" y2="620"  stroke="url(#speedGold)"  stroke-width="1" />
+        <line x1="280" y1="740"  x2="50"  y2="740"  stroke="url(#speedGreen)" stroke-width="1" />
+      </g>
+      {# Compteur / target stylisé #}
+      <g class="decor-target" transform="translate(140 280)">
+        <circle cx="0" cy="0" r="38" fill="none" stroke="#2ECC71" stroke-opacity=".15" stroke-width="1"/>
+        <circle cx="0" cy="0" r="24" fill="none" stroke="#C8A951" stroke-opacity=".2"  stroke-width="1"/>
+        <circle cx="0" cy="0" r="10" fill="none" stroke="#2ECC71" stroke-opacity=".3"  stroke-width="1"/>
+      </g>
+      {# Course / heartbeat line #}
+      <g class="decor-pulse" transform="translate(0 600)">
+        <polyline points="20,0 50,0 60,-18 70,22 80,-12 90,8 100,0 180,0" fill="none" stroke="#2ECC71" stroke-opacity=".28" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+      </g>
+    </svg>
+  </div>
+
+  {# ── STATUS BAR "TERMINAL" — console-style en haut ── #}
+  <div class="control-statusbar" data-animate="fade-down">
+    <div class="control-statusbar-left">
+      <span class="control-status-led" aria-hidden="true"></span>
+      <span class="control-status-label">CLIENT ACTIVE</span>
+      <span class="control-status-sep">/</span>
+      <span class="control-status-monospace">SPORT+ MISSION CONTROL</span>
     </div>
-    <div style="display:flex;gap:10px;flex-wrap:wrap;">
+    <div class="control-statusbar-right">
+      <span class="control-status-time" id="control-time">--:--:--</span>
+      <span class="control-status-sep">·</span>
+      <span class="control-status-monospace">{{ countThisMonth }} séance{{ countThisMonth > 1 ? 's' : '' }} ce mois</span>
+      {% if streakWeeks > 0 %}
+        <span class="control-status-sep">·</span>
+        <span class="control-status-streak"><i class="ti ti-flame"></i> {{ streakWeeks }} semaine{{ streakWeeks > 1 ? 's' : '' }}</span>
+      {% endif %}
+    </div>
+  </div>
+
+  {# ── HERO — aurora gradient subtil derrière ── #}
+  <div class="espace-hero" data-animate="fade-up">
+    <div class="espace-hero-aurora" aria-hidden="true">
+      <span class="aurora-blob aurora-blob-1"></span>
+      <span class="aurora-blob aurora-blob-2"></span>
+      <span class="aurora-blob aurora-blob-3"></span>
+    </div>
+    <div class="espace-hero-text">
+      <h1 class="espace-hero-title">
+        {{ greeting }} {{ app.user.nomComplet|split(' ')|first }}
+        <span class="espace-hero-wave" aria-hidden="true"><i class="ti ti-hand-three-fingers"></i></span>
+      </h1>
+      <p class="espace-hero-message">
+        <i class="ti {{ heroIcon }} espace-hero-icon" aria-hidden="true"></i>
+        {{ heroMessage }}
+      </p>
+    </div>
+    <div class="espace-hero-actions">
       <a href="{{ path('app_booking_new') }}" class="btn btn-primary">
-        <i class="ti ti-calendar-plus"></i> Nouvelle réservation
+        <i class="ti ti-calendar-plus"></i> Réserver une séance
       </a>
       <a href="{{ path('app_espace_client_profil') }}" class="btn btn-secondary">
         <i class="ti ti-user-cog"></i> Mon profil
@@ -21,123 +105,257 @@
     </div>
   </div>
 
-  {# ── CARD XL PROCHAINE SÉANCE ── #}
+  {# Horloge live console-style #}
+  <script>
+    (function() {
+      const el = document.getElementById('control-time');
+      if (!el) return;
+      function tick() {
+        const d = new Date();
+        const pad = n => String(n).padStart(2, '0');
+        el.textContent = `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+      }
+      tick();
+      setInterval(tick, 1000);
+    })();
+  </script>
+
+  {# ── TICKET PROCHAINE SÉANCE — coach en vedette ── #}
   {% if prochaine %}
-    <div class="next-session-card {{ prochaine.status }}" data-animate="fade-up" data-start="{{ prochaine.startAt|date('c') }}">
-      <div class="next-session-left">
-        <div class="next-session-tag">
-          {% if prochaine.status == 'confirmed' %}
-            <span class="next-session-dot"></span> Confirmée
-          {% else %}
-            <span class="next-session-dot pending"></span> En attente du coach
-          {% endif %}
-        </div>
-        <div class="next-session-countdown" id="next-session-countdown">
-          <div class="countdown-block"><span class="countdown-num" data-unit="d">--</span><span class="countdown-label">jours</span></div>
-          <div class="countdown-sep">:</div>
-          <div class="countdown-block"><span class="countdown-num" data-unit="h">--</span><span class="countdown-label">heures</span></div>
-          <div class="countdown-sep">:</div>
-          <div class="countdown-block"><span class="countdown-num" data-unit="m">--</span><span class="countdown-label">min</span></div>
-          <div class="countdown-sep">:</div>
-          <div class="countdown-block"><span class="countdown-num" data-unit="s">--</span><span class="countdown-label">sec</span></div>
-        </div>
-        <div class="next-session-meta">
-          <i class="ti ti-calendar"></i> {{ prochaine.startAt|date('d/m/Y \\à H\\hi') }}
+    {% set coachPhoto = prochaine.coach.photoSrc %}
+    {% set coachPrenom = prochaine.coach.nomComplet|split(' ')|first %}
+    <div class="session-ticket {{ prochaine.status }}" data-animate="fade-up" data-start="{{ prochaine.startAt|date('c') }}">
+      <div class="session-ticket-glow" aria-hidden="true"></div>
+
+      {# Photo coach en vedette #}
+      <div class="session-ticket-coach">
+        {% if coachPhoto %}
+          <img src="{{ coachPhoto }}" alt="{{ prochaine.coach.nomComplet }}" class="session-ticket-photo">
+        {% else %}
+          <div class="session-ticket-photo session-ticket-initials">
+            {%- set cw = prochaine.coach.nomComplet|split(' ') -%}
+            {{- cw[0]|first|upper -}}{%- if cw|length > 1 -%}{{- cw[1]|first|upper -}}{%- endif -%}
+          </div>
+        {% endif %}
+        <div class="session-ticket-coach-label">
+          <span class="session-ticket-coach-with">Ta séance avec</span>
+          <span class="session-ticket-coach-name">{{ coachPrenom }}</span>
         </div>
       </div>
-      <div class="next-session-right">
-        <div class="next-session-coach-avatar">
-          {%- set cw = prochaine.coach.user.nomComplet|split(' ') -%}
-          {{- cw[0]|first|upper -}}{%- if cw|length > 1 -%}{{- cw[1]|first|upper -}}{%- endif -%}
+
+      {# Infos séance #}
+      <div class="session-ticket-body">
+        <div class="session-ticket-top">
+          {% if prochaine.status == 'confirmed' %}
+            <span class="session-ticket-status is-confirmed"><span class="status-dot"></span> Confirmée</span>
+          {% else %}
+            <span class="session-ticket-status is-pending"><span class="status-dot pending"></span> En attente de {{ coachPrenom }}</span>
+          {% endif %}
+          <span class="session-ticket-countdown" id="ticket-countdown"><i class="ti ti-hourglass"></i> ...</span>
         </div>
-        <div class="next-session-coach-name">avec {{ prochaine.coach.user.nomComplet }}</div>
-        <div class="next-session-format">{{ prochaine.offerLabel }}</div>
-        <div class="next-session-price">{{ prochaine.prixFormatted }}</div>
-        <a href="{{ path('app_espace_client_rdv', {reference: prochaine.reference}) }}" class="btn btn-secondary btn-sm" style="margin-top:12px;width:100%;justify-content:center;">
-          <i class="ti ti-qrcode"></i> Mon QR code
-        </a>
-        {% if prochaine.conversation %}
-          <a href="{{ path('app_conversation_show', {id: prochaine.conversation.id}) }}" class="btn btn-primary btn-sm" style="margin-top:12px;width:100%;justify-content:center;">
-            <i class="ti ti-message"></i> Messagerie
+
+        <div class="session-ticket-title">{{ prochaine.offerLabel }}</div>
+
+        <div class="session-ticket-meta">
+          <span><i class="ti ti-calendar"></i> {{ prochaine.startAt|date('d/m/Y') }}</span>
+          <span><i class="ti ti-clock"></i> {{ prochaine.startAt|date('H\\hi') }}</span>
+          <span class="session-ticket-price">{{ prochaine.prixFormatted }}</span>
+        </div>
+
+        <div class="session-ticket-actions">
+          <a href="{{ path('app_espace_client_rdv', {reference: prochaine.reference}) }}" class="btn btn-secondary btn-sm">
+            <i class="ti ti-qrcode"></i> Mon QR code
           </a>
-        {% endif %}
+          {% if prochaine.conversation %}
+            <a href="{{ path('app_conversation_show', {id: prochaine.conversation.id}) }}" class="btn btn-primary btn-sm">
+              <i class="ti ti-message"></i> Écrire à {{ coachPrenom }}
+            </a>
+          {% endif %}
+        </div>
       </div>
     </div>
 
-    {# Countdown JS #}
+    {# Countdown doux : phrase humaine, mise à jour 30s, pas de secondes qui défilent #}
     <script>
       (function() {
-        const card = document.querySelector('.next-session-card');
-        if (!card) return;
-        const target = new Date(card.dataset.start).getTime();
+        const el = document.getElementById('ticket-countdown');
+        const ticket = document.querySelector('.session-ticket');
+        if (!el || !ticket) return;
+        const target = new Date(ticket.dataset.start).getTime();
 
-        function tick() {
-          const now = Date.now();
-          const diff = target - now;
+        function render() {
+          const diff = target - Date.now();
           if (diff <= 0) {
-            card.querySelectorAll('.countdown-num').forEach(el => el.textContent = '0');
-            card.classList.add('imminent');
+            el.innerHTML = `<i class="ti ti-flame"></i> C'est l'heure !`;
+            ticket.classList.add('imminent');
             return;
           }
-          const d = Math.floor(diff / 86400000);
-          const h = Math.floor((diff % 86400000) / 3600000);
-          const m = Math.floor((diff % 3600000) / 60000);
-          const s = Math.floor((diff % 60000) / 1000);
-          card.querySelector('[data-unit="d"]').textContent = d;
-          card.querySelector('[data-unit="h"]').textContent = String(h).padStart(2, '0');
-          card.querySelector('[data-unit="m"]').textContent = String(m).padStart(2, '0');
-          card.querySelector('[data-unit="s"]').textContent = String(s).padStart(2, '0');
+          const totalMin = Math.floor(diff / 60000);
+          const j = Math.floor(totalMin / 1440);
+          const h = Math.floor((totalMin % 1440) / 60);
+          const m = totalMin % 60;
 
-          // Classes selon urgence
-          if (diff < 2 * 3600000) card.classList.add('imminent');
-          else if (diff < 24 * 3600000) card.classList.add('soon');
+          if (diff < 3600000) {
+            el.innerHTML = `<i class="ti ti-flame"></i> Dans ${m} min !`;
+            ticket.classList.add('imminent');
+          } else if (j === 0) {
+            const heureSeance = new Date(target).getHours();
+            el.innerHTML = `<i class="ti ti-flame"></i> C'est ${heureSeance >= 18 ? 'ce soir' : "aujourd'hui"} — dans ${h}h${String(m).padStart(2,'0')}`;
+            ticket.classList.add('soon');
+          } else if (j === 1) {
+            el.innerHTML = `<i class="ti ti-hourglass"></i> Demain — dans ${j}j ${h}h`;
+          } else {
+            el.innerHTML = `<i class="ti ti-hourglass"></i> Dans ${j} jours`;
+          }
         }
-        tick();
-        setInterval(tick, 1000);
+        render();
+        setInterval(render, 30000);
       })();
     </script>
   {% endif %}
 
-  {# ── Founding Member card ── #}
+  {# ── Founding Member — version chaleureuse ── #}
   {% if app.user.foundingClaim %}
     {% set fc = app.user.foundingClaim %}
-    <div class="founding-member-card" style="margin-bottom:32px;">
-      <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;">
-        <div>
-          <div style="font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:900;color:var(--gold);letter-spacing:-0.5px;margin-bottom:4px;">{{ fc.foundingLabel }}</div>
-          <div style="font-family:'Cormorant Garamond',serif;font-style:italic;color:var(--text-dim);font-size:15px;">Merci d'être parmi les premiers à nous faire confiance.</div>
+    <div class="founding-thanks-card" data-animate="fade-up">
+      <div class="founding-thanks-emblem"><i class="ti ti-crown"></i></div>
+      <div class="founding-thanks-body">
+        <div class="founding-thanks-label">{{ fc.foundingLabel }}</div>
+        <p class="founding-thanks-text">Tu fais partie des tout premiers à nous avoir fait confiance. Ça, on ne l'oubliera pas. <i class="ti ti-heart-filled" style="color:#ff6b6b;vertical-align:middle;font-size:14px;"></i></p>
+        <div class="founding-thanks-meta">
+          <span class="founding-thanks-pill"><i class="ti ti-barbell"></i> {{ fc.sessionsRemaining }}/{{ fc.offer.sessionsIncluded }} séances offertes restantes</span>
+          {% if fc.isBilanDone %}
+            <span class="founding-thanks-pill is-done"><i class="ti ti-check"></i> Bilan forme effectué</span>
+          {% else %}
+            <span class="founding-thanks-pill"><i class="ti ti-clipboard-heart"></i> Bilan forme à programmer à ta 1ère séance</span>
+          {% endif %}
         </div>
-        <div style="text-align:right;">
-          <div style="font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:900;color:var(--green);">{{ fc.sessionsRemaining }}/{{ fc.offer.sessionsIncluded }}</div>
-          <div style="font-size:13px;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px;">séances restantes</div>
-        </div>
-      </div>
-      <div style="margin-top:12px;font-size:14px;color:var(--text-dim);">
-        Bilan forme :
-        {% if fc.isBilanDone %}
-          <span style="color:var(--green);">Effectué</span>
-        {% else %}
-          <span style="color:var(--gold);">À programmer lors de ta première séance</span>
-        {% endif %}
       </div>
     </div>
   {% endif %}
 
-  {# ── Stat cards ── #}
-  <div class="stats-grid">
-    <div class="stat-card">
-      <span class="stat-label">Total réservations</span>
-      <span class="stat-value">{{ total }}</span>
+  {# ── Ton parcours ── #}
+  <div class="parcours-strip" data-animate="fade-up">
+    <div class="parcours-item">
+      <div class="parcours-icon"><i class="ti ti-flame"></i></div>
+      <div class="parcours-text"><strong>{{ total }}</strong> séance{{ total > 1 ? 's' : '' }} réservée{{ total > 1 ? 's' : '' }}</div>
     </div>
-    <div class="stat-card success">
-      <span class="stat-label">Confirmées</span>
-      <span class="stat-value">{{ nbConfirmees }}</span>
+    <div class="parcours-item">
+      <div class="parcours-icon is-green"><i class="ti ti-circle-check"></i></div>
+      <div class="parcours-text"><strong>{{ nbConfirmees }}</strong> confirmée{{ nbConfirmees > 1 ? 's' : '' }}</div>
     </div>
-    <div class="stat-card warning">
-      <span class="stat-label">En attente</span>
-      <span class="stat-value">{{ nbEnAttente }}</span>
+    {% if nbEnAttente > 0 %}
+      <div class="parcours-item">
+        <div class="parcours-icon is-gold"><i class="ti ti-hourglass"></i></div>
+        <div class="parcours-text"><strong>{{ nbEnAttente }}</strong> en attente</div>
+      </div>
+    {% endif %}
+    <div class="parcours-item">
+      <div class="parcours-icon is-gold"><i class="ti ti-calendar-heart"></i></div>
+      <div class="parcours-text">Membre depuis <strong>{{ app.user.createdAt|date('m/Y') }}</strong></div>
     </div>
   </div>
+
+  {# ── MISSION CONTROL — Consistance (heatmap) + Rythme (velocity) ── #}
+  {% if total > 0 %}
+    <div class="mission-grid" data-animate="fade-up">
+
+      {# Card "Consistance" : heatmap 12 semaines #}
+      <div class="mission-card mission-card--heatmap">
+        <div class="mission-card-head">
+          <div>
+            <div class="mission-card-eyebrow">CONSISTANCE — 12 dernières semaines</div>
+            <h3 class="mission-card-title">Ta régularité <span style="color:var(--gold);">en un coup d'œil</span></h3>
+          </div>
+          {% if streakWeeks > 0 %}
+            <div class="mission-streak-chip">
+              <i class="ti ti-flame"></i>
+              <span><strong>{{ streakWeeks }}</strong> semaine{{ streakWeeks > 1 ? 's' : '' }} active{{ streakWeeks > 1 ? 's' : '' }}</span>
+            </div>
+          {% endif %}
+        </div>
+
+        <div class="heatmap-wrap">
+          <div class="heatmap-days">
+            <span>L</span><span>M</span><span>M</span><span>J</span><span>V</span><span>S</span><span>D</span>
+          </div>
+          <div class="heatmap-grid">
+            {% for week in heatmap %}
+              <div class="heatmap-week">
+                {% for cell in week %}
+                  {% set level = cell.count == 0 ? 0 : (cell.count >= 3 ? 3 : (cell.count >= 2 ? 2 : 1)) %}
+                  {% set state = cell.isFuture ? 'future' : (cell.isToday ? 'today' : 'past') %}
+                  <span
+                    class="heatmap-cell level-{{ level }} state-{{ state }}"
+                    title="{{ cell.date|date('D d/m') }} — {{ cell.count }} séance{{ cell.count > 1 ? 's' : '' }}"
+                    aria-label="{{ cell.date|date('D d/m') }} : {{ cell.count }} séance{{ cell.count > 1 ? 's' : '' }}"
+                  ></span>
+                {% endfor %}
+              </div>
+            {% endfor %}
+          </div>
+          <div class="heatmap-legend">
+            <span>Moins</span>
+            <span class="heatmap-cell level-0"></span>
+            <span class="heatmap-cell level-1"></span>
+            <span class="heatmap-cell level-2"></span>
+            <span class="heatmap-cell level-3"></span>
+            <span>Plus</span>
+          </div>
+        </div>
+      </div>
+
+      {# Card "Rythme" : tendance mois en cours #}
+      <div class="mission-card mission-card--velocity">
+        <div class="mission-card-head">
+          <div>
+            <div class="mission-card-eyebrow">RYTHME — Ce mois-ci</div>
+            <h3 class="mission-card-title">{{ app.user.nomComplet|split(' ')|first }}, ton <span style="color:var(--green);">tempo</span></h3>
+          </div>
+        </div>
+
+        <div class="velocity-main">
+          <div class="velocity-big">
+            <span class="velocity-num">{{ countThisMonth }}</span>
+            <span class="velocity-unit">séance{{ countThisMonth > 1 ? 's' : '' }}</span>
+          </div>
+          {% if tendance == 'up' %}
+            <div class="velocity-trend velocity-trend--up">
+              <i class="ti ti-trending-up"></i>
+              <span><strong>+{{ countThisMonth - countLastMonth }}</strong> vs mois dernier</span>
+            </div>
+          {% elseif tendance == 'down' %}
+            <div class="velocity-trend velocity-trend--down">
+              <i class="ti ti-trending-down"></i>
+              <span><strong>{{ countThisMonth - countLastMonth }}</strong> vs mois dernier</span>
+            </div>
+          {% else %}
+            <div class="velocity-trend velocity-trend--flat">
+              <i class="ti ti-equal"></i>
+              <span>Même tempo que le mois dernier</span>
+            </div>
+          {% endif %}
+        </div>
+
+        <p class="velocity-msg">
+          {% if tendance == 'up' %}
+            <i class="ti ti-rocket"></i> Tu accélères. Continue, on est avec toi.
+          {% elseif tendance == 'down' %}
+            <i class="ti ti-eye"></i> Un petit coup de mou ? Pas grave, on remet le couvert.
+          {% elseif countThisMonth == 0 %}
+            <i class="ti ti-bolt"></i> Le mois est jeune. Ton créneau t'attend.
+          {% else %}
+            <i class="ti ti-clock-bolt"></i> Régulier comme une horloge. C'est ça qui paye.
+          {% endif %}
+        </p>
+
+        <a href="{{ path('app_booking_new') }}" class="velocity-cta">
+          <i class="ti ti-arrow-right"></i> Booster mon mois
+        </a>
+      </div>
+
+    </div>
+  {% endif %}
 
   {# ── Encart Deciplus ── #}
   <div style="background:var(--bg-card);border:1px solid rgba(46,204,113,.3);
@@ -165,10 +383,11 @@
   </div>
 
   {% if total == 0 %}
-    <div class="empty-placeholder">
-      <i class="ti ti-barbell" style="font-size:48px;display:block;margin-bottom:16px;opacity:.3;"></i>
-      Aucune séance pour l'instant.<br>
-      <a href="{{ path('app_booking_new') }}" class="btn btn-primary" style="margin-top:24px;display:inline-flex;">
+    <div class="espace-empty" data-animate="fade-up">
+      <div class="espace-empty-icon"><i class="ti ti-barbell"></i></div>
+      <h3 class="espace-empty-title">Ton premier défi t'attend <i class="ti ti-target-arrow" style="color:var(--green);vertical-align:middle;font-size:24px;"></i></h3>
+      <p class="espace-empty-text">Choisis ton coach, ton créneau — jour ou nuit — et on s'occupe du reste.</p>
+      <a href="{{ path('app_booking_new') }}" class="btn btn-primary">
         <i class="ti ti-calendar-plus"></i> Réserver ma première séance
       </a>
     </div>

@@ -55,6 +55,91 @@ class ClientController extends AbstractController
             default                   => 'Bonne nuit',
         };
 
+        // Phrase contextuelle + icône Tabler (pas d'emoji, on garde du propre)
+        if ($prochaine) {
+            $coachNom    = (string) $prochaine->getCoach()?->getNomComplet();
+            $coachPrenom = explode(' ', $coachNom)[0] ?: 'ton coach';
+            $diff        = $now->diff($prochaine->getStartAt());
+            $jours       = (int) $diff->days;
+            $heure       = $prochaine->getStartAt()->format('H\hi');
+            $heureH      = (int) $prochaine->getStartAt()->format('H');
+
+            if ($jours === 0) {
+                $quand = $heureH < 18 ? "aujourd'hui" : 'ce soir';
+                $heroMessage = sprintf("Ta séance avec %s, c'est %s à %s. On t'attend.", $coachPrenom, $quand, $heure);
+                $heroIcon = 'ti-flame';
+            } elseif ($jours === 1) {
+                $heroMessage = sprintf("Ta séance avec %s, c'est demain à %s. Repose-toi bien.", $coachPrenom, $heure);
+                $heroIcon = 'ti-moon-stars';
+            } else {
+                $heroMessage = sprintf("Ta prochaine séance avec %s est dans %d jours. Tiens le rythme.", $coachPrenom, $jours);
+                $heroIcon = 'ti-target-arrow';
+            }
+        } else {
+            $heroMessage = "Aucune séance prévue pour l'instant — ton prochain défi t'attend.";
+            $heroIcon = 'ti-compass';
+        }
+
+        // ── Stats avancées "mission control" ──────────────────────────────────
+        // Heatmap : 12 dernières semaines × 7 jours avec count séances confirmées.
+        $heatmap = [];
+        $today = new \DateTimeImmutable('today');
+        $startWeek = $today->modify('monday this week')->modify('-11 weeks');
+        for ($w = 0; $w < 12; $w++) {
+            $week = [];
+            for ($d = 0; $d < 7; $d++) {
+                $day = $startWeek->modify(sprintf('+%d days', $w * 7 + $d));
+                $count = 0;
+                foreach ($all as $b) {
+                    if ($b->getStatus() === Booking::STATUS_CONFIRMED
+                        && $b->getStartAt()->format('Y-m-d') === $day->format('Y-m-d')
+                    ) {
+                        $count++;
+                    }
+                }
+                $week[] = [
+                    'date'  => $day,
+                    'count' => $count,
+                    'iso'   => $day->format('Y-m-d'),
+                    'isPast'   => $day < $today,
+                    'isToday'  => $day->format('Y-m-d') === $today->format('Y-m-d'),
+                    'isFuture' => $day > $today,
+                ];
+            }
+            $heatmap[] = $week;
+        }
+
+        // Streak : nombre de semaines consécutives jusqu'à cette semaine avec ≥1 séance confirmée.
+        $streakWeeks = 0;
+        for ($w = 11; $w >= 0; $w--) {
+            $weekTotal = 0;
+            foreach ($heatmap[$w] as $cell) {
+                $weekTotal += $cell['count'];
+            }
+            if ($weekTotal === 0) {
+                if ($w === 11) continue; // Tolère semaine en cours sans séance
+                break;
+            }
+            $streakWeeks++;
+        }
+
+        // Séances ce mois vs mois précédent → tendance
+        $thisMonth = $today->format('Y-m');
+        $lastMonth = $today->modify('-1 month')->format('Y-m');
+        $countThisMonth = 0;
+        $countLastMonth = 0;
+        foreach ($all as $b) {
+            if ($b->getStatus() !== Booking::STATUS_CONFIRMED) continue;
+            $bMonth = $b->getStartAt()->format('Y-m');
+            if ($bMonth === $thisMonth) $countThisMonth++;
+            elseif ($bMonth === $lastMonth) $countLastMonth++;
+        }
+        $tendance = match (true) {
+            $countThisMonth > $countLastMonth => 'up',
+            $countThisMonth < $countLastMonth => 'down',
+            default                           => 'flat',
+        };
+
         return $this->render('client/espace.html.twig', [
             'reservationsAVenir'  => $reservationsAVenir,
             'reservationsPassees' => $reservationsPassees,
@@ -63,6 +148,13 @@ class ClientController extends AbstractController
             'nbEnAttente'         => $nbEnAttente,
             'prochaine'           => $prochaine,
             'greeting'            => $greeting,
+            'heroMessage'         => $heroMessage,
+            'heroIcon'            => $heroIcon,
+            'heatmap'             => $heatmap,
+            'streakWeeks'         => $streakWeeks,
+            'countThisMonth'      => $countThisMonth,
+            'countLastMonth'      => $countLastMonth,
+            'tendance'            => $tendance,
         ]);
     }
 
