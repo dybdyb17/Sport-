@@ -297,6 +297,15 @@
 </div>
 
 <script>
+// Préventif : on déplace la start-modal en racine du body au chargement.
+// Évite que son position:fixed soit confiné si un ancêtre acquiert un jour
+// un transform/filter/will-change (même bug que celui de la group-modal).
+(function() {
+  var m = document.getElementById('start-modal');
+  if (m && m.parentElement !== document.body) {
+    document.body.appendChild(m);
+  }
+})();
 window.openStartModal = function() {
   var m = document.getElementById('start-modal');
   m.classList.add('is-open');

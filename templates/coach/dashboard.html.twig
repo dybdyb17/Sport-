@@ -343,6 +343,15 @@
         };
 
         // ── Modal refus : ouvre / ferme / presets ────────────────────────────
+        // On déplace chaque refuse-modal en racine du body (au load) pour que
+        // son position:fixed + z-index soient globaux. Sinon elle reste confinée
+        // dans la card parente (qui a des transforms data-animate) et peut
+        // passer sous le header/sidebar.
+        document.querySelectorAll('.refuse-modal').forEach(modal => {
+            if (modal.parentElement !== document.body) {
+                document.body.appendChild(modal);
+            }
+        });
         document.querySelectorAll('[data-refuse-open]').forEach(btn => {
             btn.addEventListener('click', () => {
                 const id = btn.dataset.refuseOpen;

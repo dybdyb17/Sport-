@@ -348,6 +348,14 @@
   const modal = document.getElementById('group-modal');
   if (!modal) return;
 
+  // La modal est imbriquée dans le form qui peut avoir un ancêtre avec
+  // transform/filter/will-change → ça neutralise position:fixed et confine
+  // le z-index. On la déplace en racine du body pour que le z-index 9999
+  // soit réellement global et qu'elle passe devant stepper/sidebar/header.
+  if (modal.parentElement !== document.body) {
+    document.body.appendChild(modal);
+  }
+
   const personsSel = document.querySelector('[name="booking[personsCount]"]');
   const groupCard  = document.querySelector('[data-selector="format"] [data-value="group"]');
 
