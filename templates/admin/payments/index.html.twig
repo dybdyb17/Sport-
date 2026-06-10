@@ -58,7 +58,11 @@
             <td style="color:var(--text-dim);">{{ b.startAt|date('d/m/Y H\\hi') }}</td>
             <td style="color:var(--text-dim);">{{ b.client.nomComplet }}</td>
             <td style="color:var(--text-dim);">{{ b.coach.nomComplet }}</td>
-            <td style="color:var(--gold);font-family:'Barlow Condensed',sans-serif;font-weight:700;">{{ b.prixFormatted }}</td>
+            <td style="color:var(--gold);font-family:'Barlow Condensed',sans-serif;font-weight:700;">
+              {{ b.prixFormatted }}
+              {% if b.coveredBy == 'founding' %}<br><span style="font-size:10px;color:var(--gold);font-weight:600;letter-spacing:1px;">FONDATEUR</span>{% endif %}
+              {% if b.coveredBy == 'subscription' and b.subscription %}<br><span style="font-size:10px;color:var(--green);font-weight:600;letter-spacing:1px;">VIA {{ b.subscription.packType.label|upper }}</span>{% endif %}
+            </td>
             <td>
               {% if b.paymentMethod == 'cash' %}
                 <span><i class="ti ti-cash"></i> Espèces</span><div style="font-size:11px;color:var(--text-dim);">{{ b.paymentDeclaredAt|date('d/m H\\hi') }}</div>

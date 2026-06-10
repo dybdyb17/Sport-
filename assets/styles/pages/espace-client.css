@@ -24,17 +24,17 @@
   position: absolute;
   top: 0;
   height: 100%;
-  width: 200px;
-  opacity: .9;
+  width: 220px;
+  opacity: 1;
 }
-.decor-svg-left  { left: -220px;  }
-.decor-svg-right { right: -220px; }
+.decor-svg-left  { left: -240px;  }
+.decor-svg-right { right: -240px; }
 
-@media (min-width: 1280px) {
-  .decor-svg-left  { left: -240px; width: 240px; }
-  .decor-svg-right { right: -240px; width: 240px; }
+@media (min-width: 1400px) {
+  .decor-svg-left  { left: -260px; width: 240px; }
+  .decor-svg-right { right: -260px; width: 240px; }
 }
-@media (max-width: 1100px) {
+@media (max-width: 1080px) {
   .espace-decor { display: none; }
 }
 
@@ -56,14 +56,14 @@
 }
 .speed-lines-reverse line { animation-direction: reverse; }
 
-/* Haltère subtil qui flotte */
+/* Haltère qui flotte */
 .decor-dumbbell {
   animation: dumbbellFloat 8s ease-in-out infinite;
   transform-origin: center;
 }
 @keyframes dumbbellFloat {
-  0%, 100% { transform: translate(60px, 400px) rotate(-2deg); }
-  50%      { transform: translate(60px, 410px) rotate(2deg);  }
+  0%, 100% { transform: translate(120px, 295px) rotate(-3deg); }
+  50%      { transform: translate(120px, 305px) rotate(3deg);  }
 }
 
 /* Target qui pulse */
@@ -81,133 +81,145 @@
 
 /* Pulse heartbeat - dessine la ligne */
 .decor-pulse polyline {
-  stroke-dasharray: 200;
-  stroke-dashoffset: 200;
+  stroke-dasharray: 240;
+  stroke-dashoffset: 240;
   animation: pulseDraw 3.5s ease-in-out infinite;
 }
 @keyframes pulseDraw {
-  0%   { stroke-dashoffset: 200; opacity: 0; }
+  0%   { stroke-dashoffset: 240; opacity: 0; }
   20%  { opacity: 1; }
   60%  { stroke-dashoffset: 0;   opacity: 1; }
-  100% { stroke-dashoffset: -200; opacity: 0; }
+  100% { stroke-dashoffset: -240; opacity: 0; }
+}
+
+/* Kettlebell qui balance */
+.decor-kettlebell {
+  transform-origin: 110px 736px;
+  animation: kbSwing 5s ease-in-out infinite;
+}
+@keyframes kbSwing {
+  0%, 100% { transform: rotate(-6deg); }
+  50%      { transform: rotate(6deg); }
+}
+
+/* Stopwatch — aiguille qui tourne */
+.stopwatch-hand {
+  transform-origin: 110px 920px;
+  animation: handRotate 8s linear infinite;
+}
+@keyframes handRotate {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+/* Triangles qui flottent doucement */
+.decor-triangle {
+  animation: triangleFloat 6s ease-in-out infinite;
+  transform-origin: center;
+}
+.decor-triangle-rev { animation-direction: reverse; animation-duration: 7s; }
+@keyframes triangleFloat {
+  0%, 100% { transform: translate(80px, 1020px) rotate(0deg); }
+  50%      { transform: translate(80px, 1010px) rotate(8deg); }
+}
+.decor-triangle-rev { animation-name: triangleFloatRev; }
+@keyframes triangleFloatRev {
+  0%, 100% { transform: translate(140px, 1090px) rotate(0deg); }
+  50%      { transform: translate(140px, 1100px) rotate(-8deg); }
+}
+
+/* Orbes radiaux qui respirent */
+.decor-orb {
+  transform-origin: center;
+  animation: orbBreath 7s ease-in-out infinite;
+}
+.orb-1 { animation-delay: 0s;  }
+.orb-2 { animation-delay: -2s; animation-duration: 9s; }
+.orb-3 { animation-delay: -4s; animation-duration: 8s; }
+@keyframes orbBreath {
+  0%, 100% { transform: scale(1);    opacity: .8; }
+  50%      { transform: scale(1.15); opacity: 1; }
 }
 
 html.performance-lite .speed-lines line,
 html.performance-lite .decor-dumbbell,
 html.performance-lite .decor-target circle,
-html.performance-lite .decor-pulse polyline { animation: none !important; }
+html.performance-lite .decor-pulse polyline,
+html.performance-lite .decor-kettlebell,
+html.performance-lite .stopwatch-hand,
+html.performance-lite .decor-triangle,
+html.performance-lite .decor-orb { animation: none !important; }
 
 @media (prefers-reduced-motion: reduce) {
   .speed-lines line,
   .decor-dumbbell,
   .decor-target circle,
-  .decor-pulse polyline { animation: none; }
+  .decor-pulse polyline,
+  .decor-kettlebell,
+  .stopwatch-hand,
+  .decor-triangle,
+  .decor-orb { animation: none; }
 }
 
 /* Le contenu de la page passe au-dessus du décor */
 .espace-page > *:not(.espace-decor) { position: relative; z-index: 1; }
 
-/* ── STATUS BAR "TERMINAL" — bandeau console-style ──────────────────── */
-.control-statusbar {
+/* ── BANNIÈRE téléphone manquant ─────────────────────────────────────── */
+.phone-missing-banner {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 16px;
+  gap: 14px;
+  padding: 14px 18px;
+  background: linear-gradient(90deg, rgba(255,180,80,.08) 0%, rgba(255,180,80,.02) 100%);
+  border: 1px solid rgba(255,180,80,.35);
+  border-left: 3px solid #ffb450;
+  border-radius: 14px;
+  margin-bottom: 20px;
   flex-wrap: wrap;
-  padding: 9px 18px;
-  background: linear-gradient(90deg, rgba(46,204,113,.04) 0%, rgba(0,0,0,0) 50%, rgba(200,169,81,.04) 100%);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  margin-bottom: 24px;
-  font-family: ui-monospace, 'SF Mono', 'JetBrains Mono', Menlo, Consolas, monospace;
-  font-size: 11.5px;
-  letter-spacing: .5px;
-  color: var(--text-dim);
-  position: relative;
-  overflow: hidden;
 }
-.control-statusbar::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(90deg, transparent, rgba(46,204,113,.06), transparent);
-  background-size: 200% 100%;
-  animation: scanLine 6s linear infinite;
-  pointer-events: none;
+.phone-missing-icon {
+  width: 38px; height: 38px;
+  border-radius: 10px;
+  background: rgba(255,180,80,.15);
+  display: flex; align-items: center; justify-content: center;
+  color: #ffb450;
+  font-size: 19px;
+  flex-shrink: 0;
 }
-@keyframes scanLine {
-  0%   { background-position: 200% 0; }
-  100% { background-position: -200% 0; }
-}
-html.performance-lite .control-statusbar::before,
-.control-statusbar.no-anim::before { animation: none; }
-
-@media (prefers-reduced-motion: reduce) {
-  .control-statusbar::before { animation: none; }
-}
-
-.control-statusbar-left,
-.control-statusbar-right {
+.phone-missing-body {
+  flex: 1;
+  min-width: 220px;
   display: flex;
-  align-items: center;
-  gap: 9px;
-  flex-wrap: wrap;
-  position: relative;
-  z-index: 1;
+  flex-direction: column;
+  gap: 2px;
 }
-
-.control-status-led {
-  width: 7px; height: 7px;
-  border-radius: 50%;
-  background: var(--green);
-  box-shadow: 0 0 8px var(--green), 0 0 1px var(--green);
-  animation: ledPulse 2s ease-in-out infinite;
-}
-@keyframes ledPulse {
-  0%, 100% { box-shadow: 0 0 8px var(--green), 0 0 1px var(--green); }
-  50%      { box-shadow: 0 0 14px var(--green), 0 0 2px var(--green); }
-}
-html.performance-lite .control-status-led { animation: none; }
-
-@media (prefers-reduced-motion: reduce) {
-  .control-status-led { animation: none; }
-}
-
-.control-status-label {
-  color: var(--green);
+.phone-missing-body strong {
+  color: var(--white);
+  font-size: 14.5px;
   font-weight: 700;
 }
-
-.control-status-monospace,
-.control-status-time {
+.phone-missing-body span {
+  font-size: 13px;
   color: var(--text-soft);
 }
-
-.control-status-time {
-  color: var(--gold);
-  font-weight: 600;
-  font-variant-numeric: tabular-nums;
-}
-
-.control-status-sep {
-  color: var(--border);
-  opacity: .9;
-}
-
-.control-status-streak {
+.phone-missing-cta {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  color: var(--gold);
-  font-weight: 700;
+  gap: 6px;
+  padding: 8px 14px;
+  background: #ffb450;
+  color: var(--black);
+  border-radius: 100px;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: transform .2s ease;
 }
-.control-status-streak i { font-size: 13px; }
-
-@media (max-width: 640px) {
-  .control-statusbar { font-size: 10.5px; padding: 8px 14px; gap: 8px; }
-  .control-statusbar-left,
-  .control-statusbar-right { gap: 7px; }
-}
+.phone-missing-cta:hover { transform: translateY(-1px); }
 
 /* ── HERO ────────────────────────────────────────────────────────────── */
 .espace-hero {
@@ -549,6 +561,21 @@ html.performance-lite .status-dot { animation: none; }
   font-weight: 800;
   color: var(--gold);
 }
+.session-ticket-price--covered {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--green);
+  background: rgba(46,204,113,.08);
+  border: 1px solid rgba(46,204,113,.3);
+  padding: 4px 12px;
+  border-radius: 100px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+.session-ticket-price--covered i { font-size: 14px; }
 
 .session-ticket-actions {
   display: flex;

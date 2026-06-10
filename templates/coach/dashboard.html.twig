@@ -61,10 +61,12 @@
     </div>
   </div>
 
-  {# ── DÉCLARATIONS DE PAIEMENT EN ATTENTE ── #}
+  {# ── DÉCLARATIONS DE PAIEMENT EN ATTENTE ──
+     On exclut les séances couvertes par un pack mensuel ou l'offre Fondateur :
+     le client a déjà payé en amont, il n'y a rien à déclarer comme mode d'encaissement. #}
   {% set sessionsAValider = [] %}
   {% for b in historyBookings ?? [] %}
-    {% if b.status == 'confirmed' and b.startAt < date() and b.paymentMethod is null %}
+    {% if b.status == 'confirmed' and b.startAt < date() and b.paymentMethod is null and b.coveredBy is null %}
       {% set sessionsAValider = sessionsAValider|merge([b]) %}
     {% endif %}
   {% endfor %}
@@ -154,8 +156,15 @@
                 · {{ booking.client.phone }}
               {% endif %}
             </div>
-            <div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:20px;color:var(--gold);">
-              {{ booking.prixFormatted }}
+            <div style="text-align:right;">
+              <div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:20px;color:var(--gold);">
+                {{ booking.prixFormatted }}
+              </div>
+              {% if booking.coveredBy == 'founding' %}
+                <div style="font-size:11px;color:var(--gold);letter-spacing:1px;text-transform:uppercase;margin-top:2px;"><i class="ti ti-crown"></i> Couvert Fondateur</div>
+              {% elseif booking.coveredBy == 'subscription' and booking.subscription %}
+                <div style="font-size:11px;color:var(--green);letter-spacing:1px;text-transform:uppercase;margin-top:2px;"><i class="ti ti-check"></i> Couvert {{ booking.subscription.packType.label }}</div>
+              {% endif %}
             </div>
           </div>
           {% if booking.message %}
@@ -258,7 +267,11 @@
               <td style="font-family:'Barlow Condensed',sans-serif;font-weight:700;">{{ booking.offerLabel }}</td>
               <td style="color:var(--text-dim);">{{ booking.startAt|date('d/m/Y à H:i') }}</td>
               <td style="color:var(--text-dim);">{{ booking.client.nomComplet }}</td>
-              <td style="color:var(--gold);font-family:'Barlow Condensed',sans-serif;font-weight:700;">{{ booking.prixFormatted }}</td>
+              <td style="color:var(--gold);font-family:'Barlow Condensed',sans-serif;font-weight:700;">
+                {{ booking.prixFormatted }}
+                {% if booking.coveredBy == 'founding' %}<br><span style="font-size:10px;color:var(--gold);font-weight:600;letter-spacing:1px;">FONDATEUR</span>{% endif %}
+                {% if booking.coveredBy == 'subscription' and booking.subscription %}<br><span style="font-size:10px;color:var(--green);font-weight:600;letter-spacing:1px;">VIA {{ booking.subscription.packType.label|upper }}</span>{% endif %}
+              </td>
               <td>
                 {% if booking.conversation %}
                   <a href="{{ path('app_conversation_show', {id: booking.conversation.id}) }}" class="action-btn">
