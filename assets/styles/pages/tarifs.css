@@ -846,6 +846,34 @@
   }
 }
 
+/* Anti-débordement mobile : empêche n'importe quel élément
+   de forcer la viewport à se dézoomer */
+@media (max-width: 760px) {
+  .pricing-hero,
+  .pricing-decision,
+  .pricing-day-pass-grid,
+  .pricing-pack-block,
+  .pricing-fullaccess,
+  .pricing-hero-grid,
+  .pricing-day-card,
+  .pricing-decision-card,
+  .pricing-fullaccess-grid {
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+  .pricing-table-scroll {
+    max-width: 100%;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+  }
+  /* Le pack title peut casser proprement plutôt que forcer la largeur */
+  .pricing-pack-header h3,
+  .pricing-pack-header p {
+    word-break: break-word;
+    overflow-wrap: break-word;
+  }
+}
+
 @media (max-width: 560px) {
   .pricing-decision-grid {
     grid-template-columns: 1fr;

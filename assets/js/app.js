@@ -294,6 +294,8 @@ function setup() {
     mobileMenu.classList.add('is-open');
     mobileMenu.setAttribute('aria-hidden', 'false');
     toggle.setAttribute('aria-expanded', 'true');
+    // Bloque le scroll de la page derrière (sinon le doigt fait défiler la home sous le menu)
+    document.body.classList.add('mobile-menu-open');
     lastToggleTime = Date.now();
   }
 
@@ -302,6 +304,7 @@ function setup() {
     mobileMenu.classList.remove('is-open');
     mobileMenu.setAttribute('aria-hidden', 'true');
     toggle.setAttribute('aria-expanded', 'false');
+    document.body.classList.remove('mobile-menu-open');
     lastToggleTime = Date.now();
   }
 

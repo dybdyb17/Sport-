@@ -367,15 +367,27 @@
 .mobile-menu {
   display: none;
   position: fixed;
-  top: 78px;
+  /* Couvre TOUT le viewport (plus de "trou" en haut) — on garde un padding-top
+     équivalent au header pour ne pas passer dessous le SPORT+ logo */
+  top: 0;
   left: 0;
   right: 0;
+  bottom: 0;
   background: rgba(6,6,6,.97);
-  -webkit-backdrop-filter: blur(10px);
-  backdrop-filter: blur(10px);
-  border-bottom: 1px solid var(--border);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
   z-index: 190;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  padding-top: 78px;
   /* Pas de transform — évite le bug iOS WebKit */
+}
+
+/* Quand le menu est ouvert, on bloque le scroll de la page derrière */
+body.mobile-menu-open {
+  overflow: hidden;
+  touch-action: none;
 }
 
 .mobile-menu.is-open {

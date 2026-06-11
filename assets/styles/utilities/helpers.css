@@ -209,7 +209,10 @@
 }
 
 /* Prévention overflow horizontal sur mobile */
-body { overflow-x: hidden; }
+/* overflow-x: clip empêche le scroll horizontal SANS casser
+   position: sticky des enfants (contrairement à overflow-x: hidden).
+   Fallback hidden pour les vieux navigateurs. */
+body { overflow-x: hidden; overflow-x: clip; }
 * { overflow-wrap: break-word; }
 img, video, iframe { max-width: 100%; }
 
