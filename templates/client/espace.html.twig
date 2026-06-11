@@ -333,8 +333,8 @@
                   {% set state = cell.isFuture ? 'future' : (cell.isToday ? 'today' : 'past') %}
                   <span
                     class="heatmap-cell level-{{ level }} state-{{ state }}"
-                    title="{{ cell.date|date('D d/m') }} — {{ cell.count }} séance{{ cell.count > 1 ? 's' : '' }}"
-                    aria-label="{{ cell.date|date('D d/m') }} : {{ cell.count }} séance{{ cell.count > 1 ? 's' : '' }}"
+                    title="{{ cell.date|format_datetime(pattern="EEE d/M", locale='fr') }} — {{ cell.count }} séance{{ cell.count > 1 ? 's' : '' }}"
+                    aria-label="{{ cell.date|format_datetime(pattern="EEE d/M", locale='fr') }} : {{ cell.count }} séance{{ cell.count > 1 ? 's' : '' }}"
                   ></span>
                 {% endfor %}
               </div>

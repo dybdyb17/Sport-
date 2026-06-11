@@ -28,7 +28,8 @@
         "symfony/twig-bridge": "7.4.*",
         "symfony/twig-bundle": "7.4.*",
         "symfony/validator": "7.4.*",
-        "symfony/yaml": "7.4.*"
+        "symfony/yaml": "7.4.*",
+        "twig/intl-extra": "^3.26"
     },
     "config": {
         "allow-plugins": {

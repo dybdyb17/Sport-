@@ -4,6 +4,12 @@
 use App\Kernel;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 
+// SPORT+ — timezone Europe/Paris pour toutes les commandes CLI
+// (en particulier app:send-day-before-reminders lancé en cron Railway en UTC)
+date_default_timezone_set('Europe/Paris');
+ini_set('date.timezone', 'Europe/Paris');
+setlocale(LC_TIME, 'fr_FR.UTF-8', 'fr_FR', 'french');
+
 if (!is_dir(dirname(__DIR__).'/vendor')) {
     throw new LogicException('Dependencies are missing. Try running "composer install".');
 }

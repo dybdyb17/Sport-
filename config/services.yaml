@@ -30,3 +30,9 @@ services:
             $stripeSecretKey: '%env(STRIPE_SECRET_KEY)%'
             $stripeWebhookSecret: '%env(STRIPE_WEBHOOK_SECRET)%'
             $appUrl: '%app_url%'
+
+    # Twig Intl extension : ajoute les filtres format_datetime, format_date, format_time, format_number, etc.
+    # Permet d'afficher les dates en français même si setlocale ne couvre pas le serveur.
+    Twig\Extra\Intl\IntlExtension:
+        tags:
+            - { name: twig.extension }

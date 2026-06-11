@@ -1,5 +1,10 @@
 twig:
     file_name_pattern: '*.twig'
+    # Affiche toutes les dates dans le fuseau de Paris (les valeurs en BDD restent en UTC)
+    date:
+        format: 'd/m/Y H:i'
+        interval_format: '%d jours'
+        timezone: Europe/Paris
 
 when@test:
     twig:

@@ -17,7 +17,7 @@
       <div class="profile-hero-stats">
         <div class="profile-hero-stat">
           <i class="ti ti-calendar"></i>
-          <span>Membre depuis <strong>{{ app.user.createdAt|date('M Y') }}</strong></span>
+          <span>Membre depuis <strong>{{ app.user.createdAt|format_datetime(pattern="MMMM y", locale='fr') }}</strong></span>
         </div>
         {% if app.user.bookings|length > 0 %}
           <div class="profile-hero-stat">

@@ -2,6 +2,9 @@
 framework:
     secret: '%env(APP_SECRET)%'
 
+    # Locale française par défaut (filtres date, validators, IntlDateFormatter, etc.)
+    default_locale: fr
+
     # Note that the session will be started ONLY if you read or write from it.
     session: true
 
