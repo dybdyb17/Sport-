@@ -1,0 +1,157 @@
+<div class="peek-body">
+
+  {# Bandeau header avec ref + statut #}
+  <div class="peek-header">
+    <div>
+      <div class="peek-ref">{{ b.reference }}</div>
+      <h2 class="peek-title">{{ b.offerLabel }}</h2>
+      <div class="peek-when">
+        <i class="ti ti-calendar"></i>
+        {{ b.startAt|date('l d/m/Y') }} · <i class="ti ti-clock"></i> {{ b.startAt|date('H\\hi') }} — {{ b.endAt|date('H\\hi') }}
+      </div>
+    </div>
+    <span class="status-badge {{ b.status }}">
+      <i class="ti {{ b.statutIcon }}"></i> {{ b.statutLabel }}
+    </span>
+  </div>
+
+  {# Grille 2 colonnes : Client / Coach #}
+  <div class="peek-grid">
+
+    <div class="peek-party">
+      <div class="peek-party-label"><i class="ti ti-user"></i> Client</div>
+      <div class="peek-party-name">{{ b.client.nomComplet }}</div>
+      <div class="peek-party-contacts">
+        {% if b.client.email %}
+          <a href="mailto:{{ b.client.email }}"><i class="ti ti-mail"></i> {{ b.client.email }}</a>
+        {% endif %}
+        {% if b.client.phone %}
+          <a href="tel:{{ b.client.phone|replace({' ': '', '.': '', '-': ''}) }}"><i class="ti ti-phone"></i> {{ b.client.phone }}</a>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="peek-party">
+      <div class="peek-party-label"><i class="ti ti-user-star"></i> Coach</div>
+      <div class="peek-party-name">{{ b.coach.nomComplet }}</div>
+      <div class="peek-party-contacts">
+        {% if b.coach.user.email %}
+          <a href="mailto:{{ b.coach.user.email }}"><i class="ti ti-mail"></i> {{ b.coach.user.email }}</a>
+        {% endif %}
+        {% if b.coach.user.phone %}
+          <a href="tel:{{ b.coach.user.phone|replace({' ': '', '.': '', '-': ''}) }}"><i class="ti ti-phone"></i> {{ b.coach.user.phone }}</a>
+        {% endif %}
+      </div>
+    </div>
+
+  </div>
+
+  {# Lignes infos clés #}
+  <div class="peek-rows">
+    <div class="peek-row">
+      <span class="peek-row-key"><i class="ti ti-tag"></i> Format</span>
+      <span class="peek-row-val">{{ b.format.label }} ({{ b.personsCount }} pers.)</span>
+    </div>
+    <div class="peek-row">
+      <span class="peek-row-key"><i class="ti ti-moon"></i> Créneau</span>
+      <span class="peek-row-val">{{ b.timeSlot.label }}</span>
+    </div>
+    <div class="peek-row">
+      <span class="peek-row-key"><i class="ti ti-coins"></i> Prix</span>
+      <span class="peek-row-val">
+        {{ b.prixFormatted }}
+        {% if b.coveredBy == 'founding' %}
+          <span class="peek-pill peek-pill-gold"><i class="ti ti-crown"></i> Couvert Fondateur</span>
+        {% elseif b.coveredBy == 'subscription' and b.subscription %}
+          <span class="peek-pill peek-pill-green"><i class="ti ti-check"></i> Couvert {{ b.subscription.packType.label }}</span>
+        {% endif %}
+      </span>
+    </div>
+
+    {# Paiement / no-show #}
+    <div class="peek-row">
+      <span class="peek-row-key"><i class="ti ti-credit-card"></i> Paiement</span>
+      <span class="peek-row-val">
+        {% if b.noShow %}
+          <span class="peek-pill peek-pill-red"><i class="ti ti-user-x"></i> No-show — frais {{ b.noShowFee }} €</span>
+          <span style="display:block;font-size:11px;color:var(--text-dim);margin-top:4px;">Marqué le {{ b.noShowMarkedAt|date('d/m/Y H\\hi') }}</span>
+        {% elseif b.paymentMethod %}
+          {% set methods = {'cash': 'Espèces', 'card': 'CB', 'xplor': 'Xplor Active'} %}
+          <span class="peek-pill peek-pill-green"><i class="ti ti-check"></i> {{ methods[b.paymentMethod] ?? b.paymentMethod }}</span>
+          {% if b.paymentDeclaredAt %}
+            <span style="display:block;font-size:11px;color:var(--text-dim);margin-top:4px;">Déclaré le {{ b.paymentDeclaredAt|date('d/m/Y H\\hi') }}{% if b.paymentDeclaredBy %} par {{ b.paymentDeclaredBy.nomComplet }}{% endif %}</span>
+          {% endif %}
+        {% else %}
+          {% if b.intendedPaymentMethod %}
+            {% set methods = {'cash': 'Espèces', 'card': 'CB', 'xplor': 'Xplor Active'} %}
+            <span class="peek-pill peek-pill-gold"><i class="ti ti-flag"></i> Annoncé : {{ methods[b.intendedPaymentMethod] }}</span>
+          {% else %}
+            <span class="peek-pill peek-pill-neutral"><i class="ti ti-help"></i> Non déclaré</span>
+          {% endif %}
+        {% endif %}
+      </span>
+    </div>
+
+    {# Check-in #}
+    <div class="peek-row">
+      <span class="peek-row-key"><i class="ti ti-qrcode"></i> Check-in</span>
+      <span class="peek-row-val">
+        {% if b.checkinAt %}
+          <span class="peek-pill peek-pill-green"><i class="ti ti-check"></i> Validé {{ b.checkinAt|date('d/m H\\hi') }}{% if b.checkinBy %} par {{ b.checkinBy.nomComplet }}{% endif %}</span>
+        {% else %}
+          <span class="peek-pill peek-pill-neutral"><i class="ti ti-minus"></i> Non scanné</span>
+        {% endif %}
+      </span>
+    </div>
+
+    {# Confirmation J-1 client #}
+    {% if b.clientConfirmedAt %}
+      <div class="peek-row">
+        <span class="peek-row-key"><i class="ti ti-mail-check"></i> Confirmation J-1</span>
+        <span class="peek-row-val">
+          <span class="peek-pill peek-pill-green"><i class="ti ti-check"></i> Confirmée par le client le {{ b.clientConfirmedAt|date('d/m H\\hi') }}</span>
+        </span>
+      </div>
+    {% endif %}
+
+    <div class="peek-row">
+      <span class="peek-row-key"><i class="ti ti-clock-edit"></i> Créée le</span>
+      <span class="peek-row-val">{{ b.createdAt|date('d/m/Y \\à H\\hi') }}</span>
+    </div>
+
+    {% if b.confirmedAt %}
+      <div class="peek-row">
+        <span class="peek-row-key"><i class="ti ti-circle-check"></i> Confirmée le</span>
+        <span class="peek-row-val">{{ b.confirmedAt|date('d/m/Y \\à H\\hi') }}</span>
+      </div>
+    {% endif %}
+  </div>
+
+  {# Message client / motif refus #}
+  {% if b.message %}
+    <div class="peek-note">
+      <div class="peek-note-label"><i class="ti ti-message-dots"></i> Message du client</div>
+      <p>« {{ b.message }} »</p>
+    </div>
+  {% endif %}
+
+  {% if b.refusalReason %}
+    <div class="peek-note peek-note-red">
+      <div class="peek-note-label"><i class="ti ti-message-circle-x"></i> Motif de refus du coach</div>
+      <p>« {{ b.refusalReason }} »</p>
+    </div>
+  {% endif %}
+
+  {# Actions rapides #}
+  <div class="peek-actions">
+    {% if b.conversation %}
+      <a href="{{ path('app_admin_conversation_show', {id: b.conversation.id}) }}" class="btn btn-secondary btn-sm">
+        <i class="ti ti-messages"></i> Voir la conversation
+      </a>
+    {% endif %}
+    <a href="{{ path('app_admin_bookings') }}" class="btn btn-secondary btn-sm">
+      <i class="ti ti-bookmarks"></i> Toutes les résas
+    </a>
+  </div>
+
+</div>

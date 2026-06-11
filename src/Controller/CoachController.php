@@ -156,4 +156,48 @@ class CoachController extends AbstractController
         $this->addFlash('success', 'Paiement déclaré.');
         return $this->redirectToRoute('app_coach_dashboard');
     }
+
+    /**
+     * Le coach marque la séance comme no-show (client absent).
+     * Calcul automatique d'un fee = 30% du prix unitaire de la séance.
+     */
+    #[Route('/booking/{id}/no-show', name: 'app_coach_mark_no_show', methods: ['POST'])]
+    public function markNoShow(
+        int $id,
+        Request $request,
+        BookingRepository $bookings,
+        EntityManagerInterface $em,
+    ): Response {
+        /** @var \App\Entity\User $user */
+        $user = $this->getUser();
+        $coach = $user->getCoach();
+        $booking = $bookings->find($id);
+        if (!$booking || !$coach || $booking->getCoach() !== $coach) {
+            throw $this->createAccessDeniedException();
+        }
+        if (!$this->isCsrfTokenValid('no_show_' . $id, (string) $request->request->get('_token'))) {
+            $this->addFlash('danger', 'Jeton CSRF invalide.');
+            return $this->redirectToRoute('app_coach_dashboard');
+        }
+        if ($booking->getStartAt() > new \DateTimeImmutable()) {
+            $this->addFlash('danger', 'Impossible de marquer no-show avant la séance.');
+            return $this->redirectToRoute('app_coach_dashboard');
+        }
+        // Fee = 30% du prix unitaire
+        $price = (float) ($booking->getPrice() ?? 0);
+        $fee   = number_format($price * 0.30, 2, '.', '');
+
+        $booking->setNoShow(true);
+        $booking->setNoShowMarkedAt(new \DateTimeImmutable());
+        $booking->setNoShowFee($fee);
+        // On clôt la déclaration de paiement avec une note explicite
+        $booking->setPaymentMethod('no_show');
+        $booking->setPaymentDeclaredAt(new \DateTimeImmutable());
+        $booking->setPaymentDeclaredBy($user);
+        $booking->setPaymentNote(sprintf('No-show — frais de 30%% facturés : %s €', $fee));
+        $em->flush();
+
+        $this->addFlash('success', sprintf('Marqué « non venu » — %s € à facturer au client.', $fee));
+        return $this->redirectToRoute('app_coach_dashboard');
+    }
 }

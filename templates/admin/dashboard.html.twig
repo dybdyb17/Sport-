@@ -83,42 +83,45 @@
   {% endif %}
 </div>
 
-{# ── Répartition par créneau ── #}
-<div class="section-label">Répartition par créneau — {{ periodLabel }}</div>
-<div class="data-card" style="margin-bottom:32px;">
-  {% set slotMax = slotStats['day'].count %}
-  {% if slotStats['night'].count > slotMax %}{% set slotMax = slotStats['night'].count %}{% endif %}
-  {% if slotStats['astreinte'].count > slotMax %}{% set slotMax = slotStats['astreinte'].count %}{% endif %}
-  {% set slotMax = slotMax > 0 ? slotMax : 1 %}
+{# ── Répartition par créneau — GLOBALE (tous coachs) ── #}
+<div class="section-label">
+  Répartition par créneau <span style="color:var(--text-dim);font-size:13px;letter-spacing:1px;">— {{ periodLabel }} · TOUS COACHS</span>
+</div>
+{% set totalSlots = slotStats['day'].count + slotStats['night'].count + slotStats['astreinte'].count %}
+{% set totalRevenue = slotStats['day'].revenue + slotStats['night'].revenue + slotStats['astreinte'].revenue %}
 
+<div class="slot-tiles">
   {% for slot, info in {
-    'day': {label: 'Journée', hours: '6h — 20h', icon: 'ti-sun', data: slotStats['day']},
-    'night': {label: 'Night Coach', hours: '20h — minuit', icon: 'ti-moon', data: slotStats['night']},
-    'astreinte': {label: 'Astreinte', hours: 'minuit — 6h', icon: 'ti-moon-stars', data: slotStats['astreinte']}
+    'day':       {label: 'Journée',     hours: '6h — 20h',     icon: 'ti-sun',        color: 'gold',  data: slotStats['day']},
+    'night':     {label: 'Night Coach', hours: '20h — minuit', icon: 'ti-moon',       color: 'green', data: slotStats['night']},
+    'astreinte': {label: 'Astreinte',   hours: 'minuit — 6h',  icon: 'ti-moon-stars', color: 'red',   data: slotStats['astreinte']}
   } %}
-    {% set barWidth = (info.data.count / slotMax * 100)|round %}
-    <div style="display:flex;align-items:center;gap:16px;padding:14px 0;border-bottom:1px solid var(--border);{% if loop.last %}border-bottom:none;{% endif %}">
-      <div style="width:32px;text-align:center;color:var(--gold-dim);font-size:18px;">
-        <i class="ti {{ info.icon }}"></i>
-      </div>
-      <div style="width:140px;min-width:100px;">
-        <div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;letter-spacing:1px;text-transform:uppercase;">{{ info.label }}</div>
-        <div style="font-size:11px;color:var(--text-dim);">{{ info.hours }}</div>
-      </div>
-      <div style="width:60px;text-align:right;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:24px;color:var(--gold);">
-        {{ info.data.count }}
-      </div>
-      <div style="flex:1;padding:0 16px;">
-        <div style="background:var(--bg-3);border-radius:3px;height:6px;overflow:hidden;">
-          <div style="background:var(--gold);height:100%;width:{{ barWidth }}%;border-radius:3px;"></div>
+    {% set pct = totalSlots > 0 ? (info.data.count / totalSlots * 100)|round : 0 %}
+    <div class="slot-tile slot-tile--{{ info.color }}">
+      <div class="slot-tile-glow" aria-hidden="true"></div>
+      <div class="slot-tile-head">
+        <div class="slot-tile-icon"><i class="ti {{ info.icon }}"></i></div>
+        <div>
+          <div class="slot-tile-label">{{ info.label }}</div>
+          <div class="slot-tile-hours">{{ info.hours }}</div>
         </div>
+        <div class="slot-tile-pct">{{ pct }}%</div>
       </div>
-      <div style="width:110px;text-align:right;font-family:'Barlow Condensed',sans-serif;font-size:14px;color:var(--text-dim);">
-        {{ info.data.revenue|number_format(2, ',', ' ') }} €
+      <div class="slot-tile-bignum">
+        <span class="slot-tile-num">{{ info.data.count }}</span>
+        <span class="slot-tile-num-unit">séance{{ info.data.count > 1 ? 's' : '' }}</span>
+      </div>
+      <div class="slot-tile-bar">
+        <div class="slot-tile-bar-fill" style="width:{{ pct }}%;"></div>
+      </div>
+      <div class="slot-tile-revenue">
+        <span class="slot-tile-revenue-num">{{ info.data.revenue|number_format(0, ',', ' ') }} €</span>
+        <span class="slot-tile-revenue-label">de CA</span>
       </div>
     </div>
   {% endfor %}
 </div>
+
 
 {# ── Calendrier semaine en cours (encart) ── #}
 <div class="section-label">
@@ -145,10 +148,10 @@
     {% for i in 1..7 %}
       <div class="calendar-cell">
         {% for booking in weekGrid[i][slotKey] %}
-          <div class="calendar-event {{ slotKey != 'day' ? slotKey : '' }}">
+          <button type="button" class="calendar-event {{ slotKey != 'day' ? slotKey : '' }}" data-peek-ref="{{ booking.reference }}" title="{{ booking.client.nomComplet }} — {{ booking.coach.nomComplet }}">
             <span class="calendar-event-time">{{ booking.startAt|date('H:i') }}</span>
             <span class="calendar-event-meta">{{ booking.client.nomComplet|split(' ')|first }} · {{ booking.format.value|upper }}</span>
-          </div>
+          </button>
         {% else %}
           <span></span>
         {% endfor %}
@@ -263,8 +266,8 @@
       </thead>
       <tbody>
         {% for booking in recentBookings %}
-          <tr>
-            <td style="font-family:'Barlow Condensed',sans-serif;font-size:13px;letter-spacing:2px;color:var(--text-dim);">{{ booking.reference }}</td>
+          <tr data-peek-ref="{{ booking.reference }}" class="row-peek">
+            <td style="font-family:'Barlow Condensed',sans-serif;font-size:13px;letter-spacing:2px;color:var(--gold);font-weight:700;">{{ booking.reference }}</td>
             <td style="font-family:'Barlow Condensed',sans-serif;font-weight:700;">{{ booking.offerLabel }}</td>
             <td style="color:var(--text-dim);">{{ booking.startAt|date('d/m/Y') }}</td>
             <td style="color:var(--text-dim);">{{ booking.client.nomComplet }}</td>

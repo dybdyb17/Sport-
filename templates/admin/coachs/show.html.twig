@@ -1,0 +1,200 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block admin_body %}
+<a href="{{ path('app_admin_coachs') }}" class="btn btn-ghost btn-sm" style="margin-bottom:16px;">
+  <i class="ti ti-arrow-left"></i> Tous les coachs
+</a>
+
+{# ── HEADER PROFIL COACH ── #}
+<div class="coach-show-header">
+  <div class="coach-show-avatar-wrap">
+    {% if coach.photoSrc %}
+      <img src="{{ coach.photoSrc }}" alt="{{ coach.nomComplet }}" class="coach-show-avatar">
+    {% else %}
+      {% set i1 = coach.nomComplet|split(' ')|first|first|upper %}
+      {% set i2 = coach.nomComplet|split(' ')|length > 1 ? coach.nomComplet|split(' ')[1]|first|upper : '' %}
+      <div class="coach-show-avatar coach-show-avatar-initials">{{ i1 }}{{ i2 }}</div>
+    {% endif %}
+  </div>
+  <div class="coach-show-id">
+    <div class="coach-show-eyebrow">COACH SPORT+</div>
+    <h1 class="coach-show-name">{{ coach.nomComplet }}</h1>
+    <div class="coach-show-contacts">
+      {% if coach.user.email %}
+        <a href="mailto:{{ coach.user.email }}"><i class="ti ti-mail"></i> {{ coach.user.email }}</a>
+      {% endif %}
+      {% if coach.user.phone %}
+        <a href="tel:{{ coach.user.phone|replace({' ': '', '.': '', '-': ''}) }}"><i class="ti ti-phone"></i> {{ coach.user.phone }}</a>
+      {% endif %}
+      <span><i class="ti ti-coin"></i> {{ coach.hourlyRate }} €/h</span>
+    </div>
+  </div>
+  <div class="coach-show-actions">
+    <a href="{{ path('app_admin_coach_edit', {id: coach.id}) }}" class="btn btn-secondary btn-sm">
+      <i class="ti ti-pencil"></i> Modifier le profil
+    </a>
+  </div>
+</div>
+
+{# ── BIO + SPÉCIALITÉS ── #}
+{% if coach.bio or coach.specialties %}
+  <div class="coach-show-bio">
+    {% if coach.specialties %}
+      <div class="coach-show-tags">
+        {% for spec in coach.specialties %}
+          <span class="coach-show-tag">{{ spec }}</span>
+        {% endfor %}
+      </div>
+    {% endif %}
+    {% if coach.bio %}
+      <p class="coach-show-bio-text">{{ coach.bio }}</p>
+    {% endif %}
+  </div>
+{% endif %}
+
+{# ── STATS MOIS EN COURS ── #}
+<div class="section-label">
+  Performance — <span style="color:var(--text-dim);font-size:13px;letter-spacing:1px;">MOIS EN COURS</span>
+</div>
+{% if statsMonth %}
+  {% set s = statsMonth %}
+  {# Summary big numbers #}
+  <div class="coach-summary">
+    <div class="coach-summary-item">
+      <div class="coach-summary-num">{{ s.total }}</div>
+      <div class="coach-summary-label">séance{{ s.total > 1 ? 's' : '' }}</div>
+    </div>
+    <div class="coach-summary-sep"></div>
+    <div class="coach-summary-item">
+      <div class="coach-summary-num coach-summary-num--gold">{{ s.totalRevenue|number_format(0, ',', ' ') }} €</div>
+      <div class="coach-summary-label">de CA</div>
+    </div>
+  </div>
+
+  {# 3 tiles par créneau #}
+  <div class="slot-tiles">
+    {% for slot, info in {
+      'day':       {label: 'Journée',     hours: '6h — 20h',     icon: 'ti-sun',        color: 'gold',  data: s.day},
+      'night':     {label: 'Night Coach', hours: '20h — minuit', icon: 'ti-moon',       color: 'green', data: s.night},
+      'astreinte': {label: 'Astreinte',   hours: 'minuit — 6h',  icon: 'ti-moon-stars', color: 'red',   data: s.astreinte}
+    } %}
+      {% set pct = s.total > 0 ? (info.data.count / s.total * 100)|round : 0 %}
+      <div class="slot-tile slot-tile--{{ info.color }}">
+        <div class="slot-tile-glow" aria-hidden="true"></div>
+        <div class="slot-tile-head">
+          <div class="slot-tile-icon"><i class="ti {{ info.icon }}"></i></div>
+          <div>
+            <div class="slot-tile-label">{{ info.label }}</div>
+            <div class="slot-tile-hours">{{ info.hours }}</div>
+          </div>
+          <div class="slot-tile-pct">{{ pct }}%</div>
+        </div>
+        <div class="slot-tile-bignum">
+          <span class="slot-tile-num">{{ info.data.count }}</span>
+          <span class="slot-tile-num-unit">séance{{ info.data.count > 1 ? 's' : '' }}</span>
+        </div>
+        <div class="slot-tile-bar">
+          <div class="slot-tile-bar-fill" style="width:{{ pct }}%;"></div>
+        </div>
+        <div class="slot-tile-revenue">
+          <span class="slot-tile-revenue-num">{{ info.data.revenue|number_format(0, ',', ' ') }} €</span>
+          <span class="slot-tile-revenue-label">de CA</span>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+{% else %}
+  <div class="empty-placeholder" style="padding:32px;text-align:center;color:var(--text-dim);margin-bottom:32px;">
+    <i class="ti ti-calendar-off" style="font-size:36px;opacity:.4;display:block;margin-bottom:8px;"></i>
+    Aucune séance confirmée ce mois-ci.
+  </div>
+{% endif %}
+
+{# ── STATS DEPUIS TOUJOURS ── #}
+<div class="section-label">
+  Carrière — <span style="color:var(--text-dim);font-size:13px;letter-spacing:1px;">DEPUIS LE DÉBUT</span>
+</div>
+{% if statsAll %}
+  {% set s = statsAll %}
+  <div class="coach-summary">
+    <div class="coach-summary-item">
+      <div class="coach-summary-num">{{ s.total }}</div>
+      <div class="coach-summary-label">séance{{ s.total > 1 ? 's' : '' }}</div>
+    </div>
+    <div class="coach-summary-sep"></div>
+    <div class="coach-summary-item">
+      <div class="coach-summary-num coach-summary-num--gold">{{ s.totalRevenue|number_format(0, ',', ' ') }} €</div>
+      <div class="coach-summary-label">de CA total</div>
+    </div>
+  </div>
+
+  <div class="slot-tiles">
+    {% for slot, info in {
+      'day':       {label: 'Journée',     hours: '6h — 20h',     icon: 'ti-sun',        color: 'gold',  data: s.day},
+      'night':     {label: 'Night Coach', hours: '20h — minuit', icon: 'ti-moon',       color: 'green', data: s.night},
+      'astreinte': {label: 'Astreinte',   hours: 'minuit — 6h',  icon: 'ti-moon-stars', color: 'red',   data: s.astreinte}
+    } %}
+      {% set pct = s.total > 0 ? (info.data.count / s.total * 100)|round : 0 %}
+      <div class="slot-tile slot-tile--{{ info.color }}">
+        <div class="slot-tile-glow" aria-hidden="true"></div>
+        <div class="slot-tile-head">
+          <div class="slot-tile-icon"><i class="ti {{ info.icon }}"></i></div>
+          <div>
+            <div class="slot-tile-label">{{ info.label }}</div>
+            <div class="slot-tile-hours">{{ info.hours }}</div>
+          </div>
+          <div class="slot-tile-pct">{{ pct }}%</div>
+        </div>
+        <div class="slot-tile-bignum">
+          <span class="slot-tile-num">{{ info.data.count }}</span>
+          <span class="slot-tile-num-unit">séance{{ info.data.count > 1 ? 's' : '' }}</span>
+        </div>
+        <div class="slot-tile-bar">
+          <div class="slot-tile-bar-fill" style="width:{{ pct }}%;"></div>
+        </div>
+        <div class="slot-tile-revenue">
+          <span class="slot-tile-revenue-num">{{ info.data.revenue|number_format(0, ',', ' ') }} €</span>
+          <span class="slot-tile-revenue-label">de CA</span>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+{% else %}
+  <div class="empty-placeholder" style="padding:32px;text-align:center;color:var(--text-dim);margin-bottom:32px;">
+    Aucune séance confirmée à ce jour.
+  </div>
+{% endif %}
+
+{# ── DERNIÈRES SÉANCES ── #}
+<div class="section-label">Dernières séances <span style="color:var(--text-dim);font-size:13px;letter-spacing:1px;">— LES 15 PLUS RÉCENTES</span></div>
+<div class="data-table-card">
+  {% if recentBookings is empty %}
+    <div class="empty-placeholder" style="padding:48px;text-align:center;color:var(--text-dim);">Aucune réservation.</div>
+  {% else %}
+    <table>
+      <thead>
+        <tr>
+          <th>Réf.</th>
+          <th>Date</th>
+          <th>Client</th>
+          <th>Prestation</th>
+          <th>Prix</th>
+          <th>Statut</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for b in recentBookings %}
+          <tr data-peek-ref="{{ b.reference }}" class="row-peek">
+            <td style="font-family:'Barlow Condensed',sans-serif;letter-spacing:1.5px;color:var(--gold);font-weight:700;">{{ b.reference }}</td>
+            <td style="color:var(--text-dim);">{{ b.startAt|date('d/m/Y H\\hi') }}</td>
+            <td style="color:var(--text-dim);">{{ b.client.nomComplet }}</td>
+            <td style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:14px;">{{ b.offerLabel }}</td>
+            <td style="color:var(--gold);font-family:'Barlow Condensed',sans-serif;font-weight:700;">{{ b.prixFormatted }}</td>
+            <td class="cell-wrap" style="min-width:140px;"><span class="status-badge {{ b.status }}"><i class="ti {{ b.statutIcon }}"></i>{{ b.statutLabel }}</span></td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% endif %}
+</div>
+{% endblock %}

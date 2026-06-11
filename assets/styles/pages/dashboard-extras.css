@@ -722,6 +722,38 @@
 .pay-decl-submit:active { transform: translateY(0); }
 .pay-decl-submit i { font-size: 18px; }
 
+/* ── Bouton "Client absent — no-show" ── */
+.no-show-form {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px dashed rgba(255,255,255,.08);
+}
+.no-show-btn {
+  width: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 9px 16px;
+  background: transparent;
+  color: #ff8a8a;
+  border: 1px dashed rgba(255,107,107,.4);
+  border-radius: 100px;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background .2s, border-color .2s, color .2s;
+}
+.no-show-btn:hover {
+  background: rgba(255,107,107,.08);
+  border-color: rgba(255,107,107,.7);
+  color: #ff6b6b;
+}
+.no-show-btn i { font-size: 15px; }
+
 @media (max-width: 560px) {
   .pay-decl-options { grid-template-columns: 1fr; }
   .pay-decl-chip { flex-direction: row; justify-content: flex-start; padding: 12px 16px; gap: 12px; }

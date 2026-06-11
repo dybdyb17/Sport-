@@ -57,8 +57,8 @@
       </thead>
       <tbody>
         {% for booking in bookings %}
-          <tr>
-            <td style="font-family:'Barlow Condensed',sans-serif;font-size:13px;letter-spacing:2px;color:var(--text-dim);">{{ booking.reference }}</td>
+          <tr data-peek-ref="{{ booking.reference }}" class="row-peek">
+            <td style="font-family:'Barlow Condensed',sans-serif;font-size:13px;letter-spacing:2px;color:var(--gold);font-weight:700;">{{ booking.reference }}</td>
             <td style="color:var(--text-dim);">{{ booking.startAt|date('d/m/Y à H:i') }}</td>
             <td style="font-family:'Barlow Condensed',sans-serif;font-weight:700;">{{ booking.offerLabel }}</td>
             <td style="color:var(--text-dim);">{{ booking.client.nomComplet }}</td>

@@ -100,6 +100,20 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->subscriptions = new ArrayCollection();
     }
 
+    /**
+     * Filet de sécurité au unserialize d'une vieille session Symfony :
+     * si un champ DateTimeImmutable a été stocké en \DateTime mutable
+     * (changement de type entre 2 versions), on convertit à la volée.
+     */
+    public function __wakeup(): void
+    {
+        foreach (['createdAt', 'lastSeenAt'] as $prop) {
+            if (isset($this->$prop) && $this->$prop instanceof \DateTime && !($this->$prop instanceof \DateTimeImmutable)) {
+                $this->$prop = \DateTimeImmutable::createFromMutable($this->$prop);
+            }
+        }
+    }
+
     public function getId(): ?int
     {
         return $this->id;

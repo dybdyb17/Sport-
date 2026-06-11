@@ -33,7 +33,7 @@
       </thead>
       <tbody>
         {% for coach in coaches %}
-          <tr>
+          <tr data-href="{{ path('app_admin_coach_show', {id: coach.id}) }}" class="row-clickable">
             <td>
               {% set coachPhoto = coach.photoSrc %}
               <div class="admin-coach-cell">
@@ -60,7 +60,10 @@
               {% endif %}
             </td>
             <td style="text-align:right;">
-              <a href="{{ path('app_admin_coach_edit', {id: coach.id}) }}" class="btn btn-secondary btn-sm">
+              <a href="{{ path('app_admin_coach_show', {id: coach.id}) }}" class="btn btn-secondary btn-sm" style="margin-right:6px;">
+                <i class="ti ti-eye"></i> Voir
+              </a>
+              <a href="{{ path('app_admin_coach_edit', {id: coach.id}) }}" class="btn btn-ghost btn-sm">
                 <i class="ti ti-edit"></i> Modifier
               </a>
             </td>

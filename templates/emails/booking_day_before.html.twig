@@ -1,0 +1,51 @@
+{% extends 'emails/base.html.twig' %}
+{% import 'emails/_macros.html.twig' as m %}
+
+{% block subject %}Rappel : ta séance avec {{ coach.nomComplet|split(' ')|first }}, c'est demain — SPORT+{% endblock %}
+
+{% block content %}
+<p style="margin:0 0 8px;font-size:16px;color:#ECECEC;font-family:Arial,Helvetica,sans-serif;">
+  Bonjour <strong style="color:#F4EFE6;">{{ client.nomComplet|split(' ')|first }}</strong>,
+</p>
+
+<p style="margin:0 0 24px;font-size:20px;font-weight:700;color:#C8A951;font-family:Arial,Helvetica,sans-serif;">
+  Ta séance, c'est demain.
+</p>
+
+<p style="margin:0 0 24px;font-size:16px;color:#ECECEC;font-family:Arial,Helvetica,sans-serif;line-height:1.65;">
+  <strong style="color:#F4EFE6;">{{ coach.nomComplet }}</strong> t'attend
+  <strong style="color:#F4EFE6;">{{ booking.startAt|date('d/m/Y') }} à {{ booking.startAt|date('H\\hi') }}</strong>
+  pour ta séance <strong style="color:#C8A951;">{{ booking.offerLabel }}</strong>.
+</p>
+
+<p style="margin:0 0 12px;font-size:15px;color:#ECECEC;font-family:Arial,Helvetica,sans-serif;line-height:1.55;">
+  Pour t'assurer que ton coach prépare bien ta séance, peux-tu confirmer ta présence en un clic ?
+</p>
+
+{{ m.button(confirmUrl, 'Je confirme ma présence') }}
+
+{{ m.divider() }}
+
+{{ m.infoCard('Coach', coach.nomComplet) }}
+{{ m.infoCard('Format', booking.offerLabel) }}
+{{ m.infoCard('Date et heure', booking.startAt|date('d/m/Y à H:i')) }}
+{{ m.infoCard('Lieu', '164 Chemin de Saint-Jean du Désert, 13005 Marseille') }}
+
+<table role="presentation" cellspacing="0" cellpadding="0" border="0" style="margin:18px auto 0;">
+  <tr>
+    <td align="center">
+      <a href="{{ rdvUrl }}" target="_blank" style="font-family:Arial,Helvetica,sans-serif;font-size:14px;color:#C8A951;text-decoration:underline;">
+        Voir le détail de ma séance →
+      </a>
+    </td>
+  </tr>
+</table>
+
+{{ m.divider() }}
+
+<p style="margin:0 0 8px;font-size:13px;color:#9A8F7A;font-family:Arial,Helvetica,sans-serif;text-align:center;line-height:1.55;">
+  <strong style="color:#C8A951;">Empêchement ?</strong>
+  Préviens ton coach via la messagerie ou par téléphone au plus vite.<br>
+  Une absence non prévenue peut entraîner des frais (30% du tarif de la séance).
+</p>
+{% endblock %}

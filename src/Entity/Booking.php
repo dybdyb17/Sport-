@@ -123,6 +123,21 @@ class Booking
     #[ORM\Column(length: 500, nullable: true)]
     private ?string $paymentNote = null;
 
+    // Confirmation J-1 par le client (clic sur lien email reçu la veille)
+    #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
+    private ?\DateTimeImmutable $clientConfirmedAt = null;
+
+    // No-show : client ne s'est pas présenté (cochée par le coach)
+    #[ORM\Column(options: ['default' => false])]
+    private bool $noShow = false;
+
+    #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
+    private ?\DateTimeImmutable $noShowMarkedAt = null;
+
+    // Frais no-show calculés (30% du prix unitaire) à facturer au client
+    #[ORM\Column(type: Types::DECIMAL, precision: 8, scale: 2, nullable: true)]
+    private ?string $noShowFee = null;
+
     /**
      * @var array<string, mixed>|null
      */
@@ -211,6 +226,18 @@ class Booking
 
     public function getPaymentNote(): ?string { return $this->paymentNote; }
     public function setPaymentNote(?string $paymentNote): static { $this->paymentNote = $paymentNote; return $this; }
+
+    public function getClientConfirmedAt(): ?\DateTimeImmutable { return $this->clientConfirmedAt; }
+    public function setClientConfirmedAt(?\DateTimeImmutable $clientConfirmedAt): static { $this->clientConfirmedAt = $clientConfirmedAt; return $this; }
+
+    public function isNoShow(): bool { return $this->noShow; }
+    public function setNoShow(bool $noShow): static { $this->noShow = $noShow; return $this; }
+
+    public function getNoShowMarkedAt(): ?\DateTimeImmutable { return $this->noShowMarkedAt; }
+    public function setNoShowMarkedAt(?\DateTimeImmutable $noShowMarkedAt): static { $this->noShowMarkedAt = $noShowMarkedAt; return $this; }
+
+    public function getNoShowFee(): ?string { return $this->noShowFee; }
+    public function setNoShowFee(?string $noShowFee): static { $this->noShowFee = $noShowFee; return $this; }
 
     /** @return array<string, mixed>|null */
     public function getStripeData(): ?array { return $this->stripeData; }

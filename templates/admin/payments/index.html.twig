@@ -53,7 +53,7 @@
       </thead>
       <tbody>
         {% for b in rows %}
-          <tr>
+          <tr data-peek-ref="{{ b.reference }}" class="row-peek">
             <td style="font-family:'Barlow Condensed',sans-serif;letter-spacing:1.5px;color:var(--gold);font-weight:700;">{{ b.reference }}</td>
             <td style="color:var(--text-dim);">{{ b.startAt|date('d/m/Y H\\hi') }}</td>
             <td style="color:var(--text-dim);">{{ b.client.nomComplet }}</td>
@@ -64,7 +64,11 @@
               {% if b.coveredBy == 'subscription' and b.subscription %}<br><span style="font-size:10px;color:var(--green);font-weight:600;letter-spacing:1px;">VIA {{ b.subscription.packType.label|upper }}</span>{% endif %}
             </td>
             <td>
-              {% if b.paymentMethod == 'cash' %}
+              {% if b.noShow %}
+                <span style="color:#ff6b6b;font-weight:700;"><i class="ti ti-user-x"></i> No-show</span>
+                <div style="font-size:11px;color:#ff8a8a;margin-top:2px;">À facturer : <strong>{{ b.noShowFee }} €</strong></div>
+                <div style="font-size:11px;color:var(--text-dim);">{{ b.noShowMarkedAt|date('d/m H\\hi') }}</div>
+              {% elseif b.paymentMethod == 'cash' %}
                 <span><i class="ti ti-cash"></i> Espèces</span><div style="font-size:11px;color:var(--text-dim);">{{ b.paymentDeclaredAt|date('d/m H\\hi') }}</div>
               {% elseif b.paymentMethod == 'card' %}
                 <span><i class="ti ti-credit-card"></i> CB</span><div style="font-size:11px;color:var(--text-dim);">{{ b.paymentDeclaredAt|date('d/m H\\hi') }}</div>

@@ -208,4 +208,42 @@ class MailerService
     {
         return $this->urlGenerator->generate($route, $params, UrlGeneratorInterface::ABSOLUTE_URL);
     }
+
+    /**
+     * Email de rappel J-1 : envoyé la veille de la séance avec un bouton
+     * « Je confirme ma présence » qui pointe vers un lien signé HMAC.
+     */
+    public function sendDayBeforeReminder(Booking $booking, string $secret): void
+    {
+        try {
+            $client = $booking->getClient();
+            if (!$client?->getEmail()) {
+                return;
+            }
+            $sig = substr(hash_hmac('sha256', 'confirm:' . $booking->getId(), $secret), 0, 32);
+            $confirmUrl = $this->abs('app_booking_confirm_attendance', [
+                'ref' => $booking->getReference(),
+                'sig' => $sig,
+            ]);
+
+            $email = (new TemplatedEmail())
+                ->from($this->from())
+                ->to($client->getEmail())
+                ->subject(sprintf('Rappel : ta séance avec %s, c\'est demain', (string) $booking->getCoach()?->getNomComplet()))
+                ->htmlTemplate('emails/booking_day_before.html.twig')
+                ->context([
+                    'booking'    => $booking,
+                    'coach'      => $booking->getCoach(),
+                    'client'     => $client,
+                    'confirmUrl' => $confirmUrl,
+                    'rdvUrl'     => $this->abs('app_espace_client_rdv', ['reference' => $booking->getReference()]),
+                ]);
+            $this->mailer->send($email);
+        } catch (\Throwable $e) {
+            $this->logger->error('Échec envoi email booking_day_before: ' . $e->getMessage(), [
+                'booking' => $booking->getId(),
+                'file'    => $e->getFile() . ':' . $e->getLine(),
+            ]);
+        }
+    }
 }

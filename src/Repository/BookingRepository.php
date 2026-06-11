@@ -389,4 +389,93 @@ class BookingRepository extends ServiceEntityRepository
 
         return $result;
     }
+
+    /**
+     * Performance détaillée par coach : pour chaque coach actif sur la période,
+     * détaille le nombre de séances et le CA par créneau (day/night/astreinte).
+     *
+     * @return array<array{coach:\App\Entity\Coach, total:int, totalRevenue:string, day:array{count:int,revenue:string}, night:array{count:int,revenue:string}, astreinte:array{count:int,revenue:string}}>
+     */
+    public function performanceByCoachAndSlot(\DateTimeImmutable $since, ?\DateTimeImmutable $until = null): array
+    {
+        $qb = $this->createQueryBuilder('b')
+            ->select(
+                'IDENTITY(b.coach) AS coachId',
+                'b.timeSlot AS slot',
+                'COUNT(b.id) AS cnt',
+                'COALESCE(SUM(b.price), 0) AS revenue',
+            )
+            ->where('b.status = :status')
+            ->andWhere('b.startAt >= :since')
+            ->setParameter('status', Booking::STATUS_CONFIRMED)
+            ->setParameter('since', $since)
+            ->groupBy('b.coach, b.timeSlot');
+
+        if ($until !== null) {
+            $qb->andWhere('b.startAt < :until')->setParameter('until', $until);
+        }
+
+        $rows = $qb->getQuery()->getResult();
+        if (empty($rows)) {
+            return [];
+        }
+
+        // Hydratation des coachs
+        $coachIds = array_unique(array_map(static fn ($r) => (int) $r['coachId'], $rows));
+        $coaches = $this->getEntityManager()->createQueryBuilder()
+            ->select('c', 'u')
+            ->from(\App\Entity\Coach::class, 'c')
+            ->join('c.user', 'u')
+            ->where('c.id IN (:ids)')
+            ->setParameter('ids', $coachIds)
+            ->getQuery()
+            ->getResult();
+        $coachesById = [];
+        foreach ($coaches as $coach) {
+            $coachesById[$coach->getId()] = $coach;
+        }
+
+        // Agrégation : coachId → ['day' => ..., 'night' => ..., 'astreinte' => ...]
+        $byCoach = [];
+        foreach ($rows as $row) {
+            $coachId = (int) $row['coachId'];
+            $slot = $row['slot'];
+            $slotKey = $slot instanceof \App\Entity\Enum\TimeSlot ? $slot->value : (string) $slot;
+            if (!in_array($slotKey, ['day', 'night', 'astreinte'], true)) {
+                continue;
+            }
+            if (!isset($byCoach[$coachId])) {
+                $byCoach[$coachId] = [
+                    'day'       => ['count' => 0, 'revenue' => '0.00'],
+                    'night'     => ['count' => 0, 'revenue' => '0.00'],
+                    'astreinte' => ['count' => 0, 'revenue' => '0.00'],
+                ];
+            }
+            $byCoach[$coachId][$slotKey] = [
+                'count'   => (int) $row['cnt'],
+                'revenue' => number_format((float) $row['revenue'], 2, '.', ''),
+            ];
+        }
+
+        // Compose le résultat final, trié par CA total décroissant
+        $out = [];
+        foreach ($byCoach as $coachId => $slots) {
+            $coach = $coachesById[$coachId] ?? null;
+            if ($coach === null) continue;
+            $total = $slots['day']['count'] + $slots['night']['count'] + $slots['astreinte']['count'];
+            $totalRevenue = (float) $slots['day']['revenue']
+                          + (float) $slots['night']['revenue']
+                          + (float) $slots['astreinte']['revenue'];
+            $out[] = [
+                'coach'        => $coach,
+                'total'        => $total,
+                'totalRevenue' => number_format($totalRevenue, 2, '.', ''),
+                'day'          => $slots['day'],
+                'night'        => $slots['night'],
+                'astreinte'    => $slots['astreinte'],
+            ];
+        }
+        usort($out, static fn ($a, $b) => (float) $b['totalRevenue'] <=> (float) $a['totalRevenue']);
+        return $out;
+    }
 }

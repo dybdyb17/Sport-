@@ -6,6 +6,7 @@ use App\Entity\Coach;
 use App\Entity\Enum\UserRole;
 use App\Entity\User;
 use App\Form\AdminCoachType;
+use App\Repository\BookingRepository;
 use App\Repository\CoachRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -26,6 +27,55 @@ class AdminCoachController extends AbstractController
     {
         return $this->render('admin/coachs/index.html.twig', [
             'coaches' => $coachRepository->findAllWithUser(),
+        ]);
+    }
+
+    /**
+     * Page de détail "carrière" d'un coach : stats globales (depuis tjs)
+     * + stats du mois + répartition créneau + dernières séances.
+     */
+    #[Route('/{id}', name: 'app_admin_coach_show', methods: ['GET'], requirements: ['id' => '\d+'])]
+    public function show(int $id, CoachRepository $coachRepository, BookingRepository $bookingRepository): Response
+    {
+        $coach = $coachRepository->find($id);
+        if (!$coach) {
+            throw $this->createNotFoundException();
+        }
+
+        $now            = new \DateTimeImmutable();
+        $monthStart     = $now->modify('first day of this month')->setTime(0, 0);
+        $epoch          = new \DateTimeImmutable('@0');
+
+        // Stats "depuis toujours"
+        $perfAllTime = $bookingRepository->performanceByCoachAndSlot($epoch);
+        $perfMonth   = $bookingRepository->performanceByCoachAndSlot($monthStart);
+
+        // Filtrer juste les stats de notre coach
+        $statsAll   = null;
+        $statsMonth = null;
+        foreach ($perfAllTime as $p) {
+            if ($p['coach']->getId() === $coach->getId()) { $statsAll = $p; break; }
+        }
+        foreach ($perfMonth as $p) {
+            if ($p['coach']->getId() === $coach->getId()) { $statsMonth = $p; break; }
+        }
+
+        // Dernières séances confirmées du coach
+        $recentBookings = $bookingRepository->createQueryBuilder('b')
+            ->leftJoin('b.client', 'cl')
+            ->addSelect('cl')
+            ->where('b.coach = :coach')
+            ->setParameter('coach', $coach)
+            ->orderBy('b.startAt', 'DESC')
+            ->setMaxResults(15)
+            ->getQuery()
+            ->getResult();
+
+        return $this->render('admin/coachs/show.html.twig', [
+            'coach'          => $coach,
+            'statsAll'       => $statsAll,
+            'statsMonth'     => $statsMonth,
+            'recentBookings' => $recentBookings,
         ]);
     }
 

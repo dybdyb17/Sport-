@@ -143,6 +143,38 @@ class BookingController extends AbstractController
         }
     }
 
+    /**
+     * Confirmation J-1 par le client via le lien reçu dans le mail.
+     * Pas besoin d'auth : on protège avec un hash signé du booking ID + APP_SECRET.
+     */
+    #[Route('/{ref}/confirmer/{sig}', name: 'app_booking_confirm_attendance', methods: ['GET'])]
+    public function confirmAttendance(
+        string $ref,
+        string $sig,
+        BookingRepository $bookings,
+        EntityManagerInterface $em,
+    ): Response {
+        $booking = $bookings->findOneBy(['reference' => $ref]);
+        if (!$booking) {
+            throw $this->createNotFoundException();
+        }
+        $expected = substr(hash_hmac('sha256', 'confirm:' . $booking->getId(), $this->getParameter('kernel.secret')), 0, 32);
+        if (!hash_equals($expected, $sig)) {
+            throw $this->createAccessDeniedException('Lien invalide ou expiré.');
+        }
+        if ($booking->getStatus() !== Booking::STATUS_CONFIRMED) {
+            $this->addFlash('warning', 'Cette séance n\'est pas confirmée par le coach, impossible de confirmer ta présence.');
+            return $this->redirectToRoute('app_home');
+        }
+        if ($booking->getClientConfirmedAt() === null) {
+            $booking->setClientConfirmedAt(new \DateTimeImmutable());
+            $em->flush();
+        }
+        return $this->render('booking/confirmed_attendance.html.twig', [
+            'booking' => $booking,
+        ]);
+    }
+
     #[Route('/{ref}/payer-xplor', name: 'app_booking_pay_xplor', methods: ['GET'])]
     public function payWithXplor(
         string $ref,

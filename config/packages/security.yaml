@@ -36,6 +36,8 @@ security:
     access_control:
         - { path: ^/login, roles: PUBLIC_ACCESS }
         - { path: ^/register, roles: PUBLIC_ACCESS }
+        # Confirmation J-1 accessible sans auth : protégée par lien signé HMAC
+        - { path: ^/reservation/[^/]+/confirmer/, roles: PUBLIC_ACCESS }
         - { path: ^/coach(/|$), roles: ROLE_COACH }
         - { path: ^/admin, roles: ROLE_ADMIN }
         - { path: ^/reservation, roles: ROLE_CLIENT }

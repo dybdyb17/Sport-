@@ -97,8 +97,76 @@
   </div>
 
 </div>
+
+{# ── MODAL "PEEK" : détails d'une réservation, ouverte au clic n'importe où via data-peek-ref ── #}
+<div id="peek-modal" class="peek-modal" hidden>
+  <div class="peek-modal-overlay" data-peek-close></div>
+  <div class="peek-modal-card" role="dialog" aria-modal="true" aria-labelledby="peek-title">
+    <button type="button" class="peek-modal-close" data-peek-close aria-label="Fermer">
+      <i class="ti ti-x"></i>
+    </button>
+    <div id="peek-modal-content" class="peek-modal-content">
+      <div class="peek-loading">
+        <i class="ti ti-loader-2"></i>
+        Chargement...
+      </div>
+    </div>
+  </div>
+</div>
+
 {% block mercure %}{% endblock %}
 <script src="{{ asset('js/app.js') }}" defer></script>
+<script defer>
+// ── Peek modal : ouverture au clic sur [data-peek-ref] ─────────────────
+(function() {
+  const modal   = document.getElementById('peek-modal');
+  const content = document.getElementById('peek-modal-content');
+  if (!modal || !content) return;
+
+  function open(ref) {
+    content.innerHTML = `<div class="peek-loading"><i class="ti ti-loader-2"></i> Chargement...</div>`;
+    modal.hidden = false;
+    document.body.style.overflow = 'hidden';
+    fetch(`/admin/reservations/${encodeURIComponent(ref)}/peek`, { headers: { 'Accept': 'text/html' } })
+      .then(r => r.ok ? r.text() : Promise.reject(r.status))
+      .then(html => { content.innerHTML = html; })
+      .catch(err => {
+        content.innerHTML = `<div class="peek-error">Impossible de charger les détails (${err}).</div>`;
+      });
+  }
+  function close() {
+    modal.hidden = true;
+    document.body.style.overflow = '';
+  }
+
+  document.addEventListener('click', e => {
+    const trigger = e.target.closest('[data-peek-ref]');
+    if (trigger) {
+      e.preventDefault();
+      open(trigger.dataset.peekRef);
+      return;
+    }
+    if (e.target.closest('[data-peek-close]')) {
+      e.preventDefault();
+      close();
+    }
+  });
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && !modal.hidden) close();
+  });
+})();
+
+// ── Lignes de table avec data-href → navigation au clic ─────────────────
+(function() {
+  document.addEventListener('click', e => {
+    // On ignore les clics sur liens / boutons internes
+    if (e.target.closest('a, button, input, [data-peek-ref]')) return;
+    const tr = e.target.closest('tr[data-href]');
+    if (!tr) return;
+    window.location.href = tr.dataset.href;
+  });
+})();
+</script>
 <script defer>
 document.addEventListener('DOMContentLoaded', () => {
   const burger  = document.getElementById('adminBurger');

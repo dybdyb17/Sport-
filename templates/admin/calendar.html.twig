@@ -50,10 +50,10 @@
   {% for i in 1..7 %}
     <div class="calendar-cell">
       {% for booking in grid[i]['day'] %}
-        <a href="{{ path('app_admin_bookings') }}" class="calendar-event" title="{{ booking.client.nomComplet }} — {{ booking.coach.nomComplet }}">
+        <button type="button" class="calendar-event" data-peek-ref="{{ booking.reference }}" title="{{ booking.client.nomComplet }} — {{ booking.coach.nomComplet }}">
           <span class="calendar-event-time">{{ booking.startAt|date('H:i') }}</span>
           <span class="calendar-event-meta">{{ booking.client.nomComplet|split(' ')|first }} · {{ booking.format.value|upper }}</span>
-        </a>
+        </button>
       {% endfor %}
     </div>
   {% endfor %}
@@ -63,10 +63,10 @@
   {% for i in 1..7 %}
     <div class="calendar-cell">
       {% for booking in grid[i]['night'] %}
-        <a href="{{ path('app_admin_bookings') }}" class="calendar-event night" title="{{ booking.client.nomComplet }} — {{ booking.coach.nomComplet }}">
+        <button type="button" class="calendar-event night" data-peek-ref="{{ booking.reference }}" title="{{ booking.client.nomComplet }} — {{ booking.coach.nomComplet }}">
           <span class="calendar-event-time">{{ booking.startAt|date('H:i') }}</span>
           <span class="calendar-event-meta">{{ booking.client.nomComplet|split(' ')|first }} · {{ booking.format.value|upper }}</span>
-        </a>
+        </button>
       {% endfor %}
     </div>
   {% endfor %}
@@ -76,10 +76,10 @@
   {% for i in 1..7 %}
     <div class="calendar-cell">
       {% for booking in grid[i]['astreinte'] %}
-        <a href="{{ path('app_admin_bookings') }}" class="calendar-event astreinte" title="{{ booking.client.nomComplet }} — {{ booking.coach.nomComplet }}">
+        <button type="button" class="calendar-event astreinte" data-peek-ref="{{ booking.reference }}" title="{{ booking.client.nomComplet }} — {{ booking.coach.nomComplet }}">
           <span class="calendar-event-time">{{ booking.startAt|date('H:i') }}</span>
           <span class="calendar-event-meta">{{ booking.client.nomComplet|split(' ')|first }} · {{ booking.format.value|upper }}</span>
-        </a>
+        </button>
       {% endfor %}
     </div>
   {% endfor %}
@@ -116,12 +116,12 @@
                 {{ slotInfo.label }} · {{ slotInfo.hours }}
               </div>
               {% for booking in grid[i][slotKey] %}
-                <a href="{{ path('app_admin_bookings') }}" class="calendar-event {{ slotKey != 'day' ? slotKey : '' }}" style="display:flex;align-items:center;gap:10px;text-decoration:none;">
+                <button type="button" class="calendar-event {{ slotKey != 'day' ? slotKey : '' }}" data-peek-ref="{{ booking.reference }}" style="display:flex;align-items:center;gap:10px;text-decoration:none;">
                   <span class="calendar-event-time">{{ booking.startAt|date('H:i') }}</span>
                   <span class="calendar-event-meta" style="margin-top:0;">
                     {{ booking.client.nomComplet }} · {{ booking.format.value|upper }} · {{ booking.coach.nomComplet }}
                   </span>
-                </a>
+                </button>
               {% endfor %}
             </div>
           {% endif %}
