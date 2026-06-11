@@ -229,41 +229,32 @@
 }
 
 @media (max-width: 700px) {
-  /* On retire min-width:520px qui forçait le viewport à dézoomer.
-     On laisse la table prendre la place du wrapper avec colonnes serrées. */
+  /* On laisse la table avoir une largeur confortable (min-width 480px) et
+     on se repose sur .pricing-table-scroll (overflow-x:auto) pour le scroll
+     horizontal INTERNE. Le wrapper doit être strictement contenu dans son
+     parent — c'est ce qui empêche la page entière de dézoomer. */
   .tarif-table {
-    width: 100% !important;
-    min-width: 0 !important;
-    table-layout: fixed;
+    min-width: 480px;
+    width: 100%;
   }
-  .tarif-table th,
-  .tarif-table td {
-    padding: 8px 4px;
+  .tarif-table th {
+    padding: 10px 12px;
     font-size: 11px;
-    text-align: center;
-    overflow: hidden;
+    white-space: nowrap;
   }
-  /* Première colonne (label "Pack X séances") un peu plus large */
-  .tarif-table th:first-child,
-  .tarif-table td:first-child {
-    text-align: left;
-    width: 32%;
-    padding-left: 8px;
-  }
-  /* Sur très petit écran, les icônes suffisent ; le texte du header se cache */
-  .tarif-table th i { font-size: 14px; }
   .tarif-table th span {
-    display: block;
-    font-size: 9px;
-    margin-top: 2px;
+    white-space: nowrap;
+  }
+  .tarif-table td {
+    padding: 10px 12px;
   }
   .tarif-price {
-    font-size: 16px;
+    font-size: 20px;
     white-space: nowrap;
   }
   .tarif-label {
-    font-size: 12px;
-    min-width: 0;
+    font-size: 13px;
+    min-width: 130px;
   }
   .tarif-best {
     display: block;

@@ -715,8 +715,27 @@
 
 .pricing-table-scroll {
   overflow-x: auto;
+  overflow-y: hidden;
+  /* Strictement contenu : ne peut PAS faire dépasser la page entière */
+  max-width: 100%;
+  width: 100%;
   border-radius: var(--radius);
   -webkit-overflow-scrolling: touch;
+  overscroll-behavior-x: contain;
+  /* Indicateur visuel "scrollable" : fade doré sur le bord droit qui
+     suggère qu'on peut scroller vers la droite */
+  background:
+    linear-gradient(to right, var(--bg-2) 0%, var(--bg-2) 30%, transparent 70%),
+    linear-gradient(to right, transparent 30%, rgba(200,169,81,.08) 100%);
+  background-attachment: local, scroll;
+  background-repeat: no-repeat;
+  background-size: 100% 100%, 40px 100%;
+  background-position: 0 0, right 0;
+}
+/* Le parent direct du wrapper doit aussi être contraint pour que le scroll
+   reste interne au lieu de pousser le viewport */
+.pricing-pack-block {
+  overflow: hidden;
 }
 
 .pricing-pack-block .tarif-table tbody tr {
