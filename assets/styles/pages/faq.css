@@ -94,8 +94,22 @@
   color: var(--black);
 }
 @media (max-width: 600px) {
-  .faq-nav { top: 60px; padding: 10px; }
+  /* Sur mobile, on passe en position:fixed pour que la nav reste TOUJOURS
+     visible — y compris quand on arrive en bas de la page (sticky se libère
+     dès que le parent se termine, c'est ce qui faisait "disparaître" la nav
+     avant le footer). */
+  .faq-nav {
+    position: fixed;
+    top: 60px;
+    left: 12px;
+    right: 12px;
+    padding: 10px;
+    margin: 0;
+  }
   .faq-nav-link { font-size: 12px; padding: 6px 10px; }
+  /* On compense la hauteur réservée à la nav (cachée derrière) avec une marge
+     sur la première section de questions qui suit immédiatement la nav. */
+  .faq-nav + section { margin-top: 130px; }
 }
 [id="reservations"],
 [id="coachs"],
