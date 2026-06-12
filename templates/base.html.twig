@@ -326,6 +326,179 @@ document.addEventListener('keydown', function(e) {
 });
 </script>
 
+{# ─── Modal Xplor / Deciplus : paiement Paylib in-site (globale) ─────
+   Pilotée par n'importe quel <button data-xplor-open> qui porte :
+     data-xplor-url       → URL Deciplus à charger dans l'iframe
+     data-xplor-product   → Nom de la prestation à mettre en avant
+     data-xplor-amount    → Prix formaté (ex: "210,00 €")
+     data-xplor-is-pack   → "true" si pack (catégorie "Cartes prépayées")
+#}
+<div id="xplor-modal" class="xplor-modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="xplor-modal-title">
+  <div class="xplor-modal-backdrop" data-xplor-close></div>
+  <div class="xplor-modal-shell">
+    <header class="xplor-modal-head">
+      <div class="xplor-modal-titles">
+        <span class="xplor-modal-eyebrow"><i class="ti ti-leaf"></i> Xplor Active · Paylib</span>
+        <h2 id="xplor-modal-title">Réglement de ta séance</h2>
+      </div>
+      <button type="button" class="xplor-modal-close" data-xplor-close aria-label="Fermer">
+        <i class="ti ti-x"></i>
+      </button>
+    </header>
+    <div class="xplor-modal-help">
+      <strong style="color:var(--white);display:block;margin-bottom:6px;"><i class="ti ti-target" style="color:var(--green);"></i> En 3 étapes :</strong>
+      <ol style="margin:0;padding-left:22px;line-height:1.7;">
+        <li>Dans la boutique, repère <strong id="xplor-modal-product" style="color:var(--green);"></strong><span id="xplor-modal-category"></span> et clique sur <strong>« Voir le détail »</strong>.</li>
+        <li>Dans la fiche, clique sur <strong>« Ajouter au panier »</strong>, puis ouvre l'icône <strong>panier</strong> en haut à droite.</li>
+        <li>Valide le paiement via <strong>Paylib</strong>. Tu restes sur SPORT+ pendant tout le process.</li>
+      </ol>
+    </div>
+    <div class="xplor-modal-frame-wrap">
+      <iframe
+        id="xplor-modal-frame"
+        class="xplor-modal-frame"
+        title="Paiement Xplor Active"
+        allow="payment; clipboard-read; clipboard-write"
+        referrerpolicy="no-referrer-when-downgrade"></iframe>
+    </div>
+    <footer class="xplor-modal-foot">
+      <a href="#" target="_blank" rel="noopener" class="xplor-modal-newtab" id="xplor-modal-newtab">
+        <i class="ti ti-external-link"></i> Ouvrir dans un nouvel onglet
+      </a>
+      <button type="button" class="xplor-modal-close-btn" data-xplor-close>Fermer</button>
+    </footer>
+  </div>
+</div>
+
+<script>
+(function () {
+  const modal = document.getElementById('xplor-modal');
+  if (!modal) return;
+  if (modal.parentNode !== document.body) document.body.appendChild(modal);
+
+  const frame      = document.getElementById('xplor-modal-frame');
+  const productEl  = document.getElementById('xplor-modal-product');
+  const categoryEl = document.getElementById('xplor-modal-category');
+  const newtabEl   = document.getElementById('xplor-modal-newtab');
+  let loadedUrl    = null;
+
+  function open(trigger) {
+    const url     = trigger.dataset.xplorUrl     || '';
+    const product = trigger.dataset.xplorProduct || '';
+    const amount  = trigger.dataset.xplorAmount  || '';
+    const isPack  = trigger.dataset.xplorIsPack === 'true';
+
+    productEl.textContent  = product + (amount ? ' · ' + amount : '');
+    categoryEl.textContent = isPack ? ' (rubrique Cartes prépayées)' : '';
+    newtabEl.href          = url;
+
+    if (loadedUrl !== url) {
+      frame.src = url;
+      loadedUrl = url;
+    }
+
+    modal.classList.add('is-open');
+    modal.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+  }
+  function close() {
+    modal.classList.remove('is-open');
+    modal.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+  }
+
+  document.addEventListener('click', function (e) {
+    const trigger = e.target.closest('[data-xplor-open]');
+    if (trigger) {
+      e.preventDefault();
+      open(trigger);
+      return;
+    }
+    const closer = e.target.closest('[data-xplor-close]');
+    if (closer && modal.contains(closer)) close();
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && modal.classList.contains('is-open')) close();
+  });
+})();
+</script>
+
+{# ─── Modal de confirmation universelle ─────────────────────────────
+   Tout <form data-confirm="message"> est intercepté et déclenche cette
+   modal avant submit. Options optionnelles :
+     data-confirm-title  → titre affiché (défaut : "Confirmer l'action")
+     data-confirm-button → texte du bouton OK (défaut : "Confirmer")
+     data-confirm-danger → "true" pour styliser en rouge (action destructive)
+#}
+<div id="confirm-modal" class="confirm-modal" aria-hidden="true" role="dialog" aria-modal="true">
+  <div class="confirm-modal-backdrop" data-confirm-cancel></div>
+  <div class="confirm-modal-shell">
+    <div class="confirm-modal-icon" id="confirm-modal-icon"><i class="ti ti-alert-triangle"></i></div>
+    <h3 class="confirm-modal-title" id="confirm-modal-title">Confirmer l'action</h3>
+    <p class="confirm-modal-message" id="confirm-modal-message"></p>
+    <div class="confirm-modal-actions">
+      <button type="button" class="confirm-modal-cancel" data-confirm-cancel>Annuler</button>
+      <button type="button" class="confirm-modal-ok" id="confirm-modal-ok">Confirmer</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  const modal = document.getElementById('confirm-modal');
+  if (!modal) return;
+  const titleEl = document.getElementById('confirm-modal-title');
+  const msgEl   = document.getElementById('confirm-modal-message');
+  const okBtn   = document.getElementById('confirm-modal-ok');
+  const iconEl  = document.getElementById('confirm-modal-icon');
+  let pendingForm = null;
+
+  function open(form) {
+    pendingForm = form;
+    titleEl.textContent  = form.dataset.confirmTitle  || "Confirmer l'action";
+    msgEl.textContent    = form.dataset.confirm       || '';
+    okBtn.textContent    = form.dataset.confirmButton || 'Confirmer';
+    const danger = form.dataset.confirmDanger === 'true';
+    modal.classList.toggle('is-danger', danger);
+    iconEl.innerHTML = danger ? '<i class="ti ti-alert-triangle"></i>' : '<i class="ti ti-help-circle"></i>';
+    modal.classList.add('is-open');
+    modal.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+    setTimeout(() => okBtn.focus(), 30);
+  }
+  function close() {
+    modal.classList.remove('is-open');
+    modal.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+    pendingForm = null;
+  }
+
+  document.addEventListener('submit', function (e) {
+    const form = e.target;
+    if (!(form instanceof HTMLFormElement)) return;
+    if (!form.dataset.confirm) return;
+    if (form.dataset.confirmAccepted === 'true') return;
+    e.preventDefault();
+    open(form);
+  }, true);
+
+  okBtn.addEventListener('click', function () {
+    if (!pendingForm) return close();
+    pendingForm.dataset.confirmAccepted = 'true';
+    const f = pendingForm;
+    close();
+    f.submit();
+  });
+
+  modal.querySelectorAll('[data-confirm-cancel]').forEach(el =>
+    el.addEventListener('click', close)
+  );
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && modal.classList.contains('is-open')) close();
+  });
+})();
+</script>
+
 {% block mercure %}{% endblock %}
 </body>
 </html>

@@ -59,7 +59,7 @@
     <div class="peek-row">
       <span class="peek-row-key"><i class="ti ti-coins"></i> Prix</span>
       <span class="peek-row-val">
-        {{ b.prixFormatted }}
+        {{ b.displayAmountFormatted }}
         {% if b.coveredBy == 'founding' %}
           <span class="peek-pill peek-pill-gold"><i class="ti ti-crown"></i> Couvert Fondateur</span>
         {% elseif b.coveredBy == 'subscription' and b.subscription %}

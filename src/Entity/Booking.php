@@ -290,6 +290,55 @@ class Booking
             : '—';
     }
 
+    /**
+     * Montant à afficher au client sur le récap / suivi.
+     * Si la séance est rattachée à un pack, on affiche le prix TOTAL du pack
+     * (ce que le client paie réellement), pas le prix séance unitaire théorique.
+     */
+    public function getDisplayAmountFormatted(): string
+    {
+        if ($this->subscription !== null && $this->subscription->getMonthlyPrice() !== null) {
+            return number_format((float) $this->subscription->getMonthlyPrice(), 2, ',', "\u{202F}") . ' €';
+        }
+        return $this->getPrixFormatted();
+    }
+
+    /**
+     * Libellé contextuel du montant affiché.
+     * Ex: "Pack Solo Night ×4" si rattaché à un pack, sinon null.
+     */
+    public function getDisplayAmountLabel(): ?string
+    {
+        if ($this->subscription === null) {
+            return null;
+        }
+        return sprintf(
+            'Pack %s %s ×%d',
+            $this->format->label(),
+            $this->timeSlot->label(),
+            $this->subscription->getPackType()->sessionsCount(),
+        );
+    }
+
+    /**
+     * Nom exact de la prestation tel qu'il apparaît dans la boutique Deciplus.
+     * Sert à guider le client dans la modal Xplor ("cherche XXX dans la boutique").
+     */
+    public function getDeciplusProductName(): string
+    {
+        $slotName = match ($this->timeSlot) {
+            \App\Entity\Enum\TimeSlot::DAY       => 'DAY COACH',
+            \App\Entity\Enum\TimeSlot::NIGHT     => 'NIGHT COACH',
+            \App\Entity\Enum\TimeSlot::ASTREINTE => 'ASTREINTE COACH',
+        };
+        $formatName = match ($this->format) {
+            \App\Entity\Enum\BookingFormat::SOLO  => 'SOLO',
+            \App\Entity\Enum\BookingFormat::DUO   => 'DUO',
+            \App\Entity\Enum\BookingFormat::GROUP => 'GROUP',
+        };
+        return $slotName . ' ' . $formatName;
+    }
+
     public function isConfirmed(): bool { return $this->status === self::STATUS_CONFIRMED; }
     public function isPending(): bool   { return $this->status === self::STATUS_PENDING; }
 

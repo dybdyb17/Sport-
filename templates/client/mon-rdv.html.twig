@@ -51,9 +51,14 @@
         <div class="rdv-qr-blocked-sub">
           Tu as choisi <strong>Xplor Active</strong>. Règle ta séance depuis ton espace Xplor — ton QR de check-in se débloquera automatiquement une fois le paiement validé côté SPORT+.
         </div>
-        <a href="{{ path('app_booking_pay_xplor', {ref: booking.reference}) }}" class="rdv-qr-blocked-cta">
-          <i class="ti ti-external-link"></i> Régler maintenant via Xplor
-        </a>
+        <button type="button" class="rdv-qr-blocked-cta"
+                data-xplor-open
+                data-xplor-url="{{ xplor_pay_url(booking) }}"
+                data-xplor-product="{{ booking.deciplusProductName }}"
+                data-xplor-amount="{{ booking.displayAmountFormatted }}"
+                data-xplor-is-pack="{{ booking.subscription ? 'true' : 'false' }}">
+          <i class="ti ti-credit-card-pay"></i> Régler maintenant via Xplor
+        </button>
         <p style="margin-top:14px;font-size:12px;color:var(--text-dim);line-height:1.5;">
           <i class="ti ti-info-circle" style="vertical-align:middle;"></i>
           Après ton paiement Xplor, présente ta confirmation à l'accueil à ton arrivée.
@@ -156,9 +161,14 @@
           {% endif %}
         {% elseif intent == 'xplor' %}
           {# Confirmed + Xplor → on autorise le règlement en ligne #}
-          <a href="{{ path('app_booking_pay_xplor', {ref: booking.reference}) }}" class="rdv-pay-link">
-            <i class="ti ti-external-link"></i> Régler depuis mon espace Xplor
-          </a>
+          <button type="button" class="rdv-pay-link"
+                  data-xplor-open
+                  data-xplor-url="{{ xplor_pay_url(booking) }}"
+                  data-xplor-product="{{ booking.deciplusProductName }}"
+                  data-xplor-amount="{{ booking.displayAmountFormatted }}"
+                  data-xplor-is-pack="{{ booking.subscription ? 'true' : 'false' }}">
+            <i class="ti ti-credit-card-pay"></i> Régler depuis mon espace Xplor
+          </button>
           <p class="rdv-pay-help">Tu peux régler maintenant depuis ton espace Xplor Active (Paylib), ou présenter ta carte au coach à l'arrivée.</p>
         {% elseif booking.coveredBy in ['subscription', 'founding'] %}
           {# Séance couverte (pack ou Fondateur) — pas de paiement à prévoir #}
@@ -213,4 +223,5 @@
     }
   })();
 </script>
+
 {% endblock %}

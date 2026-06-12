@@ -87,7 +87,7 @@
             <div class="pay-decl-client">
               <i class="ti ti-user"></i> {{ b.client.nomComplet }}
             </div>
-            <div class="pay-decl-amount">{{ b.prixFormatted }}</div>
+            <div class="pay-decl-amount">{{ b.displayAmountFormatted }}</div>
           </div>
           <div class="pay-decl-meta">
             <span><i class="ti ti-calendar"></i> {{ b.startAt|date('d/m/Y \\à H\\hi') }}</span>
@@ -122,7 +122,10 @@
 
           {# ── Bouton "Pas venu" — séparé pour éviter clic accidentel ── #}
           <form method="post" action="{{ path('app_coach_mark_no_show', {id: b.id}) }}" class="no-show-form"
-                onsubmit="return confirm('Confirmer que le client n\'est pas venu ? Des frais de 30% (= {{ ((b.price ?? 0) * 0.30)|number_format(2, ',', ' ') }} €) seront notés à facturer.');">
+                data-confirm-title="Marquer le client absent ?"
+                data-confirm="Le client {{ b.client.nomComplet }} n'est pas venu. Des frais de 30 % (soit {{ ((b.price ?? 0) * 0.30)|number_format(2, ',', ' ') }} €) seront notés à facturer."
+                data-confirm-button="Oui, facturer no-show"
+                data-confirm-danger="true">
             <input type="hidden" name="_token" value="{{ csrf_token('no_show_' ~ b.id) }}">
             <button type="submit" class="no-show-btn">
               <i class="ti ti-user-x"></i> Client absent — facturer no-show
@@ -167,7 +170,7 @@
             </div>
             <div style="text-align:right;">
               <div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:20px;color:var(--gold);">
-                {{ booking.prixFormatted }}
+                {{ booking.displayAmountFormatted }}
               </div>
               {% if booking.coveredBy == 'founding' %}
                 <div style="font-size:11px;color:var(--gold);letter-spacing:1px;text-transform:uppercase;margin-top:2px;"><i class="ti ti-crown"></i> Couvert Fondateur</div>
@@ -285,7 +288,7 @@
                 {% endif %}
               </td>
               <td style="color:var(--gold);font-family:'Barlow Condensed',sans-serif;font-weight:700;">
-                {{ booking.prixFormatted }}
+                {{ booking.displayAmountFormatted }}
                 {% if booking.coveredBy == 'founding' %}<br><span style="font-size:10px;color:var(--gold);font-weight:600;letter-spacing:1px;">FONDATEUR</span>{% endif %}
                 {% if booking.coveredBy == 'subscription' and booking.subscription %}<br><span style="font-size:10px;color:var(--green);font-weight:600;letter-spacing:1px;">VIA {{ booking.subscription.packType.label|upper }}</span>{% endif %}
               </td>

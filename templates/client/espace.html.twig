@@ -496,15 +496,23 @@
                 <i class="ti ti-qrcode"></i> QR
               </a>
               {% if booking.status == 'confirmed' and booking.intendedPaymentMethod == 'xplor' and not booking.paymentMethod %}
-                <a href="{{ path('app_booking_pay_xplor', {ref: booking.reference}) }}" class="action-btn action-btn--confirm" style="background:var(--green);color:var(--black);">
+                <button type="button" class="action-btn action-btn--confirm" style="background:var(--green);color:var(--black);"
+                        data-xplor-open
+                        data-xplor-url="{{ xplor_pay_url(booking) }}"
+                        data-xplor-product="{{ booking.deciplusProductName }}"
+                        data-xplor-amount="{{ booking.displayAmountFormatted }}"
+                        data-xplor-is-pack="{{ booking.subscription ? 'true' : 'false' }}">
                   <i class="ti ti-leaf"></i> Régler Xplor
-                </a>
+                </button>
               {% endif %}
               {% if booking.canBeCancelled %}
                 <form
                   action="{{ path('app_booking_cancel', {ref: booking.reference}) }}"
                   method="post"
-                  onsubmit="return confirm('Confirmer l\'annulation de cette séance ?')"
+                  data-confirm-title="Annuler cette séance ?"
+                  data-confirm="La réservation du {{ booking.startAt|date('d/m/Y à H\\hi') }} avec {{ booking.coach.nomComplet }} sera annulée."
+                  data-confirm-button="Oui, annuler"
+                  data-confirm-danger="true"
                 >
                   <input type="hidden" name="_token" value="{{ csrf_token('cancel' ~ booking.id) }}">
                   <button type="submit" class="action-btn action-btn--danger">

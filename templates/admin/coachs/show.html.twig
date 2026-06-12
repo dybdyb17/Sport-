@@ -189,7 +189,7 @@
             <td style="color:var(--text-dim);">{{ b.startAt|date('d/m/Y H\\hi') }}</td>
             <td style="color:var(--text-dim);">{{ b.client.nomComplet }}</td>
             <td style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:14px;">{{ b.offerLabel }}</td>
-            <td style="color:var(--gold);font-family:'Barlow Condensed',sans-serif;font-weight:700;">{{ b.prixFormatted }}</td>
+            <td style="color:var(--gold);font-family:'Barlow Condensed',sans-serif;font-weight:700;">{{ b.displayAmountFormatted }}</td>
             <td class="cell-wrap" style="min-width:140px;"><span class="status-badge {{ b.status }}"><i class="ti {{ b.statutIcon }}"></i>{{ b.statutLabel }}</span></td>
           </tr>
         {% endfor %}

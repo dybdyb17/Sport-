@@ -106,9 +106,12 @@
             </td>
             <td>
               {% if not claim.isBilanDone %}
-                <form method="post" action="{{ path('app_admin_founding_bilan_done', {id: claim.id}) }}" style="display:inline;">
+                <form method="post" action="{{ path('app_admin_founding_bilan_done', {id: claim.id}) }}" style="display:inline;"
+                      data-confirm-title="Bilan effectué ?"
+                      data-confirm="Marquer le bilan comme effectué pour {{ claim.user.nomComplet }} ?"
+                      data-confirm-button="Oui, marquer effectué">
                   <input type="hidden" name="_token" value="{{ csrf_token('bilan_done_' ~ claim.id) }}">
-                  <button type="submit" class="btn btn-sm btn-secondary" onclick="return confirm('Marquer le bilan comme effectué pour {{ claim.user.nomComplet }} ?')">
+                  <button type="submit" class="btn btn-sm btn-secondary">
                     <i class="ti ti-check"></i> Marquer effectué
                   </button>
                 </form>

@@ -65,7 +65,7 @@
             <td style="color:var(--text-dim);">{{ booking.coach.nomComplet }}</td>
             <td class="cell-wrap" style="min-width:140px;"><span class="status-badge {{ booking.status }}"><i class="ti {{ booking.statutIcon }}"></i>{{ booking.statutLabel }}</span></td>
             <td style="color:var(--gold);font-family:'Barlow Condensed',sans-serif;font-weight:700;">
-              {{ booking.prixFormatted }}
+              {{ booking.displayAmountFormatted }}
               {% if booking.coveredBy == 'founding' %}<br><span style="font-size:10px;color:var(--gold);font-weight:600;letter-spacing:1px;">FONDATEUR</span>{% endif %}
               {% if booking.coveredBy == 'subscription' and booking.subscription %}<br><span style="font-size:10px;color:var(--green);font-weight:600;letter-spacing:1px;">VIA {{ booking.subscription.packType.label|upper }}</span>{% endif %}
             </td>
