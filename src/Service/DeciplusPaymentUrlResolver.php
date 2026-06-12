@@ -43,10 +43,29 @@ class DeciplusPaymentUrlResolver
 
     private function directProductUrlFor(Booking $booking): ?string
     {
-        $key = sprintf('%s_%s', $booking->getFormat()->value, $booking->getTimeSlot()->value);
         $urls = $this->configuredProductUrls();
+        $format = $booking->getFormat()->value;
+        $slot   = $booking->getTimeSlot()->value;
 
-        return $urls[$key] ?? null;
+        // 1. Si la réservation est rattachée à un pack mensuel, on cherche d'abord
+        //    la clé précise format_créneau_packType (ex: "solo_night_pack_4")
+        $subscription = $booking->getSubscription();
+        if ($subscription !== null) {
+            $packKey = sprintf('%s_%s_%s', $format, $slot, $subscription->getPackType()->value);
+            if (isset($urls[$packKey])) {
+                return $urls[$packKey];
+            }
+        } else {
+            // Séance unique : on cherche format_créneau_single
+            $singleKey = sprintf('%s_%s_single', $format, $slot);
+            if (isset($urls[$singleKey])) {
+                return $urls[$singleKey];
+            }
+        }
+
+        // 2. Fallback rétro-compatible : format_créneau (ex: "solo_night")
+        $genericKey = sprintf('%s_%s', $format, $slot);
+        return $urls[$genericKey] ?? null;
     }
 
     /**
