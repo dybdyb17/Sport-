@@ -304,3 +304,41 @@ input:focus, select:focus, textarea:focus {
   border-color: rgba(46,204,113,.25);
 }
 
+
+/* ── Pages légales : mise en forme du contenu ────────────────────── */
+.legal-content {
+  color: var(--text-soft);
+  font-size: 15px;
+  line-height: 1.7;
+}
+.legal-content h2 {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--white);
+  letter-spacing: -.3px;
+  margin: 36px 0 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+.legal-content h2:first-child { margin-top: 0; }
+.legal-content h3 {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--gold);
+  letter-spacing: .3px;
+  text-transform: uppercase;
+  margin: 22px 0 8px;
+}
+.legal-content p { margin: 0 0 14px; }
+.legal-content ul {
+  margin: 0 0 16px 22px;
+  padding: 0;
+}
+.legal-content ul li {
+  margin-bottom: 6px;
+}
+.legal-content strong { color: var(--white); font-weight: 700; }
+.legal-content a { color: var(--gold); text-decoration: underline; }
+.legal-content a:hover { color: var(--green); }
