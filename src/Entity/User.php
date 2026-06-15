@@ -101,17 +101,31 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     /**
-     * Filet de sécurité au unserialize d'une vieille session Symfony :
-     * si un champ DateTimeImmutable a été stocké en \DateTime mutable
-     * (changement de type entre 2 versions), on convertit à la volée.
+     * Sérialisation custom pour le token de sécurité Symfony.
+     * On ne sérialise QUE le minimum dont Symfony a besoin pour reconstruire
+     * l'utilisateur côté session (ID, email, password, roles). Le reste est
+     * rechargé depuis la DB via le UserProvider à chaque requête.
+     *
+     * Évite les TypeError lors de changements de typage (DateTime → DateTimeImmutable
+     * par exemple) entre 2 versions du code, car les vieilles sessions ne
+     * portent plus ces champs.
      */
-    public function __wakeup(): void
+    public function __serialize(): array
     {
-        foreach (['createdAt', 'lastSeenAt'] as $prop) {
-            if (isset($this->$prop) && $this->$prop instanceof \DateTime && !($this->$prop instanceof \DateTimeImmutable)) {
-                $this->$prop = \DateTimeImmutable::createFromMutable($this->$prop);
-            }
-        }
+        return [
+            'id'       => $this->id,
+            'email'    => $this->email,
+            'password' => $this->password,
+            'roles'    => $this->roles,
+        ];
+    }
+
+    public function __unserialize(array $data): void
+    {
+        $this->id       = $data['id']       ?? null;
+        $this->email    = $data['email']    ?? null;
+        $this->password = $data['password'] ?? null;
+        $this->roles    = $data['roles']    ?? [];
     }
 
     public function getId(): ?int

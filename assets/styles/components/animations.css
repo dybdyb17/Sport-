@@ -219,7 +219,7 @@ body {
 /* ── Underline animé sur liens du footer/nav ─────────────────────────── */
 .footer-link {
   position: relative;
-  display: inline-flex;
+  display: flex;
 }
 .footer-link::after {
   content: '';
