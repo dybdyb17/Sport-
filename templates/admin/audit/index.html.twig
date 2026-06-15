@@ -1,0 +1,135 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Journal d'audit — SPORT+ Admin{% endblock %}
+
+{% block admin_body %}
+
+  <div class="section-label">Traçabilité</div>
+  <h1 class="page-title" style="margin-bottom:8px;">Journal d'<span style="color:var(--gold);">audit</span></h1>
+  <p style="color:var(--text-dim);max-width:680px;margin-bottom:24px;font-size:14px;line-height:1.6;">
+    Historique infalsifiable de toutes les actions sensibles : déclarations de paiement, no-shows, modifications admin, confirmations clients.
+    Les 200 entrées les plus récentes selon les filtres.
+  </p>
+
+  {# ── Filtres ─────────────────────────────────────────────────── #}
+  <form method="get" action="{{ path('app_admin_audit') }}"
+        style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;
+               padding:18px;margin-bottom:24px;background:var(--bg-card);
+               border:1px solid var(--border);border-radius:12px;">
+    <div>
+      <label style="display:block;font-size:12px;color:var(--text-dim);margin-bottom:4px;">Action</label>
+      <select name="action" class="form-control">
+        <option value="">— Toutes —</option>
+        {% for a in actions %}
+          <option value="{{ a.value }}" {{ actionFilter == a ? 'selected' : '' }}>{{ a.label }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div>
+      <label style="display:block;font-size:12px;color:var(--text-dim);margin-bottom:4px;">Rôle acteur</label>
+      <select name="role" class="form-control">
+        <option value="">— Tous —</option>
+        <option value="admin"  {{ roleFilter == 'admin'  ? 'selected' : '' }}>Admin</option>
+        <option value="coach"  {{ roleFilter == 'coach'  ? 'selected' : '' }}>Coach</option>
+        <option value="client" {{ roleFilter == 'client' ? 'selected' : '' }}>Client</option>
+        <option value="system" {{ roleFilter == 'system' ? 'selected' : '' }}>Système</option>
+      </select>
+    </div>
+    <div>
+      <label style="display:block;font-size:12px;color:var(--text-dim);margin-bottom:4px;">Du</label>
+      <input type="date" name="from" value="{{ fromFilter }}" class="form-control">
+    </div>
+    <div>
+      <label style="display:block;font-size:12px;color:var(--text-dim);margin-bottom:4px;">Au</label>
+      <input type="date" name="to" value="{{ toFilter }}" class="form-control">
+    </div>
+    <div style="display:flex;align-items:flex-end;gap:8px;">
+      <button type="submit" class="btn btn-primary btn-sm" style="flex:1;">
+        <i class="ti ti-filter"></i> Filtrer
+      </button>
+      <a href="{{ path('app_admin_audit') }}" class="btn btn-secondary btn-sm" title="Réinitialiser">
+        <i class="ti ti-x"></i>
+      </a>
+    </div>
+  </form>
+
+  {# ── Tableau ─────────────────────────────────────────────────── #}
+  <div class="data-table-card">
+    <div class="data-table-header">
+      <h3>{{ logs|length }} entrée{{ logs|length > 1 ? 's' : '' }}</h3>
+    </div>
+    {% if logs is empty %}
+      <div class="empty-placeholder" style="padding:48px;">
+        Aucune action n'a encore été journalisée avec ces filtres.
+      </div>
+    {% else %}
+      <table>
+        <thead>
+          <tr>
+            <th>Quand</th>
+            <th>Action</th>
+            <th>Acteur</th>
+            <th>Cible</th>
+            <th>Détails</th>
+            <th>IP</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for log in logs %}
+            {% set sev = log.action.severity %}
+            <tr style="
+              {% if sev == 'critical' %}background:rgba(255,80,80,.04);{% endif %}
+              {% if sev == 'warning' %}background:rgba(212,175,55,.04);{% endif %}
+            ">
+              <td style="white-space:nowrap;color:var(--text-dim);font-size:13px;">
+                <div>{{ log.createdAt|date('d/m/Y') }}</div>
+                <div style="font-family:ui-monospace,'SF Mono',Menlo,monospace;font-size:11px;">{{ log.createdAt|date('H:i:s') }}</div>
+              </td>
+              <td>
+                <span style="display:inline-flex;align-items:center;gap:6px;font-weight:600;
+                  {% if sev == 'critical' %}color:#ff6b6b;{% endif %}
+                  {% if sev == 'warning' %}color:var(--gold);{% endif %}
+                  {% if sev == 'info' %}color:var(--text);{% endif %}
+                ">
+                  {% if sev == 'critical' %}<i class="ti ti-alert-octagon"></i>
+                  {% elseif sev == 'warning' %}<i class="ti ti-alert-triangle"></i>
+                  {% else %}<i class="ti ti-info-circle"></i>{% endif %}
+                  {{ log.action.label }}
+                </span>
+              </td>
+              <td>
+                <div style="font-weight:600;">{{ log.actorLabel ?? '—' }}</div>
+                <div style="font-size:11px;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px;">{{ log.actorRole }}</div>
+              </td>
+              <td>
+                {% if log.targetType %}
+                  <div style="font-size:13px;color:var(--text-dim);">{{ log.targetType }}</div>
+                  <div style="font-family:ui-monospace,'SF Mono',Menlo,monospace;font-size:12px;color:var(--gold);">{{ log.targetLabel ?? ('#' ~ log.targetId) }}</div>
+                {% else %}
+                  <span style="color:var(--text-dim);">—</span>
+                {% endif %}
+              </td>
+              <td>
+                {% if log.details is not empty %}
+                  <details>
+                    <summary style="cursor:pointer;color:var(--gold);font-size:12px;">Voir</summary>
+                    <pre style="margin:6px 0 0;padding:8px;background:var(--bg-3);border-radius:6px;
+                                font-size:11px;line-height:1.5;color:var(--text-soft);
+                                font-family:ui-monospace,'SF Mono',Menlo,monospace;
+                                white-space:pre-wrap;word-break:break-word;">{{ log.details|json_encode(constant('JSON_PRETTY_PRINT') b-or constant('JSON_UNESCAPED_UNICODE')) }}</pre>
+                  </details>
+                {% else %}
+                  <span style="color:var(--text-dim);">—</span>
+                {% endif %}
+              </td>
+              <td style="font-family:ui-monospace,'SF Mono',Menlo,monospace;font-size:11px;color:var(--text-dim);">
+                {{ log.ipAddress ?? '—' }}
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% endif %}
+  </div>
+
+{% endblock %}

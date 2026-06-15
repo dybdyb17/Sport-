@@ -131,6 +131,7 @@ class CoachController extends AbstractController
         Request $request,
         BookingRepository $bookings,
         EntityManagerInterface $em,
+        \App\Service\AuditLogger $auditLogger,
     ): Response {
         /** @var \App\Entity\User $user */
         $user = $this->getUser();
@@ -148,11 +149,21 @@ class CoachController extends AbstractController
             $this->addFlash('danger', 'Mode de paiement invalide.');
             return $this->redirectToRoute('app_coach_dashboard');
         }
+        $note = (string) $request->request->get('note');
         $booking->setPaymentMethod($method);
         $booking->setPaymentDeclaredAt(new \DateTimeImmutable());
         $booking->setPaymentDeclaredBy($user);
-        $booking->setPaymentNote((string) $request->request->get('note'));
+        $booking->setPaymentNote($note);
         $em->flush();
+
+        $auditLogger->log(\App\Entity\Enum\AuditAction::PAYMENT_DECLARED, $booking, [
+            'method'        => $method,
+            'amount'        => $booking->getPrice(),
+            'note'          => $note ?: null,
+            'client'        => $booking->getClient()?->getNomComplet(),
+            'startAt'       => $booking->getStartAt()?->format('c'),
+        ]);
+
         $this->addFlash('success', 'Paiement déclaré.');
         return $this->redirectToRoute('app_coach_dashboard');
     }
@@ -167,6 +178,7 @@ class CoachController extends AbstractController
         Request $request,
         BookingRepository $bookings,
         EntityManagerInterface $em,
+        \App\Service\AuditLogger $auditLogger,
     ): Response {
         /** @var \App\Entity\User $user */
         $user = $this->getUser();
@@ -190,12 +202,18 @@ class CoachController extends AbstractController
         $booking->setNoShow(true);
         $booking->setNoShowMarkedAt(new \DateTimeImmutable());
         $booking->setNoShowFee($fee);
-        // On clôt la déclaration de paiement avec une note explicite
         $booking->setPaymentMethod('no_show');
         $booking->setPaymentDeclaredAt(new \DateTimeImmutable());
         $booking->setPaymentDeclaredBy($user);
         $booking->setPaymentNote(sprintf('No-show — frais de 30%% facturés : %s €', $fee));
         $em->flush();
+
+        $auditLogger->log(\App\Entity\Enum\AuditAction::NO_SHOW_MARKED, $booking, [
+            'fee'     => $fee,
+            'price'   => $booking->getPrice(),
+            'client'  => $booking->getClient()?->getNomComplet(),
+            'startAt' => $booking->getStartAt()?->format('c'),
+        ]);
 
         $this->addFlash('success', sprintf('Marqué « non venu » — %s € à facturer au client.', $fee));
         return $this->redirectToRoute('app_coach_dashboard');
