@@ -42,20 +42,21 @@ class AdminConversationController extends AbstractController
         $toStr    = (string) $request->query->get('to', '');
         $flagOnly = (bool) $request->query->get('flagged');
 
+        // NB : on N'utilise PAS de GROUP BY ici (Postgres est strict sur les colonnes
+        // sélectionnées hors agrégat, contrairement à MySQL). Pour la recherche dans
+        // les messages, on fait une sous-requête EXISTS. Le tri par dernière activité
+        // est fait en PHP après hydratation (peu de conversations, perf négligeable).
         $qb = $repo->createQueryBuilder('c')
             ->leftJoin('c.booking', 'b')
             ->leftJoin('b.client', 'cl')
             ->leftJoin('b.coach', 'co')
             ->leftJoin('co.user', 'cou')
-            ->leftJoin('c.messages', 'm')
             ->addSelect('b', 'cl', 'co', 'cou')
-            ->groupBy('c.id')
-            ->orderBy('MAX(m.createdAt)', 'DESC')
-            ->addOrderBy('c.createdAt', 'DESC');
+            ->orderBy('c.createdAt', 'DESC');
 
         if ($search !== '') {
             $qb->andWhere(
-                'LOWER(m.content) LIKE :q '
+                'EXISTS (SELECT 1 FROM App\Entity\Message msg WHERE msg.conversation = c AND LOWER(msg.content) LIKE :q) '
               . 'OR LOWER(cl.firstName) LIKE :q OR LOWER(cl.lastName) LIKE :q '
               . 'OR LOWER(cou.firstName) LIKE :q OR LOWER(cou.lastName) LIKE :q'
             )->setParameter('q', '%' . mb_strtolower($search) . '%');
@@ -72,7 +73,16 @@ class AdminConversationController extends AbstractController
             // dates invalides ignorées en silence
         }
 
+        /** @var \App\Entity\Conversation[] $conversations */
         $conversations = $qb->getQuery()->getResult();
+
+        // Tri secondaire : par date du dernier message (plus chaude en haut), avec
+        // fallback sur la date de création de la conversation.
+        usort($conversations, function (\App\Entity\Conversation $a, \App\Entity\Conversation $b): int {
+            $aLast = $a->getLastMessage()?->getCreatedAt() ?? $a->getCreatedAt();
+            $bLast = $b->getLastMessage()?->getCreatedAt() ?? $b->getCreatedAt();
+            return $bLast <=> $aLast;
+        });
 
         // Annoter chaque conv avec un flag "contient mot-clé sensible"
         $annotated = [];

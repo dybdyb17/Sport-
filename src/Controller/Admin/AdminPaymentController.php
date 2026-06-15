@@ -47,6 +47,7 @@ class AdminPaymentController extends AbstractController
                     'cash'    => 0.0,
                     'card'    => 0.0,
                     'xplor'   => 0.0,
+                    'no_show' => 0.0,
                     'pending' => 0.0,
                 ];
             }
@@ -55,8 +56,13 @@ class AdminPaymentController extends AbstractController
             $m = $b->getPaymentMethod();
             if ($m === null) {
                 $statsByCoach[$coachId]['pending'] += $price;
-            } else {
+            } elseif (isset($statsByCoach[$coachId][$m])) {
+                // Mode connu (cash/card/xplor/no_show) → on cumule
                 $statsByCoach[$coachId][$m] += $price;
+            } else {
+                // Sécurité : si un jour une nouvelle valeur arrive (ex: 'paylib'),
+                // on l'agrège sans crasher l'admin.
+                $statsByCoach[$coachId][$m] = $price;
             }
         }
 
