@@ -1,4 +1,5 @@
 {% extends 'base.html.twig' %}
+{% import '_macros/admin_shortcut.html.twig' as adm %}
 
 {% block title %}Nos Coachs — SPORT+ Marseille{% endblock %}
 {% block meta_description %}<meta name="description" content="Rencontrez les coachs SPORT+ Marseille : experts certifiés, disponibles de jour comme de nuit pour un coaching personnalisé en salle privative.">{% endblock %}
@@ -79,6 +80,13 @@
         {% for coach in coaches %}
           {% set isLive = coach.availableTonightNow %}
           <article class="coach-pro-card coach-team-card {{ isLive ? 'coach-pro-card-live coach-team-card-live' : '' }}">
+
+            {# Shortcut admin (visible uniquement pour ROLE_ADMIN) #}
+            {% if is_granted('ROLE_ADMIN') %}
+              <div style="position:absolute;top:10px;left:10px;z-index:5;">
+                {{ adm.pill(path('app_admin_coach_show', {id: coach.id}), 'Fiche admin') }}
+              </div>
+            {% endif %}
 
             {# Photo ou avatar initiales #}
             {% set coachPhoto = coach.photoSrc %}

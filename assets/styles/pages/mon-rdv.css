@@ -444,6 +444,34 @@
   gap: 6px;
 }
 .xplor-modal-newtab:hover { color: var(--green, #2ecc71); }
+.xplor-modal-refresh {
+  background: transparent;
+  color: var(--text-dim, #b9b3a6);
+  border: 1px solid var(--border, rgba(255,255,255,.15));
+  padding: 8px 14px;
+  border-radius: 100px;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: color .15s, border-color .15s, background .15s;
+}
+.xplor-modal-refresh:hover {
+  color: var(--gold, #d4af37);
+  border-color: var(--gold, #d4af37);
+  background: rgba(212,175,55,.06);
+}
+.xplor-modal-refresh.is-loading .ti {
+  animation: xplor-spin .8s linear infinite;
+}
+@keyframes xplor-spin {
+  to { transform: rotate(360deg); }
+}
 .xplor-modal-close-btn {
   background: var(--green, #2ecc71);
   color: #000;

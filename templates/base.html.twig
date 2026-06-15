@@ -367,6 +367,9 @@ document.addEventListener('keydown', function(e) {
       <a href="#" target="_blank" rel="noopener" class="xplor-modal-newtab" id="xplor-modal-newtab">
         <i class="ti ti-external-link"></i> Ouvrir dans un nouvel onglet
       </a>
+      <button type="button" class="xplor-modal-refresh" id="xplor-modal-refresh" title="Forcer le rechargement (utile si les prestations ne sont pas à jour)">
+        <i class="ti ti-refresh"></i> Rafraîchir
+      </button>
       <button type="button" class="xplor-modal-close-btn" data-xplor-close>Fermer</button>
     </footer>
   </div>
@@ -382,7 +385,17 @@ document.addEventListener('keydown', function(e) {
   const productEl  = document.getElementById('xplor-modal-product');
   const categoryEl = document.getElementById('xplor-modal-category');
   const newtabEl   = document.getElementById('xplor-modal-newtab');
-  let loadedUrl    = null;
+  const refreshBtn = document.getElementById('xplor-modal-refresh');
+  let currentBaseUrl = null;
+
+  // Ajoute un cache-buster à l'URL pour forcer le rechargement complet
+  // (sans ça, le navigateur garde la version mise en cache de la boutique Deciplus
+  // et ne voit pas les nouvelles prestations ajoutées côté admin Loïc).
+  function withCacheBuster(url) {
+    if (!url) return url;
+    const sep = url.includes('?') ? '&' : '?';
+    return url + sep + '_t=' + Date.now();
+  }
 
   function open(trigger) {
     const url     = trigger.dataset.xplorUrl     || '';
@@ -393,15 +406,25 @@ document.addEventListener('keydown', function(e) {
     productEl.textContent  = product + (amount ? ' · ' + amount : '');
     categoryEl.textContent = isPack ? ' (rubrique Cartes prépayées)' : '';
     newtabEl.href          = url;
+    currentBaseUrl         = url;
 
-    if (loadedUrl !== url) {
-      frame.src = url;
-      loadedUrl = url;
-    }
+    // Toujours recharger avec un cache-buster pour avoir les dernières prestations
+    frame.src = withCacheBuster(url);
 
     modal.classList.add('is-open');
     modal.setAttribute('aria-hidden', 'false');
     document.body.style.overflow = 'hidden';
+  }
+
+  // Bouton "Rafraîchir" : recharge l'iframe avec un nouveau cache-buster.
+  if (refreshBtn) {
+    refreshBtn.addEventListener('click', function () {
+      if (currentBaseUrl) {
+        refreshBtn.classList.add('is-loading');
+        frame.src = withCacheBuster(currentBaseUrl);
+        setTimeout(() => refreshBtn.classList.remove('is-loading'), 800);
+      }
+    });
   }
   function close() {
     modal.classList.remove('is-open');

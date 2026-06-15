@@ -1,8 +1,10 @@
 {% extends 'base.html.twig' %}
+{% import '_macros/admin_shortcut.html.twig' as adm %}
 
 {% block title %}Mon RDV — {{ booking.reference }} — SPORT+{% endblock %}
 
 {% block body %}
+{{ adm.floating(path('app_admin_booking_peek', {ref: booking.reference}), 'Voir ce booking en admin', 'ti-eye-bolt') }}
 <div class="container" style="padding-top:32px;padding-bottom:80px;max-width:560px;">
 
   <a href="{{ path('app_espace_client') }}" class="btn btn-ghost btn-sm" style="margin-bottom:20px;">

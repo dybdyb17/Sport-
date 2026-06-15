@@ -1,10 +1,12 @@
 {% extends 'base.html.twig' %}
+{% import '_macros/admin_shortcut.html.twig' as adm %}
 
 {% block title %}
     Conversation avec {{ interlocuteur ? interlocuteur.nomComplet : 'Coach' }} — SPORT+
 {% endblock %}
 
 {% block body %}
+{{ adm.floating(path('app_admin_conversation_show', {id: conversation.id}), 'Voir cette conversation en admin', 'ti-eye-bolt') }}
 <div class="conversation-layout">
 
   <!-- Sidebar -->

@@ -9,29 +9,71 @@
   <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:16px;">
     <div>
       <div style="font-family:'Barlow Condensed',sans-serif;font-size:13px;letter-spacing:2px;color:var(--gold);">CONV-{{ conversation.id }}</div>
-      <h1 style="font-family:'Barlow Condensed',sans-serif;font-size:26px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--white);margin:6px 0 4px;">
-        {{ conversation.client ? conversation.client.nomComplet : '—' }} ↔ {{ conversation.coach ? conversation.coach.nomComplet : '—' }}
+      <h1 style="font-family:'Barlow Condensed',sans-serif;font-size:26px;font-weight:800;
+                 text-transform:uppercase;letter-spacing:1px;color:var(--white);margin:6px 0 4px;">
+        {{ conversation.client ? conversation.client.nomComplet : '—' }}
+        <span style="color:var(--gold);">↔</span>
+        {{ conversation.coach ? conversation.coach.nomComplet : '—' }}
       </h1>
       <div style="color:var(--text-dim);font-size:13px;">
-        Conversation ouverte le {{ conversation.createdAt|date('d/m/Y \\à H\\hi') }} · {{ conversation.messages|length }} message(s)
+        Ouverte le {{ conversation.createdAt|date('d/m/Y \\à H\\hi') }} ·
+        {{ conversation.messages|length }} message{{ conversation.messages|length > 1 ? 's' : '' }}
       </div>
     </div>
+
+    {# Recherche dans la conv #}
+    <form method="get" action="{{ path('app_admin_conversation_show', {id: conversation.id}) }}"
+          style="display:flex;gap:8px;align-items:center;">
+      <input type="search" name="highlight" value="{{ highlight }}" placeholder="Surligner un mot…"
+             class="form-control" style="width:200px;">
+      <button type="submit" class="btn btn-secondary btn-sm">
+        <i class="ti ti-search"></i>
+      </button>
+    </form>
   </div>
 </div>
 
 <div class="form-card" style="padding:0;">
-  <div style="padding:24px;max-height:600px;overflow-y:auto;">
+  <div style="padding:24px;max-height:680px;overflow-y:auto;">
     {% if conversation.messages|length == 0 %}
       <p style="color:var(--text-dim);text-align:center;padding:32px 0;">Aucun message dans cette conversation.</p>
     {% else %}
       {% for msg in conversation.messages %}
         {% set isClient = conversation.client and msg.author.id == conversation.client.id %}
-        <div style="margin-bottom:20px;padding:14px 18px;background:{{ isClient ? 'rgba(200,169,81,.06)' : 'rgba(46,204,113,.06)' }};border-radius:var(--radius);border-left:3px solid {{ isClient ? 'var(--gold)' : 'var(--green)' }};">
-          <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
-            <strong style="color:var(--white);font-size:14px;">{{ msg.author.nomComplet }}</strong>
+
+        {# Détecte si CE message contient un mot-clé sensible (PHP-side normalize côté contrôleur, ici on fait un simple test rapide) #}
+        {% set msgFlagged = false %}
+        {% set lowered = msg.content|lower %}
+        {% for kw in sensitiveKeywords %}
+          {% if not msgFlagged and lowered matches '/' ~ kw ~ '/' %}
+            {% set msgFlagged = true %}
+          {% endif %}
+        {% endfor %}
+
+        <div style="margin-bottom:18px;padding:14px 18px;
+                    background:{{ isClient ? 'rgba(212,175,55,.06)' : 'rgba(46,204,113,.06)' }};
+                    border-radius:var(--radius);
+                    border-left:3px solid {{ isClient ? 'var(--gold)' : 'var(--green)' }};
+                    {% if msgFlagged %}box-shadow:0 0 0 1px rgba(255,80,80,.25);{% endif %}">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;gap:10px;flex-wrap:wrap;">
+            <div style="display:flex;align-items:center;gap:8px;">
+              <strong style="color:var(--white);font-size:14px;">{{ msg.author.nomComplet }}</strong>
+              <span style="font-size:11px;color:var(--text-dim);text-transform:uppercase;letter-spacing:1.5px;
+                           padding:2px 8px;border-radius:100px;
+                           background:{{ isClient ? 'rgba(212,175,55,.15)' : 'rgba(46,204,113,.15)' }};
+                           color:{{ isClient ? 'var(--gold)' : 'var(--green)' }};">
+                {{ isClient ? 'Client' : 'Coach' }}
+              </span>
+              {% if msgFlagged %}
+                <span style="font-size:11px;color:#ff8a8a;font-weight:700;letter-spacing:1px;
+                             text-transform:uppercase;display:inline-flex;align-items:center;gap:4px;">
+                  <i class="ti ti-flag"></i> Mot-clé sensible
+                </span>
+              {% endif %}
+            </div>
             <span style="font-size:12px;color:var(--text-dim);">{{ msg.createdAt|date('d/m/Y \\à H\\hi') }}</span>
           </div>
-          <div style="color:var(--text-soft);font-size:14px;line-height:1.55;white-space:pre-wrap;">{{ msg.content }}</div>
+          <div style="color:var(--text-soft);font-size:14px;line-height:1.6;white-space:pre-wrap;">{{ msg.content|highlight_sensitive(sensitiveKeywords, highlight) }}</div>
         </div>
       {% endfor %}
     {% endif %}

@@ -1,0 +1,29 @@
+{# ─── Macros admin shortcut ─────────────────────────────────────────
+   Affiche un bouton "œil admin" visible UNIQUEMENT si l'utilisateur courant
+   a ROLE_ADMIN. Permet à l'admin de sauter directement d'une page publique
+   ou client/coach vers la fiche admin correspondante.
+
+   Usage :
+     {% import '_macros/admin_shortcut.html.twig' as adm %}
+     {{ adm.pill(path('app_admin_coach_show', {id: coach.id}), 'Voir ce coach en admin') }}
+#}
+
+{# Bouton "pill" inline, à côté d'un titre ou dans un header de carte. #}
+{% macro pill(url, label = 'Vue admin', icon = 'ti-eye-bolt') %}
+  {% if is_granted('ROLE_ADMIN') %}
+    <a href="{{ url }}" class="admin-shortcut-pill" title="{{ label }}">
+      <i class="ti {{ icon }}"></i>
+      <span>{{ label }}</span>
+    </a>
+  {% endif %}
+{% endmacro %}
+
+{# Badge flottant en haut à droite de la page (mode FAB). #}
+{% macro floating(url, label = 'Voir cet élément côté admin', icon = 'ti-eye-bolt') %}
+  {% if is_granted('ROLE_ADMIN') %}
+    <a href="{{ url }}" class="admin-shortcut-fab" title="{{ label }}">
+      <i class="ti {{ icon }}"></i>
+      <span class="admin-shortcut-fab-label">{{ label }}</span>
+    </a>
+  {% endif %}
+{% endmacro %}
