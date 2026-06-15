@@ -259,4 +259,88 @@ class BookingController extends AbstractController
             'offer'  => $booking->getOfferLabel(),
         ]);
     }
+
+    /**
+     * Le client confirme avoir effectivement payé la séance (cash ou CB).
+     * Posté depuis la modal "Confirmer mon paiement" sur Mon RDV / Espace.
+     */
+    #[Route('/{ref}/paiement/confirmer', name: 'app_booking_payment_confirm', methods: ['POST'])]
+    public function confirmPayment(
+        string $ref,
+        Request $request,
+        BookingRepository $bookings,
+        EntityManagerInterface $em,
+        \App\Service\AuditLogger $auditLogger,
+    ): Response {
+        $booking = $bookings->findOneBy(['reference' => $ref]);
+        if (!$booking || $booking->getClient() !== $this->getUser()) {
+            throw $this->createAccessDeniedException();
+        }
+        if (!$this->isCsrfTokenValid('payment_confirm_' . $booking->getId(), (string) $request->request->get('_token'))) {
+            $this->addFlash('error', 'Jeton CSRF invalide.');
+            return $this->redirectToRoute('app_espace_client_rdv', ['reference' => $ref]);
+        }
+        if (!$booking->isPaymentAwaitingClientConfirmation()) {
+            $this->addFlash('warning', 'Aucun paiement en attente de confirmation pour cette séance.');
+            return $this->redirectToRoute('app_espace_client_rdv', ['reference' => $ref]);
+        }
+
+        $booking->setPaymentClientConfirmedAt(new \DateTimeImmutable());
+        $em->flush();
+
+        $auditLogger->log(\App\Entity\Enum\AuditAction::PAYMENT_CONFIRMED, $booking, [
+            'method' => $booking->getPaymentMethod(),
+            'amount' => $booking->getPrice(),
+            'coach'  => $booking->getCoach()?->getNomComplet(),
+        ]);
+
+        $this->addFlash('success', 'Merci, ton paiement est confirmé.');
+        return $this->redirectToRoute('app_espace_client_rdv', ['reference' => $ref]);
+    }
+
+    /**
+     * Le client conteste le paiement déclaré par le coach.
+     * Génère une alerte admin via le journal d'audit.
+     */
+    #[Route('/{ref}/paiement/contester', name: 'app_booking_payment_dispute', methods: ['POST'])]
+    public function disputePayment(
+        string $ref,
+        Request $request,
+        BookingRepository $bookings,
+        EntityManagerInterface $em,
+        \App\Service\AuditLogger $auditLogger,
+    ): Response {
+        $booking = $bookings->findOneBy(['reference' => $ref]);
+        if (!$booking || $booking->getClient() !== $this->getUser()) {
+            throw $this->createAccessDeniedException();
+        }
+        if (!$this->isCsrfTokenValid('payment_dispute_' . $booking->getId(), (string) $request->request->get('_token'))) {
+            $this->addFlash('error', 'Jeton CSRF invalide.');
+            return $this->redirectToRoute('app_espace_client_rdv', ['reference' => $ref]);
+        }
+        if (!$booking->isPaymentAwaitingClientConfirmation()) {
+            $this->addFlash('warning', 'Aucun paiement en attente pour cette séance.');
+            return $this->redirectToRoute('app_espace_client_rdv', ['reference' => $ref]);
+        }
+
+        $reason = trim((string) $request->request->get('reason', ''));
+        if ($reason === '' || mb_strlen($reason) < 8) {
+            $this->addFlash('error', 'Merci de détailler la raison de ta contestation (minimum 8 caractères).');
+            return $this->redirectToRoute('app_espace_client_rdv', ['reference' => $ref]);
+        }
+
+        $booking->setPaymentClientDisputedAt(new \DateTimeImmutable());
+        $booking->setPaymentDisputeReason(mb_substr($reason, 0, 2000));
+        $em->flush();
+
+        $auditLogger->log(\App\Entity\Enum\AuditAction::PAYMENT_DISPUTED, $booking, [
+            'method'   => $booking->getPaymentMethod(),
+            'amount'   => $booking->getPrice(),
+            'coach'    => $booking->getCoach()?->getNomComplet(),
+            'reason'   => mb_substr($reason, 0, 500),
+        ]);
+
+        $this->addFlash('success', 'Ta contestation a été enregistrée. L\'équipe SPORT+ va te recontacter sous 24 h.');
+        return $this->redirectToRoute('app_espace_client_rdv', ['reference' => $ref]);
+    }
 }

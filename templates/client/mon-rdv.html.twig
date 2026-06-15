@@ -93,6 +93,76 @@
       </div>
     </div>
 
+    {# ── Confirmation paiement par le client (anti-fraude) ── #}
+    {% if booking.isPaymentAwaitingClientConfirmation %}
+      <div class="rdv-payment-check" style="margin-top:24px;padding:18px;border:1px solid var(--gold);
+                                            border-radius:var(--radius);background:rgba(212,175,55,.06);">
+        <div style="display:flex;align-items:flex-start;gap:12px;">
+          <i class="ti ti-alert-triangle" style="color:var(--gold);font-size:24px;flex-shrink:0;margin-top:2px;"></i>
+          <div style="flex:1;">
+            <strong style="display:block;color:var(--white);font-family:'Barlow Condensed',sans-serif;
+                           font-size:16px;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">
+              Confirme ton paiement
+            </strong>
+            <p style="margin:0 0 14px;font-size:14px;line-height:1.6;color:var(--text-soft);">
+              Le coach a déclaré que tu as réglé cette séance
+              <strong style="color:var(--white);">{{ booking.paymentMethod == 'cash' ? 'en espèces' : 'par carte bancaire' }}</strong>
+              pour un montant de <strong style="color:var(--gold);">{{ booking.prixFormatted }}</strong>.
+              Confirme ou conteste pour qu'on garde une trace claire.
+            </p>
+            <div style="display:flex;gap:10px;flex-wrap:wrap;">
+              <form method="post" action="{{ path('app_booking_payment_confirm', {ref: booking.reference}) }}" style="margin:0;">
+                <input type="hidden" name="_token" value="{{ csrf_token('payment_confirm_' ~ booking.id) }}">
+                <button type="submit" class="btn btn-primary btn-sm"
+                        data-confirm-title="Confirmer ton paiement ?"
+                        data-confirm="Tu confirmes avoir réglé {{ booking.prixFormatted }} en {{ booking.paymentMethod == 'cash' ? 'espèces' : 'carte bancaire' }} pour cette séance."
+                        data-confirm-button="Oui, je confirme">
+                  <i class="ti ti-check"></i> J'ai bien payé
+                </button>
+              </form>
+              <button type="button" class="btn btn-secondary btn-sm" onclick="document.getElementById('dispute-form-{{ booking.id }}').hidden = false; this.hidden = true;">
+                <i class="ti ti-x"></i> Je n'ai pas payé / désaccord
+              </button>
+            </div>
+            <form method="post" action="{{ path('app_booking_payment_dispute', {ref: booking.reference}) }}"
+                  id="dispute-form-{{ booking.id }}" hidden style="margin-top:14px;">
+              <input type="hidden" name="_token" value="{{ csrf_token('payment_dispute_' ~ booking.id) }}">
+              <label style="display:block;font-size:12px;color:var(--text-dim);margin-bottom:6px;">
+                Explique pourquoi (l'admin SPORT+ va te recontacter)
+              </label>
+              <textarea name="reason" rows="3" minlength="8" maxlength="2000" required
+                        class="form-control" style="width:100%;"
+                        placeholder="Ex : je n'ai pas réglé cette séance / le montant ne correspond pas..."></textarea>
+              <div style="display:flex;gap:8px;margin-top:10px;">
+                <button type="submit" class="btn btn-danger btn-sm"
+                        data-confirm-title="Envoyer ta contestation ?"
+                        data-confirm="Ta contestation sera transmise immédiatement à l'admin SPORT+. Tu seras recontacté sous 24 h."
+                        data-confirm-button="Envoyer ma contestation"
+                        data-confirm-danger="true">
+                  <i class="ti ti-send"></i> Envoyer
+                </button>
+                <button type="button" class="btn btn-secondary btn-sm" onclick="this.closest('form').hidden = true; this.closest('form').previousElementSibling.querySelector('button[type=button]').hidden = false;">
+                  Annuler
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    {% elseif booking.isPaymentConfirmedByClient %}
+      <div class="rdv-payment-ok" style="margin-top:16px;padding:12px 16px;border:1px solid rgba(46,204,113,.35);
+                                         border-radius:var(--radius);background:rgba(46,204,113,.08);
+                                         color:var(--green);font-size:13px;">
+        <i class="ti ti-shield-check"></i> Paiement confirmé le {{ booking.paymentClientConfirmedAt|date('d/m/Y à H\\hi') }} — merci.
+      </div>
+    {% elseif booking.isPaymentDisputed %}
+      <div class="rdv-payment-disputed" style="margin-top:16px;padding:12px 16px;border:1px solid #ff6b6b;
+                                               border-radius:var(--radius);background:rgba(255,80,80,.08);
+                                               color:#ff8a8a;font-size:13px;">
+        <i class="ti ti-alert-octagon"></i> Contestation enregistrée le {{ booking.paymentClientDisputedAt|date('d/m/Y à H\\hi') }} — un admin va te recontacter.
+      </div>
+    {% endif %}
+
     {# ── Statut paiement ── #}
     {% set intent = booking.intendedPaymentMethod %}
     {% set declared = booking.paymentMethod %}

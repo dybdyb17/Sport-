@@ -123,6 +123,18 @@ class Booking
     #[ORM\Column(length: 500, nullable: true)]
     private ?string $paymentNote = null;
 
+    // ── Confirmation du paiement par le client (anti-fraude) ───────────────
+    // Quand le coach déclare un paiement cash/cb, le client doit confirmer.
+    // S'il conteste, c'est une alerte admin immédiate.
+    #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
+    private ?\DateTimeImmutable $paymentClientConfirmedAt = null;
+
+    #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
+    private ?\DateTimeImmutable $paymentClientDisputedAt = null;
+
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $paymentDisputeReason = null;
+
     // Confirmation J-1 par le client (clic sur lien email reçu la veille)
     #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
     private ?\DateTimeImmutable $clientConfirmedAt = null;
@@ -226,6 +238,37 @@ class Booking
 
     public function getPaymentNote(): ?string { return $this->paymentNote; }
     public function setPaymentNote(?string $paymentNote): static { $this->paymentNote = $paymentNote; return $this; }
+
+    public function getPaymentClientConfirmedAt(): ?\DateTimeImmutable { return $this->paymentClientConfirmedAt; }
+    public function setPaymentClientConfirmedAt(?\DateTimeImmutable $d): static { $this->paymentClientConfirmedAt = $d; return $this; }
+
+    public function getPaymentClientDisputedAt(): ?\DateTimeImmutable { return $this->paymentClientDisputedAt; }
+    public function setPaymentClientDisputedAt(?\DateTimeImmutable $d): static { $this->paymentClientDisputedAt = $d; return $this; }
+
+    public function getPaymentDisputeReason(): ?string { return $this->paymentDisputeReason; }
+    public function setPaymentDisputeReason(?string $r): static { $this->paymentDisputeReason = $r; return $this; }
+
+    /**
+     * Le paiement déclaré par le coach attend-il encore une réponse du client ?
+     * (Déclaré + pas encore confirmé + pas encore contesté + mode encaissé en personne)
+     */
+    public function isPaymentAwaitingClientConfirmation(): bool
+    {
+        return $this->paymentDeclaredAt !== null
+            && $this->paymentClientConfirmedAt === null
+            && $this->paymentClientDisputedAt === null
+            && in_array($this->paymentMethod, ['cash', 'card'], true);
+    }
+
+    public function isPaymentDisputed(): bool
+    {
+        return $this->paymentClientDisputedAt !== null;
+    }
+
+    public function isPaymentConfirmedByClient(): bool
+    {
+        return $this->paymentClientConfirmedAt !== null;
+    }
 
     public function getClientConfirmedAt(): ?\DateTimeImmutable { return $this->clientConfirmedAt; }
     public function setClientConfirmedAt(?\DateTimeImmutable $clientConfirmedAt): static { $this->clientConfirmedAt = $clientConfirmedAt; return $this; }
