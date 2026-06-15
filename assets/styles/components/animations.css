@@ -21,6 +21,20 @@ html { scroll-behavior: smooth; }
               transform .8s cubic-bezier(.2, .8, .2, 1);
 }
 
+/* Filet de sécurité : sur connexion lente ou JS retardé, on force l'apparition
+   automatique au bout de 400ms pour éviter que la page reste blanche.
+   Si l'IntersectionObserver déclenche avant (cas normal), `.is-visible` prend
+   le dessus avec son timing. Critique pour le Speed Index Lighthouse. */
+@keyframes data-animate-fallback {
+  to { opacity: 1; transform: translate(0,0) scale(1) rotate(0); filter: blur(0); }
+}
+[data-animate]:not(.is-visible) {
+  animation: data-animate-fallback .6s cubic-bezier(.2,.8,.2,1) .4s forwards;
+}
+[data-stagger]:not(.is-visible) > * {
+  animation: data-animate-fallback .6s cubic-bezier(.2,.8,.2,1) .4s forwards;
+}
+
 [data-animate="fade-up"]    { transform: translateY(40px); }
 [data-animate="fade-down"]  { transform: translateY(-40px); }
 [data-animate="fade-left"]  { transform: translateX(-40px); }
