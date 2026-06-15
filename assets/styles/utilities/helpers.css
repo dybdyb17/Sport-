@@ -199,6 +199,26 @@
   border-radius: var(--radius-sm);
 }
 
+/* Texte uniquement visible des lecteurs d'écran (et toujours focusable). */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Focus visible sur les régions scrollables (accessibilité clavier). */
+.pricing-table-scroll:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 4px;
+  border-radius: 12px;
+}
+
 .nav-link:focus-visible,
 .footer-link:focus-visible,
 .dropdown-item:focus-visible,
