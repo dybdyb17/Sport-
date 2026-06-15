@@ -5,6 +5,20 @@
   gap: 24px;
 }
 
+/* Tablette (fenêtre 2 colonnes) : si la grille contient exactement 3 cards,
+   on centre la 3e (sinon elle tombe seule à gauche en bas).
+   S'applique à toutes les grilles auto-fit susceptibles d'avoir 3 enfants :
+   cards-grid (home), stats-grid (admin/coach), formules-grid (tarifs). */
+@media (min-width: 600px) and (max-width: 900px) {
+  .cards-grid > *:nth-child(3):nth-last-child(1),
+  .stats-grid > *:nth-child(3):nth-last-child(1),
+  .formules-grid > *:nth-child(3):nth-last-child(1) {
+    grid-column: 1 / -1;
+    max-width: calc(50% - 12px);
+    justify-self: center;
+  }
+}
+
 /* ── FEATURE CARD ─────────────────────────────────────────────── */
 .feature-card {
   background: var(--bg-card);
