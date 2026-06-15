@@ -121,4 +121,26 @@ final class PricingCalculator
     {
         return number_format((float) $price, 2, ',', "\u{202F}") . ' €';
     }
+
+    /** Taux de TVA appliqué (aligné sur la conf Deciplus de Loïc). */
+    public const TVA_RATE = 0.20;
+
+    /**
+     * Décompose un montant TTC en HT + TVA + TTC.
+     * Tous les prix stockés en base sont TTC (cohérent avec ce que le client paye).
+     *
+     * @return array{ht:string, tva:string, ttc:string}
+     */
+    public function decomposeTva(string $ttc): array
+    {
+        $ttcFloat = (float) $ttc;
+        $htFloat  = $ttcFloat / (1 + self::TVA_RATE);
+        $tvaFloat = $ttcFloat - $htFloat;
+
+        return [
+            'ht'  => number_format($htFloat,  2, '.', ''),
+            'tva' => number_format($tvaFloat, 2, '.', ''),
+            'ttc' => number_format($ttcFloat, 2, '.', ''),
+        ];
+    }
 }

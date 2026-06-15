@@ -24,10 +24,15 @@
 <div class="stats-grid" style="grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));">
 
   {# CA du mois #}
+  {% set caMoisTva = tva_split(breakdown.total) %}
   <div class="stat-card" style="border-top: 2px solid var(--gold);">
-    <span class="stat-label">CA du mois</span>
+    <span class="stat-label">CA du mois <span style="font-size:10px;color:var(--text-dim);">TTC</span></span>
     <span class="stat-value" style="color:var(--gold);">
       {{ breakdown.total|number_format(2, ',', ' ') }} €
+    </span>
+    <span style="font-size:11px;color:var(--text-dim);margin-top:2px;display:block;">
+      HT : {{ caMoisTva.ht|number_format(2, ',', ' ') }} € ·
+      TVA 20 % : {{ caMoisTva.tva|number_format(2, ',', ' ') }} €
     </span>
     <span style="font-size:12px;color:var(--text-dim);font-style:italic;font-family:'Cormorant Garamond',serif;margin-top:4px;display:block;">
       Part structure : {{ breakdown.structure|number_format(2, ',', ' ') }} € ·
@@ -226,11 +231,16 @@
 </div>
 
 {# ── CA total toutes périodes ── #}
+{% set caTotalTva = tva_split(breakdownAllTime.total) %}
 <div class="section-label">CA cumulé depuis l'ouverture</div>
 <div class="stats-grid" style="margin-bottom:32px;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));">
   <div class="stat-card" style="border-top:2px solid var(--gold);">
-    <span class="stat-label">CA total</span>
+    <span class="stat-label">CA total <span style="font-size:10px;color:var(--text-dim);">TTC</span></span>
     <span class="stat-value" style="color:var(--gold);">{{ breakdownAllTime.total|number_format(2, ',', ' ') }} €</span>
+    <span style="font-size:11px;color:var(--text-dim);margin-top:4px;display:block;">
+      HT : {{ caTotalTva.ht|number_format(2, ',', ' ') }} € ·
+      TVA 20 % : {{ caTotalTva.tva|number_format(2, ',', ' ') }} €
+    </span>
   </div>
   <div class="stat-card" style="border-top:2px solid #7AB85A;">
     <span class="stat-label">Part structure (total)</span>

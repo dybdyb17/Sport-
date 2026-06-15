@@ -1190,6 +1190,54 @@
   letter-spacing: .4px;
 }
 
+.bk-pay-group-warning {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  padding: 16px 18px;
+  margin-bottom: 18px;
+  background: rgba(var(--gold-rgb, 212, 175, 55), .08);
+  border: 1px solid rgba(var(--gold-rgb, 212, 175, 55), .35);
+  border-radius: 12px;
+  color: var(--text-soft);
+  font-size: 14px;
+  line-height: 1.55;
+}
+.bk-pay-group-warning > .ti {
+  font-size: 22px;
+  color: var(--gold);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.bk-pay-group-warning strong {
+  display: block;
+  color: var(--white);
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 6px;
+}
+.bk-pay-group-warning p {
+  margin: 0;
+  color: var(--text-soft);
+}
+.bk-pay-group-warning p strong {
+  display: inline;
+  font-family: inherit;
+  font-size: inherit;
+  text-transform: none;
+  letter-spacing: 0;
+  color: var(--gold);
+  margin: 0;
+}
+
+/* Quand on est en mode Groupe, on masque la carte Xplor (paiement en ligne) */
+.bk-pay-block[data-format="group"] .bk-pay-card-xplor {
+  display: none;
+}
+
 .bk-pay-options {
   display: grid;
   grid-template-columns: 1fr;

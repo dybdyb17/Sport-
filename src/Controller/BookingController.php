@@ -83,6 +83,11 @@ class BookingController extends AbstractController
 
                 $intended = $request->request->get('intended_payment_method');
                 if (in_array($intended, ['cash', 'card', 'xplor'], true)) {
+                    // Groupe : paiement en ligne (Xplor) interdit côté UX et côté serveur.
+                    // Si quelqu'un force "xplor" via DevTools sur un Groupe, on rebascule en cash.
+                    if ($format === BookingFormat::GROUP && $intended === 'xplor') {
+                        $intended = 'cash';
+                    }
                     $created->setIntendedPaymentMethod($intended);
                     $em->flush();
                 }

@@ -126,6 +126,27 @@
     if (fullAccessPrice) {
       fullAccessPrice.textContent = format === 'group' ? '25' : '30';
     }
+
+    // Groupe : pas de paiement en ligne possible → on affiche un avertissement
+    // et on masque la carte Xplor (via attribut data-format sur le block parent).
+    // Si le client avait coché Xplor, on bascule sur "cash" par défaut.
+    const payBlock = document.querySelector('.bk-pay-block');
+    const payWarn  = document.getElementById('bk-pay-group-warning');
+    if (payBlock) {
+      payBlock.dataset.format = format;
+    }
+    if (payWarn) {
+      payWarn.hidden = format !== 'group';
+    }
+    if (format === 'group') {
+      const xplorRadio = document.querySelector('input[name="intended_payment_method"][value="xplor"]');
+      if (xplorRadio && xplorRadio.checked) {
+        const cashRadio = document.querySelector('input[name="intended_payment_method"][value="cash"]');
+        if (cashRadio) cashRadio.checked = true;
+        // Trigger un event pour que les helpers (bk-pay-info) se mettent à jour
+        if (cashRadio) cashRadio.dispatchEvent(new Event('change', { bubbles: true }));
+      }
+    }
   }
 
   // Écouter le changement du select de personnes (GROUP)
