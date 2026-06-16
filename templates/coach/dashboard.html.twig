@@ -124,11 +124,11 @@
           <form method="post" action="{{ path('app_coach_mark_no_show', {id: b.id}) }}" class="no-show-form"
                 data-confirm-title="Marquer le client absent ?"
                 data-confirm="Le client {{ b.client.nomComplet }} n'est pas venu. Des frais de 30 % (soit {{ ((b.price ?? 0) * 0.30)|number_format(2, ',', ' ') }} €) seront notés à facturer."
-                data-confirm-button="Oui, facturer no-show"
+                data-confirm-button="Oui, marquer absent"
                 data-confirm-danger="true">
             <input type="hidden" name="_token" value="{{ csrf_token('no_show_' ~ b.id) }}">
             <button type="submit" class="no-show-btn">
-              <i class="ti ti-user-x"></i> Client absent — facturer no-show
+              <i class="ti ti-user-x"></i> Client absent — facturer l'absence
             </button>
           </form>
         </div>

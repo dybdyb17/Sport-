@@ -7,7 +7,7 @@
       <h2 class="peek-title">{{ b.offerLabel }}</h2>
       <div class="peek-when">
         <i class="ti ti-calendar"></i>
-        {{ b.startAt|format_datetime(pattern="EEEE d MMMM y", locale='fr') }} · <i class="ti ti-clock"></i> {{ b.startAt|date('H\\hi') }} — {{ b.endAt|date('H\\hi') }}
+        {{ b.startAt|format_datetime('none', 'none', "EEEE d MMMM y", locale='fr') }} · <i class="ti ti-clock"></i> {{ b.startAt|date('H\\hi') }} — {{ b.endAt|date('H\\hi') }}
       </div>
     </div>
     <span class="status-badge {{ b.status }}">
@@ -73,8 +73,8 @@
       <span class="peek-row-key"><i class="ti ti-credit-card"></i> Paiement</span>
       <span class="peek-row-val">
         {% if b.noShow %}
-          <span class="peek-pill peek-pill-red"><i class="ti ti-user-x"></i> No-show — frais {{ b.noShowFee }} €</span>
-          <span style="display:block;font-size:11px;color:var(--text-dim);margin-top:4px;">Marqué le {{ b.noShowMarkedAt|date('d/m/Y H\\hi') }}</span>
+          <span class="peek-pill peek-pill-red"><i class="ti ti-user-x"></i> Client absent — frais {{ b.noShowFee }} € à facturer</span>
+          <span style="display:block;font-size:11px;color:var(--text-dim);margin-top:4px;">Marqué absent le {{ b.noShowMarkedAt|date('d/m/Y \\à H\\hi') }}</span>
         {% elseif b.paymentMethod %}
           {% set methods = {'cash': 'Espèces', 'card': 'CB', 'xplor': 'Xplor Active'} %}
           <span class="peek-pill peek-pill-green"><i class="ti ti-check"></i> {{ methods[b.paymentMethod] ?? b.paymentMethod }}</span>

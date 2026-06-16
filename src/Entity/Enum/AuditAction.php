@@ -33,7 +33,7 @@ enum AuditAction: string
             self::PAYMENT_DECLARED       => 'Paiement déclaré',
             self::PAYMENT_CONFIRMED      => 'Paiement confirmé par le client',
             self::PAYMENT_DISPUTED       => 'Paiement contesté par le client',
-            self::NO_SHOW_MARKED         => 'Absence client marquée',
+            self::NO_SHOW_MARKED         => 'Client marqué absent',
             self::ROLE_GRANTED           => 'Rôle accordé',
             self::ROLE_REVOKED           => 'Rôle retiré',
             self::USER_DELETED           => 'Compte supprimé',

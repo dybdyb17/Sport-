@@ -65,9 +65,9 @@
             </td>
             <td>
               {% if b.noShow %}
-                <span style="color:#ff6b6b;font-weight:700;"><i class="ti ti-user-x"></i> No-show</span>
-                <div style="font-size:11px;color:#ff8a8a;margin-top:2px;">À facturer : <strong>{{ b.noShowFee }} €</strong></div>
-                <div style="font-size:11px;color:var(--text-dim);">{{ b.noShowMarkedAt|date('d/m H\\hi') }}</div>
+                <span style="color:#ff6b6b;font-weight:700;"><i class="ti ti-user-x"></i> Client absent</span>
+                <div style="font-size:11px;color:#ff8a8a;margin-top:2px;">Frais à facturer : <strong>{{ b.noShowFee }} €</strong></div>
+                <div style="font-size:11px;color:var(--text-dim);">Marqué le {{ b.noShowMarkedAt|date('d/m H\\hi') }}</div>
               {% elseif b.paymentMethod == 'cash' %}
                 <span><i class="ti ti-cash"></i> Espèces</span><div style="font-size:11px;color:var(--text-dim);">{{ b.paymentDeclaredAt|date('d/m H\\hi') }}</div>
               {% elseif b.paymentMethod == 'card' %}
