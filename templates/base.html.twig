@@ -62,7 +62,6 @@
           </a>
         </div>
       </div>
-      <a href="{{ path('app_about') }}" class="nav-link {% if app.request.attributes.get('_route') == 'app_about' %}active{% endif %}">À propos</a>
       <a href="{{ path('app_faq') }}" class="nav-link {% if app.request.attributes.get('_route') == 'app_faq' %}active{% endif %}">FAQ</a>
       <a href="{{ path('app_contact') }}" class="nav-link {% if app.request.attributes.get('_route') == 'app_contact' %}active{% endif %}">Contact</a>
       <a href="{{ path('app_deciplus') }}" class="nav-link nav-link-deciplus {% if app.request.attributes.get('_route') == 'app_deciplus' %}active{% endif %}">
@@ -143,7 +142,6 @@
       <a href="{{ path('app_tarifs') }}#coaching" class="mobile-nav-sub"><i class="ti ti-moon-stars"></i> Formules Coaching</a>
       <a href="{{ path('app_tarifs') }}#abonnements" class="mobile-nav-sub"><i class="ti ti-id-badge-2"></i> Formules Abonnement</a>
     </div>
-    <a href="{{ path('app_about') }}" class="nav-link">À propos</a>
     <a href="{{ path('app_faq') }}" class="nav-link">FAQ</a>
     <a href="{{ path('app_contact') }}" class="nav-link">Contact</a>
     <a href="{{ path('app_deciplus') }}" class="nav-link" style="color:var(--green);">
@@ -217,7 +215,6 @@
       </div>
       <div>
         <div class="footer-col-title">Légal</div>
-        <a href="{{ path('app_about') }}" class="footer-link">À propos</a>
         <a href="{{ path('app_legal_mentions') }}" class="footer-link">Mentions légales</a>
         <a href="{{ path('app_legal_confidentialite') }}" class="footer-link">Politique de confidentialité</a>
         <a href="{{ path('app_legal_cookies') }}" class="footer-link">Gestion des cookies</a>

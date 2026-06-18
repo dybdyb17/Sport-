@@ -85,17 +85,6 @@ class PublicController extends AbstractController
         ]);
     }
 
-    #[Route('/a-propos', name: 'app_about', methods: ['GET'])]
-    public function about(
-        FoundingOfferService $foundingOfferService,
-        CoachRepository $coachRepo
-    ): Response {
-        return $this->render('public/about.html.twig', [
-            'foundingOffer' => $foundingOfferService->getActive(),
-            'coachsCount'   => $coachRepo->count([]),
-        ]);
-    }
-
     #[Route('/espace-deciplus', name: 'app_deciplus', methods: ['GET'])]
     public function deciplus(): Response
     {

@@ -28,7 +28,11 @@ class MailerService
             }
 
             $email = (new TemplatedEmail())
-                ->from($this->from())
+                ->from($this->from());
+            if ($this->replyTo()) {
+                $email->replyTo($this->replyTo());
+            }
+            $email
                 ->to($coach->getUser()->getEmail())
                 ->subject(sprintf(
                     '🔔 Nouvelle demande de réservation — %s à %s',
@@ -61,7 +65,11 @@ class MailerService
             }
 
             $email = (new TemplatedEmail())
-                ->from($this->from())
+                ->from($this->from());
+            if ($this->replyTo()) {
+                $email->replyTo($this->replyTo());
+            }
+            $email
                 ->to($client->getEmail())
                 ->subject(sprintf('Ta séance avec %s est confirmée', $booking->getCoach()->getNomComplet()))
                 ->htmlTemplate('emails/booking_confirmed_client.html.twig')
@@ -91,9 +99,13 @@ class MailerService
             }
 
             $email = (new TemplatedEmail())
-                ->from($this->from())
+                ->from($this->from());
+            if ($this->replyTo()) {
+                $email->replyTo($this->replyTo());
+            }
+            $email
                 ->to($client->getEmail())
-                ->subject('Ta reservation n\'a pas pu etre confirmee')
+                ->subject('Ta réservation n\'a pas pu être confirmée')
                 ->htmlTemplate('emails/booking_refused_client.html.twig')
                 ->context([
                     'booking'    => $booking,
@@ -122,7 +134,11 @@ class MailerService
             }
 
             $email = (new TemplatedEmail())
-                ->from($this->from())
+                ->from($this->from());
+            if ($this->replyTo()) {
+                $email->replyTo($this->replyTo());
+            }
+            $email
                 ->to($user->getEmail())
                 ->subject(sprintf('Bienvenue parmi les Membres Fondateurs #%02d', $claim->getClaimNumber()))
                 ->htmlTemplate('emails/founding_welcome.html.twig')
@@ -150,7 +166,11 @@ class MailerService
             }
 
             $email = (new TemplatedEmail())
-                ->from($this->from())
+                ->from($this->from());
+            if ($this->replyTo()) {
+                $email->replyTo($this->replyTo());
+            }
+            $email
                 ->to($user->getEmail())
                 ->subject('Bienvenue chez SPORT+ Marseille')
                 ->htmlTemplate('emails/registration_welcome.html.twig')
@@ -173,10 +193,14 @@ class MailerService
     public function sendNewFoundingAlertToAdmin(FoundingClaim $claim): void
     {
         try {
-            $adminEmail = $_ENV['APP_EMAIL_ADMIN'] ?? 'admin@sportplus-marseille.fr';
+            $adminEmail = $_ENV['APP_EMAIL_ADMIN'] ?? 'ls.sportplus13@gmail.com';
 
             $email = (new TemplatedEmail())
-                ->from($this->from())
+                ->from($this->from());
+            if ($this->replyTo()) {
+                $email->replyTo($this->replyTo());
+            }
+            $email
                 ->to($adminEmail)
                 ->subject(sprintf('Nouveau Membre Fondateur - #%02d', $claim->getClaimNumber()))
                 ->htmlTemplate('emails/founding_alert_admin.html.twig')
@@ -199,9 +223,15 @@ class MailerService
     private function from(): Address
     {
         return new Address(
-            $_ENV['APP_EMAIL_FROM']      ?? 'contact@sportplus-marseille.fr',
+            $_ENV['APP_EMAIL_FROM']      ?? 'contact@sportplus-13.fr',
             $_ENV['APP_EMAIL_FROM_NAME'] ?? 'SPORT+ Marseille'
         );
+    }
+
+    private function replyTo(): ?string
+    {
+        $value = $_ENV['APP_EMAIL_REPLY_TO'] ?? null;
+        return $value ?: null;
     }
 
     private function abs(string $route, array $params = []): string
@@ -227,7 +257,11 @@ class MailerService
             ]);
 
             $email = (new TemplatedEmail())
-                ->from($this->from())
+                ->from($this->from());
+            if ($this->replyTo()) {
+                $email->replyTo($this->replyTo());
+            }
+            $email
                 ->to($client->getEmail())
                 ->subject(sprintf('Rappel : ta séance avec %s, c\'est demain', (string) $booking->getCoach()?->getNomComplet()))
                 ->htmlTemplate('emails/booking_day_before.html.twig')
