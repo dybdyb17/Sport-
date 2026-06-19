@@ -36,10 +36,56 @@ Redeploy Railway après ajout des variables (obligatoire pour prise en compte)
 - En local avec Mailtrap : `php bin/console app:test-emails ton@email.fr`
 - En prod après config : envoyer un vrai mail test vers une boîte Gmail perso
 
-### 7. Cron rappels J-1 (Railway → Cron Jobs)
-```
-0 10 * * *  php bin/console app:send-day-before-reminders
-```
+### 7. Cron rappels J-1 sur Railway
+
+La commande `app:send-day-before-reminders` doit tourner **automatiquement chaque jour
+à 10h** (heure de Paris). Elle sélectionne les séances confirmées du lendemain dont le
+client n'a pas encore validé sa présence, et envoie l'email de rappel.
+
+> ⚠️ Railway utilise **UTC** pour les crons. Pour exécuter à **10h heure de Paris** :
+> - Heure d'été (mars→octobre) : `0 8 * * *` (8h UTC = 10h Paris)
+> - Heure d'hiver (octobre→mars) : `0 9 * * *` (9h UTC = 10h Paris)
+> Mettre `0 8 * * *` par défaut (toléré en hiver, on tombe à 9h Paris, c'est OK).
+
+⚠️ **Pré-requis prod** : ajouter aussi `DEFAULT_URI=https://sportplus-13.com` dans les
+variables Railway si pas déjà fait. Sans cette variable, les liens des emails envoyés
+en CLI/cron pointeront sur `http://localhost` (valeur par défaut de `.env`) → liens
+cassés pour les clients.
+
+#### Option A — Cron Schedule sur le service App existant *(simple)*
+- Railway → service **App** → Settings → Deploy → **Cron Schedule**
+- Schedule : `0 8 * * *`
+- Start command : `php bin/console app:send-day-before-reminders --env=prod --no-debug`
+
+⚠️ Limite : ça **relance le conteneur entier**. À n'utiliser que si Railway le supporte
+sur ton plan actuel (vérifier la facturation : sur le plan gratuit/Hobby ça peut couper
+le service web pendant l'exécution).
+
+#### Option B — Service cron dédié *(recommandé, propre)*
+Créer **un nouveau service** dans le **même projet Railway**, basé sur le même
+repo/Dockerfile :
+- Railway → projet SPORT+ → **+ New** → **Empty Service** (ou "From GitHub repo")
+- Settings → Source → pointer le même repo `dybdyb17/Sport-`
+- Settings → Deploy → **Cron Schedule** : `0 8 * * *`
+- Settings → Deploy → **Custom Start Command** :
+  `php bin/console app:send-day-before-reminders --env=prod --no-debug`
+- Settings → Variables → **copier** les mêmes que le service App :
+  `DATABASE_URL`, `MAILER_DSN`, `APP_EMAIL_FROM`, `APP_EMAIL_FROM_NAME`,
+  `APP_EMAIL_ADMIN`, `APP_EMAIL_REPLY_TO`, `APP_SITE_URL`, `APP_SECRET`,
+  `DEFAULT_URI`, `APP_ENV=prod`
+
+Ce service ne sert pas de web : il démarre à l'heure prévue, exécute la commande,
+puis s'arrête jusqu'au lendemain. Aucun impact sur le service web principal qui
+continue de tourner normalement 24/24.
+
+**→ Pour SPORT+ : recommandé d'utiliser l'option B.** Le service web reste stable,
+et si la commande crashe un jour ça n'affecte pas le site public.
+
+#### Vérifier que ça marche
+- Tester d'abord en dry-run via Railway Run Command sur le service principal :
+  `php bin/console app:send-day-before-reminders --dry-run --env=prod --no-debug`
+- Forcer une exécution manuelle du service cron depuis le dashboard (bouton "Trigger
+  Deploy") pour vérifier qu'il tourne sans erreur même hors horaire
 
 ## Important
 

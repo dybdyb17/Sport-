@@ -162,6 +162,12 @@ ResetFoundingClaims, SeedFoundingOffer, SeedPricingShowcase, **SendDayBeforeRemi
   direct au client. Template `templates/emails/contact_message.html.twig` (étend
   `emails/base.html.twig` + macros). Validation basique côté contrôleur (nom, email, message
   non vides + `filter_var` email).
+- **Cron rappels J-1 documenté (19 juin)** : commande `app:send-day-before-reminders` à
+  planifier sur Railway via service cron dédié (recommandé, option B) avec schedule
+  `0 8 * * *` UTC (= 10h Paris été / 9h Paris hiver). Tout le pas-à-pas dans
+  `EMAIL_SETUP.md`. ⚠️ **Pré-requis prod** : ajouter `DEFAULT_URI=https://sportplus-13.com`
+  dans Railway, sinon les URLs absolues générées par UrlGenerator en CLI tomberont sur
+  `http://localhost` (valeur par défaut de `.env`) → liens cassés dans les emails J-1.
 - **Mot de passe oublié (19 juin)** : routes `/mot-de-passe-oublie` (`app_forgot_password`)
   et `/reinitialiser-mot-de-passe/{id}/{ts}/{token}` (`app_reset_password`) dans
   `SecurityController`. Token = `hash_hmac('sha256', 'reset:' ~ id ~ ':' ~ ts ~ ':' ~
