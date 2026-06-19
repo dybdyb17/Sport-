@@ -155,6 +155,13 @@ ResetFoundingClaims, SeedFoundingOffer, SeedPricingShowcase, **SendDayBeforeRemi
   `app_url` globale n'était définie nulle part → tous les liens footer pointaient sur
   `127.0.0.1` en prod. ⚠️ **À ajouter dans Railway** : `APP_SITE_URL=https://sportplus-13.com`
   + redeploy.
+- **Formulaire de contact fonctionnel (19 juin)** : `/contact` envoie désormais un vrai
+  email vers `ls.sportplus13@gmail.com` (gmail Loïc) via `MailerService::sendContactMessage()`.
+  Particularité : le **Reply-To pointe vers l'email du visiteur** (pas vers le gmail de
+  Loïc comme les autres méthodes) → Loïc clique « Répondre » dans Gmail, la réponse part
+  direct au client. Template `templates/emails/contact_message.html.twig` (étend
+  `emails/base.html.twig` + macros). Validation basique côté contrôleur (nom, email, message
+  non vides + `filter_var` email).
 
 ---
 

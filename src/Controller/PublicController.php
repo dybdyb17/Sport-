@@ -61,13 +61,30 @@ class PublicController extends AbstractController
     }
 
     #[Route('/contact', name: 'app_contact', methods: ['GET', 'POST'])]
-    public function contact(Request $request): Response
+    public function contact(Request $request, \App\Service\MailerService $mailer): Response
     {
         if ($request->isMethod('POST')) {
             if (!$this->isCsrfTokenValid('contact-form', $request->request->get('_token'))) {
                 $this->addFlash('error', 'Token de sécurité invalide. Veuillez réessayer.');
                 return $this->redirectToRoute('app_contact');
             }
+
+            $name    = trim((string) $request->request->get('name', ''));
+            $email   = trim((string) $request->request->get('email', ''));
+            $phone   = trim((string) $request->request->get('phone', ''));
+            $message = trim((string) $request->request->get('message', ''));
+
+            if ($name === '' || $email === '' || $message === '') {
+                $this->addFlash('error', 'Merci de renseigner ton nom, ton email et ton message.');
+                return $this->redirectToRoute('app_contact');
+            }
+            if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                $this->addFlash('error', 'L\'adresse email renseignée n\'est pas valide.');
+                return $this->redirectToRoute('app_contact');
+            }
+
+            $mailer->sendContactMessage($name, $email, $phone !== '' ? $phone : null, $message);
+
             $this->addFlash('success', 'Votre message a bien été envoyé. Nous vous répondrons dans les 24h.');
             return $this->redirectToRoute('app_contact');
         }

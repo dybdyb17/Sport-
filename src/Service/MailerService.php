@@ -280,4 +280,38 @@ class MailerService
             ]);
         }
     }
+
+    /**
+     * Message envoyé via le formulaire de contact public (/contact).
+     *
+     * Particularité : le Reply-To pointe vers l'email du VISITEUR (pas vers le gmail
+     * de Loïc comme dans les autres méthodes), pour que Loïc puisse répondre direct
+     * au client en tapant simplement "Répondre" depuis sa boîte Gmail.
+     */
+    public function sendContactMessage(string $name, string $email, ?string $phone, string $message): void
+    {
+        try {
+            $adminEmail = $_ENV['APP_EMAIL_ADMIN'] ?? 'ls.sportplus13@gmail.com';
+
+            $mail = (new TemplatedEmail())
+                ->from($this->from())
+                ->replyTo($email)
+                ->to($adminEmail)
+                ->subject(sprintf('Nouveau message de %s — SPORT+', $name))
+                ->htmlTemplate('emails/contact_message.html.twig')
+                ->context([
+                    'name'    => $name,
+                    'email'   => $email,
+                    'phone'   => $phone,
+                    'message' => $message,
+                ]);
+
+            $this->mailer->send($mail);
+        } catch (\Throwable $e) {
+            $this->logger->error('Échec envoi email contact_message: ' . $e->getMessage(), [
+                'visitor' => $email,
+                'file'    => $e->getFile() . ':' . $e->getLine(),
+            ]);
+        }
+    }
 }
