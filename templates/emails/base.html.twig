@@ -16,7 +16,7 @@
           {# Header #}
           <tr>
             <td align="center" style="padding:32px 20px 24px;border-bottom:1px solid #2A2720;">
-              <img src="{{ app.request is defined and app.request.schemeAndHttpHost ? (app.request.schemeAndHttpHost ~ '/img/sportplus-logo.png') : 'https://sport-production-ba11.up.railway.app/img/sportplus-logo.png' }}"
+              <img src="{{ site_url ~ '/img/sportplus-logo.png' }}"
                    alt="SPORT+ Centre d'Entraînement"
                    width="200"
                    style="display:block;margin:0 auto;max-width:200px;height:auto;">
@@ -48,7 +48,7 @@
               </div>
               <div style="margin-top:14px;font-size:11px;color:#6A6050;font-family:Arial,Helvetica,sans-serif;">
                 Vous recevez cet email car vous avez un compte sur SPORT+ Marseille.<br>
-                <a href="{{ app_url ?? 'http://127.0.0.1:8001' }}" style="color:#7A6228;text-decoration:underline;">sport-plus-marseille.fr</a>
+                <a href="{{ site_url }}" style="color:#7A6228;text-decoration:underline;">sportplus-13.com</a>
               </div>
             </td>
           </tr>

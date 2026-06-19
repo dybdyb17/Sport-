@@ -148,6 +148,13 @@ ResetFoundingClaims, SeedFoundingOffer, SeedPricingShowcase, **SendDayBeforeRemi
   `sportplus-marseille.fr` / `sportplus-13.fr` dans les 4 pages légales, MailerService,
   `.env` et `EMAIL_SETUP.md`. `ls.sportplus13@gmail.com` (gmail Loïc) et URL Railway
   intacts.
+- **Logo emails + globale Twig `site_url` (19 juin)** : variable `APP_SITE_URL` ajoutée
+  dans `.env`, globale Twig `site_url` créée dans `config/packages/twig.yaml`, template
+  `templates/emails/base.html.twig` corrigé (logo + lien footer). Plus de dépendance à
+  `app.request` (qui n'existe pas en CLI/cron). Bug latent ligne 51 corrigé en bonus :
+  `app_url` globale n'était définie nulle part → tous les liens footer pointaient sur
+  `127.0.0.1` en prod. ⚠️ **À ajouter dans Railway** : `APP_SITE_URL=https://sportplus-13.com`
+  + redeploy.
 
 ---
 

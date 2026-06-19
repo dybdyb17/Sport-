@@ -24,7 +24,12 @@ APP_EMAIL_FROM=contact@sportplus-13.com
 APP_EMAIL_FROM_NAME=SPORT+ Marseille
 APP_EMAIL_ADMIN=ls.sportplus13@gmail.com
 APP_EMAIL_REPLY_TO=ls.sportplus13@gmail.com
+APP_SITE_URL=https://sportplus-13.com
 ```
+> `APP_SITE_URL` = URL publique du site, utilisée pour les images/liens absolus dans les
+> emails (sans elle, le logo et les liens ne s'affichent pas correctement quand les mails
+> sont envoyés via CLI/cron).
+
 Redeploy Railway après ajout des variables (obligatoire pour prise en compte)
 
 ### 6. Tester

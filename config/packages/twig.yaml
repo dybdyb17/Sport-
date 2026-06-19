@@ -5,6 +5,10 @@ twig:
         format: 'd/m/Y H:i'
         interval_format: '%d jours'
         timezone: Europe/Paris
+    # URL publique du site, dispo dans tous les templates (utile pour les emails
+    # rendus en CLI où app.request n'existe pas).
+    globals:
+        site_url: '%env(APP_SITE_URL)%'
 
 when@test:
     twig:
