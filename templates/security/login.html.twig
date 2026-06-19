@@ -26,6 +26,11 @@
         <div class="form-field">
           <label for="inputPassword">Mot de passe</label>
           <input type="password" name="_password" id="inputPassword" autocomplete="current-password" required placeholder="••••••••">
+          <div style="text-align:right;margin-top:8px;">
+            <a href="{{ path('app_forgot_password') }}" style="font-size:13px;color:var(--gold);text-decoration:none;">
+              Mot de passe oublié ?
+            </a>
+          </div>
         </div>
 
         <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">

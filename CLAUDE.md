@@ -162,6 +162,17 @@ ResetFoundingClaims, SeedFoundingOffer, SeedPricingShowcase, **SendDayBeforeRemi
   direct au client. Template `templates/emails/contact_message.html.twig` (étend
   `emails/base.html.twig` + macros). Validation basique côté contrôleur (nom, email, message
   non vides + `filter_var` email).
+- **Mot de passe oublié (19 juin)** : routes `/mot-de-passe-oublie` (`app_forgot_password`)
+  et `/reinitialiser-mot-de-passe/{id}/{ts}/{token}` (`app_reset_password`) dans
+  `SecurityController`. Token = `hash_hmac('sha256', 'reset:' ~ id ~ ':' ~ ts ~ ':' ~
+  user.password, APP_SECRET)` tronqué à 32 chars. **Le hash du mot de passe est dans la
+  signature → à usage unique automatiquement** (dès qu'il change, l'ancien lien devient
+  invalide, zéro table en base). Expiration 1h via timestamp dans l'URL. Anti-énumération :
+  même message neutre « si un compte existe… » qu'on ait trouvé l'email ou pas. Lien
+  « Mot de passe oublié ? » ajouté sous le champ password de `login.html.twig`. 2 nouveaux
+  templates `security/forgot_password.html.twig` et `security/reset_password.html.twig`
+  (DA Night Performance, layout `auth-layout`). Template email
+  `emails/password_reset.html.twig`. Routes en PUBLIC_ACCESS dans `security.yaml`.
 
 ---
 

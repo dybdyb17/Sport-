@@ -282,6 +282,41 @@ class MailerService
     }
 
     /**
+     * Email de réinitialisation de mot de passe.
+     * L'URL est un lien signé HMAC à usage unique (le hash du mot de passe actuel
+     * est dans la signature → dès qu'il change, l'ancien lien devient invalide).
+     */
+    public function sendPasswordReset(User $user, string $resetUrl): void
+    {
+        try {
+            if (!$user->getEmail()) {
+                return;
+            }
+
+            $email = (new TemplatedEmail())
+                ->from($this->from());
+            if ($this->replyTo()) {
+                $email->replyTo($this->replyTo());
+            }
+            $email
+                ->to($user->getEmail())
+                ->subject('Réinitialise ton mot de passe — SPORT+')
+                ->htmlTemplate('emails/password_reset.html.twig')
+                ->context([
+                    'user'     => $user,
+                    'resetUrl' => $resetUrl,
+                ]);
+
+            $this->mailer->send($email);
+        } catch (\Throwable $e) {
+            $this->logger->error('Échec envoi email password_reset: ' . $e->getMessage(), [
+                'user' => $user->getEmail(),
+                'file' => $e->getFile() . ':' . $e->getLine(),
+            ]);
+        }
+    }
+
+    /**
      * Message envoyé via le formulaire de contact public (/contact).
      *
      * Particularité : le Reply-To pointe vers l'email du VISITEUR (pas vers le gmail

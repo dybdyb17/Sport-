@@ -36,6 +36,9 @@ security:
     access_control:
         - { path: ^/login, roles: PUBLIC_ACCESS }
         - { path: ^/register, roles: PUBLIC_ACCESS }
+        # Mot de passe oublié : demande + reset protégés par lien signé HMAC à usage unique
+        - { path: ^/mot-de-passe-oublie, roles: PUBLIC_ACCESS }
+        - { path: ^/reinitialiser-mot-de-passe, roles: PUBLIC_ACCESS }
         # Confirmation J-1 accessible sans auth : protégée par lien signé HMAC
         - { path: ^/reservation/[^/]+/confirmer/, roles: PUBLIC_ACCESS }
         - { path: ^/coach(/|$), roles: ROLE_COACH }
