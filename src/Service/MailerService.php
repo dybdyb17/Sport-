@@ -223,7 +223,7 @@ class MailerService
     private function from(): Address
     {
         return new Address(
-            $_ENV['APP_EMAIL_FROM']      ?? 'contact@sportplus-13.fr',
+            $_ENV['APP_EMAIL_FROM']      ?? 'contact@sportplus-13.com',
             $_ENV['APP_EMAIL_FROM_NAME'] ?? 'SPORT+ Marseille'
         );
     }
