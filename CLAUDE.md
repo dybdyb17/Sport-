@@ -162,6 +162,15 @@ ResetFoundingClaims, SeedFoundingOffer, SeedPricingShowcase, **SendDayBeforeRemi
   direct au client. Template `templates/emails/contact_message.html.twig` (étend
   `emails/base.html.twig` + macros). Validation basique côté contrôleur (nom, email, message
   non vides + `filter_var` email).
+- **Règle « 8 caractères minimum » visible sur les formulaires de mot de passe (19 juin)** :
+  help text affiché sous le champ via `'help' => '8 caractères minimum.'` sur
+  `AdminCoachType` et `RegistrationFormType`. Bloc d'erreurs global ajouté en haut de
+  `admin/coachs/new.html.twig` et `admin/coachs/edit.html.twig` (alert rouge listant chaque
+  erreur du formulaire, impossible à rater). Texte help ajouté aussi sur
+  `security/reset_password.html.twig`. Messages harmonisés sur « Votre mot de passe doit
+  faire au moins 8 caractères ». ⚠️ **`templates/security/login.html.twig` volontairement
+  non touché** : sur la page de connexion, aucune règle de mdp affichée (sécurité — pas
+  d'indice à un attaquant). Le seul message reste « Identifiants invalides ».
 - **Cron rappels J-1 documenté (19 juin)** : commande `app:send-day-before-reminders` à
   planifier sur Railway via service cron dédié (recommandé, option B) avec schedule
   `0 8 * * *` UTC (= 10h Paris été / 9h Paris hiver). Tout le pas-à-pas dans

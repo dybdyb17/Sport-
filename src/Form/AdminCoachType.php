@@ -26,7 +26,7 @@ class AdminCoachType extends AbstractType
         $passwordConstraints = [
             new Length([
                 'min'        => 8,
-                'minMessage' => 'Minimum {{ limit }} caractères.',
+                'minMessage' => 'Votre mot de passe doit faire au moins {{ limit }} caractères.',
                 'max'        => 4096,
             ]),
         ];
@@ -65,6 +65,7 @@ class AdminCoachType extends AbstractType
                 'required' => !$isEdit,
                 'attr'     => ['autocomplete' => 'new-password'],
                 'mapped'   => false,
+                'help'     => '8 caractères minimum.',
                 'constraints' => $passwordConstraints,
             ])
             ->add('bio', TextareaType::class, [

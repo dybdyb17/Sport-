@@ -45,11 +45,12 @@ class RegistrationFormType extends AbstractType
                 'mapped' => false,
                 'label' => 'Mot de passe',
                 'attr' => ['autocomplete' => 'new-password'],
+                'help' => '8 caractères minimum.',
                 'constraints' => [
                     new NotBlank(['message' => 'Merci de saisir un mot de passe']),
                     new Length([
                         'min' => 8,
-                        'minMessage' => 'Votre mot de passe doit faire au moins {{ limit }} caractères',
+                        'minMessage' => 'Votre mot de passe doit faire au moins {{ limit }} caractères.',
                         'max' => 4096,
                     ]),
                 ],

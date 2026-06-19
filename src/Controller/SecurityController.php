@@ -137,7 +137,7 @@ class SecurityController extends AbstractController
             $confirm = (string) $request->request->get('password_confirm', '');
 
             if (mb_strlen($new) < 8) {
-                $this->addFlash('error', 'Le mot de passe doit faire au moins 8 caractères.');
+                $this->addFlash('error', 'Votre mot de passe doit faire au moins 8 caractères.');
                 return $this->redirectToRoute('app_reset_password', ['id' => $id, 'ts' => $ts, 'token' => $token]);
             }
             if ($new !== $confirm) {

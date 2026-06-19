@@ -19,6 +19,27 @@
 
     {{ form_start(form, {'attr': {'enctype': 'multipart/form-data'}}) }}
 
+      {% if form.vars.submitted and not form.vars.valid %}
+        <div style="display:flex;gap:12px;align-items:flex-start;padding:14px 18px;margin-bottom:24px;
+                    background:rgba(255,80,80,.08);border:1px solid rgba(255,80,80,.4);
+                    border-radius:10px;color:#ffb3b3;">
+          <i class="ti ti-alert-circle" style="font-size:22px;color:#ff6b6b;flex-shrink:0;margin-top:2px;"></i>
+          <div style="flex:1;font-size:14px;line-height:1.6;">
+            <strong style="color:#fff;display:block;margin-bottom:4px;">Impossible d'enregistrer ce coach :</strong>
+            <ul style="margin:0;padding-left:18px;">
+              {% for error in form.vars.errors %}
+                <li>{{ error.message }}</li>
+              {% endfor %}
+              {% for child in form %}
+                {% for error in child.vars.errors %}
+                  <li><strong>{{ child.vars.label ?? child.vars.name }}</strong> : {{ error.message }}</li>
+                {% endfor %}
+              {% endfor %}
+            </ul>
+          </div>
+        </div>
+      {% endif %}
+
       <div class="form-field">
         {{ form_label(form.nomComplet) }}
         {{ form_widget(form.nomComplet) }}
@@ -46,6 +67,9 @@
           </button>
         </div>
         {{ form_errors(form.plainPassword) }}
+        <div style="font-size:12px;color:var(--text-dim);margin-top:6px;">
+          <i class="ti ti-info-circle"></i> 8 caractères minimum.
+        </div>
       </div>
 
       <div class="form-field">
