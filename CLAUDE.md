@@ -140,6 +140,14 @@ ResetFoundingClaims, SeedFoundingOffer, SeedPricingShowcase, **SendDayBeforeRemi
 - **Pages légales** : 4 pages avec contenu réel.
 - **Page À propos : RETIRÉE** (route, template, CSS, liens navbar/footer, sitemap). Ne pas la
   recréer. `/a-propos` → 404 volontaire.
+- **Système Reply-To MailerService (18 juin)** : helper `replyTo()` qui lit
+  `$_ENV['APP_EMAIL_REPLY_TO']`, appliqué aux 7 méthodes `send*` via `if ($this->replyTo()) {
+  $email->replyTo($this->replyTo()); }`. Fallback admin `sendNewFoundingAlertToAdmin` =
+  `ls.sportplus13@gmail.com`. Subject `sendBookingRefusedToClient` accentué proprement.
+- **Alignement domaine `sportplus-13.com` (19 juin)** : remplacement des 14 occurrences
+  `sportplus-marseille.fr` / `sportplus-13.fr` dans les 4 pages légales, MailerService,
+  `.env` et `EMAIL_SETUP.md`. `ls.sportplus13@gmail.com` (gmail Loïc) et URL Railway
+  intacts.
 
 ---
 
@@ -148,9 +156,10 @@ ResetFoundingClaims, SeedFoundingOffer, SeedPricingShowcase, **SendDayBeforeRemi
 Tout le système email est codé et prêt. Il reste la config infra (hors-code) à finaliser.
 
 ### Décisions actées
-- **Domaine acheté : `sportplus-13.com`** (Cloudflare, au nom de Loïc / SPORT+). ⚠️ C'est bien
-  le **.com**, PAS le .fr (les pages légales mentionnent encore `sportplus-13.fr` → à aligner
-  sur `.com` dans un prochain passage).
+- **Domaine acheté : `sportplus-13.com`** (Cloudflare, au nom de Loïc / SPORT+). C'est bien
+  le **.com**, PAS le .fr. ✅ **Aligné partout (19 juin)** : pages légales, MailerService
+  fallback, `.env`, EMAIL_SETUP.md — plus aucune occurrence de `sportplus-13.fr` ni
+  `sportplus-marseille.fr` dans le code.
 - **Système Reply-To** (codé par Claude Code) :
   - Expéditeur affiché = **`contact@sportplus-13.com`** (domaine pro — gmail comme `from` est
     bloqué par DMARC pour l'envoi auto).
