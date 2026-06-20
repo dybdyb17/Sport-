@@ -282,6 +282,43 @@ class MailerService
     }
 
     /**
+     * Récap quotidien à l'admin après l'exécution du cron J-1.
+     * Sert de "dead man's switch" : tant que Loïc reçoit son ping quotidien
+     * (même "0 mail envoyé"), il sait que le cron tourne. S'il ne reçoit rien
+     * un matin, c'est que le cron a planté en silence.
+     *
+     * @param Booking[] $bookings Liste des bookings ciblés ce matin
+     */
+    public function sendDayBeforeReminderSummary(int $sent, int $skipped, array $bookings): void
+    {
+        try {
+            $adminEmail = $_ENV['APP_EMAIL_ADMIN'] ?? 'ls.sportplus13@gmail.com';
+
+            $email = (new TemplatedEmail())
+                ->from($this->from());
+            if ($this->replyTo()) {
+                $email->replyTo($this->replyTo());
+            }
+            $email
+                ->to($adminEmail)
+                ->subject(sprintf('Rappels J-1 — %d envoyé(s) ce matin', $sent))
+                ->htmlTemplate('emails/day_before_summary_admin.html.twig')
+                ->context([
+                    'sent'     => $sent,
+                    'skipped'  => $skipped,
+                    'bookings' => $bookings,
+                    'runDate'  => new \DateTimeImmutable(),
+                ]);
+
+            $this->mailer->send($email);
+        } catch (\Throwable $e) {
+            $this->logger->error('Échec envoi récap J-1 admin: ' . $e->getMessage(), [
+                'file' => $e->getFile() . ':' . $e->getLine(),
+            ]);
+        }
+    }
+
+    /**
      * Email de réinitialisation de mot de passe.
      * L'URL est un lien signé HMAC à usage unique (le hash du mot de passe actuel
      * est dans la signature → dès qu'il change, l'ancien lien devient invalide).

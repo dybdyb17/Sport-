@@ -1,0 +1,52 @@
+{% extends 'emails/base.html.twig' %}
+{% import 'emails/_macros.html.twig' as m %}
+
+{% block subject %}Rappels J-1 — {{ sent }} envoyé(s) ce matin{% endblock %}
+
+{% block content %}
+<p style="margin:0 0 8px;font-size:18px;font-weight:700;color:#ECECEC;font-family:Arial,Helvetica,sans-serif;">
+  Récap quotidien — rappels J-1
+</p>
+<p style="margin:0 0 24px;font-size:14px;color:#9A9080;font-family:Arial,Helvetica,sans-serif;line-height:1.6;">
+  Exécution du {{ runDate|date('d/m/Y à H\\hi') }}. Tu reçois ce mail tous les matins même
+  si zéro rappel a été envoyé — c'est ton confirmation quotidien que le cron tourne bien.
+  Si tu ne reçois pas ce mail un matin, c'est que le système a planté → check Railway.
+</p>
+
+<table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin:0 0 20px;">
+  <tr>
+    <td width="33%" style="padding:14px;background-color:#161620;border-left:3px solid #2ECC71;border-radius:6px;text-align:center;">
+      <div style="font-weight:700;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#2ECC71;font-family:Arial,Helvetica,sans-serif;">Envoyés</div>
+      <div style="font-family:'Barlow Condensed',Arial,sans-serif;font-size:32px;font-weight:900;color:#2ECC71;margin-top:4px;">{{ sent }}</div>
+    </td>
+    <td width="2%"></td>
+    <td width="33%" style="padding:14px;background-color:#161620;border-left:3px solid #C8A951;border-radius:6px;text-align:center;">
+      <div style="font-weight:700;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#C8A951;font-family:Arial,Helvetica,sans-serif;">Ignorés</div>
+      <div style="font-family:'Barlow Condensed',Arial,sans-serif;font-size:32px;font-weight:900;color:#C8A951;margin-top:4px;">{{ skipped }}</div>
+    </td>
+    <td width="2%"></td>
+    <td width="33%" style="padding:14px;background-color:#161620;border-left:3px solid #6A6050;border-radius:6px;text-align:center;">
+      <div style="font-weight:700;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#9A9080;font-family:Arial,Helvetica,sans-serif;">Total demain</div>
+      <div style="font-family:'Barlow Condensed',Arial,sans-serif;font-size:32px;font-weight:900;color:#ECECEC;margin-top:4px;">{{ bookings|length }}</div>
+    </td>
+  </tr>
+</table>
+
+{% if bookings is empty %}
+  <p style="margin:20px 0 0;font-size:14px;color:#9A9080;font-family:Arial,Helvetica,sans-serif;line-height:1.6;text-align:center;font-style:italic;">
+    Aucune séance confirmée prévue pour demain. Le cron a tourné normalement, simplement
+    il n'y avait personne à relancer.
+  </p>
+{% else %}
+  {{ m.divider() }}
+  <div style="font-weight:700;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#C8A951;margin-bottom:10px;font-family:Arial,Helvetica,sans-serif;">
+    Séances ciblées demain
+  </div>
+  {% for b in bookings %}
+    {{ m.infoCard(
+      b.reference,
+      (b.client.nomComplet ?? '?') ~ ' · ' ~ (b.coach.nomComplet ?? '?') ~ ' · ' ~ b.startAt|date('d/m H\\hi')
+    ) }}
+  {% endfor %}
+{% endif %}
+{% endblock %}

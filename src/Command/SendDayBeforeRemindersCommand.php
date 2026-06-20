@@ -66,11 +66,6 @@ class SendDayBeforeRemindersCommand extends Command
         /** @var Booking[] $list */
         $list = $qb->getQuery()->getResult();
 
-        if (empty($list)) {
-            $io->success('Aucune séance demain — rien à envoyer.');
-            return Command::SUCCESS;
-        }
-
         $io->title(sprintf('Rappels J-1 — %d séance(s) demain', count($list)));
         $sent = 0;
         $skipped = 0;
@@ -96,9 +91,19 @@ class SendDayBeforeRemindersCommand extends Command
 
         if ($dryRun) {
             $io->note(sprintf('Dry-run : %d email(s) auraient été envoyés.', count($list)));
-        } else {
-            $io->success(sprintf('Envoi terminé : %d envoyé(s), %d ignoré(s).', $sent, $skipped));
+            return Command::SUCCESS;
         }
+
+        // Récap quotidien à l'admin — TOUJOURS envoyé (même si 0 mail) pour servir
+        // de "dead man's switch" : si Loïc ne reçoit pas son ping un matin, c'est
+        // que le cron a planté en silence. À NE PAS supprimer.
+        $this->mailer->sendDayBeforeReminderSummary($sent, $skipped, $list);
+
+        $io->success(sprintf('Envoi terminé : %d envoyé(s), %d ignoré(s). Récap admin envoyé à %s.',
+            $sent,
+            $skipped,
+            $_ENV['APP_EMAIL_ADMIN'] ?? 'ls.sportplus13@gmail.com'
+        ));
         return Command::SUCCESS;
     }
 }
