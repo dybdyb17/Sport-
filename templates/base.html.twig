@@ -23,7 +23,10 @@
   <meta name="twitter:image"      content="{{ app.request.schemeAndHttpHost ~ asset('img/club-photos/coaching-halteres.jpg') }}">
   {% endblock %}
 
-  <link rel="icon" href="{{ asset('favicon.svg') }}" type="image/svg+xml">
+  {# Favicons : Google indexe le PNG, les browsers modernes utilisent le SVG, iOS l'apple-touch-icon. #}
+  <link rel="icon" type="image/png" sizes="192x192" href="{{ asset('favicon.png') }}">
+  <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}">
+  <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('apple-touch-icon.png') }}">
   {% block preload_assets %}{% endblock %}
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

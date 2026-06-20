@@ -167,6 +167,17 @@ ResetFoundingClaims, SeedFoundingOffer, SeedPricingShowcase, **SendDayBeforeRemi
   direct au client. Template `templates/emails/contact_message.html.twig` (étend
   `emails/base.html.twig` + macros). Validation basique côté contrôleur (nom, email, message
   non vides + `filter_var` email).
+- **Favicon Google + iOS (20 juin)** : SPORT+ est désormais en première page Google sur
+  « sport+ marseille » mais le favicon ressortait en globe générique car on n'avait QUE
+  un `favicon.svg` — or **Google indexe uniquement les favicons en PNG/JPG/ICO**, pas SVG.
+  Solution : 3 fichiers servis à la racine `public/` :
+  - `favicon.png` (192×192, 4 KB) — pour Google + browsers modernes
+  - `favicon.svg` (360 octets) — pour browsers vectoriels (fallback)
+  - `apple-touch-icon.png` (180×180, 3.7 KB) — pour iOS "Ajouter à l'écran d'accueil"
+  Générés via `qlmanage -t -s 512` (macOS) → puis `sips -Z` pour les tailles cibles.
+  Balises link mises à jour dans `base.html.twig`. Le favicon est le S+ stylé doré/vert
+  sur fond noir — signature visuelle SPORT+. Pour forcer Google à recrawler : Search
+  Console → Outil d'inspection URL → "Demander une indexation".
 - **Bouton « Sortir admin » dans le header (20 juin)** : en plus de la bannière sticky en
   haut ET du FAB en bas à droite, un **3e bouton** « SORTIR ADMIN » est désormais affiché
   dans le `header-actions` de `base.html.twig` — donc visible sur **toutes** les pages
