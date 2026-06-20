@@ -19,7 +19,7 @@
 {{ m.infoCard('Coach', coach.nomComplet) }}
 {{ m.infoCard('Format', booking.format.label) }}
 {{ m.infoCard('Créneau', booking.timeSlot.label) }}
-{{ m.infoCard('Date et heure', booking.startAt|date('d/m/Y à H:i')) }}
+{{ m.infoCard('Date et horaires', booking.startAt|date('d/m/Y') ~ ' · ' ~ booking.timeRangeFormatted ~ ' <span style="color:#C8A951;font-weight:700;">(' ~ booking.durationFormatted ~ ')</span>') }}
 {{ m.infoCard('Lieu', '164 Chemin de Saint-Jean du Désert, 13005 Marseille') }}
 
 {{ m.button(espaceClientUrl, 'Voir ma séance') }}

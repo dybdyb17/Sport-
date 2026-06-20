@@ -7,7 +7,7 @@
       <h2 class="peek-title">{{ b.offerLabel }}</h2>
       <div class="peek-when">
         <i class="ti ti-calendar"></i>
-        {{ b.startAt|format_datetime('none', 'none', "EEEE d MMMM y", locale='fr') }} · <i class="ti ti-clock"></i> {{ b.startAt|date('H\\hi') }} — {{ b.endAt|date('H\\hi') }}
+        {{ b.startAt|format_datetime('none', 'none', "EEEE d MMMM y", locale='fr') }} · <i class="ti ti-clock"></i> {{ b.timeRangeFormatted }} <span style="color:var(--gold);font-size:13px;">· {{ b.durationFormatted }}</span>
       </div>
     </div>
     <span class="status-badge {{ b.status }}">

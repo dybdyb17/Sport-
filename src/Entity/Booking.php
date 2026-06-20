@@ -403,6 +403,36 @@ class Booking
         return intdiv($this->endAt->getTimestamp() - $this->startAt->getTimestamp(), 60);
     }
 
+    /** Ex: "1h" ou "1h30" — pour l'affichage compact en listing. */
+    public function getDurationFormatted(): string
+    {
+        $minutes = $this->getDurationMinutes();
+        $hours   = intdiv($minutes, 60);
+        $rest    = $minutes % 60;
+        if ($hours === 0) {
+            return $minutes . ' min';
+        }
+        return $rest === 0
+            ? $hours . 'h'
+            : sprintf('%dh%02d', $hours, $rest);
+    }
+
+    /**
+     * Ex: "22h00 → 23h00" — pour que le client voie d'un coup d'œil que la séance
+     * a une plage horaire claire et ne déborde pas sur autre chose.
+     */
+    public function getTimeRangeFormatted(): string
+    {
+        if (!$this->startAt) {
+            return '—';
+        }
+        $start = $this->startAt->format('H\hi');
+        if (!$this->endAt) {
+            return $start;
+        }
+        return $start . ' → ' . $this->endAt->format('H\hi');
+    }
+
     // ─── Callbacks de validation Symfony ──────────────────────────────────
 
     #[Assert\Callback]

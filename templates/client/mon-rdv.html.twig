@@ -75,7 +75,13 @@
       </div>
       <div class="rdv-detail">
         <div class="rdv-detail-label"><i class="ti ti-calendar"></i> Date</div>
-        <div class="rdv-detail-value">{{ booking.startAt|date('d/m/Y \\à H\\hi') }}</div>
+        <div class="rdv-detail-value">
+          {{ booking.startAt|date('d/m/Y') }}
+          <div style="font-size:13px;color:var(--text-dim);margin-top:2px;">
+            <i class="ti ti-clock" style="font-size:13px;color:var(--gold-dim);"></i>
+            {{ booking.timeRangeFormatted }} <span style="color:var(--gold);">· {{ booking.durationFormatted }}</span>
+          </div>
+        </div>
       </div>
       <div class="rdv-detail">
         <div class="rdv-detail-label"><i class="ti ti-clock"></i> Format</div>

@@ -20,7 +20,7 @@
     <div style="width:100%;display:flex;flex-direction:column;gap:8px;">
       <div style="display:flex;align-items:center;gap:8px;font-size:14px;color:var(--text-dim);">
         <i class="ti ti-calendar" style="color:var(--gold-dim);"></i>
-        {{ booking.startAt|date('d/m/Y à H:i') }}
+        {{ booking.startAt|date('d/m/Y') }} · {{ booking.timeRangeFormatted }} <span style="color:var(--gold);">({{ booking.durationFormatted }})</span>
       </div>
       <div style="display:flex;align-items:center;gap:8px;font-size:14px;color:var(--text-dim);">
         <i class="ti ti-user" style="color:var(--gold-dim);"></i>

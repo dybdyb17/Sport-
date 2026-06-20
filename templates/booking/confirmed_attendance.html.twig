@@ -45,10 +45,11 @@
       <div>
         <div style="font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:2px;
                     color:var(--text-dim);text-transform:uppercase;margin-bottom:4px;">
-          <i class="ti ti-clock"></i> Heure
+          <i class="ti ti-clock"></i> Horaires
         </div>
         <div style="color:var(--white);font-size:15px;font-weight:600;">
-          {{ booking.startAt|date('H\\hi') }}
+          {{ booking.timeRangeFormatted }}
+          <span style="color:var(--gold);font-size:13px;">· {{ booking.durationFormatted }}</span>
         </div>
       </div>
       <div>

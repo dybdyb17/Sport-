@@ -279,7 +279,10 @@
             {% set isImminent = booking.startAt|date('U') - 'now'|date('U') < 86400 %}
             <tr>
               <td style="font-family:'Barlow Condensed',sans-serif;font-weight:700;">{{ booking.offerLabel }}</td>
-              <td style="color:var(--text-dim);">{{ booking.startAt|date('d/m/Y à H:i') }}</td>
+              <td style="color:var(--text-dim);">
+                {{ booking.startAt|date('d/m/Y à H\\hi') }}
+                <span style="color:var(--gold);font-size:11px;font-weight:600;">· {{ booking.durationFormatted }}</span>
+              </td>
               <td style="color:var(--text-dim);">
                 {{ booking.client.nomComplet }}
                 {% if booking.client.phone %}
@@ -346,7 +349,10 @@
           {% for booking in historyBookings %}
             <tr>
               <td style="font-family:'Barlow Condensed',sans-serif;font-weight:700;">{{ booking.offerLabel }}</td>
-              <td style="color:var(--text-dim);">{{ booking.startAt|date('d/m/Y à H:i') }}</td>
+              <td style="color:var(--text-dim);">
+                {{ booking.startAt|date('d/m/Y à H\\hi') }}
+                <span style="color:var(--gold);font-size:11px;font-weight:600;">· {{ booking.durationFormatted }}</span>
+              </td>
               <td style="color:var(--text-dim);">
                 {{ booking.client.nomComplet }}
                 {% if booking.client.phone %}
