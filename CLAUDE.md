@@ -167,6 +167,14 @@ ResetFoundingClaims, SeedFoundingOffer, SeedPricingShowcase, **SendDayBeforeRemi
   direct au client. Template `templates/emails/contact_message.html.twig` (étend
   `emails/base.html.twig` + macros). Validation basique côté contrôleur (nom, email, message
   non vides + `filter_var` email).
+- **Bouton « Sortir admin » dans le header (20 juin)** : en plus de la bannière sticky en
+  haut ET du FAB en bas à droite, un **3e bouton** « SORTIR ADMIN » est désormais affiché
+  dans le `header-actions` de `base.html.twig` — donc visible sur **toutes** les pages
+  publiques/client/coach. Style pill orange-doré pulsant. Sur mobile : icône seule.
+  Triple sécurité pour ne jamais rester coincé en impersonnification.
+  ⚠️ **Compat Symfony 6+** : check étendu sur `is_granted('ROLE_PREVIOUS_ADMIN') or
+  is_granted('IS_IMPERSONATOR')` — le second nom est le plus récent, l'ancien reste
+  supporté. Variable Twig `isImpersonating` calculée une fois au début du body et réutilisée.
 - **FAB « Sortir admin » impersonnification (20 juin)** : en plus de la bannière sticky
   en haut, un bouton flottant orange est désormais affiché en bas à droite quand un admin
   impersonne un user. `position: fixed`, `z-index: 10000`, animation pulse douce pour

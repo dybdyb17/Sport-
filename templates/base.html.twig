@@ -38,7 +38,9 @@
 {# Bannière + FAB d'impersonnification — UNIQUEMENT pour un admin qui impersonne un user.
    Le rôle ROLE_PREVIOUS_ADMIN est ajouté automatiquement par Symfony en mode switch_user.
    → Strictement invisible pour les vrais clients/coachs/admins non impersonnifiants. #}
-{% if is_granted('ROLE_PREVIOUS_ADMIN') %}
+{# Compatibilité : Symfony 6+ expose IS_IMPERSONATOR en plus de ROLE_PREVIOUS_ADMIN. #}
+{% set isImpersonating = is_granted('ROLE_PREVIOUS_ADMIN') or is_granted('IS_IMPERSONATOR') %}
+{% if isImpersonating %}
   <div class="impersonate-banner" role="alert">
     <div class="impersonate-banner-inner">
       <div class="impersonate-banner-text">
@@ -95,6 +97,16 @@
 
     <!-- Actions -->
     <div class="header-actions">
+      {# Bouton "Sortir admin" dans le header — invisible aux non-impersonnifiants,
+         affiché en priorité absolue pour l'admin en mode switch. Toujours dans le header
+         donc présent sur TOUTES les pages qui étendent base.html.twig. #}
+      {% if isImpersonating ?? false %}
+        <a href="{{ path('app_admin_users', {_switch_user: '_exit'}) }}" class="header-impersonate-exit"
+           title="Sortir et redevenir admin">
+          <i class="ti ti-logout"></i>
+          <span>Sortir admin</span>
+        </a>
+      {% endif %}
       {% if app.user %}
         <!-- CTA Réserver (pour non-coachs/non-admins) -->
         {% if not is_granted('ROLE_COACH') and not is_granted('ROLE_ADMIN') %}

@@ -409,6 +409,43 @@ img, video, iframe { max-width: 100%; }
   .impersonate-banner-inner { padding: 8px 12px; }
 }
 
+/* Bouton "Sortir admin" dans le header — visible partout grâce à la sticky du header.
+   Style voyant orange pour ne jamais l'oublier. Invisible aux non-impersonnifiants. */
+.header-impersonate-exit {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  background: linear-gradient(135deg, #d49426 0%, #b97a1e 100%);
+  border: 1.5px solid #ffd06b;
+  border-radius: 100px;
+  color: #1a1208;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  text-decoration: none;
+  box-shadow: 0 0 0 3px rgba(212,148,38,.2), 0 4px 14px rgba(212,148,38,.3);
+  transition: transform .15s, box-shadow .15s;
+  flex-shrink: 0;
+  animation: impersonate-fab-pulse 2.5s ease-in-out infinite;
+}
+.header-impersonate-exit:hover {
+  transform: translateY(-1px);
+  color: #000;
+  box-shadow: 0 0 0 4px rgba(212,148,38,.3), 0 8px 22px rgba(212,148,38,.4);
+}
+.header-impersonate-exit .ti { font-size: 15px; }
+
+@media (max-width: 640px) {
+  .header-impersonate-exit {
+    padding: 7px 10px;
+  }
+  .header-impersonate-exit span { display: none; }
+  .header-impersonate-exit .ti { font-size: 18px; }
+}
+
 /* FAB flottant en bas à droite — secours quand la bannière sticky est masquée
    (modals, longue page, parent avec transform/overflow, etc.).
    Position fixed = vraiment indéplaçable. */
