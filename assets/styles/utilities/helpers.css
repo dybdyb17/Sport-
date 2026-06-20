@@ -410,10 +410,6 @@ img, video, iframe { max-width: 100%; }
   .impersonate-banner { display: none; }
   .impersonate-banner-sub { display: none; }
   .impersonate-banner-inner { padding: 8px 12px; }
-  /* Le FAB peut aussi causer des soucis viewport iOS (dézoom auto au tap d'un élément
-     position:fixed animé). On le cache aussi en mobile — le bouton dans le header
-     suffit largement comme moyen de sortir d'impersonnification. */
-  .impersonate-fab { display: none; }
 }
 
 /* Helpers globaux d'affichage responsive — à utiliser partout où on a besoin de
@@ -499,15 +495,10 @@ img, video, iframe { max-width: 100%; }
   50%      { box-shadow: 0 10px 30px rgba(212,148,38,.55), 0 0 0 10px rgba(212,148,38,.05); }
 }
 
-/* Mobile : icône seule pour ne pas gêner le contenu. */
+/* Mobile : le FAB est CACHÉ — le bouton dans le header suffit, et le FAB animé
+   (position:fixed + animation pulse) est suspect du dézoom iOS au tap. */
 @media (max-width: 640px) {
-  .impersonate-fab {
-    bottom: 20px;
-    right: 16px;
-    padding: 14px;
-  }
-  .impersonate-fab-label { display: none; }
-  .impersonate-fab .ti { font-size: 22px; }
+  .impersonate-fab { display: none !important; }
 }
 
 /* Bloc de droite de la topbar admin : "Voir le site" + nom user.
