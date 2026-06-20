@@ -25,6 +25,7 @@
           <th>Email</th>
           <th>Rôle</th>
           <th>Inscription</th>
+          <th>Actions</th>
         </tr>
       </thead>
       <tbody>
@@ -47,6 +48,21 @@
               </span>
             </td>
             <td style="color:var(--text-dim);">{{ user.createdAt|date('d/m/Y') }}</td>
+            <td>
+              {# Empêche un admin de switcher vers lui-même : pas de bouton si c'est le user courant. #}
+              {% if user.id != app.user.id %}
+                <a href="{{ path('app_home', {_switch_user: user.email}) }}" class="action-btn"
+                   title="Voir le site comme cet utilisateur"
+                   data-confirm-title="Entrer dans l'espace de {{ user.nomComplet }} ?"
+                   data-confirm="Tu verras le site comme {{ user.nomComplet }} le voit. Tes actions seront tracées dans le journal d'audit. Tu pourras sortir à tout moment via la bannière orange."
+                   data-confirm-button="Oui, entrer dans son espace"
+                   onclick="event.preventDefault(); if (confirm(this.dataset.confirm)) window.location.href = this.href;">
+                  <i class="ti ti-user-bolt"></i> Entrer
+                </a>
+              {% else %}
+                <span style="color:var(--text-dim);font-size:12px;font-style:italic;">— Toi —</span>
+              {% endif %}
+            </td>
           </tr>
         {% endfor %}
       </tbody>

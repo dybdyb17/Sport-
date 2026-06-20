@@ -35,6 +35,23 @@
 </head>
 <body>
 
+{# Bannière d'impersonnification — visible UNIQUEMENT si un admin a switché en un autre user.
+   Le rôle ROLE_PREVIOUS_ADMIN est ajouté automatiquement par Symfony quand on est en mode switch. #}
+{% if is_granted('ROLE_PREVIOUS_ADMIN') %}
+  <div class="impersonate-banner" role="alert">
+    <div class="impersonate-banner-inner">
+      <div class="impersonate-banner-text">
+        <i class="ti ti-user-bolt"></i>
+        Tu es connecté en tant que <strong>{{ app.user.nomComplet ?? app.user.userIdentifier }}</strong>
+        <span class="impersonate-banner-sub">— vue côté utilisateur, tes actions sont tracées</span>
+      </div>
+      <a href="{{ path('app_admin_users', {_switch_user: '_exit'}) }}" class="impersonate-banner-exit">
+        <i class="ti ti-logout"></i> Sortir et redevenir admin
+      </a>
+    </div>
+  </div>
+{% endif %}
+
 <header class="site-header">
   <div class="header-inner">
     <!-- Logo -->

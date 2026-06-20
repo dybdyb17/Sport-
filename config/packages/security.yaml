@@ -9,9 +9,10 @@ security:
                 property: email
 
     # Un coach et un admin ont aussi les droits d'un client/utilisateur connecté.
+    # ROLE_ADMIN porte aussi ROLE_ALLOWED_TO_SWITCH qui débloque l'impersonnification.
     role_hierarchy:
         ROLE_COACH: [ROLE_CLIENT, ROLE_USER]
-        ROLE_ADMIN: [ROLE_COACH, ROLE_CLIENT, ROLE_USER]
+        ROLE_ADMIN: [ROLE_COACH, ROLE_CLIENT, ROLE_USER, ROLE_ALLOWED_TO_SWITCH]
 
     firewalls:
         dev:
@@ -32,6 +33,12 @@ security:
                 secret: '%kernel.secret%'
                 lifetime: 604800
                 path: /
+            # Impersonnification : un ROLE_ADMIN peut prendre l'identité d'un autre
+            # user (client/coach/admin) pour voir son espace tel qu'il le voit.
+            # Activé via ?_switch_user=email@du.user, sortie via ?_switch_user=_exit.
+            switch_user:
+                role: ROLE_ALLOWED_TO_SWITCH
+                parameter: _switch_user
 
     access_control:
         - { path: ^/login, roles: PUBLIC_ACCESS }

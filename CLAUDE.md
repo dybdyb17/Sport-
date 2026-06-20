@@ -162,6 +162,31 @@ ResetFoundingClaims, SeedFoundingOffer, SeedPricingShowcase, **SendDayBeforeRemi
   direct au client. Template `templates/emails/contact_message.html.twig` (étend
   `emails/base.html.twig` + macros). Validation basique côté contrôleur (nom, email, message
   non vides + `filter_var` email).
+- **Impersonnification admin (20 juin)** : un `ROLE_ADMIN` peut « entrer dans l'espace »
+  de n'importe quel user (client, coach, autre admin) depuis `/admin/users` via le bouton
+  **Entrer** sur chaque ligne. Mécanique : `switch_user` natif Symfony activé dans
+  `security.yaml` (param `_switch_user=email@du.user`, sortie via `_switch_user=_exit`).
+  Symfony garde un token `ROLE_PREVIOUS_ADMIN` → retour en 1 clic, pas besoin de se
+  reconnecter. Bannière orange persistante affichée tant qu'on impersonne (dans
+  `base.html.twig` ET `admin/base.html.twig` pour couvrir toutes les pages). Toute entrée
+  ET sortie est tracée dans le journal d'audit via `SwitchUserAuditListener`
+  (`AuditAction::ADMIN_IMPERSONATE` / `ADMIN_LEAVE_IMPERSONATE`) — qui a switché en qui,
+  IP, UA, date. ROLE_ADMIN hérite désormais aussi de ROLE_ALLOWED_TO_SWITCH.
+- **Durée de séance bien visible partout (20 juin)** : 2 helpers ajoutés sur `Booking` :
+  `getTimeRangeFormatted()` → `"22h00 → 23h00"` et `getDurationFormatted()` → `"1h"`
+  (ou `"1h30"` plus tard si on a des séances longues). Remplacé l'affichage simple de
+  l'heure de début par la plage horaire + badge durée sur : Mon RDV, page suivi demande,
+  mail confirmation client, mail J-1 (corps + infoCard), page « Présence confirmée »,
+  ticket prochaine séance espace client, dashboard coach (3 occurrences), modal PEEK admin.
+  Le client comprend en 1 seconde que sa séance va de 9h à 10h, pas juste « à 9h ».
+- **Récap J-1 admin = dead man's switch (20 juin)** : à la fin de la commande
+  `app:send-day-before-reminders`, un email récap part **toujours** à `APP_EMAIL_ADMIN`
+  (`ls.sportplus13@gmail.com`), même si 0 mail a été envoyé. Contenu : nombre envoyés,
+  ignorés, total demain + liste des séances ciblées. Template
+  `emails/day_before_summary_admin.html.twig`. **But** : si Loïc ne reçoit pas son ping
+  quotidien un matin, il sait que le cron Railway a planté en silence — pas besoin
+  d'attendre qu'un client se plaigne. Méthode `MailerService::sendDayBeforeReminderSummary()`.
+  Le dry-run NE déclenche PAS l'envoi du récap (pour tests).
 - **Fix bug bloquant — confirmation de présence J-1 inaccessible (20 juin)** :
   `BookingController` avait un `#[IsGranted('ROLE_CLIENT')]` au niveau de la **classe**
   qui s'appliquait à toutes les méthodes, **y compris `confirmAttendance`** qui doit être

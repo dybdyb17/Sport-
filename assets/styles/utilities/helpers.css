@@ -338,6 +338,77 @@ img, video, iframe { max-width: 100%; }
   .admin-burger { display: flex; }
 }
 
+/* ─── Bannière impersonnification (switch_user actif) ──────────────────
+   Affichée en permanence quand un admin a pris l'identité d'un autre user.
+   Volontairement orange/jaune voyant pour qu'on ne l'oublie jamais. */
+.impersonate-banner {
+  position: sticky;
+  top: 0;
+  z-index: 9999;
+  background: linear-gradient(90deg, #b97a1e 0%, #d49426 100%);
+  border-bottom: 1px solid rgba(0,0,0,.3);
+  box-shadow: 0 4px 16px rgba(0,0,0,.4);
+  color: #1a1208;
+  font-family: 'Barlow Condensed', sans-serif;
+}
+.impersonate-banner-inner {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 8px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  flex-wrap: wrap;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: .5px;
+}
+.impersonate-banner-text {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+.impersonate-banner-text strong {
+  color: #fff;
+  letter-spacing: 1.5px;
+}
+.impersonate-banner-text .ti { font-size: 18px; color: #1a1208; }
+.impersonate-banner-sub {
+  font-weight: 500;
+  text-transform: none;
+  letter-spacing: 0;
+  font-style: italic;
+  opacity: .85;
+}
+.impersonate-banner-exit {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  background: #1a1208;
+  color: #ffcf6b;
+  border-radius: 100px;
+  text-decoration: none;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  transition: transform .15s, box-shadow .15s;
+  border: 1px solid #ffcf6b;
+}
+.impersonate-banner-exit:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(0,0,0,.3);
+  color: #fff;
+}
+@media (max-width: 640px) {
+  .impersonate-banner-sub { display: none; }
+  .impersonate-banner-inner { padding: 8px 12px; }
+}
+
 /* Bloc de droite de la topbar admin : "Voir le site" + nom user.
    Le bouton "Voir le site" est TOUJOURS visible (desktop + mobile) — c'est
    le filet de sécurité pour ne JAMAIS rester coincé dans l'admin. */

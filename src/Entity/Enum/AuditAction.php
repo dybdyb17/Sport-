@@ -22,6 +22,8 @@ enum AuditAction: string
     case USER_DELETED          = 'user_deleted';          // suppression compte
     case ADMIN_PRICE_OVERRIDE  = 'admin_price_override';  // admin modifie un prix
     case FOUNDING_BILAN_DONE   = 'founding_bilan_done';   // bilan fondateur marqué fait
+    case ADMIN_IMPERSONATE     = 'admin_impersonate';     // admin prend identité d'un user
+    case ADMIN_LEAVE_IMPERSONATE = 'admin_leave_impersonate'; // admin sort d'impersonnification
 
     public function label(): string
     {
@@ -39,6 +41,8 @@ enum AuditAction: string
             self::USER_DELETED           => 'Compte supprimé',
             self::ADMIN_PRICE_OVERRIDE   => 'Prix modifié par admin',
             self::FOUNDING_BILAN_DONE    => 'Bilan fondateur effectué',
+            self::ADMIN_IMPERSONATE      => 'Admin entré dans un espace utilisateur',
+            self::ADMIN_LEAVE_IMPERSONATE => 'Admin sorti d\'un espace utilisateur',
         };
     }
 
@@ -47,7 +51,7 @@ enum AuditAction: string
     {
         return match ($this) {
             self::PAYMENT_DISPUTED, self::USER_DELETED, self::ADMIN_PRICE_OVERRIDE => 'critical',
-            self::PAYMENT_DECLARED, self::NO_SHOW_MARKED, self::ROLE_GRANTED, self::ROLE_REVOKED => 'warning',
+            self::PAYMENT_DECLARED, self::NO_SHOW_MARKED, self::ROLE_GRANTED, self::ROLE_REVOKED, self::ADMIN_IMPERSONATE => 'warning',
             default => 'info',
         };
     }
