@@ -77,7 +77,12 @@ d'abonnement + accès salle), sans le remplacer.
 - Répertoire local : `/Users/dybril/Dev/sportplus-corrige`. Serveur dev sur `127.0.0.1:8001`.
 - **Pas de migrations Doctrine** → `php bin/console doctrine:schema:update --force` (start.sh
   étape 2 le fait en prod).
-- Filtre Twig `format_datetime` NON installé → utiliser `|date('d/m/Y \\à H\\hi')`.
+- Convention dates Twig (mise à jour 20 juin) : `twig/intl-extra ^3.26` **est installé**.
+  - `|date('d/m/Y \\à H\\hi')` pour les formats compacts du quotidien
+  - `|format_datetime('none', 'none', "EEEE d MMMM y", locale='fr')` quand on veut le
+    français complet et lisible (ex: « samedi 21 juin 2026 »). Les 2 premiers args
+    `'none'` sont obligatoires sinon le pattern personnalisé est ignoré (déjà vécu).
+  - Les deux coexistent volontairement dans le code, ne pas tout uniformiser.
 - Doctrine ORM 3.x + PHP 8.4 → `enable_native_lazy_objects: true` obligatoire.
 
 ### DA « Night Performance »
