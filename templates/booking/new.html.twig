@@ -231,11 +231,20 @@
           </div>
 
           <div class="bk-detail-field">
-            <label class="bk-detail-label"><i class="ti ti-calendar"></i> Date &amp; heure</label>
+            <label class="bk-detail-label">
+              <i class="ti ti-calendar"></i> Date &amp; heure de début
+              <span style="margin-left:auto;font-size:11px;font-weight:700;letter-spacing:1.5px;
+                           text-transform:uppercase;color:var(--gold);
+                           background:rgba(212,175,55,.1);border:1px solid rgba(212,175,55,.35);
+                           padding:2px 10px;border-radius:100px;">
+                <i class="ti ti-clock"></i> Durée 1h
+              </span>
+            </label>
             {{ form_widget(form.startAt) }}
             <div class="bk-detail-hint" id="slot-hint">
               <i class="ti ti-info-circle"></i>
               Doit correspondre au créneau choisi : Journée 6h–20h · Night 20h–minuit · Astreinte minuit–6h.
+              <span id="time-range-preview" style="display:none;margin-left:8px;color:var(--gold);font-weight:600;"></span>
             </div>
             {{ form_errors(form.startAt) }}
           </div>
@@ -410,6 +419,11 @@
         <div class="bk-recap-line">
           <span class="bk-recap-key"><i class="ti ti-sun"></i> Créneau</span>
           <span class="bk-recap-val" id="sum-slot">Journée 6h–20h</span>
+        </div>
+
+        <div class="bk-recap-line" id="sum-timerange-row" style="display:none;">
+          <span class="bk-recap-key"><i class="ti ti-clock"></i> Horaires</span>
+          <span class="bk-recap-val" id="sum-timerange">—</span>
         </div>
 
         <div class="bk-recap-line">

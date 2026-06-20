@@ -51,12 +51,17 @@
             <td>
               {# Empêche un admin de switcher vers lui-même : pas de bouton si c'est le user courant. #}
               {% if user.id != app.user.id %}
-                <a href="{{ path('app_home', {_switch_user: user.email}) }}" class="action-btn"
-                   title="Voir le site comme cet utilisateur"
+                {# Redirection vers l'espace adapté au rôle de la cible. #}
+                {% set target =
+                  user.role.value == 'admin' ? path('app_admin_dashboard', {_switch_user: user.email})
+                  : (user.role.value == 'coach' ? path('app_coach_dashboard', {_switch_user: user.email})
+                  : path('app_espace_client', {_switch_user: user.email}))
+                %}
+                <a href="{{ target }}" class="action-btn"
+                   title="Entrer dans son espace ({{ user.role.value }})"
                    data-confirm-title="Entrer dans l'espace de {{ user.nomComplet }} ?"
                    data-confirm="Tu verras le site comme {{ user.nomComplet }} le voit. Tes actions seront tracées dans le journal d'audit. Tu pourras sortir à tout moment via la bannière orange."
-                   data-confirm-button="Oui, entrer dans son espace"
-                   onclick="event.preventDefault(); if (confirm(this.dataset.confirm)) window.location.href = this.href;">
+                   data-confirm-button="Oui, entrer dans son espace">
                   <i class="ti ti-user-bolt"></i> Entrer
                 </a>
               {% else %}

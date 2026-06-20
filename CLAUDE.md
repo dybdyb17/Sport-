@@ -162,6 +162,21 @@ ResetFoundingClaims, SeedFoundingOffer, SeedPricingShowcase, **SendDayBeforeRemi
   direct au client. Template `templates/emails/contact_message.html.twig` (étend
   `emails/base.html.twig` + macros). Validation basique côté contrôleur (nom, email, message
   non vides + `filter_var` email).
+- **Fixes UX impersonnification + tunnel réservation (20 juin)** :
+  - Modal de confirmation universelle (`base.html.twig`) étendue pour intercepter aussi
+    les clics sur `<a data-confirm>` (avant : uniquement les `<form data-confirm>`).
+    Variable interne `pendingForm` → `pendingEl`. Plus de `confirm()` natif moche du
+    navigateur pour le bouton « Entrer » impersonnification.
+  - Bouton « Entrer » dans `/admin/users` route désormais vers l'**espace adapté au rôle
+    de la cible** : ROLE_ADMIN → `/admin`, ROLE_COACH → `/coach/dashboard`,
+    ROLE_CLIENT → `/mon-espace`. Avant : tout le monde tombait sur `/` (page d'accueil
+    publique).
+  - Tunnel de réservation (`templates/booking/new.html.twig`) : badge doré « Durée 1h »
+    fixe à droite du label « Date & heure de début ». Récap latéral : nouvelle ligne
+    **« Horaires »** qui apparaît dès que le client choisit une date/heure, avec
+    `22h00 → 23h00 · 1h` en direct. Hint sous le champ affiche aussi la plage calculée.
+    Logique dans `booking-form.js` : calcul `end = start + 60min`, formatage en `HHhMM`,
+    injection dans 3 éléments DOM à chaque `onChange` Flatpickr.
 - **Impersonnification admin (20 juin)** : un `ROLE_ADMIN` peut « entrer dans l'espace »
   de n'importe quel user (client, coach, autre admin) depuis `/admin/users` via le bouton
   **Entrer** sur chaque ligne. Mécanique : `switch_user` natif Symfony activé dans

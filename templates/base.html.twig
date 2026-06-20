@@ -490,14 +490,15 @@ document.addEventListener('keydown', function(e) {
   const msgEl   = document.getElementById('confirm-modal-message');
   const okBtn   = document.getElementById('confirm-modal-ok');
   const iconEl  = document.getElementById('confirm-modal-icon');
-  let pendingForm = null;
+  // Élément en attente de confirmation : peut être un <form> OU un <a href>.
+  let pendingEl = null;
 
-  function open(form) {
-    pendingForm = form;
-    titleEl.textContent  = form.dataset.confirmTitle  || "Confirmer l'action";
-    msgEl.textContent    = form.dataset.confirm       || '';
-    okBtn.textContent    = form.dataset.confirmButton || 'Confirmer';
-    const danger = form.dataset.confirmDanger === 'true';
+  function open(el) {
+    pendingEl = el;
+    titleEl.textContent  = el.dataset.confirmTitle  || "Confirmer l'action";
+    msgEl.textContent    = el.dataset.confirm       || '';
+    okBtn.textContent    = el.dataset.confirmButton || 'Confirmer';
+    const danger = el.dataset.confirmDanger === 'true';
     modal.classList.toggle('is-danger', danger);
     iconEl.innerHTML = danger ? '<i class="ti ti-alert-triangle"></i>' : '<i class="ti ti-help-circle"></i>';
     modal.classList.add('is-open');
@@ -509,9 +510,10 @@ document.addEventListener('keydown', function(e) {
     modal.classList.remove('is-open');
     modal.setAttribute('aria-hidden', 'true');
     document.body.style.overflow = '';
-    pendingForm = null;
+    pendingEl = null;
   }
 
+  // Intercepte les soumissions de form avec data-confirm
   document.addEventListener('submit', function (e) {
     const form = e.target;
     if (!(form instanceof HTMLFormElement)) return;
@@ -521,12 +523,25 @@ document.addEventListener('keydown', function(e) {
     open(form);
   }, true);
 
+  // Intercepte aussi les clics sur les liens <a href> avec data-confirm
+  document.addEventListener('click', function (e) {
+    const link = e.target.closest('a[data-confirm]');
+    if (!link) return;
+    if (link.dataset.confirmAccepted === 'true') return;
+    e.preventDefault();
+    open(link);
+  }, true);
+
   okBtn.addEventListener('click', function () {
-    if (!pendingForm) return close();
-    pendingForm.dataset.confirmAccepted = 'true';
-    const f = pendingForm;
+    if (!pendingEl) return close();
+    pendingEl.dataset.confirmAccepted = 'true';
+    const el = pendingEl;
     close();
-    f.submit();
+    if (el instanceof HTMLFormElement) {
+      el.submit();
+    } else if (el.tagName === 'A' && el.href) {
+      window.location.href = el.href;
+    }
   });
 
   modal.querySelectorAll('[data-confirm-cancel]').forEach(el =>

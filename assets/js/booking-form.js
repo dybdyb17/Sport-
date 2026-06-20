@@ -325,7 +325,30 @@
       disableMobile:   true,            // forcer le picker custom sur mobile aussi
       onChange: function(selectedDates) {
         if (!selectedDates[0]) return;
-        const hour = selectedDates[0].getHours();
+        const date = selectedDates[0];
+        const hour = date.getHours();
+
+        // Calcul plage horaire (début → fin = +1h, à afficher en direct partout)
+        const pad = (n) => String(n).padStart(2, '0');
+        const startStr = pad(date.getHours()) + 'h' + pad(date.getMinutes());
+        const endDate  = new Date(date.getTime() + 60 * 60 * 1000);
+        const endStr   = pad(endDate.getHours()) + 'h' + pad(endDate.getMinutes());
+        const range    = startStr + ' → ' + endStr;
+
+        // Récap latéral : ligne "Horaires"
+        const recapRow  = document.getElementById('sum-timerange-row');
+        const recapVal  = document.getElementById('sum-timerange');
+        if (recapRow && recapVal) {
+          recapVal.textContent = range + ' · 1h';
+          recapRow.style.display = '';
+        }
+        // Hint sous le champ : préview à côté du message
+        const preview = document.getElementById('time-range-preview');
+        if (preview) {
+          preview.textContent = '· ' + range + ' (1h)';
+          preview.style.display = 'inline';
+        }
+
         // Hint visuel selon le créneau sélectionné vs heure choisie
         const hint = document.getElementById('slot-hint');
         if (!hint) return;
@@ -337,7 +360,7 @@
         const isOk = slotMap[state.slot] ?? true;
         hint.style.color = isOk ? 'var(--text-dim)' : 'var(--danger, #ff6666)';
         hint.innerHTML = isOk
-          ? '<i class="ti ti-check" style="color:#7AB85A;"></i> Heure cohérente avec le créneau sélectionné'
+          ? '<i class="ti ti-check" style="color:#7AB85A;"></i> Heure cohérente avec le créneau · <span style="color:var(--gold);font-weight:600;">' + range + ' (1h)</span>'
           : '<i class="ti ti-alert-triangle" style="color:#ff6666;"></i> Attention : l\'heure ne correspond pas au créneau sélectionné (Journée 6h–20h · Night 20h–minuit · Astreinte minuit–6h)';
       },
     });
