@@ -135,15 +135,15 @@
 </div>
 
 {# Récap semaine #}
-<div style="display:flex;gap:32px;align-items:center;margin-top:16px;padding:16px 0;border-top:1px solid var(--border);">
-  <div style="font-family:'Barlow Condensed',sans-serif;font-size:15px;color:var(--text-dim);">
+<div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap;margin-top:16px;padding:16px 0;border-top:1px solid var(--border);">
+  <div style="font-family:'Barlow Condensed',sans-serif;font-size:15px;color:var(--text-dim);flex:1;min-width:0;">
     <i class="ti ti-calendar-stats" style="color:var(--gold);"></i>
     <strong style="color:var(--text);">{{ totalSessions }}</strong> séance{{ totalSessions != 1 ? 's' : '' }} cette semaine
     &nbsp;·&nbsp;
     CA généré : <strong style="color:var(--gold);">{{ totalRevenue|number_format(2, ',', ' ') }} €</strong>
   </div>
-  <a href="{{ path('app_admin_export_revenue', {from: from|date('Y-m-d'), to: to|date('Y-m-d')}) }}" class="btn btn-secondary btn-sm" style="margin-left:auto;">
-    <i class="ti ti-download"></i> Export CSV semaine
+  <a href="{{ path('app_admin_export_revenue', {from: from|date('Y-m-d'), to: to|date('Y-m-d')}) }}" class="btn btn-secondary btn-sm" style="flex-shrink:0;">
+    <i class="ti ti-download"></i> <span class="hide-on-mobile">Export CSV semaine</span><span class="show-on-mobile-only">CSV</span>
   </a>
 </div>
 

@@ -410,6 +410,18 @@ img, video, iframe { max-width: 100%; }
   .impersonate-banner { display: none; }
   .impersonate-banner-sub { display: none; }
   .impersonate-banner-inner { padding: 8px 12px; }
+  /* Le FAB peut aussi causer des soucis viewport iOS (dézoom auto au tap d'un élément
+     position:fixed animé). On le cache aussi en mobile — le bouton dans le header
+     suffit largement comme moyen de sortir d'impersonnification. */
+  .impersonate-fab { display: none; }
+}
+
+/* Helpers globaux d'affichage responsive — à utiliser partout où on a besoin de
+   raccourcir un libellé en mobile sans dupliquer un bouton complet. */
+.show-on-mobile-only { display: none; }
+@media (max-width: 640px) {
+  .hide-on-mobile { display: none; }
+  .show-on-mobile-only { display: inline; }
 }
 
 /* Bouton "Sortir admin" dans le header — visible partout grâce à la sticky du header.

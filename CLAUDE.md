@@ -167,6 +167,14 @@ ResetFoundingClaims, SeedFoundingOffer, SeedPricingShowcase, **SendDayBeforeRemi
   direct au client. Template `templates/emails/contact_message.html.twig` (étend
   `emails/base.html.twig` + macros). Validation basique côté contrôleur (nom, email, message
   non vides + `filter_var` email).
+- **Fixes mobile 2e passe (20 juin)** :
+  - **FAB « Sortir admin » caché en mobile** (`max-width: 640px`) : suspect du dézoom iOS
+    (position: fixed + animation pulse). En mobile, seul le bouton dans le header reste
+    pour sortir d'impersonnification.
+  - **Bouton « Export CSV semaine » calendrier admin** : parent en `flex-wrap: wrap` +
+    `flex-shrink: 0` sur le bouton, label raccourci à « CSV » en mobile via les helpers.
+  - **Helpers globaux `.hide-on-mobile` / `.show-on-mobile-only`** dans `helpers.css`,
+    réutilisables partout.
 - **Fixes mobile critiques (20 juin)** : 3 corrections ciblées sur le responsive.
   - **Bannière impersonnification cachée en mobile (≤640px)** : prenait 1/3 de l'écran
     avec son bouton « SORTIR ET REDEVENIR ADMIN » qui passait à la ligne. Le bouton dans
