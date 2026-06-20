@@ -499,6 +499,17 @@ img, video, iframe { max-width: 100%; }
    (position:fixed + animation pulse) est suspect du dézoom iOS au tap. */
 @media (max-width: 640px) {
   .impersonate-fab { display: none !important; }
+
+  /* Quand on impersonne sur mobile, le header est surchargé : Logo + bouton
+     "Sortir admin" + "Réserver" + avatar + burger = ça dépasse 100vw et iOS
+     dézoome pour tout afficher (et reste bloqué dézoomé).
+     → On cache "Réserver" et l'avatar pour que le header tienne dans l'écran.
+     L'avatar reste accessible via le menu burger. */
+  body.is-impersonating .header-actions .btn-primary,
+  body.is-impersonating .header-actions .user-avatar,
+  body.is-impersonating .header-actions > div:has(> .user-avatar) {
+    display: none !important;
+  }
 }
 
 /* Bloc de droite de la topbar admin : "Voir le site" + nom user.

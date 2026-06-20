@@ -167,6 +167,17 @@ ResetFoundingClaims, SeedFoundingOffer, SeedPricingShowcase, **SendDayBeforeRemi
   direct au client. Template `templates/emails/contact_message.html.twig` (étend
   `emails/base.html.twig` + macros). Validation basique côté contrôleur (nom, email, message
   non vides + `filter_var` email).
+- **Fix dézoom iOS en impersonnification (20 juin)** : cause identifiée — sur mobile, le
+  header de l'utilisateur impersonné contenait Logo + bouton « Sortir admin » + bouton
+  « Réserver » + avatar + burger = la somme des largeurs dépassait 100vw → iOS Safari
+  dézoomait pour tout afficher et restait bloqué dézoomé.
+  Fix :
+  - Classe `is-impersonating` ajoutée sur `<body>` quand `isImpersonating` est `true`
+    (variable Twig calculée une fois en haut de `base.html.twig`).
+  - CSS dans `helpers.css` : en mobile (`max-width: 640px`) ET sous `body.is-impersonating`,
+    on cache `.header-actions .btn-primary` (Réserver) et `.user-avatar` + son conteneur
+    parent (via `:has(> .user-avatar)`). L'avatar reste accessible via le menu burger.
+  - Le `body` reste propre pour les non-impersonnifiants : classe vide normale.
 - **Espace coach caché pour les admins non-coachs (20 juin)** : dans `base.html.twig`,
   le check `is_granted('ROLE_COACH')` (qui matche aussi les admins via la role_hierarchy)
   est remplacé par `app.user.coach is not null` pour le dropdown avatar et le menu mobile.

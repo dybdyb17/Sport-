@@ -36,13 +36,13 @@
   {% block stylesheets %}<link rel="stylesheet" href="{{ asset('styles/sportplus.css') }}">{% endblock %}
   {% block javascripts %}{% block importmap %}{{ importmap('app') }}{% endblock %}{% endblock %}
 </head>
-<body>
-
-{# Bannière + FAB d'impersonnification — UNIQUEMENT pour un admin qui impersonne un user.
-   Le rôle ROLE_PREVIOUS_ADMIN est ajouté automatiquement par Symfony en mode switch_user.
-   → Strictement invisible pour les vrais clients/coachs/admins non impersonnifiants. #}
 {# Compatibilité : Symfony 6+ expose IS_IMPERSONATOR en plus de ROLE_PREVIOUS_ADMIN. #}
 {% set isImpersonating = is_granted('ROLE_PREVIOUS_ADMIN') or is_granted('IS_IMPERSONATOR') %}
+<body class="{{ isImpersonating ? 'is-impersonating' : '' }}">
+
+{# Bannière + FAB d'impersonnification — UNIQUEMENT pour un admin qui impersonne un user.
+   La variable isImpersonating est définie plus haut (sur le body) pour appliquer
+   la classe is-impersonating dans le markup. #}
 {% if isImpersonating %}
   <div class="impersonate-banner" role="alert">
     <div class="impersonate-banner-inner">
