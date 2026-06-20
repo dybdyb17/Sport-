@@ -275,6 +275,8 @@
         </thead>
         <tbody>
           {% for booking in upcomingBookings %}
+            {# Séance prévue dans les 24 prochaines heures ? → on suggère la relance téléphone si non confirmé #}
+            {% set isImminent = booking.startAt|date('U') - 'now'|date('U') < 86400 %}
             <tr>
               <td style="font-family:'Barlow Condensed',sans-serif;font-weight:700;">{{ booking.offerLabel }}</td>
               <td style="color:var(--text-dim);">{{ booking.startAt|date('d/m/Y à H:i') }}</td>
@@ -286,6 +288,22 @@
                     <i class="ti ti-phone" style="font-size:13px;"></i> {{ booking.client.phone }}
                   </a>
                 {% endif %}
+                <div style="margin-top:8px;">
+                  {% if booking.clientConfirmedAt %}
+                    <span class="confirm-badge confirm-badge--confirmed">
+                      <i class="ti ti-user-check"></i> Présence confirmée
+                    </span>
+                  {% else %}
+                    <span class="confirm-badge confirm-badge--pending">
+                      <i class="ti ti-clock-hour-4"></i> En attente de confirmation
+                    </span>
+                    {% if isImminent and booking.client.phone %}
+                      <div class="confirm-badge-hint">
+                        <i class="ti ti-phone-call"></i> À relancer rapidement
+                      </div>
+                    {% endif %}
+                  {% endif %}
+                </div>
               </td>
               <td style="color:var(--gold);font-family:'Barlow Condensed',sans-serif;font-weight:700;">
                 {{ booking.displayAmountFormatted }}

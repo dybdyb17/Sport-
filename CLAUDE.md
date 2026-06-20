@@ -162,6 +162,19 @@ ResetFoundingClaims, SeedFoundingOffer, SeedPricingShowcase, **SendDayBeforeRemi
   direct au client. Template `templates/emails/contact_message.html.twig` (étend
   `emails/base.html.twig` + macros). Validation basique côté contrôleur (nom, email, message
   non vides + `filter_var` email).
+- **Badge confirmation de présence côté coach (20 juin)** : dans
+  `templates/coach/dashboard.html.twig`, section « Mes séances à venir », chaque ligne
+  affiche désormais un badge basé sur `Booking.clientConfirmedAt` :
+  - **Vert « Présence confirmée »** (icône `ti-user-check`) si le client a cliqué « Je
+    confirme ma présence » dans le mail J-1
+  - **Doré « En attente de confirmation »** (icône `ti-clock-hour-4`) sinon
+  - Hint additionnel discret « À relancer rapidement » (icône `ti-phone-call`) si la
+    séance est dans les 24h ET pas confirmée ET le client a un téléphone (le tel est déjà
+    cliquable au-dessus).
+  CSS dans `assets/styles/pages/dashboard-extras.css` (classes `.confirm-badge`,
+  `--confirmed`, `--pending`, `.confirm-badge-hint`). Aucune émoticône, icônes Tabler
+  uniquement. **Préparation future** : un bouton coach « Confirmer la présence par
+  téléphone » remplira le même champ → badge basculera automatiquement.
 - **Bouton « Voir le site » dans la topbar admin (20 juin)** : raccourci toujours visible
   en haut à droite du layout admin (`templates/admin/base.html.twig`), pour éviter de rester
   coincé dans le dashboard sur mobile. Style pill dorée. Sur mobile (≤ 640px), le label est
@@ -177,12 +190,12 @@ ResetFoundingClaims, SeedFoundingOffer, SeedPricingShowcase, **SendDayBeforeRemi
   faire au moins 8 caractères ». ⚠️ **`templates/security/login.html.twig` volontairement
   non touché** : sur la page de connexion, aucune règle de mdp affichée (sécurité — pas
   d'indice à un attaquant). Le seul message reste « Identifiants invalides ».
-- **Cron rappels J-1 documenté (19 juin)** : commande `app:send-day-before-reminders` à
-  planifier sur Railway via service cron dédié (recommandé, option B) avec schedule
-  `0 8 * * *` UTC (= 10h Paris été / 9h Paris hiver). Tout le pas-à-pas dans
-  `EMAIL_SETUP.md`. ⚠️ **Pré-requis prod** : ajouter `DEFAULT_URI=https://sportplus-13.com`
-  dans Railway, sinon les URLs absolues générées par UrlGenerator en CLI tomberont sur
-  `http://localhost` (valeur par défaut de `.env`) → liens cassés dans les emails J-1.
+- **Cron rappels J-1 EN PROD (20 juin)** : service cron Railway dédié configuré et
+  fonctionnel — la commande `app:send-day-before-reminders` tourne quotidiennement
+  (cron config par l'IA Railway selon `EMAIL_SETUP.md`). Pré-requis `DEFAULT_URI=
+  https://sportplus-13.com` dans Railway = OK (test J-1 validé avec lien fonctionnel).
+  Pour vérifier que ça continue : Railway → service cron → onglet Deployments (vert/rouge
+  par exécution).
 - **Mot de passe oublié (19 juin)** : routes `/mot-de-passe-oublie` (`app_forgot_password`)
   et `/reinitialiser-mot-de-passe/{id}/{ts}/{token}` (`app_reset_password`) dans
   `SecurityController`. Token = `hash_hmac('sha256', 'reset:' ~ id ~ ':' ~ ts ~ ':' ~

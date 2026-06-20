@@ -943,3 +943,52 @@
   .refuse-modal-actions { flex-direction: column-reverse; }
   .refuse-modal-actions .action-btn { width: 100%; justify-content: center; }
 }
+
+/* ─── Badges confirmation de présence (séances coach) ────────────────────
+   Affichés sur chaque séance "à venir" pour indiquer si le client a cliqué
+   "Je confirme ma présence" depuis le mail J-1. Source : Booking.clientConfirmedAt. */
+.confirm-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  border-radius: 100px;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  white-space: nowrap;
+  line-height: 1.2;
+}
+.confirm-badge .ti { font-size: 13px; }
+
+/* Présence confirmée — vert */
+.confirm-badge--confirmed {
+  background: rgba(46,204,113,.12);
+  border: 1px solid rgba(46,204,113,.4);
+  color: var(--green);
+}
+
+/* En attente — or doux (pas rouge, ce n'est pas une erreur) */
+.confirm-badge--pending {
+  background: rgba(212,175,55,.10);
+  border: 1px solid rgba(212,175,55,.35);
+  color: var(--gold);
+}
+
+/* Hint discret pour relance téléphone — affiché uniquement si la séance
+   approche (< 24h) et que le client n'a pas encore confirmé. */
+.confirm-badge-hint {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 6px;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .8px;
+  color: var(--text-dim);
+  font-style: italic;
+}
+.confirm-badge-hint .ti { color: var(--gold-dim); font-size: 12px; }
