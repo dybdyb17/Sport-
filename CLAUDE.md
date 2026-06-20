@@ -167,6 +167,14 @@ ResetFoundingClaims, SeedFoundingOffer, SeedPricingShowcase, **SendDayBeforeRemi
   direct au client. Template `templates/emails/contact_message.html.twig` (étend
   `emails/base.html.twig` + macros). Validation basique côté contrôleur (nom, email, message
   non vides + `filter_var` email).
+- **FAB « Sortir admin » impersonnification (20 juin)** : en plus de la bannière sticky
+  en haut, un bouton flottant orange est désormais affiché en bas à droite quand un admin
+  impersonne un user. `position: fixed`, `z-index: 10000`, animation pulse douce pour
+  attirer l'œil. Sur mobile : icône seule. **Strictement invisible** pour les vrais
+  clients/coachs/admins non impersonnifiants (check `is_granted('ROLE_PREVIOUS_ADMIN')`).
+  Garantit qu'on peut TOUJOURS sortir d'impersonnification, même si la bannière sticky est
+  cachée par une modal ou un parent qui crée un stacking context. Ajouté dans
+  `base.html.twig` ET `admin/base.html.twig`.
 - **Fixes UX impersonnification + tunnel réservation (20 juin)** :
   - Modal de confirmation universelle (`base.html.twig`) étendue pour intercepter aussi
     les clics sur `<a data-confirm>` (avant : uniquement les `<form data-confirm>`).

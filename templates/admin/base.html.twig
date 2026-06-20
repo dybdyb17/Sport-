@@ -11,7 +11,7 @@
   <link rel="stylesheet" href="{{ asset('styles/sportplus.css') }}">
 </head>
 <body>
-{# Bannière d'impersonnification (même mécanisme que sur base.html.twig) #}
+{# Bannière + FAB d'impersonnification (même mécanisme que sur base.html.twig) #}
 {% if is_granted('ROLE_PREVIOUS_ADMIN') %}
   <div class="impersonate-banner" role="alert">
     <div class="impersonate-banner-inner">
@@ -25,6 +25,11 @@
       </a>
     </div>
   </div>
+  <a href="{{ path('app_admin_users', {_switch_user: '_exit'}) }}" class="impersonate-fab"
+     title="Sortir et redevenir admin">
+    <i class="ti ti-logout"></i>
+    <span class="impersonate-fab-label">Sortir admin</span>
+  </a>
 {% endif %}
 <div class="admin-layout">
 

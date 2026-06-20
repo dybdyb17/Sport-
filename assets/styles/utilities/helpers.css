@@ -409,6 +409,55 @@ img, video, iframe { max-width: 100%; }
   .impersonate-banner-inner { padding: 8px 12px; }
 }
 
+/* FAB flottant en bas à droite — secours quand la bannière sticky est masquée
+   (modals, longue page, parent avec transform/overflow, etc.).
+   Position fixed = vraiment indéplaçable. */
+.impersonate-fab {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 10000;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 20px 14px 16px;
+  background: linear-gradient(135deg, #d49426 0%, #b97a1e 100%);
+  border: 2px solid #1a1208;
+  border-radius: 100px;
+  color: #1a1208;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  text-decoration: none;
+  box-shadow: 0 10px 30px rgba(212,148,38,.45), 0 0 0 4px rgba(212,148,38,.18);
+  transition: transform .15s, box-shadow .15s;
+  animation: impersonate-fab-pulse 2.5s ease-in-out infinite;
+}
+.impersonate-fab:hover {
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 14px 40px rgba(212,148,38,.6), 0 0 0 6px rgba(212,148,38,.25);
+  color: #000;
+}
+.impersonate-fab .ti { font-size: 18px; }
+
+@keyframes impersonate-fab-pulse {
+  0%, 100% { box-shadow: 0 10px 30px rgba(212,148,38,.45), 0 0 0 4px rgba(212,148,38,.18); }
+  50%      { box-shadow: 0 10px 30px rgba(212,148,38,.55), 0 0 0 10px rgba(212,148,38,.05); }
+}
+
+/* Mobile : icône seule pour ne pas gêner le contenu. */
+@media (max-width: 640px) {
+  .impersonate-fab {
+    bottom: 20px;
+    right: 16px;
+    padding: 14px;
+  }
+  .impersonate-fab-label { display: none; }
+  .impersonate-fab .ti { font-size: 22px; }
+}
+
 /* Bloc de droite de la topbar admin : "Voir le site" + nom user.
    Le bouton "Voir le site" est TOUJOURS visible (desktop + mobile) — c'est
    le filet de sécurité pour ne JAMAIS rester coincé dans l'admin. */

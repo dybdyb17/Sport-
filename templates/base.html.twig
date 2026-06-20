@@ -35,8 +35,9 @@
 </head>
 <body>
 
-{# Bannière d'impersonnification — visible UNIQUEMENT si un admin a switché en un autre user.
-   Le rôle ROLE_PREVIOUS_ADMIN est ajouté automatiquement par Symfony quand on est en mode switch. #}
+{# Bannière + FAB d'impersonnification — UNIQUEMENT pour un admin qui impersonne un user.
+   Le rôle ROLE_PREVIOUS_ADMIN est ajouté automatiquement par Symfony en mode switch_user.
+   → Strictement invisible pour les vrais clients/coachs/admins non impersonnifiants. #}
 {% if is_granted('ROLE_PREVIOUS_ADMIN') %}
   <div class="impersonate-banner" role="alert">
     <div class="impersonate-banner-inner">
@@ -50,6 +51,12 @@
       </a>
     </div>
   </div>
+  {# FAB flottant — toujours visible en bas à droite, secours quand la bannière est masquée. #}
+  <a href="{{ path('app_admin_users', {_switch_user: '_exit'}) }}" class="impersonate-fab"
+     title="Sortir et redevenir admin">
+    <i class="ti ti-logout"></i>
+    <span class="impersonate-fab-label">Sortir admin</span>
+  </a>
 {% endif %}
 
 <header class="site-header">
