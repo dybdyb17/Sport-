@@ -146,6 +146,7 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  min-width: 0; /* permet à flex-child de rétrécir au lieu de déborder */
 }
 
 .admin-topbar {
@@ -167,6 +168,8 @@
   flex: 1;
   padding: 32px 40px;
   overflow-y: auto;
+  overflow-x: hidden; /* coupe net tout débordement horizontal sur mobile */
+  min-width: 0;
 }
 
 /* ── CHAT / CONVERSATION ──────────────────────────────────────── */

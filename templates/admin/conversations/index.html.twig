@@ -12,10 +12,7 @@
 </div>
 
 {# ── Barre de filtres ────────────────────────────────────────── #}
-<form method="get" action="{{ path('app_admin_conversations') }}"
-      style="display:grid;grid-template-columns:2fr 1fr 1fr auto;gap:12px;
-             padding:16px;margin-bottom:24px;background:var(--bg-card);
-             border:1px solid var(--border);border-radius:12px;">
+<form method="get" action="{{ path('app_admin_conversations') }}" class="conv-admin-filters">
   <div>
     <label style="display:block;font-size:12px;color:var(--text-dim);margin-bottom:4px;">
       Recherche (message, client, coach)

@@ -167,6 +167,16 @@ ResetFoundingClaims, SeedFoundingOffer, SeedPricingShowcase, **SendDayBeforeRemi
   direct au client. Template `templates/emails/contact_message.html.twig` (étend
   `emails/base.html.twig` + macros). Validation basique côté contrôleur (nom, email, message
   non vides + `filter_var` email).
+- **Fixes mobile critiques (20 juin)** : 3 corrections ciblées sur le responsive.
+  - **Bannière impersonnification cachée en mobile (≤640px)** : prenait 1/3 de l'écran
+    avec son bouton « SORTIR ET REDEVENIR ADMIN » qui passait à la ligne. Le bouton dans
+    le header (icône seule) + le FAB en bas suffisent largement comme double sécurité.
+  - **`.admin-body` + `.admin-main` : `overflow-x: hidden` + `min-width: 0`** dans
+    `account.css`. Coupe net tout débordement horizontal sur les pages admin. Réglait le
+    problème de `/admin/conversations` qui « débordait de fou » sur iPhone.
+  - **Filtres conversations admin responsive** : remplacement du grid inline
+    `2fr 1fr 1fr auto` par une classe `.conv-admin-filters` dans `dashboard-extras.css`
+    avec breakpoints : desktop = 4 col, tablette = 2 col, mobile = 1 col (stack).
 - **Favicon Google + iOS (20 juin)** : SPORT+ est désormais en première page Google sur
   « sport+ marseille » mais le favicon ressortait en globe générique car on n'avait QUE
   un `favicon.svg` — or **Google indexe uniquement les favicons en PNG/JPG/ICO**, pas SVG.

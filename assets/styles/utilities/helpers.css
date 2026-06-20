@@ -405,6 +405,9 @@ img, video, iframe { max-width: 100%; }
   color: #fff;
 }
 @media (max-width: 640px) {
+  /* En mobile, la bannière prend trop de place (3 lignes) et fait doublon avec le
+     bouton dans le header + le FAB. On la cache complètement. */
+  .impersonate-banner { display: none; }
   .impersonate-banner-sub { display: none; }
   .impersonate-banner-inner { padding: 8px 12px; }
 }
