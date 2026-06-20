@@ -167,6 +167,13 @@ ResetFoundingClaims, SeedFoundingOffer, SeedPricingShowcase, **SendDayBeforeRemi
   direct au client. Template `templates/emails/contact_message.html.twig` (étend
   `emails/base.html.twig` + macros). Validation basique côté contrôleur (nom, email, message
   non vides + `filter_var` email).
+- **Espace coach caché pour les admins non-coachs (20 juin)** : dans `base.html.twig`,
+  le check `is_granted('ROLE_COACH')` (qui matche aussi les admins via la role_hierarchy)
+  est remplacé par `app.user.coach is not null` pour le dropdown avatar et le menu mobile.
+  → Loïc (admin + coach, `sizzlostyle@gmail.com`) garde son accès à `/coach/dashboard`.
+  → Un admin sans profil coach (ex: `dybrilboudiaf14@gmail.com`) ne voit plus le lien et
+  ne tombe plus sur la bannière flash jaune mal placée. Le contrôleur garde sa garde
+  silencieuse (redirect vers `/admin` si URL tapée à la main, sans flash technique).
 - **Fixes mobile 2e passe (20 juin)** :
   - **FAB « Sortir admin » caché en mobile** (`max-width: 640px`) : suspect du dézoom iOS
     (position: fixed + animation pulse). En mobile, seul le bouton dans le header reste

@@ -141,9 +141,11 @@
             {% if is_granted('ROLE_ADMIN') %}
               <a href="{{ path('app_admin_dashboard') }}" class="dropdown-item" role="menuitem"><i class="ti ti-shield"></i> Administration</a>
             {% endif %}
-            {% if is_granted('ROLE_COACH') %}
+            {# On vérifie le PROFIL coach réel (app.user.coach), pas juste le rôle :
+               un admin sans profil coach n'a rien à faire sur /coach/dashboard. #}
+            {% if app.user.coach is not null %}
               <a href="{{ path('app_coach_dashboard') }}" class="dropdown-item" role="menuitem"><i class="ti ti-users"></i> Espace coach</a>
-            {% else %}
+            {% elseif not is_granted('ROLE_ADMIN') %}
               <a href="{{ path('app_espace_client') }}" class="dropdown-item" role="menuitem"><i class="ti ti-user"></i> Mon espace</a>
               <a href="{{ path('app_espace_client_profil') }}" class="dropdown-item" role="menuitem"><i class="ti ti-user-cog"></i> Mon profil</a>
             {% endif %}
@@ -194,7 +196,10 @@
       {% endif %}
       {% if is_granted('ROLE_ADMIN') %}
         <a href="{{ path('app_admin_dashboard') }}" class="btn btn-secondary btn-full">Administration</a>
-      {% elseif is_granted('ROLE_COACH') %}
+        {% if app.user.coach is not null %}
+          <a href="{{ path('app_coach_dashboard') }}" class="btn btn-secondary btn-full">Espace coach</a>
+        {% endif %}
+      {% elseif app.user.coach is not null %}
         <a href="{{ path('app_coach_dashboard') }}" class="btn btn-secondary btn-full">Espace coach</a>
       {% else %}
         <a href="{{ path('app_espace_client') }}" class="btn btn-secondary btn-full">Mon espace</a>
