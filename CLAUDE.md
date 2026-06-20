@@ -162,6 +162,12 @@ ResetFoundingClaims, SeedFoundingOffer, SeedPricingShowcase, **SendDayBeforeRemi
   direct au client. Template `templates/emails/contact_message.html.twig` (étend
   `emails/base.html.twig` + macros). Validation basique côté contrôleur (nom, email, message
   non vides + `filter_var` email).
+- **Bouton « Voir le site » dans la topbar admin (20 juin)** : raccourci toujours visible
+  en haut à droite du layout admin (`templates/admin/base.html.twig`), pour éviter de rester
+  coincé dans le dashboard sur mobile. Style pill dorée. Sur mobile (≤ 640px), le label est
+  caché mais l'icône `ti-arrow-back-up` reste visible — accessible en 1 tap depuis n'importe
+  où dans l'admin. Le lien existant en footer de sidebar reste, c'est un double filet de
+  sécurité.
 - **Règle « 8 caractères minimum » visible sur les formulaires de mot de passe (19 juin)** :
   help text affiché sous le champ via `'help' => '8 caractères minimum.'` sur
   `AdminCoachType` et `RegistrationFormType`. Bloc d'erreurs global ajouté en haut de

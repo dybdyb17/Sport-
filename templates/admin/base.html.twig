@@ -90,9 +90,15 @@
           <div class="alert alert-{{ label }}" style="margin:0;padding:8px 16px;font-size:13px;">{{ message }}</div>
         {% endfor %}
       {% endfor %}
-      {% if app.user %}
-        <span style="font-family:'Barlow Condensed',sans-serif;font-size:13px;color:var(--text-dim);">{{ app.user.nomComplet }}</span>
-      {% endif %}
+      <div class="admin-topbar-right">
+        <a href="{{ path('app_home') }}" class="admin-back-to-site" title="Retour au site public">
+          <i class="ti ti-arrow-back-up"></i>
+          <span class="admin-back-to-site-label">Voir le site</span>
+        </a>
+        {% if app.user %}
+          <span class="admin-topbar-user">{{ app.user.nomComplet }}</span>
+        {% endif %}
+      </div>
     </div>
     <div class="admin-body">
       {% block admin_body %}{% endblock %}

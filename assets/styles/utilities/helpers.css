@@ -338,6 +338,63 @@ img, video, iframe { max-width: 100%; }
   .admin-burger { display: flex; }
 }
 
+/* Bloc de droite de la topbar admin : "Voir le site" + nom user.
+   Le bouton "Voir le site" est TOUJOURS visible (desktop + mobile) — c'est
+   le filet de sécurité pour ne JAMAIS rester coincé dans l'admin. */
+.admin-topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+.admin-back-to-site {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  background: linear-gradient(135deg, rgba(212,175,55,.12), rgba(46,204,113,.12));
+  border: 1px solid rgba(212,175,55,.4);
+  border-radius: 100px;
+  color: var(--gold);
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: color .15s, border-color .15s, box-shadow .15s, transform .15s;
+}
+.admin-back-to-site:hover {
+  color: var(--white);
+  border-color: var(--gold);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(212,175,55,.25);
+}
+.admin-back-to-site .ti { font-size: 16px; }
+.admin-topbar-user {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 13px;
+  color: var(--text-dim);
+  white-space: nowrap;
+}
+
+/* Mobile : on garde le bouton "Voir le site" visible mais on cache son label
+   pour gagner de la place ; l'icône reste claire. Le nom user disparaît. */
+@media (max-width: 640px) {
+  .admin-back-to-site {
+    padding: 8px 10px;
+  }
+  .admin-back-to-site-label {
+    display: none;
+  }
+  .admin-back-to-site .ti { font-size: 18px; }
+  .admin-topbar-user {
+    display: none;
+  }
+}
+
 .admin-overlay {
   display: none;
   position: fixed;
