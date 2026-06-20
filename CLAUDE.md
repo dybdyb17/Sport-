@@ -162,6 +162,20 @@ ResetFoundingClaims, SeedFoundingOffer, SeedPricingShowcase, **SendDayBeforeRemi
   direct au client. Template `templates/emails/contact_message.html.twig` (étend
   `emails/base.html.twig` + macros). Validation basique côté contrôleur (nom, email, message
   non vides + `filter_var` email).
+- **Fix bug bloquant — confirmation de présence J-1 inaccessible (20 juin)** :
+  `BookingController` avait un `#[IsGranted('ROLE_CLIENT')]` au niveau de la **classe**
+  qui s'appliquait à toutes les méthodes, **y compris `confirmAttendance`** qui doit être
+  publique (lien signé HMAC depuis le mail J-1, sans connexion). Conséquence : tout clic
+  sur le bouton « Je confirme ma présence » depuis la boîte mail finissait en redirection
+  login → `clientConfirmedAt` jamais rempli → côté coach, le badge restait sur « En
+  attente » même pour les clients ayant cliqué. **Fix** : `#[IsGranted]` retiré de la
+  classe, ajouté méthode par méthode (7 méthodes : `new`, `pricingPreview`, `payWithXplor`,
+  `status`, `statusJson`, `confirmPayment`, `disputePayment`). `confirmAttendance` **sans
+  IsGranted** — protégée uniquement par HMAC (`hash_equals`). La règle
+  `^/reservation/[^/]+/confirmer/` en PUBLIC_ACCESS dans `security.yaml` fonctionne enfin.
+  Bonus : page `confirmed_attendance.html.twig` refondue (carte récap date/heure/coach/
+  format, halo radial vert sur l'icône check, 2 boutons adaptés selon connecté ou pas vu
+  que le lien arrive d'un mail).
 - **Badge confirmation de présence côté coach (20 juin)** : dans
   `templates/coach/dashboard.html.twig`, section « Mes séances à venir », chaque ligne
   affiche désormais un badge basé sur `Booking.clientConfirmedAt` :

@@ -3,32 +3,105 @@
 {% block title %}Présence confirmée — SPORT+{% endblock %}
 
 {% block body %}
-<div class="container" style="padding-top:80px;padding-bottom:80px;max-width:560px;text-align:center;">
+<div class="container" style="padding-top:80px;padding-bottom:80px;max-width:600px;">
 
-  <div style="width:84px;height:84px;margin:0 auto 24px;border-radius:24px;background:rgba(46,204,113,.10);border:1px solid rgba(46,204,113,.4);display:flex;align-items:center;justify-content:center;">
-    <i class="ti ti-circle-check" style="font-size:46px;color:var(--green);"></i>
+  <div style="text-align:center;">
+    <div style="width:96px;height:96px;margin:0 auto 28px;border-radius:50%;
+                background:radial-gradient(circle at center, rgba(46,204,113,.22) 0%, rgba(46,204,113,.06) 60%, transparent 100%);
+                border:1px solid rgba(46,204,113,.45);
+                display:flex;align-items:center;justify-content:center;
+                box-shadow:0 0 40px rgba(46,204,113,.18);">
+      <i class="ti ti-circle-check" style="font-size:54px;color:var(--green);"></i>
+    </div>
+
+    <div style="font-family:'Barlow Condensed',sans-serif;font-size:12px;letter-spacing:3px;
+                color:var(--green);text-transform:uppercase;margin-bottom:8px;">
+      <i class="ti ti-shield-check"></i> Confirmation enregistrée
+    </div>
+    <h1 style="font-family:'Barlow Condensed',sans-serif;font-size:42px;font-weight:900;
+               color:var(--white);letter-spacing:-0.5px;margin:0 0 14px;line-height:1.1;">
+      Présence <span style="color:var(--green);">confirmée</span>
+    </h1>
+    <p style="font-size:17px;color:var(--text-soft);line-height:1.65;margin:0 0 32px;">
+      Merci, ta présence est bien enregistrée.<br>
+      <strong style="color:var(--white);">{{ booking.coach.nomComplet }}</strong> est prévenu et t'attend.
+      <span style="color:var(--gold);font-weight:600;">À demain !</span>
+    </p>
   </div>
 
-  <h1 style="font-family:'Barlow Condensed',sans-serif;font-size:38px;font-weight:900;color:var(--white);letter-spacing:-0.5px;margin:0 0 12px;">
-    Merci, ta présence est <span style="color:var(--green);">confirmée</span>
-  </h1>
+  {# Carte récap de la séance #}
+  <div style="background:linear-gradient(180deg, rgba(46,204,113,.06) 0%, var(--bg-card) 100%);
+              border:1px solid rgba(46,204,113,.25);border-radius:18px;padding:24px;margin-bottom:24px;">
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px 24px;">
+      <div>
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:2px;
+                    color:var(--text-dim);text-transform:uppercase;margin-bottom:4px;">
+          <i class="ti ti-calendar-event"></i> Date
+        </div>
+        <div style="color:var(--white);font-size:15px;font-weight:600;">
+          {{ booking.startAt|date('d/m/Y') }}
+        </div>
+      </div>
+      <div>
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:2px;
+                    color:var(--text-dim);text-transform:uppercase;margin-bottom:4px;">
+          <i class="ti ti-clock"></i> Heure
+        </div>
+        <div style="color:var(--white);font-size:15px;font-weight:600;">
+          {{ booking.startAt|date('H\\hi') }}
+        </div>
+      </div>
+      <div>
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:2px;
+                    color:var(--text-dim);text-transform:uppercase;margin-bottom:4px;">
+          <i class="ti ti-user-bolt"></i> Coach
+        </div>
+        <div style="color:var(--white);font-size:15px;font-weight:600;">
+          {{ booking.coach.nomComplet }}
+        </div>
+      </div>
+      <div>
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:2px;
+                    color:var(--text-dim);text-transform:uppercase;margin-bottom:4px;">
+          <i class="ti ti-bolt"></i> Format
+        </div>
+        <div style="color:var(--gold);font-size:15px;font-weight:600;">
+          {{ booking.offerLabel }}
+        </div>
+      </div>
+    </div>
+  </div>
 
-  <p style="font-size:16px;color:var(--text-soft);line-height:1.6;margin:0 0 32px;">
-    {{ booking.coach.nomComplet|split(' ')|first }} t'attend le
-    <strong style="color:var(--white);">{{ booking.startAt|date('d/m/Y') }} à {{ booking.startAt|date('H\\hi') }}</strong>
-    pour ta séance <strong style="color:var(--gold);">{{ booking.offerLabel }}</strong>.
-  </p>
-
-  <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:14px;padding:18px 22px;margin-bottom:28px;text-align:left;font-size:14px;color:var(--text-soft);">
-    <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;color:var(--gold);font-family:'Barlow Condensed',sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;font-size:12px;">
+  {# Hint imprévu #}
+  <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:14px;
+              padding:16px 22px;margin-bottom:32px;font-size:13px;color:var(--text-soft);line-height:1.6;">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;color:var(--gold);
+                font-family:'Barlow Condensed',sans-serif;font-weight:700;text-transform:uppercase;
+                letter-spacing:1.5px;font-size:12px;">
       <i class="ti ti-info-circle"></i> Un imprévu ?
     </div>
     Préviens ton coach au plus vite via la messagerie ou par téléphone.
     En cas d'absence non prévenue, des frais peuvent t'être facturés (selon CGV).
   </div>
 
-  <a href="{{ path('app_espace_client') }}" class="btn btn-primary">
-    <i class="ti ti-home"></i> Retour à mon espace
-  </a>
+  {# Boutons de retour — adaptés selon connecté ou pas (le lien vient du mail) #}
+  <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center;">
+    {% if app.user %}
+      <a href="{{ path('app_espace_client') }}" class="btn btn-primary">
+        <i class="ti ti-home"></i> Retour à mon espace
+      </a>
+      <a href="{{ path('app_espace_client_rdv', {reference: booking.reference}) }}" class="btn btn-secondary">
+        <i class="ti ti-calendar-check"></i> Voir le détail du RDV
+      </a>
+    {% else %}
+      <a href="{{ path('app_login') }}" class="btn btn-primary">
+        <i class="ti ti-login"></i> Me connecter à mon espace
+      </a>
+      <a href="{{ path('app_home') }}" class="btn btn-secondary">
+        <i class="ti ti-home"></i> Accueil
+      </a>
+    {% endif %}
+  </div>
+
 </div>
 {% endblock %}

@@ -20,10 +20,14 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/reservation')]
-#[IsGranted('ROLE_CLIENT')]
+// ⚠️ Ne PAS mettre #[IsGranted] au niveau de la classe : confirmAttendance doit
+// rester accessible sans connexion (lien signé HMAC reçu par email J-1). On
+// applique IsGranted individuellement sur chaque méthode qui nécessite un client
+// connecté — sauf confirmAttendance.
 class BookingController extends AbstractController
 {
     #[Route('/new', name: 'app_booking_new', methods: ['GET', 'POST'])]
+    #[IsGranted('ROLE_CLIENT')]
     public function new(Request $request, BookingManager $manager, EntityManagerInterface $em): Response
     {
         $booking = new Booking();
@@ -109,6 +113,7 @@ class BookingController extends AbstractController
      * Aperçu tarifaire dynamique — appelé par JS lors du changement de sélections.
      */
     #[Route('/api/pricing-preview', name: 'app_pricing_preview', methods: ['GET'])]
+    #[IsGranted('ROLE_CLIENT')]
     public function pricingPreview(Request $request, PricingCalculator $pricing): JsonResponse
     {
         try {
@@ -187,6 +192,7 @@ class BookingController extends AbstractController
     }
 
     #[Route('/{ref}/payer-xplor', name: 'app_booking_pay_xplor', methods: ['GET'])]
+    #[IsGranted('ROLE_CLIENT')]
     public function payWithXplor(
         string $ref,
         BookingRepository $bookingRepository,
@@ -225,6 +231,7 @@ class BookingController extends AbstractController
     }
 
     #[Route('/{ref}/suivi', name: 'app_booking_status', methods: ['GET'])]
+    #[IsGranted('ROLE_CLIENT')]
     public function status(string $ref, BookingRepository $bookingRepository): Response
     {
         $booking = $bookingRepository->findOneBy(['reference' => $ref]);
@@ -243,6 +250,7 @@ class BookingController extends AbstractController
     }
 
     #[Route('/{ref}/status.json', name: 'app_booking_status_json', methods: ['GET'])]
+    #[IsGranted('ROLE_CLIENT')]
     public function statusJson(string $ref, BookingRepository $bookingRepository): Response
     {
         $booking = $bookingRepository->findOneBy(['reference' => $ref]);
@@ -265,6 +273,7 @@ class BookingController extends AbstractController
      * Posté depuis la modal "Confirmer mon paiement" sur Mon RDV / Espace.
      */
     #[Route('/{ref}/paiement/confirmer', name: 'app_booking_payment_confirm', methods: ['POST'])]
+    #[IsGranted('ROLE_CLIENT')]
     public function confirmPayment(
         string $ref,
         Request $request,
@@ -303,6 +312,7 @@ class BookingController extends AbstractController
      * Génère une alerte admin via le journal d'audit.
      */
     #[Route('/{ref}/paiement/contester', name: 'app_booking_payment_dispute', methods: ['POST'])]
+    #[IsGranted('ROLE_CLIENT')]
     public function disputePayment(
         string $ref,
         Request $request,
