@@ -5,6 +5,7 @@ namespace App\Command;
 use App\Entity\Booking;
 use App\Repository\BookingRepository;
 use App\Service\MailerService;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -28,6 +29,7 @@ class SendDayBeforeRemindersCommand extends Command
     public function __construct(
         private readonly BookingRepository $bookings,
         private readonly MailerService $mailer,
+        private readonly EntityManagerInterface $em,
         #[Autowire('%kernel.secret%')]
         private readonly string $appSecret,
     ) {
@@ -49,33 +51,38 @@ class SendDayBeforeRemindersCommand extends Command
         $io     = new SymfonyStyle($input, $output);
         $dryRun = (bool) $input->getOption('dry-run');
 
-        // Demain entre 00:00 et 23:59:59 (timezone serveur)
-        $tomorrow      = new \DateTimeImmutable('tomorrow');
-        $tomorrowStart = $tomorrow->setTime(0, 0, 0);
-        $tomorrowEnd   = $tomorrow->setTime(23, 59, 59);
+        // Cible : toutes les séances confirmées dans les 36h à venir, pour lesquelles
+        // le rappel n'a pas encore été envoyé (par ce cron OU par BookingManager::confirm()
+        // si la séance était trop proche pour attendre le prochain cron).
+        // Fenêtre 36h = on couvre une matinée du surlendemain au cas où la session
+        // précédente du cron a sauté. Idempotent grâce au flag reminderSentAt.
+        $now    = new \DateTimeImmutable();
+        $end    = $now->modify('+36 hours');
 
         $qb = $this->bookings->createQueryBuilder('b')
             ->andWhere('b.status = :confirmed')
-            ->andWhere('b.startAt >= :start')
+            ->andWhere('b.startAt > :now')
             ->andWhere('b.startAt <= :end')
             ->andWhere('b.clientConfirmedAt IS NULL')
+            ->andWhere('b.reminderSentAt IS NULL')
             ->setParameter('confirmed', Booking::STATUS_CONFIRMED)
-            ->setParameter('start', $tomorrowStart)
-            ->setParameter('end', $tomorrowEnd);
+            ->setParameter('now', $now)
+            ->setParameter('end', $end)
+            ->orderBy('b.startAt', 'ASC');
 
         /** @var Booking[] $list */
         $list = $qb->getQuery()->getResult();
 
-        $io->title(sprintf('Rappels J-1 — %d séance(s) demain', count($list)));
+        $io->title(sprintf('Rappels J-1 — %d séance(s) éligible(s) dans les 36h', count($list)));
         $sent = 0;
         $skipped = 0;
         foreach ($list as $b) {
             $clientLabel = $b->getClient()?->getNomComplet() ?? '?';
             $coachLabel  = $b->getCoach()?->getNomComplet() ?? '?';
-            $when        = $b->getStartAt()->format('H\hi');
+            $when        = $b->getStartAt()->format('d/m H\hi');
 
             if ($dryRun) {
-                $io->writeln(sprintf(' • <comment>%s</comment> → %s avec %s à %s', $b->getReference(), $clientLabel, $coachLabel, $when));
+                $io->writeln(sprintf(' • <comment>%s</comment> → %s avec %s le %s', $b->getReference(), $clientLabel, $coachLabel, $when));
                 continue;
             }
 
@@ -84,9 +91,18 @@ class SendDayBeforeRemindersCommand extends Command
                 $skipped++;
                 continue;
             }
-            $this->mailer->sendDayBeforeReminder($b, $this->appSecret);
-            $io->writeln(sprintf(' <fg=green>✓ %s</> → %s', $b->getReference(), $clientLabel));
-            $sent++;
+            $ok = $this->mailer->sendDayBeforeReminder($b, $this->appSecret);
+            if ($ok) {
+                // Mail vraiment parti → on flag, le prochain cron ne le reprendra pas
+                $b->setReminderSentAt(new \DateTimeImmutable());
+                $this->em->flush();
+                $io->writeln(sprintf(' <fg=green>✓ %s</> → %s (séance le %s)', $b->getReference(), $clientLabel, $when));
+                $sent++;
+            } else {
+                // Échec d'envoi (ex: Resend down) → on ne flag PAS, retry au prochain cron
+                $io->writeln(sprintf(' <fg=red>✗ %s</> → échec envoi, sera retenté au prochain cron', $b->getReference()));
+                $skipped++;
+            }
         }
 
         if ($dryRun) {

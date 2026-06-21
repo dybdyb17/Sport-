@@ -12,12 +12,22 @@ use App\Entity\Subscription;
 use App\Entity\User;
 use App\Repository\ConversationRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
 
 class BookingManager
 {
     /** Durée standard d'une séance en minutes (peut évoluer par format si besoin) */
     private const SESSION_DURATION_MINUTES = 60;
+
+    /**
+     * Si une séance est confirmée à moins de cette durée de son startAt, on envoie
+     * le rappel J-1 IMMÉDIATEMENT (pas le lendemain) — sinon le cron quotidien à 10h
+     * la raterait. 30h couvre :
+     *  - une résa du soir pour le lendemain matin (8h-9h-10h)
+     *  - une confirmation un peu tardive le matin pour le surlendemain matinal
+     */
+    private const IMMEDIATE_REMINDER_THRESHOLD_HOURS = 30;
 
     public function __construct(
         private readonly EntityManagerInterface $em,
@@ -26,6 +36,8 @@ class BookingManager
         private readonly FoundingOfferService   $foundingService,
         private readonly MailerService          $mailer,
         private readonly ConversationRepository $conversationRepo,
+        #[Autowire('%kernel.secret%')]
+        private readonly string                 $appSecret,
     ) {}
 
     /**
@@ -136,7 +148,54 @@ class BookingManager
         $this->notifier->notifyClient($booking);
         $this->mailer->sendBookingConfirmedToClient($booking);
 
+        // ── Rappel J-1 : envoi immédiat si la séance est trop proche pour le cron ──
+        // Le cron tourne à 10h chaque jour. Si une séance est confirmée à moins de
+        // 30h de son début (ex: résa du soir pour le lendemain matin), elle raterait
+        // le cron J-1. On lui envoie le rappel tout de suite, et on flag
+        // reminderSentAt pour éviter que le cron le renvoie en double.
+        $this->sendImmediateReminderIfDue($booking);
+
         return $booking;
+    }
+
+    /**
+     * Envoie le mail rappel J-1 immédiatement si la séance est dans <30h et que
+     * le rappel n'a pas encore été envoyé. Idempotent : safe à appeler plusieurs fois.
+     */
+    private function sendImmediateReminderIfDue(Booking $booking): void
+    {
+        // Déjà envoyé → on ne refait pas
+        if ($booking->getReminderSentAt() !== null) {
+            return;
+        }
+        // Séance passée ou pas d'email client → on ne fait rien
+        $startAt = $booking->getStartAt();
+        $client  = $booking->getClient();
+        if (!$startAt || !$client?->getEmail()) {
+            return;
+        }
+
+        $now        = new \DateTimeImmutable();
+        $hoursUntil = ($startAt->getTimestamp() - $now->getTimestamp()) / 3600;
+
+        // Séance déjà commencée ou passée → on n'envoie pas (le mail dirait
+        // "ta séance c'est demain" alors qu'elle est déjà finie)
+        if ($hoursUntil <= 0) {
+            return;
+        }
+        // Séance trop loin → le cron quotidien s'en occupera demain matin
+        if ($hoursUntil > self::IMMEDIATE_REMINDER_THRESHOLD_HOURS) {
+            return;
+        }
+
+        // Tous les cas entre 0 et 30h : on envoie tout de suite, peu importe l'heure
+        // (résa à 1h du matin pour 7h, coach accepte à 5h pour séance à 10h, etc.)
+        // On ne flag reminderSentAt QUE si le mail est vraiment parti — sinon
+        // le cron du lendemain pourra retenter (sécurité contre une panne Resend).
+        if ($this->mailer->sendDayBeforeReminder($booking, $this->appSecret)) {
+            $booking->setReminderSentAt($now);
+            $this->em->flush();
+        }
     }
 
     /**

@@ -242,13 +242,18 @@ class MailerService
     /**
      * Email de rappel J-1 : envoyé la veille de la séance avec un bouton
      * « Je confirme ma présence » qui pointe vers un lien signé HMAC.
+     *
+     * Retourne TRUE si l'email est parti, FALSE si une exception a été attrapée
+     * ou si le client n'a pas d'email. L'appelant utilise ce booléen pour décider
+     * de marquer (ou pas) Booking.reminderSentAt — un échec d'envoi doit pouvoir
+     * être retenté au prochain cron, sinon on perdrait des rappels en silence.
      */
-    public function sendDayBeforeReminder(Booking $booking, string $secret): void
+    public function sendDayBeforeReminder(Booking $booking, string $secret): bool
     {
         try {
             $client = $booking->getClient();
             if (!$client?->getEmail()) {
-                return;
+                return false;
             }
             $sig = substr(hash_hmac('sha256', 'confirm:' . $booking->getId(), $secret), 0, 32);
             $confirmUrl = $this->abs('app_booking_confirm_attendance', [
@@ -273,11 +278,13 @@ class MailerService
                     'rdvUrl'     => $this->abs('app_espace_client_rdv', ['reference' => $booking->getReference()]),
                 ]);
             $this->mailer->send($email);
+            return true;
         } catch (\Throwable $e) {
             $this->logger->error('Échec envoi email booking_day_before: ' . $e->getMessage(), [
                 'booking' => $booking->getId(),
                 'file'    => $e->getFile() . ':' . $e->getLine(),
             ]);
+            return false;
         }
     }
 

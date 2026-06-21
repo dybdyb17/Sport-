@@ -128,7 +128,14 @@ ResetFoundingClaims, SeedFoundingOffer, SeedPricingShowcase, **SendDayBeforeRemi
   fee **30%** (décision Loïc), bouton coach + badge rouge admin.
 - **Confirmation J-1** : `Booking.clientConfirmedAt`, route signée HMAC
   `/reservation/{ref}/confirmer/{sig}` (sans auth), email + bouton « Je confirme », commande
-  `app:send-day-before-reminders` (cron `0 10 * * *` à configurer sur Railway).
+  `app:send-day-before-reminders` (cron `0 10 * * *` sur Railway).
+- **Rappel J-1 toute heure (21 juin)** : `Booking.reminderSentAt` + envoi immédiat à la
+  confirmation si la séance est dans <30h (BookingManager::sendImmediateReminderIfDue).
+  Le cron quotidien filtre sur `reminderSentAt IS NULL` et marque le flag après envoi
+  réussi → aucun doublon, aucune séance oubliée (résa du soir pour le lendemain matin,
+  résa de nuit pour le matin même, etc.). `sendDayBeforeReminder` retourne `bool` :
+  si Resend plante, le flag n'est pas set → le prochain cron retentera. Fenêtre cron
+  élargie à 36h (au lieu de juste « demain ») pour rattraper un éventuel cron sauté.
 - **Audit log anti-fraude (16 juin)** : entité AuditLog, service AuditLogger (capture
   acteur/IP/UA), AdminAuditController (`/admin/audit`), enum AuditAction (14 actions).
 - **Confirmation/contestation client des paiements** : routes `/reservation/{ref}/paiement/

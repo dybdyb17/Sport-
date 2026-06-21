@@ -139,6 +139,12 @@ class Booking
     #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
     private ?\DateTimeImmutable $clientConfirmedAt = null;
 
+    // Rappel J-1 : timestamp d'envoi. Permet d'éviter les doublons (cron + envoi
+    // immédiat à la confirmation pour les séances proches). Si NULL → pas encore
+    // envoyé, donc éligible. Si non-NULL → déjà envoyé, on skip.
+    #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
+    private ?\DateTimeImmutable $reminderSentAt = null;
+
     // No-show : client ne s'est pas présenté (cochée par le coach)
     #[ORM\Column(options: ['default' => false])]
     private bool $noShow = false;
@@ -272,6 +278,9 @@ class Booking
 
     public function getClientConfirmedAt(): ?\DateTimeImmutable { return $this->clientConfirmedAt; }
     public function setClientConfirmedAt(?\DateTimeImmutable $clientConfirmedAt): static { $this->clientConfirmedAt = $clientConfirmedAt; return $this; }
+
+    public function getReminderSentAt(): ?\DateTimeImmutable { return $this->reminderSentAt; }
+    public function setReminderSentAt(?\DateTimeImmutable $reminderSentAt): static { $this->reminderSentAt = $reminderSentAt; return $this; }
 
     public function isNoShow(): bool { return $this->noShow; }
     public function setNoShow(bool $noShow): static { $this->noShow = $noShow; return $this; }
