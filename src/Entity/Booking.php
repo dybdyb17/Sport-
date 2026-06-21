@@ -442,6 +442,60 @@ class Booking
         return $start . ' → ' . $this->endAt->format('H\hi');
     }
 
+    /**
+     * Label adaptatif selon la distance entre aujourd'hui et le jour de la séance.
+     * Utilisé par le mail rappel pré-séance qui peut partir aujourd'hui-même,
+     * demain ou à J-2 selon le contexte (envoi immédiat à la confirmation,
+     * fenêtre cron 36h pour rattrapage, etc.). Plus de "demain" en dur et faux.
+     *
+     * Retourne :
+     *  - "aujourd'hui" si la séance est le jour calendaire courant
+     *  - "demain" si la séance est le lendemain
+     *  - "samedi 22 juin" sinon (jour de la semaine + date, en français)
+     */
+    public function getRelativeDayLabel(): string
+    {
+        if (!$this->startAt) {
+            return '';
+        }
+
+        $tz       = $this->startAt->getTimezone();
+        $todayMid = (new \DateTimeImmutable('today', $tz))->setTime(0, 0);
+        $startMid = $this->startAt->setTime(0, 0);
+        $diffDays = (int) $todayMid->diff($startMid)->format('%r%a');
+
+        if ($diffDays === 0) {
+            return 'aujourd\'hui';
+        }
+        if ($diffDays === 1) {
+            return 'demain';
+        }
+
+        // Fallback : "samedi 22 juin" (sans l'année — séance proche, l'année est implicite)
+        $fmt = new \IntlDateFormatter(
+            'fr_FR',
+            \IntlDateFormatter::NONE,
+            \IntlDateFormatter::NONE,
+            $tz,
+            null,
+            'EEEE d MMMM'
+        );
+        $label = $fmt?->format($this->startAt);
+        return is_string($label) && $label !== '' ? $label : $this->startAt->format('d/m/Y');
+    }
+
+    /**
+     * Ex: "aujourd'hui à 22h00", "demain à 8h00", "samedi 22 juin à 10h00".
+     * Combine getRelativeDayLabel() + l'heure de début pour les phrases naturelles.
+     */
+    public function getRelativeDayWithTimeLabel(): string
+    {
+        if (!$this->startAt) {
+            return '';
+        }
+        return $this->getRelativeDayLabel() . ' à ' . $this->startAt->format('H\hi');
+    }
+
     // ─── Callbacks de validation Symfony ──────────────────────────────────
 
     #[Assert\Callback]

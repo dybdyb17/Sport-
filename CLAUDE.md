@@ -136,6 +136,13 @@ ResetFoundingClaims, SeedFoundingOffer, SeedPricingShowcase, **SendDayBeforeRemi
   résa de nuit pour le matin même, etc.). `sendDayBeforeReminder` retourne `bool` :
   si Resend plante, le flag n'est pas set → le prochain cron retentera. Fenêtre cron
   élargie à 36h (au lieu de juste « demain ») pour rattraper un éventuel cron sauté.
+- **Wording rappel adaptatif (21 juin)** : helpers `Booking.relativeDayLabel` →
+  `"aujourd'hui"` / `"demain"` / `"samedi 22 juin"` (IntlDateFormatter `fr_FR`), et
+  `Booking.relativeDayWithTimeLabel` → `"aujourd'hui à 16h00"`. Template
+  `emails/booking_day_before.html.twig` (sujet + corps) ne dit plus jamais
+  « c'est demain » en dur — il sort le bon label selon la vraie distance entre `now`
+  et `startAt`. Évite l'effet amateur quand un rappel part le jour-même
+  (envoi immédiat à 5h pour séance à 10h) ou rattrape un cron sauté.
 - **Audit log anti-fraude (16 juin)** : entité AuditLog, service AuditLogger (capture
   acteur/IP/UA), AdminAuditController (`/admin/audit`), enum AuditAction (14 actions).
 - **Confirmation/contestation client des paiements** : routes `/reservation/{ref}/paiement/
