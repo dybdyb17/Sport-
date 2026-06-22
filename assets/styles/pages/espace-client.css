@@ -18,9 +18,9 @@
   z-index: 1;
 }
 
-/* ── DÉCOR LINE ART LATÉRAL (grand écran uniquement) ────────────────── */
+/* ── DÉCOR LINE ART LATÉRAL ANIMÉ (≥1100px) ─────────────────────────── */
 .espace-deco {
-  --deco-opacity: 0.16;
+  --deco-opacity: 0.28;
   position: absolute;
   inset: 0;
   pointer-events: none;
@@ -34,11 +34,12 @@
   width: 200px;
   opacity: var(--deco-opacity);
 }
-.espace-deco-svg--left  { left: -240px; }
-.espace-deco-svg--right { right: -240px; }
+.espace-deco-svg--left  { left: -230px; }
+.espace-deco-svg--right { right: -230px; }
 
-/* En-dessous de 1200px : on cache le décor, le contenu prend toute la largeur */
-@media (max-width: 1199px) {
+/* Seuil 1100px : couvre MacBook 13" et tablettes paysage.
+   En dessous : pas la place, on cache le décor entièrement. */
+@media (max-width: 1099px) {
   .espace-deco { display: none; }
 }
 @media (min-width: 1400px) {
@@ -46,11 +47,74 @@
   .espace-deco-svg--right { right: -260px; }
 }
 
-/* Pas d'animation à atténuer — le décor est statique. On garde la règle
-   pour cohérence avec le reste du projet. */
-html.performance-lite .espace-deco { --deco-opacity: 0.10; }
+/* ── Keyframes d'animation du décor ──
+   floatY  : flottement vers le haut
+   floatYb : flottement vers le bas (variante)
+   spawnFade : apparition/disparition en fondu avec léger scale */
+@keyframes floatY {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-16px); }
+}
+@keyframes floatYb {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(14px); }
+}
+@keyframes spawnFade {
+  0%, 100% { opacity: 0; transform: translateY(-4px) scale(0.94); }
+  15%, 80% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* Application sur chaque silhouette — durées 5-6s pour les flottements
+   (rapide, vivant) et 8-9s pour les spawn. Délais décalés pour un effet
+   organique : tout ne bouge pas en même temps. transform-origin: center
+   pour que le scale du spawn parte du centre du dessin. */
+.deco-anim-1,
+.deco-anim-2,
+.deco-anim-3,
+.deco-anim-4,
+.deco-anim-5,
+.deco-anim-6,
+.deco-anim-7,
+.deco-anim-8,
+.deco-anim-9,
+.deco-anim-10 {
+  transform-origin: center;
+  transform-box: fill-box;
+  will-change: transform, opacity;
+}
+
+.deco-anim-1  { animation: floatY    5.5s ease-in-out  0s    infinite; } /* haltère */
+.deco-anim-2  { animation: spawnFade 8s   ease-in-out -3s   infinite; } /* petit cercle */
+.deco-anim-3  { animation: spawnFade 9s   ease-in-out -1.5s infinite; } /* cible */
+.deco-anim-4  { animation: floatYb   6s   ease-in-out -1s   infinite; } /* disques */
+.deco-anim-5  { animation: floatY    5s   ease-in-out -2.5s infinite; } /* triangle */
+.deco-anim-6  { animation: floatYb   5.5s ease-in-out  0s    infinite; } /* kettlebell */
+.deco-anim-7  { animation: spawnFade 8s   ease-in-out -5s   infinite; } /* croix */
+.deco-anim-8  { animation: spawnFade 9s   ease-in-out -2s   infinite; } /* pulse */
+.deco-anim-9  { animation: floatY    6s   ease-in-out -1.8s infinite; } /* chrono */
+.deco-anim-10 { animation: floatYb   5.5s ease-in-out -3.5s infinite; } /* cercle final */
+
+/* Exception accessibilité OBLIGATOIRE :
+   - prefers-reduced-motion: utilisateurs qui ont coupé les animations OS
+   - html.performance-lite : mode performance allégé
+   Pour TOUS les autres (défaut), ça bouge normalement. Ne pas élargir. */
 @media (prefers-reduced-motion: reduce) {
-  .espace-deco { --deco-opacity: 0.12; }
+  .deco-anim-1, .deco-anim-2, .deco-anim-3, .deco-anim-4, .deco-anim-5,
+  .deco-anim-6, .deco-anim-7, .deco-anim-8, .deco-anim-9, .deco-anim-10 {
+    animation: none;
+  }
+}
+html.performance-lite .deco-anim-1,
+html.performance-lite .deco-anim-2,
+html.performance-lite .deco-anim-3,
+html.performance-lite .deco-anim-4,
+html.performance-lite .deco-anim-5,
+html.performance-lite .deco-anim-6,
+html.performance-lite .deco-anim-7,
+html.performance-lite .deco-anim-8,
+html.performance-lite .deco-anim-9,
+html.performance-lite .deco-anim-10 {
+  animation: none;
 }
 
 /* ── BANNIÈRE D'ACTION CONTEXTUELLE (ajout A) ───────────────────────── */

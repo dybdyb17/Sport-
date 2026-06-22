@@ -124,8 +124,14 @@ ResetFoundingClaims, SeedFoundingOffer, SeedPricingShowcase, **SendDayBeforeRemi
   contextuelle en haut (paiement Xplor en attente OU profil incomplet, cliquable, fond or
   translucide), liste « TES AUTRES SÉANCES À VENIR » compacte sous le ticket (n'apparaît
   que s'il y a >1 séance), état vide soigné (icône calendar-plus + CTA réserver). Décor
-  line art doré statique sur les flancs (haltère/cible/disques/kettlebell/pulse/chrono),
-  ≥1200px uniquement, variable CSS `--deco-opacity: 0.16`. Lien discret « Voir mes séances
+  line art doré **animé** sur les flancs (haltère/cible/disques/kettlebell/pulse/chrono/
+  triangle/croix/cercles), ≥1100px (couvre MacBook 13" + tablette paysage), variable CSS
+  `--deco-opacity: 0.28` (28% bien visible). Animations : `floatY` (translateY -16px, 5-6s),
+  `floatYb` (translateY +14px, 5-6s) et `spawnFade` (opacity 0↔1 + scale, 8-9s) appliquées
+  sur 10 silhouettes avec délais décalés pour effet organique. Structure SVG `<g>` double
+  (extérieur = animation, intérieur = position) pour ne pas écraser les `translate`.
+  Exception `prefers-reduced-motion: reduce` + `html.performance-lite` coupent l'animation
+  (accessibilité obligatoire) — par défaut ça bouge. Lien discret « Voir mes séances
   passées » en bas. Founding thanks card + encart Deciplus gardés. CSS :
   `assets/styles/pages/espace-client.css` (réécrit).
 - **Page historique client (22 juin)** : nouvelle route `/mon-espace/historique`
