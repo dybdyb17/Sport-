@@ -443,6 +443,34 @@ class Booking
     }
 
     /**
+     * Le QR de check-in est-il accessible côté client ?
+     *
+     * Règle (alignée sur templates/client/mon-rdv.html.twig) :
+     *  - séance confirmée
+     *  - ET soit le paiement n'est PAS Xplor (espèces/CB → réglé sur place, QR ok)
+     *    soit Xplor mais le coach a déjà déclaré le paiement
+     *
+     * Centralise la condition pour ne pas la dupliquer entre les pages
+     * (espace client, mon-rdv, futurs écrans).
+     */
+    public function isQrUnlocked(): bool
+    {
+        return $this->status === self::STATUS_CONFIRMED
+            && ($this->intendedPaymentMethod !== 'xplor' || $this->paymentMethod !== null);
+    }
+
+    /**
+     * Pendant utile pour l'espace client : la séance est confirmée mais bloquée
+     * par un paiement Xplor non déclaré → on doit afficher le CTA "Régler via Xplor".
+     */
+    public function isAwaitingXplorPayment(): bool
+    {
+        return $this->status === self::STATUS_CONFIRMED
+            && $this->intendedPaymentMethod === 'xplor'
+            && $this->paymentMethod === null;
+    }
+
+    /**
      * Label adaptatif selon la distance entre aujourd'hui et le jour de la séance.
      * Utilisé par le mail rappel pré-séance qui peut partir aujourd'hui-même,
      * demain ou à J-2 selon le contexte (envoi immédiat à la confirmation,

@@ -114,11 +114,26 @@ ResetFoundingClaims, SeedFoundingOffer, SeedPricingShowcase, **SendDayBeforeRemi
 
 ## ✅ État des features (construites & validées)
 
-- **Espace client refondu « Mission Control »** (`/mon-espace`) : hero conversationnel +
-  heroMessage contextuel, ticket séance avec photo coach (glass, coin coupé), countdown
-  « humain », founding thanks card, parcours strip, heatmap consistance 12 semaines, card
-  rythme du mois, décor SVG sport animé sur les flancs (haltère/kettlebell/target/chrono/
-  pulse/orbes), container max 960px, icônes Tabler. CSS : `assets/styles/pages/espace-client.css`.
+- **Espace client refondu épuré (22 juin)** (`/mon-espace`) : retiré heatmap 12 semaines,
+  card rythme du mois, parcours strip (trop chargé). Ticket prochaine séance **adaptatif
+  selon 3 états** : `state-pending` (icône horloge + texte rassurant), `state-payment`
+  (CTA central « Régler via Xplor » avec mention « QR prêt, attend juste le paiement » —
+  parcours Xplor clarifié), `state-ready` (QR affiché en grand directement). Logique
+  centralisée via 2 helpers `Booking.isQrUnlocked()` / `Booking.isAwaitingXplorPayment()`
+  (utilisés par espace + mon-rdv → plus de duplication). Ajouts : bannière action
+  contextuelle en haut (paiement Xplor en attente OU profil incomplet, cliquable, fond or
+  translucide), liste « TES AUTRES SÉANCES À VENIR » compacte sous le ticket (n'apparaît
+  que s'il y a >1 séance), état vide soigné (icône calendar-plus + CTA réserver). Décor
+  line art doré statique sur les flancs (haltère/cible/disques/kettlebell/pulse/chrono),
+  ≥1200px uniquement, variable CSS `--deco-opacity: 0.16`. Lien discret « Voir mes séances
+  passées » en bas. Founding thanks card + encart Deciplus gardés. CSS :
+  `assets/styles/pages/espace-client.css` (réécrit).
+- **Page historique client (22 juin)** : nouvelle route `/mon-espace/historique`
+  (`app_espace_client_history`), template `templates/client/historique.html.twig`. Liste
+  cards compactes triées de la plus récente à la plus ancienne, statut final synthétique
+  (honorée / no-show / annulée / refusée / non confirmée / terminée) avec pastille colorée
+  et bordure gauche de couleur correspondante. CSS dédié
+  `assets/styles/pages/historique-client.css`.
 - **Features nuit** : `Coach.isAvailableTonight` + toggle, `User.lastSeenAt` +
   UserActivitySubscriber, préférences nocturnes, bandeau séance + indicateur en ligne + quick
   replies en messagerie.

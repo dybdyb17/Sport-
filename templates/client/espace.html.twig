@@ -3,138 +3,99 @@
 {% block title %}Mon espace — SPORT+{% endblock %}
 
 {% block body %}
+{% set phoneMissing = app.user.phone is empty %}
+{% set hasAction = actionAttente or phoneMissing %}
+
 <div class="container espace-page">
 
-  {# ── DÉCOR SPORT animé sur les flancs vides ── #}
-  <div class="espace-decor" aria-hidden="true">
-    <svg class="decor-svg decor-svg-left" viewBox="0 0 240 1200" preserveAspectRatio="xMidYMid slice">
-      <defs>
-        <linearGradient id="speedGreen" x1="0" y1="0" x2="1" y2="0">
-          <stop offset="0%" stop-color="#2ECC71" stop-opacity="0"/>
-          <stop offset="50%" stop-color="#2ECC71" stop-opacity=".75"/>
-          <stop offset="100%" stop-color="#2ECC71" stop-opacity="0"/>
-        </linearGradient>
-        <linearGradient id="speedGold" x1="0" y1="0" x2="1" y2="0">
-          <stop offset="0%" stop-color="#C8A951" stop-opacity="0"/>
-          <stop offset="50%" stop-color="#C8A951" stop-opacity=".75"/>
-          <stop offset="100%" stop-color="#C8A951" stop-opacity="0"/>
-        </linearGradient>
-        <radialGradient id="orbGreen">
-          <stop offset="0%" stop-color="#2ECC71" stop-opacity=".4"/>
-          <stop offset="70%" stop-color="#2ECC71" stop-opacity=".05"/>
-          <stop offset="100%" stop-color="#2ECC71" stop-opacity="0"/>
-        </radialGradient>
-        <radialGradient id="orbGold">
-          <stop offset="0%" stop-color="#C8A951" stop-opacity=".35"/>
-          <stop offset="70%" stop-color="#C8A951" stop-opacity=".05"/>
-          <stop offset="100%" stop-color="#C8A951" stop-opacity="0"/>
-        </radialGradient>
-      </defs>
-
-      {# Orbe verte en haut #}
-      <circle class="decor-orb orb-1" cx="100" cy="120" r="80" fill="url(#orbGreen)"/>
-
-      {# Haltère stylisé bien visible #}
-      <g class="decor-dumbbell" transform="translate(120 300)">
-        <rect x="-44" y="-5" width="88" height="10" rx="3" fill="none" stroke="#C8A951" stroke-opacity=".55" stroke-width="2"/>
-        <rect x="-62" y="-22" width="14" height="44" rx="3" fill="none" stroke="#2ECC71" stroke-opacity=".55" stroke-width="2"/>
-        <rect x="48"  y="-22" width="14" height="44" rx="3" fill="none" stroke="#2ECC71" stroke-opacity=".55" stroke-width="2"/>
-        <rect x="-78" y="-30" width="14" height="60" rx="3" fill="none" stroke="#C8A951" stroke-opacity=".4" stroke-width="2"/>
-        <rect x="64"  y="-30" width="14" height="60" rx="3" fill="none" stroke="#C8A951" stroke-opacity=".4" stroke-width="2"/>
+  {# ── DÉCOR LINE ART LATÉRAL — grand écran uniquement ── #}
+  <div class="espace-deco" aria-hidden="true">
+    <svg class="espace-deco-svg espace-deco-svg--left" viewBox="0 0 200 1100" preserveAspectRatio="xMidYMid meet">
+      {# Haltère stylisé #}
+      <g transform="translate(100 180)" fill="none" stroke="#C8A951" stroke-width="1.4" stroke-linecap="round">
+        <rect x="-44" y="-5" width="88" height="10" rx="3"/>
+        <rect x="-62" y="-22" width="14" height="44" rx="3"/>
+        <rect x="48"  y="-22" width="14" height="44" rx="3"/>
+        <rect x="-78" y="-30" width="14" height="60" rx="3"/>
+        <rect x="64"  y="-30" width="14" height="60" rx="3"/>
       </g>
-
-      {# Lignes de vitesse en milieu #}
-      <g class="speed-lines">
-        <line x1="-240" y1="500" x2="160" y2="500" stroke="url(#speedGreen)" stroke-width="1.5"/>
-        <line x1="-240" y1="540" x2="120" y2="540" stroke="url(#speedGold)"  stroke-width="1.5"/>
-        <line x1="-240" y1="580" x2="180" y2="580" stroke="url(#speedGreen)" stroke-width="1.5"/>
-        <line x1="-240" y1="620" x2="100" y2="620" stroke="url(#speedGold)"  stroke-width="1.5"/>
+      {# Cible / target #}
+      <g transform="translate(100 460)" fill="none" stroke="#C8A951" stroke-width="1.4">
+        <circle cx="0" cy="0" r="50"/>
+        <circle cx="0" cy="0" r="34"/>
+        <circle cx="0" cy="0" r="18"/>
+        <line x1="-62" y1="0" x2="-54" y2="0" stroke-linecap="round"/>
+        <line x1="54"  y1="0" x2="62"  y2="0" stroke-linecap="round"/>
+        <line x1="0" y1="-62" x2="0" y2="-54" stroke-linecap="round"/>
+        <line x1="0" y1="54"  x2="0" y2="62"  stroke-linecap="round"/>
       </g>
-
-      {# Kettlebell silhouette #}
-      <g class="decor-kettlebell" transform="translate(110 780)">
-        <path d="M -22,-30 Q -22,-44 0,-44 Q 22,-44 22,-30 L 22,-22 L 30,-15 Q 36,-5 36,12 Q 36,38 0,38 Q -36,38 -36,12 Q -36,-5 -30,-15 L -22,-22 Z"
-              fill="none" stroke="#2ECC71" stroke-opacity=".55" stroke-width="2" stroke-linejoin="round"/>
-        <ellipse cx="0" cy="-30" rx="14" ry="3" fill="none" stroke="#C8A951" stroke-opacity=".45" stroke-width="1.5"/>
+      {# Disques empilés #}
+      <g transform="translate(100 740)" fill="none" stroke="#C8A951" stroke-width="1.4" stroke-linecap="round">
+        <ellipse cx="0" cy="0"  rx="46" ry="10"/>
+        <ellipse cx="0" cy="18" rx="46" ry="10"/>
+        <ellipse cx="0" cy="36" rx="46" ry="10"/>
+        <line x1="-46" y1="0" x2="-46" y2="36"/>
+        <line x1="46"  y1="0" x2="46"  y2="36"/>
       </g>
-
-      {# Triangle décoratif bas #}
-      <g class="decor-triangle" transform="translate(80 1020)">
-        <polygon points="0,-30 26,15 -26,15" fill="none" stroke="#C8A951" stroke-opacity=".45" stroke-width="1.5" stroke-linejoin="round"/>
+      {# Petit triangle bas #}
+      <g transform="translate(100 980)" fill="none" stroke="#C8A951" stroke-width="1.4" stroke-linejoin="round">
+        <polygon points="0,-22 22,18 -22,18"/>
       </g>
-
-      {# Orbe or en bas #}
-      <circle class="decor-orb orb-2" cx="140" cy="1130" r="70" fill="url(#orbGold)"/>
     </svg>
 
-    <svg class="decor-svg decor-svg-right" viewBox="0 0 240 1200" preserveAspectRatio="xMidYMid slice">
-      {# Orbe or en haut #}
-      <circle class="decor-orb orb-3" cx="140" cy="100" r="70" fill="url(#orbGold)"/>
-
-      {# Target / compteur F1 — bien visible #}
-      <g class="decor-target" transform="translate(120 250)">
-        <circle cx="0" cy="0" r="48" fill="none" stroke="#2ECC71" stroke-opacity=".35" stroke-width="1.5"/>
-        <circle cx="0" cy="0" r="34" fill="none" stroke="#C8A951" stroke-opacity=".45" stroke-width="1.5"/>
-        <circle cx="0" cy="0" r="20" fill="none" stroke="#2ECC71" stroke-opacity=".55" stroke-width="1.5"/>
-        <circle cx="0" cy="0" r="6"  fill="#C8A951" fill-opacity=".55"/>
-        {# Cross hair #}
-        <line x1="-58" y1="0" x2="-52" y2="0" stroke="#2ECC71" stroke-opacity=".55" stroke-width="2"/>
-        <line x1="52"  y1="0" x2="58"  y2="0" stroke="#2ECC71" stroke-opacity=".55" stroke-width="2"/>
-        <line x1="0" y1="-58" x2="0" y2="-52" stroke="#2ECC71" stroke-opacity=".55" stroke-width="2"/>
-        <line x1="0" y1="52"  x2="0" y2="58"  stroke="#2ECC71" stroke-opacity=".55" stroke-width="2"/>
+    <svg class="espace-deco-svg espace-deco-svg--right" viewBox="0 0 200 1100" preserveAspectRatio="xMidYMid meet">
+      {# Kettlebell #}
+      <g transform="translate(100 200)" fill="none" stroke="#C8A951" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round">
+        <path d="M -22,-30 Q -22,-44 0,-44 Q 22,-44 22,-30 L 22,-22 L 30,-15 Q 38,-5 38,15 Q 38,42 0,42 Q -38,42 -38,15 Q -38,-5 -30,-15 L -22,-22 Z"/>
+        <ellipse cx="0" cy="-30" rx="16" ry="3"/>
       </g>
-
-      {# Lignes de vitesse milieu - sens inverse #}
-      <g class="speed-lines speed-lines-reverse">
-        <line x1="280" y1="430" x2="60"  y2="430" stroke="url(#speedGold)"  stroke-width="1.5"/>
-        <line x1="280" y1="470" x2="100" y2="470" stroke="url(#speedGreen)" stroke-width="1.5"/>
-        <line x1="280" y1="510" x2="40"  y2="510" stroke="url(#speedGold)"  stroke-width="1.5"/>
-        <line x1="280" y1="550" x2="120" y2="550" stroke="url(#speedGreen)" stroke-width="1.5"/>
+      {# Pulse / heartbeat #}
+      <g transform="translate(20 480)" fill="none" stroke="#C8A951" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="0,0 50,0 70,-36 90,40 110,-24 130,18 150,0 200,0"/>
       </g>
-
-      {# Pulse heartbeat — bien visible #}
-      <g class="decor-pulse" transform="translate(0 720)">
-        <polyline points="10,0 60,0 75,-32 90,38 105,-22 120,16 135,0 230,0"
-                  fill="none" stroke="#2ECC71" stroke-opacity=".55" stroke-width="2"
-                  stroke-linecap="round" stroke-linejoin="round"/>
+      {# Chrono #}
+      <g transform="translate(100 760)" fill="none" stroke="#C8A951" stroke-width="1.4" stroke-linecap="round">
+        <circle cx="0" cy="0" r="36"/>
+        <rect x="-9" y="-50" width="18" height="6" rx="1"/>
+        <line x1="0" y1="0" x2="0" y2="-24"/>
+        <circle cx="0" cy="0" r="2.5" fill="#C8A951"/>
       </g>
-
-      {# Stopwatch / chrono #}
-      <g class="decor-stopwatch" transform="translate(110 920)">
-        <circle cx="0" cy="0" r="32" fill="none" stroke="#C8A951" stroke-opacity=".5" stroke-width="2"/>
-        <rect x="-8" y="-44" width="16" height="6" rx="1" fill="none" stroke="#C8A951" stroke-opacity=".5" stroke-width="1.5"/>
-        <line x1="0" y1="0" x2="0" y2="-22" stroke="#2ECC71" stroke-opacity=".75" stroke-width="2" stroke-linecap="round" class="stopwatch-hand"/>
-        <circle cx="0" cy="0" r="2.5" fill="#C8A951" fill-opacity=".7"/>
-      </g>
-
-      {# Triangle décoratif #}
-      <g class="decor-triangle decor-triangle-rev" transform="translate(140 1090)">
-        <polygon points="0,30 26,-15 -26,-15" fill="none" stroke="#2ECC71" stroke-opacity=".45" stroke-width="1.5" stroke-linejoin="round"/>
+      {# Cercle final #}
+      <g transform="translate(100 990)" fill="none" stroke="#C8A951" stroke-width="1.4">
+        <circle cx="0" cy="0" r="26"/>
+        <circle cx="0" cy="0" r="10"/>
       </g>
     </svg>
   </div>
 
-  {# ── BANNIÈRE : téléphone manquant (anciens comptes) ── #}
-  {% if app.user.phone is empty %}
-    <div class="phone-missing-banner" data-animate="fade-down">
-      <div class="phone-missing-icon"><i class="ti ti-phone-plus"></i></div>
-      <div class="phone-missing-body">
-        <strong>Ajoute ton numéro de téléphone</strong>
-        <span>Indispensable pour que ton coach puisse te joindre en cas de changement de créneau.</span>
+  {# ══════════════════════════════════════════════════════════════════════
+     A. BANNIÈRE D'ACTION CONTEXTUELLE — n'apparaît QUE si action à faire
+     ══════════════════════════════════════════════════════════════════════ #}
+  {% if actionAttente %}
+    {% set coachPrenomBan = actionAttente.coach.nomComplet|split(' ')|first %}
+    <a href="{{ path('app_espace_client_rdv', {reference: actionAttente.reference}) }}" class="action-banner action-banner--payment" data-animate="fade-down">
+      <div class="action-banner-icon"><i class="ti ti-credit-card-pay"></i></div>
+      <div class="action-banner-body">
+        <strong>Une séance attend ton paiement</strong>
+        <span>Ta séance avec {{ coachPrenomBan }} le {{ actionAttente.startAt|date('d/m') }} à {{ actionAttente.startAt|date('H\\hi') }} — règle via Xplor pour débloquer ton QR.</span>
       </div>
-      <a href="{{ path('app_espace_client_profil') }}" class="phone-missing-cta">
-        <i class="ti ti-arrow-right"></i> Compléter mon profil
-      </a>
-    </div>
+      <i class="ti ti-chevron-right action-banner-chevron"></i>
+    </a>
+  {% elseif phoneMissing %}
+    <a href="{{ path('app_espace_client_profil') }}" class="action-banner action-banner--profile" data-animate="fade-down">
+      <div class="action-banner-icon"><i class="ti ti-phone-plus"></i></div>
+      <div class="action-banner-body">
+        <strong>Complète ton profil</strong>
+        <span>Ajoute ton numéro de téléphone pour que ton coach puisse te joindre.</span>
+      </div>
+      <i class="ti ti-chevron-right action-banner-chevron"></i>
+    </a>
   {% endif %}
 
-  {# ── HERO — aurora gradient subtil derrière ── #}
+  {# ══════════════════════════════════════════════════════════════════════
+     HERO — message adaptatif selon l'état
+     ══════════════════════════════════════════════════════════════════════ #}
   <div class="espace-hero" data-animate="fade-up">
-    <div class="espace-hero-aurora" aria-hidden="true">
-      <span class="aurora-blob aurora-blob-1"></span>
-      <span class="aurora-blob aurora-blob-2"></span>
-      <span class="aurora-blob aurora-blob-3"></span>
-    </div>
     <div class="espace-hero-text">
       <h1 class="espace-hero-title">
         {{ greeting }} {{ app.user.nomComplet|split(' ')|first }}
@@ -155,46 +116,55 @@
     </div>
   </div>
 
-
-  {# ── TICKET PROCHAINE SÉANCE — coach en vedette ── #}
+  {# ══════════════════════════════════════════════════════════════════════
+     TICKET PROCHAINE SÉANCE — 3 états : en attente / à régler / prête
+     ══════════════════════════════════════════════════════════════════════ #}
   {% if prochaine %}
     {% set coachPhoto = prochaine.coach.photoSrc %}
     {% set coachPrenom = prochaine.coach.nomComplet|split(' ')|first %}
-    <div class="session-ticket {{ prochaine.status }}" data-animate="fade-up" data-start="{{ prochaine.startAt|date('c') }}">
+    {% set isPending = prochaine.status == 'pending' %}
+    {% set isAwaitingPayment = prochaine.isAwaitingXplorPayment %}
+    {% set isReady = prochaine.isQrUnlocked %}
+
+    <div class="session-ticket {{ isPending ? 'state-pending' : (isAwaitingPayment ? 'state-payment' : 'state-ready') }}"
+         data-animate="fade-up" data-start="{{ prochaine.startAt|date('c') }}">
       <div class="session-ticket-glow" aria-hidden="true"></div>
 
-      {# Photo coach en vedette #}
-      <div class="session-ticket-coach">
-        {% if coachPhoto %}
-          <img src="{{ coachPhoto }}" alt="{{ prochaine.coach.nomComplet }}" class="session-ticket-photo">
-        {% else %}
-          <div class="session-ticket-photo session-ticket-initials">
-            {%- set cw = prochaine.coach.nomComplet|split(' ') -%}
-            {{- cw[0]|first|upper -}}{%- if cw|length > 1 -%}{{- cw[1]|first|upper -}}{%- endif -%}
-          </div>
-        {% endif %}
-        <div class="session-ticket-coach-label">
-          <span class="session-ticket-coach-with">Ta séance avec</span>
-          <span class="session-ticket-coach-name">{{ coachPrenom }}</span>
-        </div>
-      </div>
-
-      {# Infos séance #}
-      <div class="session-ticket-body">
-        <div class="session-ticket-top">
-          {% if prochaine.status == 'confirmed' %}
-            <span class="session-ticket-status is-confirmed"><span class="status-dot"></span> Confirmée</span>
+      {# Header ticket : coach + countdown #}
+      <div class="session-ticket-header">
+        <div class="session-ticket-coach">
+          {% if coachPhoto %}
+            <img src="{{ coachPhoto }}" alt="{{ prochaine.coach.nomComplet }}" class="session-ticket-photo">
           {% else %}
+            <div class="session-ticket-photo session-ticket-initials">
+              {%- set cw = prochaine.coach.nomComplet|split(' ') -%}
+              {{- cw[0]|first|upper -}}{%- if cw|length > 1 -%}{{- cw[1]|first|upper -}}{%- endif -%}
+            </div>
+          {% endif %}
+          <div class="session-ticket-coach-label">
+            <span class="session-ticket-coach-with">Ta séance avec</span>
+            <span class="session-ticket-coach-name">{{ coachPrenom }}</span>
+          </div>
+        </div>
+
+        <div class="session-ticket-meta-top">
+          {% if isPending %}
             <span class="session-ticket-status is-pending"><span class="status-dot pending"></span> En attente de {{ coachPrenom }}</span>
+          {% elseif isAwaitingPayment %}
+            <span class="session-ticket-status is-confirmed"><span class="status-dot"></span> Confirmée par ton coach</span>
+          {% else %}
+            <span class="session-ticket-status is-confirmed"><span class="status-dot"></span> Payée · prête</span>
           {% endif %}
           <span class="session-ticket-countdown" id="ticket-countdown"><i class="ti ti-hourglass"></i> ...</span>
         </div>
+      </div>
 
+      {# Infos de la séance #}
+      <div class="session-ticket-info">
         <div class="session-ticket-title">{{ prochaine.offerLabel }}</div>
-
         <div class="session-ticket-meta">
           <span><i class="ti ti-calendar"></i> {{ prochaine.startAt|date('d/m/Y') }}</span>
-          <span><i class="ti ti-clock"></i> {{ prochaine.timeRangeFormatted }} <span style="color:var(--gold);">· {{ prochaine.durationFormatted }}</span></span>
+          <span><i class="ti ti-clock"></i> {{ prochaine.timeRangeFormatted }} <span class="meta-dim">· {{ prochaine.durationFormatted }}</span></span>
           {% if prochaine.coveredBy == 'founding' %}
             <span class="session-ticket-price session-ticket-price--covered">
               <i class="ti ti-crown"></i> Incluse — Fondateur
@@ -207,21 +177,68 @@
             <span class="session-ticket-price">{{ prochaine.prixFormatted }}</span>
           {% endif %}
         </div>
+      </div>
 
-        <div class="session-ticket-actions">
-          <a href="{{ path('app_espace_client_rdv', {reference: prochaine.reference}) }}" class="btn btn-secondary btn-sm">
-            <i class="ti ti-qrcode"></i> Mon QR code
-          </a>
+      {# Bloc central adaptatif selon l'état #}
+      {% if isPending %}
+        <div class="session-ticket-state-block state-pending-block">
+          <div class="state-block-icon"><i class="ti ti-hourglass-high"></i></div>
+          <div class="state-block-text">
+            <strong>Ta demande est partie</strong>
+            <p>{{ coachPrenom }} va confirmer ta séance très vite. Tu recevras un email dès que c'est bon.</p>
+          </div>
           {% if prochaine.conversation %}
-            <a href="{{ path('app_conversation_show', {id: prochaine.conversation.id}) }}" class="btn btn-primary btn-sm">
+            <a href="{{ path('app_conversation_show', {id: prochaine.conversation.id}) }}" class="btn btn-ghost btn-sm">
               <i class="ti ti-message"></i> Écrire à {{ coachPrenom }}
             </a>
           {% endif %}
         </div>
-      </div>
+
+      {% elseif isAwaitingPayment %}
+        <div class="session-ticket-state-block state-payment-block">
+          <div class="state-block-eyebrow">PLUS QU'UNE ÉTAPE</div>
+          <h3 class="state-block-title">Règle ta séance via Xplor</h3>
+          <p class="state-block-sub">
+            Dès que ton paiement est validé, ton QR de check-in se débloque ici tout seul.
+            Pas besoin de revenir nous voir.
+          </p>
+          <button type="button" class="state-block-cta"
+                  data-xplor-open
+                  data-xplor-url="{{ xplor_pay_url(prochaine) }}"
+                  data-xplor-product="{{ prochaine.deciplusProductName }}"
+                  data-xplor-amount="{{ prochaine.displayAmountFormatted }}"
+                  data-xplor-is-pack="{{ prochaine.subscription ? 'true' : 'false' }}">
+            <i class="ti ti-credit-card-pay"></i> Régler {{ prochaine.prixFormatted }} via Xplor Active
+          </button>
+          <p class="state-block-locked">
+            <i class="ti ti-lock"></i> Ton QR est prêt, il attend juste le paiement
+          </p>
+        </div>
+
+      {% elseif isReady %}
+        <div class="session-ticket-state-block state-ready-block">
+          <div class="state-block-qr-wrap">
+            <div id="ticket-qr" data-checkin-url="{{ url('app_admin_checkin_validate', {reference: prochaine.reference}) }}"></div>
+          </div>
+          <p class="state-block-qr-text">
+            <i class="ti ti-scan"></i>
+            Présente ce QR à l'accueil — l'équipe le scanne pour valider ton arrivée.
+          </p>
+          <div class="session-ticket-actions">
+            {% if prochaine.conversation %}
+              <a href="{{ path('app_conversation_show', {id: prochaine.conversation.id}) }}" class="btn btn-ghost btn-sm">
+                <i class="ti ti-message"></i> Écrire à {{ coachPrenom }}
+              </a>
+            {% endif %}
+            <a href="{{ path('app_espace_client_rdv', {reference: prochaine.reference}) }}" class="btn btn-ghost btn-sm">
+              <i class="ti ti-file-text"></i> Détail du RDV
+            </a>
+          </div>
+        </div>
+      {% endif %}
     </div>
 
-    {# Countdown doux : phrase humaine, mise à jour 30s, pas de secondes qui défilent #}
+    {# Countdown doux (réutilise le script existant) #}
     <script>
       (function() {
         const el = document.getElementById('ticket-countdown');
@@ -258,9 +275,89 @@
         setInterval(render, 30000);
       })();
     </script>
+
+    {# Rendu QR : seulement si on est dans l'état "prête" #}
+    {% if isReady %}
+      <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
+      <script>
+        (function() {
+          const wrap = document.getElementById('ticket-qr');
+          if (!wrap) return;
+          const url = wrap.dataset.checkinUrl;
+          const qr = qrcode(0, 'M');
+          qr.addData(url);
+          qr.make();
+          wrap.innerHTML = qr.createImgTag(5, 6);
+          const img = wrap.querySelector('img');
+          if (img) {
+            img.style.background = '#fff';
+            img.style.padding = '10px';
+            img.style.borderRadius = '10px';
+            img.style.display = 'block';
+            img.style.margin = '0 auto';
+            img.style.width = '100%';
+            img.style.maxWidth = '220px';
+            img.style.height = 'auto';
+          }
+        })();
+      </script>
+    {% endif %}
+
+  {% else %}
+    {# ════════════════════════════════════════════════════════════════════
+       ÉTAT VIDE — aucune séance à venir
+       ════════════════════════════════════════════════════════════════════ #}
+    <div class="empty-state" data-animate="fade-up">
+      <div class="empty-state-icon"><i class="ti ti-calendar-plus"></i></div>
+      <h2 class="empty-state-title">Aucune séance prévue</h2>
+      <p class="empty-state-text">
+        Réserve ta prochaine séance avec un coach et reprends ton rythme quand tu veux,
+        jour comme nuit.
+      </p>
+      <a href="{{ path('app_booking_new') }}" class="btn btn-primary">
+        <i class="ti ti-calendar-plus"></i> Réserver une séance
+      </a>
+    </div>
   {% endif %}
 
-  {# ── Founding Member — version chaleureuse ── #}
+  {# ══════════════════════════════════════════════════════════════════════
+     B. AUTRES SÉANCES À VENIR — n'apparaît QUE si >1 séance à venir
+     ══════════════════════════════════════════════════════════════════════ #}
+  {% if autresSeances|length > 0 %}
+    <div class="upcoming-list" data-animate="fade-up">
+      <div class="upcoming-list-eyebrow">TES AUTRES SÉANCES À VENIR</div>
+      <div class="upcoming-list-items">
+        {% for b in autresSeances %}
+          {% set bCoachPrenom = b.coach.nomComplet|split(' ')|first %}
+          <a href="{{ path('app_espace_client_rdv', {reference: b.reference}) }}" class="upcoming-item">
+            <div class="upcoming-item-date">
+              <span class="upcoming-item-day">{{ b.startAt|date('d') }}</span>
+              <span class="upcoming-item-month">{{ b.startAt|format_datetime('none', 'none', 'MMM', locale='fr')|upper|replace({'.': ''}) }}</span>
+            </div>
+            <div class="upcoming-item-body">
+              <div class="upcoming-item-line">
+                <i class="ti ti-clock"></i> {{ b.timeRangeFormatted }}
+                <span class="upcoming-item-coach">· avec {{ bCoachPrenom }}</span>
+              </div>
+              <div class="upcoming-item-sub">{{ b.offerLabel }}</div>
+            </div>
+            <div class="upcoming-item-status">
+              {% if b.status == 'confirmed' %}
+                <span class="upcoming-item-pill is-confirmed"><i class="ti ti-check"></i> Confirmée</span>
+              {% else %}
+                <span class="upcoming-item-pill is-pending"><i class="ti ti-hourglass"></i> En attente</span>
+              {% endif %}
+            </div>
+            <i class="ti ti-chevron-right upcoming-item-chevron"></i>
+          </a>
+        {% endfor %}
+      </div>
+    </div>
+  {% endif %}
+
+  {# ══════════════════════════════════════════════════════════════════════
+     Founding thanks card — gardée telle quelle
+     ══════════════════════════════════════════════════════════════════════ #}
   {% if app.user.foundingClaim %}
     {% set fc = app.user.foundingClaim %}
     <div class="founding-thanks-card" data-animate="fade-up">
@@ -280,295 +377,32 @@
     </div>
   {% endif %}
 
-  {# ── Ton parcours ── #}
-  <div class="parcours-strip" data-animate="fade-up">
-    <div class="parcours-item">
-      <div class="parcours-icon"><i class="ti ti-flame"></i></div>
-      <div class="parcours-text"><strong>{{ total }}</strong> séance{{ total > 1 ? 's' : '' }} réservée{{ total > 1 ? 's' : '' }}</div>
-    </div>
-    <div class="parcours-item">
-      <div class="parcours-icon is-green"><i class="ti ti-circle-check"></i></div>
-      <div class="parcours-text"><strong>{{ nbConfirmees }}</strong> confirmée{{ nbConfirmees > 1 ? 's' : '' }}</div>
-    </div>
-    {% if nbEnAttente > 0 %}
-      <div class="parcours-item">
-        <div class="parcours-icon is-gold"><i class="ti ti-hourglass"></i></div>
-        <div class="parcours-text"><strong>{{ nbEnAttente }}</strong> en attente</div>
-      </div>
-    {% endif %}
-    <div class="parcours-item">
-      <div class="parcours-icon is-gold"><i class="ti ti-calendar-heart"></i></div>
-      <div class="parcours-text">Membre depuis <strong>{{ app.user.createdAt|date('m/Y') }}</strong></div>
-    </div>
-  </div>
-
-  {# ── MISSION CONTROL — Consistance (heatmap) + Rythme (velocity) ── #}
-  {% if total > 0 %}
-    <div class="mission-grid" data-animate="fade-up">
-
-      {# Card "Consistance" : heatmap 12 semaines #}
-      <div class="mission-card mission-card--heatmap">
-        <div class="mission-card-head">
-          <div>
-            <div class="mission-card-eyebrow">CONSISTANCE — 12 dernières semaines</div>
-            <h3 class="mission-card-title">Ta régularité <span style="color:var(--gold);">en un coup d'œil</span></h3>
-          </div>
-          {% if streakWeeks > 0 %}
-            <div class="mission-streak-chip">
-              <i class="ti ti-flame"></i>
-              <span><strong>{{ streakWeeks }}</strong> semaine{{ streakWeeks > 1 ? 's' : '' }} active{{ streakWeeks > 1 ? 's' : '' }}</span>
-            </div>
-          {% endif %}
-        </div>
-
-        <div class="heatmap-wrap">
-          <div class="heatmap-days">
-            <span>L</span><span>M</span><span>M</span><span>J</span><span>V</span><span>S</span><span>D</span>
-          </div>
-          <div class="heatmap-grid">
-            {% for week in heatmap %}
-              <div class="heatmap-week">
-                {% for cell in week %}
-                  {% set level = cell.count == 0 ? 0 : (cell.count >= 3 ? 3 : (cell.count >= 2 ? 2 : 1)) %}
-                  {% set state = cell.isFuture ? 'future' : (cell.isToday ? 'today' : 'past') %}
-                  <span
-                    class="heatmap-cell level-{{ level }} state-{{ state }}"
-                    title="{{ cell.date|format_datetime('none', 'none', "EEE d/M", locale='fr') }} — {{ cell.count }} séance{{ cell.count > 1 ? 's' : '' }}"
-                    aria-label="{{ cell.date|format_datetime('none', 'none', "EEE d/M", locale='fr') }} : {{ cell.count }} séance{{ cell.count > 1 ? 's' : '' }}"
-                  ></span>
-                {% endfor %}
-              </div>
-            {% endfor %}
-          </div>
-          <div class="heatmap-legend">
-            <span>Moins</span>
-            <span class="heatmap-cell level-0"></span>
-            <span class="heatmap-cell level-1"></span>
-            <span class="heatmap-cell level-2"></span>
-            <span class="heatmap-cell level-3"></span>
-            <span>Plus</span>
-          </div>
-        </div>
-      </div>
-
-      {# Card "Rythme" : tendance mois en cours #}
-      <div class="mission-card mission-card--velocity">
-        <div class="mission-card-head">
-          <div>
-            <div class="mission-card-eyebrow">RYTHME — Ce mois-ci</div>
-            <h3 class="mission-card-title">{{ app.user.nomComplet|split(' ')|first }}, ton <span style="color:var(--green);">tempo</span></h3>
-          </div>
-        </div>
-
-        <div class="velocity-main">
-          <div class="velocity-big">
-            <span class="velocity-num">{{ countThisMonth }}</span>
-            <span class="velocity-unit">séance{{ countThisMonth > 1 ? 's' : '' }}</span>
-          </div>
-          {% if tendance == 'up' %}
-            <div class="velocity-trend velocity-trend--up">
-              <i class="ti ti-trending-up"></i>
-              <span><strong>+{{ countThisMonth - countLastMonth }}</strong> vs mois dernier</span>
-            </div>
-          {% elseif tendance == 'down' %}
-            <div class="velocity-trend velocity-trend--down">
-              <i class="ti ti-trending-down"></i>
-              <span><strong>{{ countThisMonth - countLastMonth }}</strong> vs mois dernier</span>
-            </div>
-          {% else %}
-            <div class="velocity-trend velocity-trend--flat">
-              <i class="ti ti-equal"></i>
-              <span>Même tempo que le mois dernier</span>
-            </div>
-          {% endif %}
-        </div>
-
-        <p class="velocity-msg">
-          {% if tendance == 'up' %}
-            <i class="ti ti-rocket"></i> Tu accélères. Continue, on est avec toi.
-          {% elseif tendance == 'down' %}
-            <i class="ti ti-eye"></i> Un petit coup de mou ? Pas grave, on remet le couvert.
-          {% elseif countThisMonth == 0 %}
-            <i class="ti ti-bolt"></i> Le mois est jeune. Ton créneau t'attend.
-          {% else %}
-            <i class="ti ti-clock-bolt"></i> Régulier comme une horloge. C'est ça qui paye.
-          {% endif %}
-        </p>
-
-        <a href="{{ path('app_booking_new') }}" class="velocity-cta">
-          <i class="ti ti-arrow-right"></i> Booster mon mois
-        </a>
-      </div>
-
-    </div>
-  {% endif %}
-
-  {# ── Encart Deciplus ── #}
-  <div style="background:var(--bg-card);border:1px solid rgba(46,204,113,.3);
-              border-left:3px solid var(--green);border-radius:var(--radius-lg);
-              padding:20px 24px;margin-bottom:32px;
-              display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;">
-    <div style="display:flex;align-items:center;gap:14px;">
-      <div style="width:42px;height:42px;background:rgba(46,204,113,.1);border-radius:10px;
-                  display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-        <i class="ti ti-qrcode" style="font-size:20px;color:var(--green);"></i>
-      </div>
-      <div>
-        <div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:15px;
-                    text-transform:uppercase;letter-spacing:1px;color:var(--white);">
-          Mon abonnement &amp; accès salle — Deciplus
-        </div>
-        <div style="font-size:13px;color:var(--text-dim);margin-top:2px;">
-          Abonnement mensuel, planning, QR code d'accès &amp; paiement <strong style="color:var(--green);">Paylib</strong>.
-        </div>
+  {# ══════════════════════════════════════════════════════════════════════
+     Encart Deciplus — gardé
+     ══════════════════════════════════════════════════════════════════════ #}
+  <div class="deciplus-strip">
+    <div class="deciplus-strip-body">
+      <div class="deciplus-strip-icon"><i class="ti ti-qrcode"></i></div>
+      <div class="deciplus-strip-text">
+        <div class="deciplus-strip-title">Mon abonnement &amp; accès salle — Deciplus</div>
+        <div class="deciplus-strip-sub">Abonnement mensuel, planning, QR d'accès &amp; paiement <strong>Paylib</strong>.</div>
       </div>
     </div>
-    <a href="{{ path('app_deciplus') }}" class="btn btn-secondary btn-sm" style="flex-shrink:0;">
+    <a href="{{ path('app_deciplus') }}" class="btn btn-secondary btn-sm">
       <i class="ti ti-external-link"></i> Mon espace Deciplus
     </a>
   </div>
 
-  {% if total == 0 %}
-    <div class="espace-empty" data-animate="fade-up">
-      <div class="espace-empty-icon"><i class="ti ti-barbell"></i></div>
-      <h3 class="espace-empty-title">Ton premier défi t'attend <i class="ti ti-target-arrow" style="color:var(--green);vertical-align:middle;font-size:24px;"></i></h3>
-      <p class="espace-empty-text">Choisis ton coach, ton créneau — jour ou nuit — et on s'occupe du reste.</p>
-      <a href="{{ path('app_booking_new') }}" class="btn btn-primary">
-        <i class="ti ti-calendar-plus"></i> Réserver ma première séance
-      </a>
-    </div>
-  {% else %}
-
-    {# ── Info messagerie (si aucune conversation) ── #}
-    {% if nbConfirmees == 0 %}
-      <div class="info-box" style="margin-bottom:28px;">
-        <i class="ti ti-message-dots"></i>
-        <p>
-          <strong style="font-family:'Barlow Condensed',sans-serif;font-weight:700;">Messagerie</strong><br>
-          La messagerie s'ouvre automatiquement dès qu'un coach accepte votre réservation. Vous pouvez alors échanger directement avec lui.
-        </p>
-      </div>
-    {% endif %}
-
-    {# ── Séances à venir ── #}
-    <div class="section-label">Mes séances à venir</div>
-
-    {% if reservationsAVenir is empty %}
-      <p style="color:var(--text-dim);margin-bottom:32px;">
-        Aucune séance à venir.
-        <a href="{{ path('app_booking_new') }}" class="link-gold">Réserver un créneau →</a>
-      </p>
-    {% else %}
-      <div class="cards-grid" style="margin-bottom:40px;">
-        {% for booking in reservationsAVenir %}
-          <div class="coach-card" style="align-items:flex-start;text-align:left;">
-            <div style="display:flex;justify-content:space-between;align-items:flex-start;width:100%;margin-bottom:16px;">
-              <div>
-                <div class="coach-name" style="font-size:18px;">{{ booking.offerLabel }}</div>
-                <div style="font-size:13px;color:var(--text-dim);margin-top:2px;">Réf. {{ booking.reference }}</div>
-              </div>
-              <span class="status-badge {{ booking.status }}"><i class="ti {{ booking.statutIcon }}"></i>{{ booking.statutLabel }}</span>
-            </div>
-            <div style="width:100%;display:flex;flex-direction:column;gap:8px;margin-bottom:20px;">
-              <div style="display:flex;align-items:center;gap:8px;font-size:14px;color:var(--text-dim);">
-                <i class="ti ti-calendar" style="color:var(--gold-dim);"></i>
-                {{ booking.startAt|date('d/m/Y à H:i') }}
-              </div>
-              <div style="display:flex;align-items:center;gap:8px;font-size:14px;color:var(--text-dim);">
-                <i class="ti ti-user" style="color:var(--gold-dim);"></i>
-                {{ booking.coach.nomComplet }}
-              </div>
-              <div style="display:flex;align-items:center;gap:8px;font-size:14px;color:var(--gold);font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:18px;">
-                {% if booking.coveredBy == 'founding' %}
-                  <i class="ti ti-crown" style="color:var(--gold);font-size:14px;"></i>
-                  <span style="color:var(--gold);">Incluse — Fondateur</span>
-                {% elseif booking.coveredBy == 'subscription' and booking.subscription %}
-                  <i class="ti ti-check" style="color:var(--green);font-size:14px;"></i>
-                  <span style="color:var(--green);font-size:15px;">Incluse — {{ booking.subscription.packType.label }}</span>
-                {% else %}
-                  <i class="ti ti-coins" style="color:var(--gold-dim);font-size:14px;"></i>
-                  {{ booking.prixFormatted }}
-                {% endif %}
-              </div>
-            </div>
-            <div class="booking-card-actions">
-              <a href="{{ path('app_espace_client_rdv', {reference: booking.reference}) }}" class="action-btn">
-                <i class="ti ti-qrcode"></i> QR
-              </a>
-              {% if booking.status == 'confirmed' and booking.intendedPaymentMethod == 'xplor' and not booking.paymentMethod %}
-                <button type="button" class="action-btn action-btn--confirm" style="background:var(--green);color:var(--black);"
-                        data-xplor-open
-                        data-xplor-url="{{ xplor_pay_url(booking) }}"
-                        data-xplor-product="{{ booking.deciplusProductName }}"
-                        data-xplor-amount="{{ booking.displayAmountFormatted }}"
-                        data-xplor-is-pack="{{ booking.subscription ? 'true' : 'false' }}">
-                  <i class="ti ti-leaf"></i> Régler Xplor
-                </button>
-              {% endif %}
-              {% if booking.canBeCancelled %}
-                <form
-                  action="{{ path('app_booking_cancel', {ref: booking.reference}) }}"
-                  method="post"
-                  data-confirm-title="Annuler cette séance ?"
-                  data-confirm="La réservation du {{ booking.startAt|date('d/m/Y à H\\hi') }} avec {{ booking.coach.nomComplet }} sera annulée."
-                  data-confirm-button="Oui, annuler"
-                  data-confirm-danger="true"
-                >
-                  <input type="hidden" name="_token" value="{{ csrf_token('cancel' ~ booking.id) }}">
-                  <button type="submit" class="action-btn action-btn--danger">
-                    <i class="ti ti-x"></i> Annuler
-                  </button>
-                </form>
-              {% endif %}
-              {% if booking.conversation %}
-                <a href="{{ path('app_conversation_show', {id: booking.conversation.id}) }}" class="action-btn">
-                  <i class="ti ti-message"></i> Messagerie
-                </a>
-              {% endif %}
-            </div>
-          </div>
-        {% endfor %}
-      </div>
-    {% endif %}
-
-    {# ── Historique ── #}
-    {% if reservationsPassees is not empty %}
-      <div class="section-label">Historique</div>
-      <div class="data-table-card">
-        <table>
-          <thead>
-            <tr>
-              <th>Prestation</th>
-              <th>Date</th>
-              <th>Coach</th>
-              <th>Prix</th>
-              <th>Statut</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for booking in reservationsPassees %}
-              <tr>
-                <td style="font-family:'Barlow Condensed',sans-serif;font-weight:700;">{{ booking.offerLabel }}</td>
-                <td style="color:var(--text-dim);">{{ booking.startAt|date('d/m/Y') }}</td>
-                <td style="color:var(--text-dim);">{{ booking.coach.nomComplet }}</td>
-                <td style="color:var(--gold);font-family:'Barlow Condensed',sans-serif;font-weight:700;">
-                  {% if booking.coveredBy == 'founding' %}
-                    <span style="color:var(--gold);font-size:13px;"><i class="ti ti-crown"></i> Fondateur</span>
-                  {% elseif booking.coveredBy == 'subscription' and booking.subscription %}
-                    <span style="color:var(--green);font-size:13px;"><i class="ti ti-check"></i> {{ booking.subscription.packType.label }}</span>
-                  {% else %}
-                    {{ booking.prixFormatted }}
-                  {% endif %}
-                </td>
-                <td><span class="status-badge {{ booking.status }}"><i class="ti {{ booking.statutIcon }}"></i>{{ booking.statutLabel }}</span></td>
-              </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-      </div>
-    {% endif %}
-
-  {% endif %}
+  {# ══════════════════════════════════════════════════════════════════════
+     D. LIEN HISTORIQUE — discret, en bas
+     ══════════════════════════════════════════════════════════════════════ #}
+  <div class="history-link-wrap">
+    <a href="{{ path('app_espace_client_history') }}" class="history-link">
+      <i class="ti ti-history"></i>
+      Voir mes séances passées
+      <i class="ti ti-arrow-right"></i>
+    </a>
+  </div>
 
 </div>
 {% endblock %}

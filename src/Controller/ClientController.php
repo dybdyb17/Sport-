@@ -27,27 +27,30 @@ class ClientController extends AbstractController
         $all  = $bookingRepository->findForClient($user);
         $now  = new \DateTimeImmutable();
 
-        $estAVenir = static function (Booking $b) use ($now): bool {
-            return $b->getStartAt() >= $now
-                && in_array($b->getStatus(), [Booking::STATUS_PENDING, Booking::STATUS_CONFIRMED], true);
-        };
+        // Séances à venir (pending ou confirmed), triées du plus proche au plus lointain
+        $aVenir = array_values(array_filter($all, static fn (Booking $b): bool =>
+            $b->getStartAt() >= $now
+            && in_array($b->getStatus(), [Booking::STATUS_PENDING, Booking::STATUS_CONFIRMED], true)
+        ));
+        usort($aVenir, static fn (Booking $a, Booking $b): int => $a->getStartAt() <=> $b->getStartAt());
 
-        $reservationsAVenir  = array_values(array_filter($all, $estAVenir));
-        $reservationsPassees = array_values(array_filter($all, static fn (Booking $b): bool => !$estAVenir($b)));
+        // La prochaine + les autres (pour l'affichage adaptatif)
+        $prochaine     = $aVenir[0] ?? null;
+        $autresSeances = array_slice($aVenir, 1);
 
-        $nbConfirmees = count(array_filter($all, static fn (Booking $b): bool => $b->isConfirmed()));
-        $nbEnAttente  = count(array_filter($all, static fn (Booking $b): bool => $b->isPending()));
-
-        // Trouver la prochaine séance à venir (pending ou confirmed)
-        $prochaine = null;
-        foreach ($reservationsAVenir as $b) {
-            if ($prochaine === null || $b->getStartAt() < $prochaine->getStartAt()) {
-                $prochaine = $b;
+        // Action en attente : une séance confirmée non encore payée via Xplor →
+        // on l'affiche dans la bannière contextuelle. Priorité à la PROCHAINE
+        // séance bloquée, sinon la première qu'on trouve.
+        $actionAttente = null;
+        foreach ($aVenir as $b) {
+            if ($b->isAwaitingXplorPayment()) {
+                $actionAttente = $b;
+                break;
             }
         }
 
         // Salutation selon l'heure
-        $hour = (int) (new \DateTime())->format('H');
+        $hour = (int) $now->format('H');
         $greeting = match (true) {
             $hour >= 6  && $hour < 12 => 'Bonjour',
             $hour >= 12 && $hour < 18 => 'Bon après-midi',
@@ -55,12 +58,10 @@ class ClientController extends AbstractController
             default                   => 'Bonne nuit',
         };
 
-        // Phrase contextuelle + icône Tabler (pas d'emoji, on garde du propre)
+        // Phrase contextuelle adaptée à l'état
         if ($prochaine) {
-            $coachNom    = (string) $prochaine->getCoach()?->getNomComplet();
-            $coachPrenom = explode(' ', $coachNom)[0] ?: 'ton coach';
-            $diff        = $now->diff($prochaine->getStartAt());
-            $jours       = (int) $diff->days;
+            $coachPrenom = explode(' ', (string) $prochaine->getCoach()?->getNomComplet())[0] ?: 'ton coach';
+            $jours       = (int) $now->diff($prochaine->getStartAt())->days;
             $heure       = $prochaine->getStartAt()->format('H\hi');
             $heureH      = (int) $prochaine->getStartAt()->format('H');
 
@@ -76,85 +77,38 @@ class ClientController extends AbstractController
                 $heroIcon = 'ti-target-arrow';
             }
         } else {
-            $heroMessage = "Aucune séance prévue pour l'instant — ton prochain défi t'attend.";
-            $heroIcon = 'ti-compass';
+            $heroMessage = "Prêt à reprendre l'entraînement ? Choisis ton coach et ton créneau.";
+            $heroIcon = 'ti-bolt';
         }
-
-        // ── Stats avancées "mission control" ──────────────────────────────────
-        // Heatmap : 12 dernières semaines × 7 jours avec count séances confirmées.
-        $heatmap = [];
-        $today = new \DateTimeImmutable('today');
-        $startWeek = $today->modify('monday this week')->modify('-11 weeks');
-        for ($w = 0; $w < 12; $w++) {
-            $week = [];
-            for ($d = 0; $d < 7; $d++) {
-                $day = $startWeek->modify(sprintf('+%d days', $w * 7 + $d));
-                $count = 0;
-                foreach ($all as $b) {
-                    if ($b->getStatus() === Booking::STATUS_CONFIRMED
-                        && $b->getStartAt()->format('Y-m-d') === $day->format('Y-m-d')
-                    ) {
-                        $count++;
-                    }
-                }
-                $week[] = [
-                    'date'  => $day,
-                    'count' => $count,
-                    'iso'   => $day->format('Y-m-d'),
-                    'isPast'   => $day < $today,
-                    'isToday'  => $day->format('Y-m-d') === $today->format('Y-m-d'),
-                    'isFuture' => $day > $today,
-                ];
-            }
-            $heatmap[] = $week;
-        }
-
-        // Streak : nombre de semaines consécutives jusqu'à cette semaine avec ≥1 séance confirmée.
-        $streakWeeks = 0;
-        for ($w = 11; $w >= 0; $w--) {
-            $weekTotal = 0;
-            foreach ($heatmap[$w] as $cell) {
-                $weekTotal += $cell['count'];
-            }
-            if ($weekTotal === 0) {
-                if ($w === 11) continue; // Tolère semaine en cours sans séance
-                break;
-            }
-            $streakWeeks++;
-        }
-
-        // Séances ce mois vs mois précédent → tendance
-        $thisMonth = $today->format('Y-m');
-        $lastMonth = $today->modify('-1 month')->format('Y-m');
-        $countThisMonth = 0;
-        $countLastMonth = 0;
-        foreach ($all as $b) {
-            if ($b->getStatus() !== Booking::STATUS_CONFIRMED) continue;
-            $bMonth = $b->getStartAt()->format('Y-m');
-            if ($bMonth === $thisMonth) $countThisMonth++;
-            elseif ($bMonth === $lastMonth) $countLastMonth++;
-        }
-        $tendance = match (true) {
-            $countThisMonth > $countLastMonth => 'up',
-            $countThisMonth < $countLastMonth => 'down',
-            default                           => 'flat',
-        };
 
         return $this->render('client/espace.html.twig', [
-            'reservationsAVenir'  => $reservationsAVenir,
-            'reservationsPassees' => $reservationsPassees,
-            'total'               => count($all),
-            'nbConfirmees'        => $nbConfirmees,
-            'nbEnAttente'         => $nbEnAttente,
-            'prochaine'           => $prochaine,
-            'greeting'            => $greeting,
-            'heroMessage'         => $heroMessage,
-            'heroIcon'            => $heroIcon,
-            'heatmap'             => $heatmap,
-            'streakWeeks'         => $streakWeeks,
-            'countThisMonth'      => $countThisMonth,
-            'countLastMonth'      => $countLastMonth,
-            'tendance'            => $tendance,
+            'prochaine'      => $prochaine,
+            'autresSeances'  => $autresSeances,
+            'actionAttente'  => $actionAttente,
+            'greeting'       => $greeting,
+            'heroMessage'    => $heroMessage,
+            'heroIcon'       => $heroIcon,
+        ]);
+    }
+
+    #[Route('/mon-espace/historique', name: 'app_espace_client_history', methods: ['GET'])]
+    public function history(BookingRepository $bookingRepository): Response
+    {
+        /** @var \App\Entity\User $user */
+        $user = $this->getUser();
+        $all  = $bookingRepository->findForClient($user);
+        $now  = new \DateTimeImmutable();
+
+        // Passées = startAt < now OU statut terminal (cancelled/refused).
+        // Triées de la plus récente à la plus ancienne.
+        $passees = array_values(array_filter($all, static function (Booking $b) use ($now): bool {
+            $isFinalStatus = in_array($b->getStatus(), [Booking::STATUS_CANCELLED, Booking::STATUS_REFUSED], true);
+            return $b->getStartAt() < $now || $isFinalStatus;
+        }));
+        usort($passees, static fn (Booking $a, Booking $b): int => $b->getStartAt() <=> $a->getStartAt());
+
+        return $this->render('client/historique.html.twig', [
+            'passees' => $passees,
         ]);
     }
 

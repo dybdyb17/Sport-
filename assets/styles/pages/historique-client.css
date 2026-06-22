@@ -1,0 +1,202 @@
+/* ════════════════════════════════════════════════════════════════════════
+   PAGE HISTORIQUE CLIENT — /mon-espace/historique
+   ════════════════════════════════════════════════════════════════════════
+   Liste compacte des séances passées. Pastille colorée selon le statut
+   final (honorée / no-show / annulée / refusée / non confirmée).
+   ════════════════════════════════════════════════════════════════════════ */
+
+.historique-page {
+  max-width: 880px;
+}
+
+.historique-head {
+  margin-bottom: 28px;
+}
+.historique-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: clamp(26px, 3vw, 34px);
+  font-weight: 900;
+  color: var(--white);
+  margin: 0 0 6px;
+  letter-spacing: -0.5px;
+}
+.historique-sub {
+  font-size: 14.5px;
+  color: var(--text-soft);
+  margin: 0;
+}
+
+.historique-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.historique-card {
+  display: grid;
+  grid-template-columns: auto 1fr auto auto;
+  gap: 18px;
+  align-items: center;
+  padding: 14px 18px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  text-decoration: none;
+  color: inherit;
+  transition: background .2s ease, border-color .2s ease, transform .2s ease;
+}
+.historique-card:hover {
+  background: var(--bg-2);
+  transform: translateY(-1px);
+  border-color: rgba(200,169,81,.25);
+}
+
+/* Bandeau de couleur sur le côté selon le statut final */
+.historique-card--done      { border-left: 3px solid var(--green); }
+.historique-card--noshow    { border-left: 3px solid #ff6b6b; }
+.historique-card--cancelled { border-left: 3px solid var(--text-dim); }
+.historique-card--refused   { border-left: 3px solid #ff6b6b; }
+.historique-card--expired   { border-left: 3px solid var(--gold-dim); }
+.historique-card--confirmed { border-left: 3px solid var(--gold); }
+
+/* Bloc date à gauche */
+.historique-card-date {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 56px;
+  flex-shrink: 0;
+  padding: 6px 0;
+  background: rgba(255,255,255,.03);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+.historique-card-day {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--white);
+  line-height: 1;
+}
+.historique-card-month {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  color: var(--gold);
+  margin-top: 1px;
+}
+.historique-card-year {
+  font-size: 10px;
+  color: var(--text-dim);
+  margin-top: 1px;
+  font-weight: 600;
+}
+
+/* Corps de la card */
+.historique-card-body {
+  min-width: 0;
+}
+.historique-card-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--white);
+  margin-bottom: 4px;
+  line-height: 1.2;
+}
+.historique-card-meta {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  font-size: 13px;
+  color: var(--text-soft);
+}
+.historique-card-meta i {
+  color: var(--gold-dim);
+  margin-right: 4px;
+  font-size: 14px;
+}
+.historique-card-price {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 800;
+  color: var(--gold);
+  font-size: 14px;
+}
+.historique-card-price.covered {
+  color: var(--green);
+  font-size: 12px;
+  background: rgba(46,204,113,.08);
+  border: 1px solid rgba(46,204,113,.25);
+  padding: 2px 8px;
+  border-radius: 100px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Pastille statut final */
+.historique-card-status {
+  flex-shrink: 0;
+}
+.historique-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 11px;
+  border-radius: 100px;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.historique-pill--done {
+  background: rgba(46,204,113,.10);
+  border: 1px solid rgba(46,204,113,.30);
+  color: var(--green);
+}
+.historique-pill--noshow {
+  background: rgba(255,80,80,.08);
+  border: 1px solid rgba(255,80,80,.30);
+  color: #ff8a8a;
+}
+.historique-pill--cancelled {
+  background: rgba(255,255,255,.04);
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+}
+.historique-pill--refused {
+  background: rgba(255,80,80,.08);
+  border: 1px solid rgba(255,80,80,.30);
+  color: #ff8a8a;
+}
+.historique-pill--expired {
+  background: rgba(200,169,81,.06);
+  border: 1px solid rgba(200,169,81,.25);
+  color: var(--gold-dim);
+}
+.historique-pill--confirmed {
+  background: rgba(200,169,81,.08);
+  border: 1px solid rgba(200,169,81,.30);
+  color: var(--gold);
+}
+
+.historique-card-chevron {
+  color: var(--text-dim);
+  font-size: 20px;
+}
+
+@media (max-width: 580px) {
+  .historique-card {
+    grid-template-columns: auto 1fr;
+    grid-template-rows: auto auto;
+    row-gap: 10px;
+  }
+  .historique-card-status {
+    grid-column: 1 / -1;
+    justify-self: start;
+  }
+  .historique-card-chevron { display: none; }
+}

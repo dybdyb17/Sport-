@@ -1,0 +1,99 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mes séances passées — SPORT+{% endblock %}
+
+{% block body %}
+<div class="container historique-page">
+
+  <a href="{{ path('app_espace_client') }}" class="btn btn-ghost btn-sm" style="margin-bottom:20px;">
+    <i class="ti ti-arrow-left"></i> Mon espace
+  </a>
+
+  <div class="historique-head" data-animate="fade-up">
+    <h1 class="historique-title">Mes séances passées</h1>
+    <p class="historique-sub">
+      {% if passees|length == 0 %}
+        Tu n'as pas encore d'historique — toutes tes séances apparaîtront ici après ton premier RDV.
+      {% else %}
+        {{ passees|length }} séance{{ passees|length > 1 ? 's' : '' }} au total, de la plus récente à la plus ancienne.
+      {% endif %}
+    </p>
+  </div>
+
+  {% if passees|length == 0 %}
+    <div class="empty-state" data-animate="fade-up" style="margin-top:32px;">
+      <div class="empty-state-icon"><i class="ti ti-history"></i></div>
+      <h2 class="empty-state-title">Aucune séance passée</h2>
+      <p class="empty-state-text">Quand tu auras terminé ta première séance, elle apparaîtra ici.</p>
+      <a href="{{ path('app_booking_new') }}" class="btn btn-primary">
+        <i class="ti ti-calendar-plus"></i> Réserver une séance
+      </a>
+    </div>
+  {% else %}
+    <div class="historique-list" data-animate="fade-up">
+      {% for b in passees %}
+        {% set coachPrenom = b.coach.nomComplet|split(' ')|first %}
+
+        {# Statut final synthétique #}
+        {% if b.status == 'cancelled' %}
+          {% set finalStatus = 'cancelled' %}
+          {% set finalLabel  = 'Annulée' %}
+          {% set finalIcon   = 'ti-x' %}
+        {% elseif b.status == 'refused' %}
+          {% set finalStatus = 'refused' %}
+          {% set finalLabel  = 'Refusée' %}
+          {% set finalIcon   = 'ti-circle-x' %}
+        {% elseif b.noShow %}
+          {% set finalStatus = 'noshow' %}
+          {% set finalLabel  = 'No-show' %}
+          {% set finalIcon   = 'ti-alert-triangle' %}
+        {% elseif b.checkinAt %}
+          {% set finalStatus = 'done' %}
+          {% set finalLabel  = 'Honorée' %}
+          {% set finalIcon   = 'ti-check' %}
+        {% elseif b.status == 'pending' %}
+          {% set finalStatus = 'expired' %}
+          {% set finalLabel  = 'Non confirmée' %}
+          {% set finalIcon   = 'ti-clock-off' %}
+        {% else %}
+          {% set finalStatus = 'confirmed' %}
+          {% set finalLabel  = 'Terminée' %}
+          {% set finalIcon   = 'ti-flag' %}
+        {% endif %}
+
+        <a href="{{ path('app_espace_client_rdv', {reference: b.reference}) }}" class="historique-card historique-card--{{ finalStatus }}">
+          <div class="historique-card-date">
+            <span class="historique-card-day">{{ b.startAt|date('d') }}</span>
+            <span class="historique-card-month">{{ b.startAt|format_datetime('none', 'none', 'MMM', locale='fr')|upper|replace({'.': ''}) }}</span>
+            <span class="historique-card-year">{{ b.startAt|date('Y') }}</span>
+          </div>
+
+          <div class="historique-card-body">
+            <div class="historique-card-title">{{ b.offerLabel }}</div>
+            <div class="historique-card-meta">
+              <span><i class="ti ti-user"></i> {{ coachPrenom }}</span>
+              <span><i class="ti ti-clock"></i> {{ b.timeRangeFormatted }}</span>
+              {% if b.coveredBy == 'founding' %}
+                <span class="historique-card-price covered"><i class="ti ti-crown"></i> Fondateur</span>
+              {% elseif b.coveredBy == 'subscription' and b.subscription %}
+                <span class="historique-card-price covered"><i class="ti ti-check"></i> {{ b.subscription.packType.label }}</span>
+              {% else %}
+                <span class="historique-card-price">{{ b.prixFormatted }}</span>
+              {% endif %}
+            </div>
+          </div>
+
+          <div class="historique-card-status">
+            <span class="historique-pill historique-pill--{{ finalStatus }}">
+              <i class="ti {{ finalIcon }}"></i> {{ finalLabel }}
+            </span>
+          </div>
+
+          <i class="ti ti-chevron-right historique-card-chevron"></i>
+        </a>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+</div>
+{% endblock %}
