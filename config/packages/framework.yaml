@@ -8,6 +8,17 @@ framework:
     # Note that the session will be started ONLY if you read or write from it.
     session: true
 
+    # ── Trusted proxies (Railway termine le TLS en amont) ────────────────
+    # Sans ça, Symfony reçoit les requêtes en http en interne et génère
+    # toutes les URL absolues (sitemap, mails CLI désactivés mais routes
+    # absolues dans les pages, etc.) en http → Google Search Console
+    # rejette le sitemap car les <loc> ne matchent pas le https déclaré.
+    # REMOTE_ADDR + plages privées RFC1918 = compromis sûr pour Railway
+    # (IP de proxy non fixe, on fait confiance au dernier hop quel qu'il
+    # soit). x-forwarded-proto donne le bon scheme côté Symfony.
+    trusted_proxies: '%env(TRUSTED_PROXIES)%'
+    trusted_headers: ['x-forwarded-for', 'x-forwarded-host', 'x-forwarded-proto', 'x-forwarded-port']
+
     #esi: true
     #fragments: true
 

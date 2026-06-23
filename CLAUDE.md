@@ -191,6 +191,16 @@ ResetFoundingClaims, SeedFoundingOffer, SeedPricingShowcase, **SendDayBeforeRemi
 - **Photos coach** : base64 en DB (`photo_data` + `photo_mime_type`), `getPhotoSrc()`, fallback
   fichier local.
 - **Pages légales** : 4 pages avec contenu réel.
+- **Trusted proxies Railway (23 juin)** : `framework.yaml` reçoit `trusted_proxies:
+  '%env(TRUSTED_PROXIES)%'` + `trusted_headers: [x-forwarded-for, x-forwarded-host,
+  x-forwarded-proto, x-forwarded-port]`. Valeur par défaut dans `.env` :
+  `127.0.0.1,REMOTE_ADDR,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16` (REMOTE_ADDR fait
+  confiance au dernier hop quel qu'il soit, parfait pour Railway sans IP fixe).
+  Cause : Railway termine le TLS en amont, sans trusted proxies Symfony lit
+  `http` côté requête → sitemap.xml génère les `<loc>` en `http://` →
+  Search Console rejette parce que la propriété est déclarée en `https`. Fix
+  aussi toutes les URL absolues `url()` Twig générées en contexte requête.
+  ⚠️ Pas besoin de `TRUSTED_PROXIES` côté Railway : le défaut `.env` suffit.
 - **FAQ catégorie « Coaching de nuit & accès 24h/24 » + Schema FAQPage (23 juin)** : 6 nouvelles
   Q/R ciblées SEO niche (« coach sportif nuit Marseille », « salle 24h/24 Marseille ») dans une
   section avec ancre `#nuit`, ajoutée entre « Coachs & séances » et « Membres Fondateurs ». Lien
