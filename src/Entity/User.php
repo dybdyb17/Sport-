@@ -103,11 +103,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * Sérialisation custom pour le token de sécurité Symfony.
      * On ne sérialise QUE le minimum dont Symfony a besoin pour reconstruire
-     * l'utilisateur côté session (ID, email, password, roles). Le reste est
-     * rechargé depuis la DB via le UserProvider à chaque requête.
+     * l'utilisateur côté session (ID, email, password, roles, role enum).
+     * Le reste est rechargé depuis la DB via le UserProvider à chaque requête.
      *
-     * Évite les TypeError lors de changements de typage (DateTime → DateTimeImmutable
-     * par exemple) entre 2 versions du code, car les vieilles sessions ne
+     * ⚠️ `role` (l'enum) DOIT être sérialisé : la colonne `roles` (array) est
+     * souvent vide [] en DB pour les comptes coach/client purs. Si l'enum
+     * n'est pas restauré, `__unserialize` retombe sur la valeur par défaut
+     * UserRole::CLIENT → getRoles() retourne juste ROLE_CLIENT → un coach
+     * connecté apparaît comme client à Symfony et se prend des 403 sur ses
+     * propres pages (cas vécu 23/06 sur /admin/checkin/{ref}).
+     *
+     * Évite aussi les TypeError lors de changements de typage (DateTime
+     * → DateTimeImmutable) entre versions, car les vieilles sessions ne
      * portent plus ces champs.
      */
     public function __serialize(): array
@@ -117,6 +124,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             'email'    => $this->email,
             'password' => $this->password,
             'roles'    => $this->roles,
+            'role'     => $this->role->value,
         ];
     }
 
@@ -126,6 +134,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->email    = $data['email']    ?? null;
         $this->password = $data['password'] ?? null;
         $this->roles    = $data['roles']    ?? [];
+
+        // Restauration du role enum. Les vieilles sessions sérialisées avant ce
+        // fix n'ont pas 'role' → tryFrom retourne null → on garde la valeur
+        // par défaut (CLIENT). Le UserProvider refresh les corrigera au tour
+        // d'après en rechargeant depuis la DB. Pas de cassure rétro.
+        if (isset($data['role'])) {
+            $this->role = UserRole::tryFrom((string) $data['role']) ?? $this->role;
+        }
     }
 
     public function getId(): ?int
