@@ -1,9 +1,58 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}FAQ — SPORT+ Marseille{% endblock %}
-{% block meta_description %}<meta name="description" content="Questions fréquentes sur SPORT+ Marseille : réservation, tarifs, Night Coach, Membres Fondateurs, accès salle, annulation. 30 questions, 30 réponses.">{% endblock %}
+{% block meta_description %}<meta name="description" content="Questions fréquentes sur SPORT+ Marseille : coaching de nuit, accès salle 24h/24, réservation, tarifs, Night Coach, Membres Fondateurs, annulation. 36 questions, 36 réponses.">{% endblock %}
 
 {% block body %}
+
+{# ──────────────────────────────────────────────────────────────────────
+   Schema.org FAQPage — toutes les questions de la page pour rich snippets
+   Google. Texte des réponses en clair (pas de HTML).
+   ────────────────────────────────────────────────────────────────────── #}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {"@type":"Question","name":"Comment réserver une séance ?","acceptedAnswer":{"@type":"Answer","text":"3 étapes : 1) Crée ton compte ou connecte-toi sur SPORT+. 2) Choisis un coach depuis la page Coachs, sélectionne ton format (Solo, Duo ou Group) et ton créneau (Day, Night ou Astreinte). 3) Confirme ta demande — le coach reçoit une notification et valide dans les 24h."}},
+    {"@type":"Question","name":"Quel délai pour réserver à l'avance ?","acceptedAnswer":{"@type":"Answer","text":"Tu peux réserver jusqu'à 30 jours à l'avance. Le délai minimum est de 48h avant le début de la séance pour laisser le temps au coach de confirmer et préparer ta venue."}},
+    {"@type":"Question","name":"Quand est-ce que je paye ?","acceptedAnswer":{"@type":"Answer","text":"Tu peux payer sur place à l'accueil ou avec ton coach (espèces ou carte bancaire). Tu auras prochainement la possibilité de réserver et payer ta séance en amont via Xplor Active SPORT+, le système de paiement intégré à Deciplus. Aucun prélèvement n'est effectué tant que la séance n'est pas confirmée par le coach."}},
+    {"@type":"Question","name":"Comment annuler une réservation ?","acceptedAnswer":{"@type":"Answer","text":"Depuis votre espace client, cliquez sur Annuler sur la réservation concernée. L'annulation est gratuite jusqu'à 2h avant la séance."}},
+    {"@type":"Question","name":"Si le coach refuse ma demande, suis-je débité ?","acceptedAnswer":{"@type":"Answer","text":"Non, jamais. Le paiement n'est déclenché qu'à la confirmation de la séance. Un refus ou une expiration sans réponse du coach n'engendre aucun frais."}},
+    {"@type":"Question","name":"Les coachs sont-ils certifiés ?","acceptedAnswer":{"@type":"Answer","text":"Oui, tous nos coachs sont certifiés et régulièrement évalués. Leur profil inclut leurs spécialités et leur tarif horaire."}},
+    {"@type":"Question","name":"Comment choisir le bon coach pour moi ?","acceptedAnswer":{"@type":"Answer","text":"Consulte les profils sur la page Coachs — chaque coach précise ses spécialités (musculation, cardio, mobilité, perte de poids...). Tu peux aussi lui envoyer un message avant de réserver pour discuter de tes objectifs."}},
+    {"@type":"Question","name":"Quelle est la durée d'une séance ?","acceptedAnswer":{"@type":"Answer","text":"Les séances durent entre 45 et 90 minutes selon la prestation choisie. La durée est indiquée lors de la réservation."}},
+    {"@type":"Question","name":"Puis-je changer de coach ?","acceptedAnswer":{"@type":"Answer","text":"Absolument. Chaque réservation est indépendante, vous choisissez votre coach à chaque séance selon vos besoins."}},
+    {"@type":"Question","name":"Puis-je contacter mon coach avant la séance ?","acceptedAnswer":{"@type":"Answer","text":"Oui. Une messagerie privée s'ouvre automatiquement dès que le coach confirme votre réservation."}},
+    {"@type":"Question","name":"Le coach apporte-t-il son matériel ?","acceptedAnswer":{"@type":"Answer","text":"Non, tout est sur place. La salle est entièrement équipée — machines cardio, poids libres, barres, bancs, élastiques, tapis, etc. Tu arrives les mains vides, le coach gère le reste."}},
+    {"@type":"Question","name":"Peut-on vraiment s'entraîner la nuit à Marseille ?","acceptedAnswer":{"@type":"Answer","text":"Oui. SPORT+ propose du coaching en soirée et en pleine nuit à Marseille. Le créneau Night couvre 20h à minuit, et l'Astreinte va de minuit à 6h du matin. Que tu travailles en horaires décalés, que tu préfères t'entraîner au calme ou que tu sois simplement du soir, tu peux réserver une séance avec un coach à des heures où la plupart des salles sont fermées."}},
+    {"@type":"Question","name":"Y a-t-il vraiment un coach disponible en pleine nuit ?","acceptedAnswer":{"@type":"Answer","text":"La disponibilité dépend des coachs, qui indiquent en temps réel s'ils sont joignables via leur statut de disponibilité. Quand un coach est disponible sur un créneau de nuit, tu peux réserver ta séance directement. Et avant de réserver, tu peux échanger avec lui : SPORT+ te donne accès à la messagerie et au contact direct du coach, pour caler ta séance en toute simplicité."}},
+    {"@type":"Question","name":"La salle est-elle sécurisée la nuit ?","acceptedAnswer":{"@type":"Answer","text":"Oui. L'accès à la salle se fait par un badge QR personnel scanné à l'entrée, et les locaux sont placés sous vidéosurveillance. Une présence est assurée sur place, y compris la nuit. Tu peux donc t'entraîner sereinement, quelle que soit l'heure."}},
+    {"@type":"Question","name":"Comment accéder à la salle 24h/24 ?","acceptedAnswer":{"@type":"Answer","text":"L'accès à la salle 24h/24 se fait avec un badge QR personnel, obtenu via un abonnement SPORT+ sur Xplor. C'est distinct de la réservation de coaching à la séance : le coaching te met en relation avec un coach pour une séance, tandis que l'abonnement Xplor te donne l'accès libre à la salle."}},
+    {"@type":"Question","name":"Quelle différence entre réserver un coaching et s'abonner à la salle ?","acceptedAnswer":{"@type":"Answer","text":"Ce sont deux offres complémentaires. La réservation de coaching te permet de réserver une séance avec un coach (en solo, duo ou petit groupe), de jour comme de nuit. L'abonnement salle, lui, te donne un accès libre 24h/24 via ton badge QR. Tu peux combiner les deux, ou choisir l'une selon tes besoins."}},
+    {"@type":"Question","name":"Comment contacter mon coach pour une séance de nuit ?","acceptedAnswer":{"@type":"Answer","text":"Dès que ta réservation est confirmée, une messagerie privée s'ouvre avec ton coach. Tu as aussi accès à son contact direct, ce qui est particulièrement pratique pour les séances en soirée ou de nuit. Tu peux ainsi confirmer un détail, prévenir d'un retard ou ajuster ton créneau facilement."}},
+    {"@type":"Question","name":"Qu'est-ce qu'un Membre Fondateur ?","acceptedAnswer":{"@type":"Answer","text":"Les 50 premiers membres à rejoindre SPORT+ sous cette offre reçoivent un badge Fondateur permanent sur leur compte — un statut qui reconnaît leur confiance dès le lancement."}},
+    {"@type":"Question","name":"Quels sont les avantages Membre Fondateur ?","acceptedAnswer":{"@type":"Answer","text":"En devenant Membre Fondateur, tu obtiens : 3 séances de coaching offertes (utilisables dans les 6 mois), un bilan corporel complet avec un coach, un accès prioritaire aux créneaux Night Coach, et un badge Fondateur à vie sur ton profil."}},
+    {"@type":"Question","name":"Combien coûte le statut Membre Fondateur ?","acceptedAnswer":{"@type":"Answer","text":"99 euros une seule fois, pour débloquer l'ensemble des avantages Fondateur à vie. Aucun renouvellement, aucun abonnement."}},
+    {"@type":"Question","name":"Combien de places Membre Fondateur restent disponibles ?","acceptedAnswer":{"@type":"Answer","text":"Le nombre de places disponibles est affiché en temps réel sur la page Offre Fondateur. Dès que les 50 places sont prises, l'offre ferme définitivement."}},
+    {"@type":"Question","name":"Puis-je devenir Founding plus tard ?","acceptedAnswer":{"@type":"Answer","text":"Oui, tant qu'il reste des places disponibles. Il n'y a pas de délai imposé, mais l'offre est limitée à 50 membres au total — first come, first served."}},
+    {"@type":"Question","name":"Quelle différence entre séance unique et pack ?","acceptedAnswer":{"@type":"Answer","text":"Une séance unique se paye à l'unité. Un pack de 4 séances est prépayé et donne droit à une réduction de 10 à 30 % selon le format. Plus tu t'engages sur un pack, plus le tarif à la séance baisse."}},
+    {"@type":"Question","name":"Quels sont les créneaux et leurs tarifs ?","acceptedAnswer":{"@type":"Answer","text":"SPORT+ propose 3 types de créneaux : Day de 6h à 20h au tarif standard, Night de 20h à minuit avec majoration x1.4 (prime nocturne), et Astreinte de minuit à 6h avec majoration x1.8 (garde d'équipe). Consulte la grille tarifaire complète sur la page Tarifs."}},
+    {"@type":"Question","name":"Pourquoi le Night Coach est-il plus cher ?","acceptedAnswer":{"@type":"Answer","text":"Les créneaux nocturnes (20h–minuit) sont majorés x1,4 par rapport au tarif Day pour rémunérer équitablement nos coachs qui travaillent en soirée. La prime est transparente et affichée sur chaque fiche tarif."}},
+    {"@type":"Question","name":"Pourquoi l'Astreinte est-elle encore plus chère ?","acceptedAnswer":{"@type":"Answer","text":"L'Astreinte couvre les créneaux minuit–6h. Elle nécessite qu'un coach reste en garde sur place, ce qui justifie une majoration x1,8 par rapport au tarif Day. C'est la formule la plus atypique, pensée pour les emplois du temps vraiment décalés."}},
+    {"@type":"Question","name":"Y a-t-il des frais cachés ?","acceptedAnswer":{"@type":"Answer","text":"Aucun. Le prix affiché est le prix final. Pas d'abonnement, pas de frais d'inscription, pas de surprises."}},
+    {"@type":"Question","name":"Où se trouve SPORT+ ?","acceptedAnswer":{"@type":"Answer","text":"SPORT+ est située au 164 Chemin de Saint-Jean du Désert, 13005 Marseille (5e arrondissement). Un espace calme, privatisé, à l'écart du tumulte des salles classiques."}},
+    {"@type":"Question","name":"Comment accéder à la salle SPORT+ 24h/24 ?","acceptedAnswer":{"@type":"Answer","text":"Chaque membre actif reçoit un badge d'accès personnel après sa première séance confirmée. Ce badge te donne l'accès à la salle à n'importe quelle heure, même en dehors de tes créneaux avec un coach."}},
+    {"@type":"Question","name":"Y a-t-il un parking ?","acceptedAnswer":{"@type":"Answer","text":"Informations parking à venir."}},
+    {"@type":"Question","name":"Y a-t-il des vestiaires et douches ?","acceptedAnswer":{"@type":"Answer","text":"Oui. La salle dispose de vestiaires équipés avec douches individuelles. Tu peux venir directement du travail et repartir frais."}},
+    {"@type":"Question","name":"Quel équipement est disponible ?","acceptedAnswer":{"@type":"Answer","text":"La salle est entièrement équipée : machines cardio, poids libres, barres olympiques, bancs de musculation, câbles, élastiques, tapis, et plus encore."}},
+    {"@type":"Question","name":"Comment fonctionne le Night Coach ?","acceptedAnswer":{"@type":"Answer","text":"Vous réservez votre créneau dès 20h. Un coach dédié vous attend en salle. Solo, duo ou groupe jusqu'à 6 personnes."}},
+    {"@type":"Question","name":"Comment supprimer mon compte SPORT+ ?","acceptedAnswer":{"@type":"Answer","text":"Envoie ta demande de suppression depuis la page Contact. Nous traitons toutes les demandes dans les 72h et supprimons définitivement tes données conformément au RGPD."}},
+    {"@type":"Question","name":"Mes données sont-elles vendues ?","acceptedAnswer":{"@type":"Answer","text":"Non, jamais. Tes données sont exclusivement utilisées pour faire fonctionner SPORT+. Aucune transmission à des tiers à des fins commerciales."}},
+    {"@type":"Question","name":"Comment exercer mes droits RGPD ?","acceptedAnswer":{"@type":"Answer","text":"Tu peux exercer tes droits (accès, rectification, effacement, portabilité, opposition) en nous contactant directement par email depuis la page Contact. Nous répondons dans un délai maximum de 30 jours."}}
+  ]
+}
+</script>
 
 {# Bouton flottant "Catégories" (mobile uniquement, masqué en desktop via CSS) #}
 <button type="button" id="faq-fab" class="faq-fab" aria-label="Ouvrir les catégories" aria-expanded="false">
@@ -12,6 +61,7 @@
 <nav id="faq-fab-panel" class="faq-fab-panel" aria-label="Catégories FAQ rapides">
   <a href="#reservations"><i class="ti ti-calendar"></i> Réservations</a>
   <a href="#coachs"><i class="ti ti-user-check"></i> Coachs &amp; séances</a>
+  <a href="#nuit"><i class="ti ti-moon-stars"></i> Coaching de nuit</a>
   <a href="#founding"><i class="ti ti-crown"></i> Membres Fondateurs</a>
   <a href="#tarifs"><i class="ti ti-coin"></i> Tarifs &amp; packs</a>
   <a href="#salle"><i class="ti ti-building"></i> La salle</a>
@@ -44,7 +94,7 @@
   <div class="container">
     <div class="hero-badge">Questions fréquentes</div>
     <h1 class="section-title">Tout ce que tu veux <span style="color:var(--gold)">savoir</span></h1>
-    <p class="section-sub">30 questions, 30 réponses. Tu ne trouves pas la tienne ?
+    <p class="section-sub">36 questions, 36 réponses. Tu ne trouves pas la tienne ?
       <a href="{{ path('app_contact') }}" style="color:var(--gold);text-decoration:underline;">Écris-nous via le formulaire de contact.</a>
     </p>
   </div>
@@ -60,6 +110,9 @@
       </a>
       <a href="#coachs" class="faq-nav-link">
         <i class="ti ti-user-check"></i> Coachs & séances
+      </a>
+      <a href="#nuit" class="faq-nav-link">
+        <i class="ti ti-moon-stars"></i> Coaching de nuit
       </a>
       <a href="#founding" class="faq-nav-link">
         <i class="ti ti-crown"></i> Membres Fondateurs
@@ -159,7 +212,48 @@
       </div>
     </section>
 
-    {# C. Membres Fondateurs #}
+    {# C. Coaching de nuit & accès 24h/24 — différenciateur SPORT+, SEO niche #}
+    <section id="nuit" style="margin-bottom:56px;">
+      <div class="section-label" style="margin-top:0;margin-bottom:8px;">Différenciateur SPORT+</div>
+      <h2 style="font-family:'Barlow Condensed',sans-serif;font-size:32px;font-weight:900;
+                 text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">Coaching de nuit & accès 24h/24</h2>
+      <p style="color:var(--text-dim);font-size:14px;margin-bottom:24px;">Coaching en soirée et en pleine nuit, accès libre par badge — la spécificité de SPORT+ Marseille.</p>
+      <div class="faq-list">
+
+        <details class="faq-item">
+          <summary>Peut-on vraiment s'entraîner la nuit à Marseille ?</summary>
+          <div class="faq-answer">Oui. SPORT+ propose du coaching en soirée et en pleine nuit à Marseille. Le créneau <strong>Night couvre 20h à minuit</strong>, et l'<strong>Astreinte va de minuit à 6h du matin</strong>. Que tu travailles en horaires décalés, que tu préfères t'entraîner au calme ou que tu sois simplement du soir, tu peux réserver une séance avec un coach à des heures où la plupart des salles sont fermées.</div>
+        </details>
+
+        <details class="faq-item">
+          <summary>Y a-t-il vraiment un coach disponible en pleine nuit ?</summary>
+          <div class="faq-answer">La disponibilité dépend des coachs, qui indiquent en temps réel s'ils sont joignables via leur statut de disponibilité. Quand un coach est disponible sur un créneau de nuit, tu peux réserver ta séance directement. Et avant de réserver, tu peux échanger avec lui : SPORT+ te donne accès à la messagerie et au contact direct du coach, pour caler ta séance en toute simplicité.</div>
+        </details>
+
+        <details class="faq-item">
+          <summary>La salle est-elle sécurisée la nuit ?</summary>
+          <div class="faq-answer">Oui. L'accès à la salle se fait par un <strong>badge QR personnel scanné à l'entrée</strong>, et les locaux sont placés sous vidéosurveillance. Une présence est assurée sur place, y compris la nuit. Tu peux donc t'entraîner sereinement, quelle que soit l'heure.</div>
+        </details>
+
+        <details class="faq-item">
+          <summary>Comment accéder à la salle 24h/24 ?</summary>
+          <div class="faq-answer">L'accès à la salle 24h/24 se fait avec un <strong>badge QR personnel</strong>, obtenu via un abonnement SPORT+ sur Xplor. C'est distinct de la réservation de coaching à la séance : le coaching te met en relation avec un coach pour une séance, tandis que <a href="{{ path('app_deciplus') }}" style="color:var(--gold)">l'abonnement Xplor</a> te donne l'accès libre à la salle.</div>
+        </details>
+
+        <details class="faq-item">
+          <summary>Quelle différence entre réserver un coaching et s'abonner à la salle ?</summary>
+          <div class="faq-answer">Ce sont deux offres complémentaires. La <strong>réservation de coaching</strong> te permet de réserver une séance avec un coach (en solo, duo ou petit groupe), de jour comme de nuit. L'<strong>abonnement salle</strong>, lui, te donne un accès libre 24h/24 via ton badge QR. Tu peux combiner les deux, ou choisir l'une selon tes besoins.</div>
+        </details>
+
+        <details class="faq-item">
+          <summary>Comment contacter mon coach pour une séance de nuit ?</summary>
+          <div class="faq-answer">Dès que ta réservation est confirmée, une <strong>messagerie privée s'ouvre avec ton coach</strong>. Tu as aussi accès à son contact direct, ce qui est particulièrement pratique pour les séances en soirée ou de nuit. Tu peux ainsi confirmer un détail, prévenir d'un retard ou ajuster ton créneau facilement.</div>
+        </details>
+
+      </div>
+    </section>
+
+    {# D. Membres Fondateurs #}
     <section id="founding" style="margin-bottom:56px;">
       <div class="section-label" style="margin-top:0;margin-bottom:8px;">Offre Exclusive</div>
       <h2 style="font-family:'Barlow Condensed',sans-serif;font-size:32px;font-weight:900;

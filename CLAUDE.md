@@ -187,6 +187,12 @@ ResetFoundingClaims, SeedFoundingOffer, SeedPricingShowcase, **SendDayBeforeRemi
 - **Photos coach** : base64 en DB (`photo_data` + `photo_mime_type`), `getPhotoSrc()`, fallback
   fichier local.
 - **Pages légales** : 4 pages avec contenu réel.
+- **FAQ catégorie « Coaching de nuit & accès 24h/24 » + Schema FAQPage (23 juin)** : 6 nouvelles
+  Q/R ciblées SEO niche (« coach sportif nuit Marseille », « salle 24h/24 Marseille ») dans une
+  section avec ancre `#nuit`, ajoutée entre « Coachs & séances » et « Membres Fondateurs ». Lien
+  ajouté dans les 2 navs (.faq-nav + #faq-fab-panel) avec icône ti-moon-stars. Total : 30 → 36
+  questions (compteurs hero + meta description mis à jour). Ajout d'un `<script type="application/
+  ld+json">` Schema.org **FAQPage** listant les 36 Q/R en texte brut → rich snippets Google.
 - **Page À propos : RETIRÉE** (route, template, CSS, liens navbar/footer, sitemap). Ne pas la
   recréer. `/a-propos` → 404 volontaire.
 - **Système Reply-To MailerService (18 juin)** : helper `replyTo()` qui lit
