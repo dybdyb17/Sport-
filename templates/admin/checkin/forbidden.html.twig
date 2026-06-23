@@ -1,0 +1,132 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Validation impossible — SPORT+{% endblock %}
+
+{% block body %}
+<div class="container" style="padding-top:48px;padding-bottom:80px;max-width:520px;">
+
+  <div class="checkin-forbidden-card">
+    <div class="checkin-forbidden-icon">
+      <i class="ti ti-lock"></i>
+    </div>
+
+    <h1 class="checkin-forbidden-title">Tu ne peux pas valider cette séance</h1>
+
+    {% if booking.coach %}
+      <p class="checkin-forbidden-text">
+        Cette séance est assignée à
+        <strong>{{ booking.coach.nomComplet }}</strong>.
+        Seul ce coach ou un administrateur peut valider ce check-in.
+      </p>
+    {% else %}
+      <p class="checkin-forbidden-text">
+        Cette séance n'est pas rattachée à un coach.
+        Seul un administrateur peut valider ce check-in.
+      </p>
+    {% endif %}
+
+    <div class="checkin-forbidden-meta">
+      <div class="checkin-forbidden-meta-item">
+        <span class="checkin-forbidden-meta-label">Référence</span>
+        <span class="checkin-forbidden-meta-value">{{ booking.reference }}</span>
+      </div>
+      <div class="checkin-forbidden-meta-item">
+        <span class="checkin-forbidden-meta-label">Client</span>
+        <span class="checkin-forbidden-meta-value">{{ booking.client.nomComplet }}</span>
+      </div>
+      <div class="checkin-forbidden-meta-item">
+        <span class="checkin-forbidden-meta-label">Quand</span>
+        <span class="checkin-forbidden-meta-value">{{ booking.startAt|date('d/m/Y') }} · {{ booking.timeRangeFormatted }}</span>
+      </div>
+    </div>
+
+    <div class="checkin-forbidden-actions">
+      {% if is_granted('ROLE_COACH') %}
+        <a href="{{ path('app_coach_dashboard') }}" class="btn btn-primary">
+          <i class="ti ti-arrow-left"></i> Mon dashboard coach
+        </a>
+      {% elseif is_granted('ROLE_ADMIN') %}
+        <a href="{{ path('app_admin_dashboard') }}" class="btn btn-primary">
+          <i class="ti ti-arrow-left"></i> Dashboard admin
+        </a>
+      {% else %}
+        <a href="{{ path('app_home') }}" class="btn btn-primary">
+          <i class="ti ti-arrow-left"></i> Accueil
+        </a>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<style>
+  .checkin-forbidden-card {
+    text-align: center;
+    padding: 40px 28px;
+    background:
+      radial-gradient(ellipse at top, rgba(200,169,81,.06) 0%, transparent 55%),
+      var(--bg-card);
+    border: 1px solid var(--border);
+    border-top: 3px solid var(--gold);
+    border-radius: var(--radius-lg);
+  }
+  .checkin-forbidden-icon {
+    width: 72px; height: 72px;
+    margin: 0 auto 18px;
+    border-radius: 22px;
+    background: rgba(200,169,81,.10);
+    border: 1px solid rgba(200,169,81,.30);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--gold);
+    font-size: 36px;
+  }
+  .checkin-forbidden-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 24px;
+    font-weight: 800;
+    color: var(--white);
+    margin: 0 0 10px;
+    line-height: 1.2;
+  }
+  .checkin-forbidden-text {
+    font-size: 15px;
+    color: var(--text-soft);
+    margin: 0 0 24px;
+    line-height: 1.55;
+  }
+  .checkin-forbidden-text strong { color: var(--gold); }
+  .checkin-forbidden-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 16px 18px;
+    background: rgba(255,255,255,.02);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    margin-bottom: 26px;
+    text-align: left;
+  }
+  .checkin-forbidden-meta-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    font-size: 13.5px;
+  }
+  .checkin-forbidden-meta-label {
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 12px;
+  }
+  .checkin-forbidden-meta-value {
+    color: var(--white);
+    font-weight: 600;
+  }
+  .checkin-forbidden-actions {
+    display: flex;
+    justify-content: center;
+  }
+</style>
+{% endblock %}
