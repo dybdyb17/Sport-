@@ -46,9 +46,16 @@ class AdminCheckinController extends AbstractController
         // Contrôle fin : un coach ne peut valider QUE ses propres séances.
         // S'applique en GET (affichage) ET en POST (validation effective) — sinon
         // un coach non assigné pourrait forger la requête POST.
+        //
+        // Comparaison par ID (et PAS par instance via ===) : le projet a
+        // enable_native_lazy_objects activé (PHP 8.4 + Doctrine ORM 3.x), donc
+        // $booking->getCoach()->getUser() peut renvoyer un proxy lazy différent
+        // de $this->getUser() même si c'est le même user en DB. Le === échouait
+        // alors → coach assigné injustement bloqué (cas vécu en prod 23/06).
         $user            = $this->getUser();
         $isAdmin         = $this->isGranted('ROLE_ADMIN');
-        $isAssignedCoach = $booking->getCoach()?->getUser() === $user;
+        $coachUserId     = $booking->getCoach()?->getUser()?->getId();
+        $isAssignedCoach = $coachUserId !== null && $coachUserId === $user?->getId();
 
         if (!$isAdmin && !$isAssignedCoach) {
             return $this->render('admin/checkin/forbidden.html.twig', [

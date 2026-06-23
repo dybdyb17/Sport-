@@ -49,9 +49,15 @@ class ConversationController extends AbstractController
     public function show(Conversation $conversation, EntityManagerInterface $em, ConversationRepository $convRepository): Response
     {
         /** @var \App\Entity\User $user */
-        $user     = $this->getUser();
-        $isClient = $conversation->getClient() === $user;
-        $isCoach  = $conversation->getCoach()?->getUser() === $user;
+        $user        = $this->getUser();
+        // Comparaison par ID (et pas par instance via ===) : avec
+        // enable_native_lazy_objects, les getters Doctrine peuvent renvoyer
+        // des proxies lazy différents de l'instance retournée par getUser(),
+        // ce qui ferait échouer === et bloquerait le user de sa propre conv.
+        $userId      = $user?->getId();
+        $isClient    = $userId !== null && $conversation->getClient()?->getId() === $userId;
+        $coachUserId = $conversation->getCoach()?->getUser()?->getId();
+        $isCoach     = $coachUserId !== null && $coachUserId === $userId;
 
         if (!$isClient && !$isCoach) {
             throw $this->createAccessDeniedException();
@@ -113,9 +119,12 @@ class ConversationController extends AbstractController
         NotificationService $notifier,
     ): Response {
         /** @var \App\Entity\User $user */
-        $user     = $this->getUser();
-        $isClient = $conversation->getClient() === $user;
-        $isCoach  = $conversation->getCoach()?->getUser() === $user;
+        $user        = $this->getUser();
+        // Idem show() : comparaison par ID pour contourner les proxies lazy.
+        $userId      = $user?->getId();
+        $isClient    = $userId !== null && $conversation->getClient()?->getId() === $userId;
+        $coachUserId = $conversation->getCoach()?->getUser()?->getId();
+        $isCoach     = $coachUserId !== null && $coachUserId === $userId;
 
         if (!$isClient && !$isCoach) {
             throw $this->createAccessDeniedException();
