@@ -200,7 +200,10 @@ ResetFoundingClaims, SeedFoundingOffer, SeedPricingShowcase, **SendDayBeforeRemi
   `http` côté requête → sitemap.xml génère les `<loc>` en `http://` →
   Search Console rejette parce que la propriété est déclarée en `https`. Fix
   aussi toutes les URL absolues `url()` Twig générées en contexte requête.
-  ⚠️ Pas besoin de `TRUSTED_PROXIES` côté Railway : le défaut `.env` suffit.
+  ⚠️ **`TRUSTED_PROXIES` DOIT être définie côté Railway** (le `.env` du repo
+  n'est PAS chargé fiablement en mode prod sur Railway). Set via
+  `railway variables -s Sport- --set TRUSTED_PROXIES=127.0.0.1,REMOTE_ADDR,
+  10.0.0.0/8,172.16.0.0/12,192.168.0.0/16` — appliqué 23/06.
 - **FAQ catégorie « Coaching de nuit & accès 24h/24 » + Schema FAQPage (23 juin)** : 6 nouvelles
   Q/R ciblées SEO niche (« coach sportif nuit Marseille », « salle 24h/24 Marseille ») dans une
   section avec ancre `#nuit`, ajoutée entre « Coachs & séances » et « Membres Fondateurs ». Lien
