@@ -146,14 +146,18 @@ ResetFoundingClaims, SeedFoundingOffer, SeedPricingShowcase, **SendDayBeforeRemi
 - **Check-in QR** : page Mon RDV (`/mon-espace/mon-rdv/{ref}`), AdminCheckinController, champs
   Booking `checkinAt`/`checkinBy`. Téléphone client affiché/cliquable côté coach + admin.
 - **Check-in accessible aux coachs (23 juin)** : `AdminCheckinController` n'est plus
-  `#[IsGranted('ROLE_ADMIN')]` au niveau classe. À la place : `#[IsGranted(Expression
-  'ROLE_ADMIN or ROLE_COACH')]` sur la méthode `validate`. Contrôle fin dans le corps
-  (GET ET POST) : `booking.coach.user === currentUser`. Admin = passe-partout, coach =
-  limité à SES séances. Coach scannant la séance d'un autre → page lisible
-  `templates/admin/checkin/forbidden.html.twig` (icône cadenas, nom du coach assigné,
-  bouton retour dashboard) au lieu d'un 403 brut. **Route et nom inchangés**
-  (`/admin/checkin/{reference}`, `app_admin_checkin_validate`) pour ne pas invalider les
-  QR déjà générés. `checkinBy` enregistre QUI a validé (coach ou admin).
+  `#[IsGranted('ROLE_ADMIN')]` au niveau classe. Autorisation gérée **sans
+  expression-language** (composant non installé) : simple `#[IsGranted('ROLE_COACH')]`
+  sur la méthode `validate` — ça suffit grâce à la `role_hierarchy` de `security.yaml`
+  (`ROLE_ADMIN: [ROLE_COACH, ...]`) → admin et coach passent, client/visiteur bloqué.
+  Contrôle fin dans le corps (GET ET POST) : `booking.coach.user === currentUser`.
+  Admin = passe-partout, coach = limité à SES séances. Coach scannant la séance d'un
+  autre → page lisible `templates/admin/checkin/forbidden.html.twig` (icône cadenas,
+  nom du coach assigné, bouton retour dashboard) au lieu d'un 403 brut. **Route et nom
+  inchangés** (`/admin/checkin/{reference}`, `app_admin_checkin_validate`) pour ne pas
+  invalider les QR déjà générés. `checkinBy` enregistre QUI a validé (coach ou admin).
+  Template `validate.html.twig` migré sur `base.html.twig` (plus de sidebar admin
+  orpheline pour un coach).
 - **No-show** : `Booking.noShow`/`noShowMarkedAt`/`noShowFee`, route `/coach/booking/{id}/no-show`,
   fee **30%** (décision Loïc), bouton coach + badge rouge admin.
 - **Confirmation J-1** : `Booking.clientConfirmedAt`, route signée HMAC

@@ -5,7 +5,6 @@ namespace App\Controller\Admin;
 use App\Repository\BookingRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\ExpressionLanguage\Expression;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -18,14 +17,21 @@ class AdminCheckinController extends AbstractController
      * Validation du check-in via le QR client.
      *
      * Accès : admin (passe-partout) OU coach (limité à SES propres séances).
-     * Contrôle fin coach assigné fait dans le corps, pas via IsGranted, pour
-     * pouvoir afficher une page d'erreur lisible au coach plutôt qu'un 403 brut.
+     * Implémenté via `#[IsGranted('ROLE_COACH')]` qui couvre les 2 cas grâce à
+     * la role_hierarchy (security.yaml : ROLE_ADMIN: [ROLE_COACH, ...]). Un
+     * simple client/visiteur est bloqué par Symfony avant d'entrer ici.
+     * (Pas de syntaxe multi-rôle via attribut ici : le composant
+     * symfony/expression-language n'est pas installé sur ce projet,
+     * l'utiliser provoquait une 500.)
+     *
+     * Contrôle fin coach assigné fait dans le corps pour pouvoir afficher une
+     * page d'erreur lisible au coach plutôt qu'un 403 brut.
      *
      * Route et nom INCHANGÉS — le QR client encode déjà cette URL,
      * la modifier invaliderait tous les QR déjà générés.
      */
     #[Route('/{reference}', name: 'app_admin_checkin_validate', methods: ['GET', 'POST'])]
-    #[IsGranted(new Expression('is_granted("ROLE_ADMIN") or is_granted("ROLE_COACH")'))]
+    #[IsGranted('ROLE_COACH')]
     public function validate(
         string $reference,
         Request $request,
