@@ -49,6 +49,11 @@ security:
         # Confirmation J-1 accessible sans auth : protégée par lien signé HMAC
         - { path: ^/reservation/[^/]+/confirmer/, roles: PUBLIC_ACCESS }
         - { path: ^/coach(/|$), roles: ROLE_COACH }
+        # IMPORTANT : règle check-in AVANT ^/admin sinon le firewall exigerait
+        # ROLE_ADMIN au niveau path et bloquerait le coach assigné AVANT même
+        # que le contrôleur ne s'exécute. Le contrôle fin "coach == séance.coach"
+        # est dans AdminCheckinController::validate (admin passe via hierarchy).
+        - { path: ^/admin/checkin, roles: ROLE_COACH }
         - { path: ^/admin, roles: ROLE_ADMIN }
         - { path: ^/reservation, roles: ROLE_CLIENT }
 
