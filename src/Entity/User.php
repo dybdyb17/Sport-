@@ -62,8 +62,22 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $coachNotes = null;
 
+    /**
+     * ⚠️ PAS de valeur par défaut sur la propriété (volontaire).
+     *
+     * Avec PHP 8.4 + Doctrine ORM 3.x, les entités sont chargées via des
+     * native lazy objects. Si une propriété a une valeur par défaut au niveau
+     * de la déclaration, PHP la considère comme « déjà initialisée » et ne
+     * déclenche PAS l'hydratation du proxy quand on y accède. Conséquence :
+     * `$repository->find($id)` retournerait un User dont $role reste à la
+     * valeur par défaut (CLIENT) au lieu de la vraie valeur en DB → un coach
+     * authentifié apparaîtrait comme ROLE_CLIENT à Symfony (vécu 23/06 sur
+     * /admin/checkin/{ref} : 403 sur le coach assigné).
+     *
+     * La valeur par défaut pour `new User()` est gérée dans __construct.
+     */
     #[ORM\Column(enumType: UserRole::class)]
-    private UserRole $role = UserRole::CLIENT;
+    private UserRole $role;
 
     #[ORM\Column]
     private ?\DateTimeImmutable $createdAt = null;
@@ -95,6 +109,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function __construct()
     {
+        // Valeur par défaut du role déplacée ici (vs propriété) pour permettre
+        // aux proxies lazy de Doctrine de déclencher l'hydratation à l'accès
+        // — cf commentaire sur la déclaration $role.
+        $this->role          = UserRole::CLIENT;
         $this->createdAt     = new \DateTimeImmutable();
         $this->bookings      = new ArrayCollection();
         $this->subscriptions = new ArrayCollection();
@@ -136,12 +154,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->roles    = $data['roles']    ?? [];
 
         // Restauration du role enum. Les vieilles sessions sérialisées avant ce
-        // fix n'ont pas 'role' → tryFrom retourne null → on garde la valeur
-        // par défaut (CLIENT). Le UserProvider refresh les corrigera au tour
-        // d'après en rechargeant depuis la DB. Pas de cassure rétro.
-        if (isset($data['role'])) {
-            $this->role = UserRole::tryFrom((string) $data['role']) ?? $this->role;
-        }
+        // fix n'ont pas 'role' → fallback CLIENT (sans toucher au reste, le
+        // UserProvider refresh corrigera au tour d'après en rechargeant depuis
+        // la DB → l'enum est maintenant sans valeur par défaut sur la
+        // propriété, donc le proxy lazy hydrate bien au premier accès).
+        // Fallback EXPLICITE à CLIENT (pas de "?? $this->role") car $this->role
+        // n'a plus de valeur par défaut → accès non initialisé = Error PHP 8.4.
+        $this->role = isset($data['role'])
+            ? (UserRole::tryFrom((string) $data['role']) ?? UserRole::CLIENT)
+            : UserRole::CLIENT;
     }
 
     public function getId(): ?int
