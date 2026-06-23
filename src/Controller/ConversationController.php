@@ -21,12 +21,14 @@ class ConversationController extends AbstractController
     {
         /** @var \App\Entity\User $user */
         $user          = $this->getUser();
+        $userId        = $user?->getId();
         $conversations = $convRepository->findForUser($user);
 
+        // Comparaisons par ID partout (proxies lazy Doctrine cassent ===).
         $items = [];
         foreach ($conversations as $conv) {
             $lastMsg       = $conv->getLastMessage();
-            $interlocuteur = ($conv->getClient() === $user)
+            $interlocuteur = ($conv->getClient()?->getId() === $userId)
                 ? $conv->getCoach()?->getUser()
                 : $conv->getClient();
 
@@ -35,7 +37,7 @@ class ConversationController extends AbstractController
                 'interlocuteur' => $interlocuteur,
                 'lastMessage'   => $lastMsg,
                 'isUnread'      => null !== $lastMsg
-                    && $lastMsg->getAuthor() !== $user
+                    && $lastMsg->getAuthor()?->getId() !== $userId
                     && null === $lastMsg->getReadAt(),
             ];
         }
@@ -63,11 +65,12 @@ class ConversationController extends AbstractController
             throw $this->createAccessDeniedException();
         }
 
-        // Marquer comme lus les messages de l'interlocuteur (un seul flush)
+        // Marquer comme lus les messages de l'interlocuteur (un seul flush).
+        // Comparaison par ID — cf bloc isClient/isCoach plus haut.
         $now     = new \DateTimeImmutable();
         $changed = false;
         foreach ($conversation->getMessages() as $msg) {
-            if ($msg->getAuthor() !== $user && null === $msg->getReadAt()) {
+            if ($msg->getAuthor()?->getId() !== $userId && null === $msg->getReadAt()) {
                 $msg->setReadAt($now);
                 $changed = true;
             }
@@ -85,11 +88,12 @@ class ConversationController extends AbstractController
             : $conversation->getClient();
 
         // Sidebar: liste de toutes les conversations de l'utilisateur
+        // (mêmes comparaisons par ID que la boucle inbox).
         $allConversations = $convRepository->findForUser($user);
         $sidebarItems     = [];
         foreach ($allConversations as $conv) {
             $lastMsg       = $conv->getLastMessage();
-            $inter = ($conv->getClient() === $user)
+            $inter = ($conv->getClient()?->getId() === $userId)
                 ? $conv->getCoach()?->getUser()
                 : $conv->getClient();
 
@@ -98,7 +102,7 @@ class ConversationController extends AbstractController
                 'interlocuteur' => $inter,
                 'lastMessage'   => $lastMsg,
                 'isUnread'      => null !== $lastMsg
-                    && $lastMsg->getAuthor() !== $user
+                    && $lastMsg->getAuthor()?->getId() !== $userId
                     && null === $lastMsg->getReadAt(),
             ];
         }

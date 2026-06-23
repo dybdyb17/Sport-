@@ -191,6 +191,18 @@ ResetFoundingClaims, SeedFoundingOffer, SeedPricingShowcase, **SendDayBeforeRemi
 - **Photos coach** : base64 en DB (`photo_data` + `photo_mime_type`), `getPhotoSrc()`, fallback
   fichier local.
 - **Pages légales** : 4 pages avec contenu réel.
+- **Audit solidité (23 juin)** :
+  - **Point C — enums Booking/Subscription** : NON corrigés. Diagnostic prouvé en prod (booking
+    de test avec `format=group, time_slot=night` chargé via `find()` retourne bien `group/night`
+    et PAS les défauts `solo/day`). Le proxy lazy hydrate correctement ces propriétés malgré
+    leur valeur par défaut, contrairement à `User::$role` qui avait planté. À surveiller si
+    Doctrine/PHP change, mais pas d'action nécessaire pour l'instant.
+  - **Point A — removeBooking par ID** : `User::removeBooking` et `Coach::removeBooking`
+    migrés vers `$booking->getClient()?->getId() === $this->getId()` (idem côté Coach).
+    Évite que le dénouage rate sur un proxy lazy.
+  - **Point B — messagerie cosmétique** : 5 comparaisons `===` migrées vers ID dans
+    `ConversationController::inbox` (interlocuteur sidebar, badge unread) et `::show` (boucle
+    marquage as-read, sidebar dans show). `$userId` extrait une fois en début de méthode.
 - **Trusted proxies Railway (23 juin)** : `framework.yaml` reçoit `trusted_proxies:
   '%env(TRUSTED_PROXIES)%'` + `trusted_headers: [x-forwarded-for, x-forwarded-host,
   x-forwarded-proto, x-forwarded-port]`. Valeur par défaut dans `.env` :

@@ -128,7 +128,9 @@ class Coach
     public function removeBooking(Booking $booking): static
     {
         if ($this->bookings->removeElement($booking)) {
-            if ($booking->getCoach() === $this) {
+            // Comparaison par ID — cf User::removeBooking, même justification :
+            // les proxies lazy Doctrine cassent le ===.
+            if ($booking->getCoach()?->getId() === $this->getId()) {
                 $booking->setCoach(null);
             }
         }

@@ -341,7 +341,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function removeBooking(Booking $booking): static
     {
         if ($this->bookings->removeElement($booking)) {
-            if ($booking->getClient() === $this) {
+            // Comparaison par ID (et pas par instance) : avec les proxies lazy
+            // Doctrine, $booking->getClient() peut être une instance différente
+            // de $this même si c'est le même user en DB. Si l'entité n'est
+            // pas encore persistée (getId() null), on tombe sur null === null
+            // → true → on dénoue quand même, ce qui est le comportement attendu
+            // (un removeBooking sur une entité non persistée détache toujours).
+            if ($booking->getClient()?->getId() === $this->getId()) {
                 $booking->setClient(null);
             }
         }
