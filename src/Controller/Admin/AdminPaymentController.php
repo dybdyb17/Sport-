@@ -29,7 +29,7 @@ class AdminPaymentController extends AbstractController
 
         if ($methodFilter === 'pending') {
             $qb->andWhere('b.paymentMethod IS NULL');
-        } elseif (in_array($methodFilter, ['cash', 'card', 'xplor'], true)) {
+        } elseif (in_array($methodFilter, ['cash', 'card', 'stripe'], true)) {
             $qb->andWhere('b.paymentMethod = :m')->setParameter('m', $methodFilter);
         }
 
@@ -46,7 +46,7 @@ class AdminPaymentController extends AbstractController
                     'total'   => 0.0,
                     'cash'    => 0.0,
                     'card'    => 0.0,
-                    'xplor'   => 0.0,
+                    'stripe'  => 0.0,
                     'no_show' => 0.0,
                     'pending' => 0.0,
                 ];
@@ -57,7 +57,7 @@ class AdminPaymentController extends AbstractController
             if ($m === null) {
                 $statsByCoach[$coachId]['pending'] += $price;
             } elseif (isset($statsByCoach[$coachId][$m])) {
-                // Mode connu (cash/card/xplor/no_show) → on cumule
+                // Mode connu (cash/card/stripe/no_show) → on cumule
                 $statsByCoach[$coachId][$m] += $price;
             } else {
                 // Sécurité : si un jour une nouvelle valeur arrive (ex: 'paylib'),

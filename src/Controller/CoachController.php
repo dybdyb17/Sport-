@@ -145,7 +145,9 @@ class CoachController extends AbstractController
             return $this->redirectToRoute('app_coach_dashboard');
         }
         $method = $request->request->get('method');
-        if (!in_array($method, ['cash', 'card', 'xplor'], true)) {
+        // Le coach ne déclare QUE les encaissements sur place (cash/card).
+        // Les paiements 'stripe' sont posés par le webhook, jamais via cette route.
+        if (!in_array($method, ['cash', 'card'], true)) {
             $this->addFlash('danger', 'Mode de paiement invalide.');
             return $this->redirectToRoute('app_coach_dashboard');
         }

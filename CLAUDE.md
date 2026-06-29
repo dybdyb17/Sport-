@@ -55,16 +55,27 @@ d'abonnement + accès salle), sans le remplacer.
 
 ## 💳 Paiements
 
-- **Stripe Checkout = UNIQUEMENT l'offre Founding** (50 places). **En mode LIVE** depuis le
+- **Stripe Checkout = Founding + séances coaching** (depuis 29/06). **En mode LIVE** depuis le
   15 juin (clés sk_live, webhook signing, branding). Idempotence + verrou pessimiste + webhook
-  sécurisé.
-- **Deciplus / Xplor = séances + abonnements** (Paylib). Modal Xplor intégrée in-site
-  (`XplorExtension` Twig `xplor_pay_url(booking)`, `getDisplayAmountFormatted()` affiche le
-  prix TOTAL du pack, ex 210€, pas l'unitaire). **Format Groupe = paiement sur place
-  obligatoire** (Xplor masqué, protégé côté serveur).
-- 3 modes de paiement choisis à la résa (chips Espèces/CB/Xplor → champ
-  `intendedPaymentMethod`). Le coach déclare l'encaissement réel après séance. Check-in QR
-  conditionnel selon statut + paiement.
+  sécurisé. Le même endpoint webhook `/stripe/webhook` aiguille selon
+  `metadata.purchase_type` (`founding_offer` ou `booking_session`).
+- **3 modes de paiement** choisis à la résa (chips Espèces/CB/Stripe → champ
+  `intendedPaymentMethod`) :
+  - `cash` / `card` : encaissé **sur place** par le coach après la séance. Le coach
+    déclare le mode réel depuis son dashboard (`AdminPaymentController` côté admin).
+  - `stripe` : paiement **en ligne après confirmation coach**. Lien dans l'espace
+    client + mon-rdv qui POST vers `app_booking_checkout_stripe`. Le webhook
+    `checkout.session.completed` pose `paymentMethod='stripe'` + `stripeData`
+    (session_id, payment_intent_id, paid_at, amount_cents). Idempotent.
+- **Format Groupe** = paiement sur place obligatoire (chip Stripe masquée côté UI
+  via JS sur changement de format + protection serveur dans `BookingController`
+  qui rebascule `stripe` → `cash` si format=GROUP).
+- **Deciplus reste** pour l'abo salle 24/24 (Paylib via deciplus.pro). C'est l'app
+  mobile Xplor Active + QR Decipass pour entrer dans la salle. **AUCUN paiement
+  de séance ne passe par Deciplus depuis le 29/06** (modal Xplor supprimée,
+  `XplorExtension` + `DeciplusPaymentUrlResolver` + route `payer-xplor` retirés).
+- Check-in QR conditionnel selon statut + paiement (cf `Booking::isQrUnlocked()`
+  et `isAwaitingOnlinePayment()`).
 
 ---
 
@@ -102,9 +113,8 @@ Message, AuditLog. **Enums** : AuditAction, BookingFormat, PackType, TimeSlot, U
 Security, Sitemap, Stripe + `Admin/` (Audit, Booking, Calendar, Checkin, Coach, Conversation,
 Dashboard, Export, Founding, Payment, Subscription, User).
 
-**Services** : AdminExportService, AuditLogger, BookingManager, DeciplusPaymentUrlResolver,
-FoundingOfferService, MailerService, NotificationService, PricingCalculator,
-StripeCheckoutService.
+**Services** : AdminExportService, AuditLogger, BookingManager, FoundingOfferService,
+MailerService, NotificationService, PricingCalculator, StripeCheckoutService.
 
 **Commands** : CreateAdmin, CreateCoach, GrantAdmin, PromoteAdmin, PromoteCoach,
 ResetFoundingClaims, SeedFoundingOffer, SeedPricingShowcase, **SendDayBeforeReminders**
@@ -117,11 +127,12 @@ ResetFoundingClaims, SeedFoundingOffer, SeedPricingShowcase, **SendDayBeforeRemi
 - **Espace client refondu épuré (22 juin)** (`/mon-espace`) : retiré heatmap 12 semaines,
   card rythme du mois, parcours strip (trop chargé). Ticket prochaine séance **adaptatif
   selon 3 états** : `state-pending` (icône horloge + texte rassurant), `state-payment`
-  (CTA central « Régler via Xplor » avec mention « QR prêt, attend juste le paiement » —
-  parcours Xplor clarifié), `state-ready` (QR affiché en grand directement). Logique
-  centralisée via 2 helpers `Booking.isQrUnlocked()` / `Booking.isAwaitingXplorPayment()`
-  (utilisés par espace + mon-rdv → plus de duplication). Ajouts : bannière action
-  contextuelle en haut (paiement Xplor en attente OU profil incomplet, cliquable, fond or
+  (CTA central « Régler en ligne via Stripe » avec mention « QR prêt, attend juste le
+  paiement » — depuis 29/06, Xplor remplacé par Stripe), `state-ready` (QR affiché en
+  grand directement). Logique centralisée via 2 helpers `Booking.isQrUnlocked()` /
+  `Booking.isAwaitingOnlinePayment()` (utilisés par espace + mon-rdv → plus de
+  duplication). Ajouts : bannière action contextuelle en haut (paiement en ligne en
+  attente OU profil incomplet, cliquable, fond or
   translucide), liste « TES AUTRES SÉANCES À VENIR » compacte sous le ticket (n'apparaît
   que s'il y a >1 séance), état vide soigné (icône calendar-plus + CTA réserver). Décor
   line art doré **animé** sur les flancs (haltère/cible/disques/kettlebell/pulse/chrono/
@@ -191,6 +202,35 @@ ResetFoundingClaims, SeedFoundingOffer, SeedPricingShowcase, **SendDayBeforeRemi
 - **Photos coach** : base64 en DB (`photo_data` + `photo_mime_type`), `getPhotoSrc()`, fallback
   fichier local.
 - **Pages légales** : 4 pages avec contenu réel.
+- **Migration Xplor → Stripe pour les bookings (29 juin)** : décision Loïc. Le paiement
+  en ligne des séances passe de Xplor Active (modal in-site + Paylib via Deciplus) à
+  **Stripe Checkout** (redirect externe sécurisé, même infrastructure que Founding).
+  - `StripeCheckoutService` étendu : `createBookingCheckout(Booking)` (idempotency_key
+    `booking-checkout-{id}`, metadata `purchase_type=booking_session, booking_id, ref,
+    client_id`) + `fulfillBookingCheckout(Session, ?expectedClient)` (pose
+    `paymentMethod='stripe'` + `stripeData` JSON, idempotent).
+  - `StripeController` étendu avec 3 routes : POST `/reservation/{ref}/payer-stripe`,
+    GET `/reservation/{ref}/paiement/{succes,annule}`. Le webhook unique
+    `/stripe/webhook` aiguille via `metadata.purchase_type` (Founding ou Booking).
+  - Enum `intendedPaymentMethod` / `paymentMethod` : valeur `'xplor'` → `'stripe'`
+    partout (DB clean côté prod, pas de migration nécessaire).
+  - `Booking::isAwaitingXplorPayment()` renommée en `isAwaitingOnlinePayment()`.
+    `isQrUnlocked()` utilise désormais `'stripe'`.
+  - Suppression complète : `src/Twig/XplorExtension.php`, `src/Service/
+    DeciplusPaymentUrlResolver.php`, route `app_booking_pay_xplor`, modal Xplor JS
+    dans `base.html.twig` (~120 lignes), CSS `.xplor-modal-*` dans `mon-rdv.css`
+    (~180 lignes), méthode `Booking::getDeciplusProductName()`.
+  - UI : chips à la résa (Espèces/CB/**Stripe**), bouton Stripe sur mon-rdv et
+    espace client `state-payment`, labels admin payments + booking peek, retrait
+    de la chip Stripe côté dashboard coach (le webhook gère, le coach n'a accès
+    qu'à cash/card). Form CSRF `booking-stripe-{id}` côté UI.
+  - Coach `declarePayment` côté serveur : `in_array($method, ['cash', 'card'], true)`
+    uniquement (plus de `'stripe'` car c'est le webhook qui le pose).
+  - Format Groupe : protection serveur dans `BookingController` (`stripe` → `cash`
+    si format=GROUP) + JS qui rebascule la chip si format change.
+  - Deciplus reste pour l'**abo salle 24/24** (Paylib via deciplus.pro, app mobile
+    Xplor Active + QR Decipass). AUCUN paiement de séance n'y transite.
+  - FAQ : réponse « Quand est-ce que je paye ? » reformulée (HTML + Schema FAQPage).
 - **Audit solidité (23 juin)** :
   - **Point C — enums Booking/Subscription** : NON corrigés. Diagnostic prouvé en prod (booking
     de test avec `format=group, time_slot=night` chargé via `find()` retourne bien `group/night`
@@ -356,7 +396,8 @@ ResetFoundingClaims, SeedFoundingOffer, SeedPricingShowcase, **SendDayBeforeRemi
   sur le bouton « Je confirme ma présence » depuis la boîte mail finissait en redirection
   login → `clientConfirmedAt` jamais rempli → côté coach, le badge restait sur « En
   attente » même pour les clients ayant cliqué. **Fix** : `#[IsGranted]` retiré de la
-  classe, ajouté méthode par méthode (7 méthodes : `new`, `pricingPreview`, `payWithXplor`,
+  classe, ajouté méthode par méthode (7 méthodes : `new`, `pricingPreview`, `payWithXplor`
+  — depuis 29/06 supprimée et remplacée par la route Stripe `app_booking_checkout_stripe`,
   `status`, `statusJson`, `confirmPayment`, `disputePayment`). `confirmAttendance` **sans
   IsGranted** — protégée uniquement par HMAC (`hash_equals`). La règle
   `^/reservation/[^/]+/confirmer/` en PUBLIC_ACCESS dans `security.yaml` fonctionne enfin.

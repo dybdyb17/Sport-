@@ -103,11 +103,14 @@ class Booking
 
     #[ORM\Column(length: 20, nullable: true)]
     private ?string $paymentMethod = null;
-    // Valeurs : 'cash', 'card', 'xplor'
+    // Valeurs : 'cash', 'card', 'stripe'
+    //  - cash/card : déclaré par le coach après séance (encaissement sur place)
+    //  - stripe    : posé automatiquement par le webhook Stripe à la réception du paiement
 
     #[ORM\Column(length: 20, nullable: true)]
     private ?string $intendedPaymentMethod = null;
-    // Choix annoncé par le client à la réservation. Valeurs : 'cash', 'card', 'xplor'
+    // Choix annoncé par le client à la réservation. Valeurs : 'cash', 'card', 'stripe'
+    // ('stripe' = règlement en ligne après confirmation coach via Stripe Checkout)
 
     #[ORM\Column(length: 500, nullable: true)]
     private ?string $refusalReason = null;
@@ -372,24 +375,10 @@ class Booking
         );
     }
 
-    /**
-     * Nom exact de la prestation tel qu'il apparaît dans la boutique Deciplus.
-     * Sert à guider le client dans la modal Xplor ("cherche XXX dans la boutique").
-     */
-    public function getDeciplusProductName(): string
-    {
-        $slotName = match ($this->timeSlot) {
-            \App\Entity\Enum\TimeSlot::DAY       => 'DAY COACH',
-            \App\Entity\Enum\TimeSlot::NIGHT     => 'NIGHT COACH',
-            \App\Entity\Enum\TimeSlot::ASTREINTE => 'ASTREINTE COACH',
-        };
-        $formatName = match ($this->format) {
-            \App\Entity\Enum\BookingFormat::SOLO  => 'SOLO',
-            \App\Entity\Enum\BookingFormat::DUO   => 'DUO',
-            \App\Entity\Enum\BookingFormat::GROUP => 'GROUP',
-        };
-        return $slotName . ' ' . $formatName;
-    }
+    // getDeciplusProductName() supprimée le 29/06 — servait à guider le client
+    // dans la modal Xplor pour repérer la prestation dans la boutique Deciplus.
+    // Avec Stripe Checkout, le client n'a plus besoin d'identifier visuellement
+    // une prestation : l'amount + line_item du Checkout suffisent.
 
     public function isConfirmed(): bool { return $this->status === self::STATUS_CONFIRMED; }
     public function isPending(): bool   { return $this->status === self::STATUS_PENDING; }
@@ -447,8 +436,8 @@ class Booking
      *
      * Règle (alignée sur templates/client/mon-rdv.html.twig) :
      *  - séance confirmée
-     *  - ET soit le paiement n'est PAS Xplor (espèces/CB → réglé sur place, QR ok)
-     *    soit Xplor mais le coach a déjà déclaré le paiement
+     *  - ET soit le paiement n'est PAS en ligne (espèces/CB → réglé sur place, QR ok)
+     *    soit en ligne mais Stripe a déjà confirmé (paymentMethod posé par webhook)
      *
      * Centralise la condition pour ne pas la dupliquer entre les pages
      * (espace client, mon-rdv, futurs écrans).
@@ -456,17 +445,18 @@ class Booking
     public function isQrUnlocked(): bool
     {
         return $this->status === self::STATUS_CONFIRMED
-            && ($this->intendedPaymentMethod !== 'xplor' || $this->paymentMethod !== null);
+            && ($this->intendedPaymentMethod !== 'stripe' || $this->paymentMethod !== null);
     }
 
     /**
-     * Pendant utile pour l'espace client : la séance est confirmée mais bloquée
-     * par un paiement Xplor non déclaré → on doit afficher le CTA "Régler via Xplor".
+     * La séance est confirmée mais bloquée par un paiement Stripe non encore reçu
+     * → on doit afficher le CTA "Régler en ligne". Le client a annoncé vouloir payer
+     * via Stripe à la résa mais le webhook n'a pas encore validé.
      */
-    public function isAwaitingXplorPayment(): bool
+    public function isAwaitingOnlinePayment(): bool
     {
         return $this->status === self::STATUS_CONFIRMED
-            && $this->intendedPaymentMethod === 'xplor'
+            && $this->intendedPaymentMethod === 'stripe'
             && $this->paymentMethod === null;
     }
 

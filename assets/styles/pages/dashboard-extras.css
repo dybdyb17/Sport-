@@ -688,12 +688,12 @@
 
 .pay-decl-chip[data-method="cash"]:has(input:checked) i { color: #c8e6a8; }
 .pay-decl-chip[data-method="card"]:has(input:checked) i { color: #a8c8e6; }
-.pay-decl-chip[data-method="xplor"]:has(input:checked) {
+.pay-decl-chip[data-method="stripe"]:has(input:checked) {
   border-color: var(--green);
   background: rgba(46,204,113,.10);
   box-shadow: 0 0 0 1px var(--green), 0 8px 20px rgba(46,204,113,.2);
 }
-.pay-decl-chip[data-method="xplor"]:has(input:checked) i { color: var(--green); }
+.pay-decl-chip[data-method="stripe"]:has(input:checked) i { color: var(--green); }
 
 .pay-decl-submit {
   width: 100%;

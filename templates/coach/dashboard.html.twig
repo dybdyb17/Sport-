@@ -81,7 +81,7 @@
       </p>
       {% for b in sessionsAValider %}
         {% set intent = b.intendedPaymentMethod %}
-        {% set intentLabels = {'cash': 'Espèces', 'card': 'Carte bancaire', 'xplor': 'Xplor Active'} %}
+        {% set intentLabels = {'cash': 'Espèces', 'card': 'Carte bancaire', 'stripe': 'En ligne (Stripe)'} %}
         <div class="pay-decl-card">
           <div class="pay-decl-head">
             <div class="pay-decl-client">
@@ -109,11 +109,10 @@
                 <i class="ti ti-credit-card"></i>
                 <span>Carte bancaire</span>
               </label>
-              <label class="pay-decl-chip" data-method="xplor">
-                <input type="radio" name="method" value="xplor" required {{ intent == 'xplor' ? 'checked' : '' }}>
-                <i class="ti ti-leaf"></i>
-                <span>Xplor Active</span>
-              </label>
+              {# Pas de chip "Stripe" ici : le coach ne déclare QUE les encaissements
+                 sur place (espèces / CB). Les paiements Stripe en ligne sont posés
+                 automatiquement par le webhook → la séance n'apparaît plus dans
+                 sessionsAValider une fois Stripe confirmé. #}
             </div>
             <button type="submit" class="pay-decl-submit">
               <i class="ti ti-check"></i> Confirmer l'encaissement

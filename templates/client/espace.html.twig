@@ -118,7 +118,7 @@
       <div class="action-banner-icon"><i class="ti ti-credit-card-pay"></i></div>
       <div class="action-banner-body">
         <strong>Une séance attend ton paiement</strong>
-        <span>Ta séance avec {{ coachPrenomBan }} le {{ actionAttente.startAt|date('d/m') }} à {{ actionAttente.startAt|date('H\\hi') }} — règle via Xplor pour débloquer ton QR.</span>
+        <span>Ta séance avec {{ coachPrenomBan }} le {{ actionAttente.startAt|date('d/m') }} à {{ actionAttente.startAt|date('H\\hi') }} — règle en ligne pour débloquer ton QR.</span>
       </div>
       <i class="ti ti-chevron-right action-banner-chevron"></i>
     </a>
@@ -164,7 +164,7 @@
     {% set coachPhoto = prochaine.coach.photoSrc %}
     {% set coachPrenom = prochaine.coach.nomComplet|split(' ')|first %}
     {% set isPending = prochaine.status == 'pending' %}
-    {% set isAwaitingPayment = prochaine.isAwaitingXplorPayment %}
+    {% set isAwaitingPayment = prochaine.isAwaitingOnlinePayment %}
     {% set isReady = prochaine.isQrUnlocked %}
 
     <div class="session-ticket {{ isPending ? 'state-pending' : (isAwaitingPayment ? 'state-payment' : 'state-ready') }}"
@@ -238,19 +238,17 @@
       {% elseif isAwaitingPayment %}
         <div class="session-ticket-state-block state-payment-block">
           <div class="state-block-eyebrow">PLUS QU'UNE ÉTAPE</div>
-          <h3 class="state-block-title">Règle ta séance via Xplor</h3>
+          <h3 class="state-block-title">Règle ta séance en ligne</h3>
           <p class="state-block-sub">
-            Dès que ton paiement est validé, ton QR de check-in se débloque ici tout seul.
-            Pas besoin de revenir nous voir.
+            Paiement sécurisé par carte via Stripe. Ton QR de check-in se débloque ici
+            tout seul dès validation.
           </p>
-          <button type="button" class="state-block-cta"
-                  data-xplor-open
-                  data-xplor-url="{{ xplor_pay_url(prochaine) }}"
-                  data-xplor-product="{{ prochaine.deciplusProductName }}"
-                  data-xplor-amount="{{ prochaine.displayAmountFormatted }}"
-                  data-xplor-is-pack="{{ prochaine.subscription ? 'true' : 'false' }}">
-            <i class="ti ti-credit-card-pay"></i> Régler {{ prochaine.prixFormatted }} via Xplor Active
-          </button>
+          <form method="post" action="{{ path('app_booking_checkout_stripe', {ref: prochaine.reference}) }}" style="margin:0;">
+            <input type="hidden" name="_token" value="{{ csrf_token('booking-stripe-' ~ prochaine.id) }}">
+            <button type="submit" class="state-block-cta">
+              <i class="ti ti-credit-card-pay"></i> Régler {{ prochaine.prixFormatted }} via Stripe
+            </button>
+          </form>
           <p class="state-block-locked">
             <i class="ti ti-lock"></i> Ton QR est prêt, il attend juste le paiement
           </p>

@@ -318,7 +318,7 @@
             <i class="ti ti-users-group"></i>
             <div>
               <strong>Format Groupe — paiement sur place uniquement</strong>
-              <p>Pour les séances en groupe (4 à 6 personnes), le règlement se fait directement au club par le coach, en <strong>espèces</strong> ou <strong>carte bancaire</strong>. Le paiement en ligne via Xplor Active n'est pas disponible pour ce format.</p>
+              <p>Pour les séances en groupe (4 à 6 personnes), le règlement se fait directement au club par le coach, en <strong>espèces</strong> ou <strong>carte bancaire</strong>. Le paiement en ligne n'est pas disponible pour ce format.</p>
             </div>
           </div>
 
@@ -343,12 +343,12 @@
               <span class="bk-pay-select"><i class="ti ti-check"></i></span>
             </label>
 
-            <label class="bk-pay-card bk-pay-card-xplor" data-method="xplor">
-              <input type="radio" name="intended_payment_method" value="xplor">
-              <span class="bk-pay-icon"><i class="ti ti-device-mobile-dollar"></i></span>
+            <label class="bk-pay-card bk-pay-card-stripe" data-method="stripe">
+              <input type="radio" name="intended_payment_method" value="stripe">
+              <span class="bk-pay-icon"><i class="ti ti-lock"></i></span>
               <span class="bk-pay-copy">
-                <strong>Xplor Active</strong>
-                <small>Paiement sécurisé depuis ton espace</small>
+                <strong>En ligne (Stripe)</strong>
+                <small>Paiement sécurisé par carte bancaire</small>
               </span>
               <span class="bk-pay-online">En ligne</span>
               <span class="bk-pay-select"><i class="ti ti-check"></i></span>
@@ -363,14 +363,14 @@
             <i class="ti ti-info-circle"></i>
             <span>Le règlement se fera directement auprès du coach à la fin de la séance.</span>
           </div>
-          <div class="bk-pay-info bk-pay-info-xplor" data-show-for="xplor" hidden>
-            <i class="ti ti-device-mobile-dollar"></i>
+          <div class="bk-pay-info bk-pay-info-stripe" data-show-for="stripe" hidden>
+            <i class="ti ti-lock"></i>
             <div>
-              <strong>Paiement Xplor Active</strong>
-              <p>Après validation du coach, ton lien sécurisé apparaîtra dans ton espace SPORT+. Tu pourras alors régler en ligne via Xplor/Deciplus.</p>
+              <strong>Paiement en ligne via Stripe</strong>
+              <p>Après validation de ta séance par le coach, un bouton « Régler maintenant » apparaîtra dans ton espace. Tu seras redirigé vers une page de paiement Stripe sécurisée (carte bancaire).</p>
               <div class="bk-pay-important">
-                <i class="ti ti-lock"></i>
-                <span><strong>Important :</strong> le lien ne devient actif qu'après confirmation de la séance.</span>
+                <i class="ti ti-shield-check"></i>
+                <span><strong>Aucun débit avant confirmation :</strong> tu ne payes qu'après acceptation par le coach.</span>
               </div>
             </div>
           </div>

@@ -507,7 +507,7 @@ html.performance-lite .status-dot { animation: none; }
   line-height: 1.5;
 }
 
-/* État 2 : à régler (Xplor) — bloc central qui invite à payer */
+/* État 2 : à régler en ligne (Stripe) — bloc central qui invite à payer */
 .state-payment-block {
   background:
     radial-gradient(ellipse at top left, rgba(200,169,81,.10) 0%, transparent 60%),

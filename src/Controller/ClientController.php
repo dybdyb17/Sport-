@@ -43,7 +43,7 @@ class ClientController extends AbstractController
         // séance bloquée, sinon la première qu'on trouve.
         $actionAttente = null;
         foreach ($aVenir as $b) {
-            if ($b->isAwaitingXplorPayment()) {
+            if ($b->isAwaitingOnlinePayment()) {
                 $actionAttente = $b;
                 break;
             }

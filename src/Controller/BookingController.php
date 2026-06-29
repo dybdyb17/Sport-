@@ -8,7 +8,6 @@ use App\Entity\Enum\PackType;
 use App\Form\BookingType;
 use App\Repository\BookingRepository;
 use App\Service\BookingManager;
-use App\Service\DeciplusPaymentUrlResolver;
 use App\Service\PricingCalculator;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -86,10 +85,10 @@ class BookingController extends AbstractController
                 );
 
                 $intended = $request->request->get('intended_payment_method');
-                if (in_array($intended, ['cash', 'card', 'xplor'], true)) {
-                    // Groupe : paiement en ligne (Xplor) interdit côté UX et côté serveur.
-                    // Si quelqu'un force "xplor" via DevTools sur un Groupe, on rebascule en cash.
-                    if ($format === BookingFormat::GROUP && $intended === 'xplor') {
+                if (in_array($intended, ['cash', 'card', 'stripe'], true)) {
+                    // Groupe : paiement en ligne interdit côté UX et côté serveur.
+                    // Si quelqu'un force "stripe" via DevTools sur un Groupe, on rebascule en cash.
+                    if ($format === BookingFormat::GROUP && $intended === 'stripe') {
                         $intended = 'cash';
                     }
                     $created->setIntendedPaymentMethod($intended);
@@ -191,44 +190,8 @@ class BookingController extends AbstractController
         ]);
     }
 
-    #[Route('/{ref}/payer-xplor', name: 'app_booking_pay_xplor', methods: ['GET'])]
-    #[IsGranted('ROLE_CLIENT')]
-    public function payWithXplor(
-        string $ref,
-        BookingRepository $bookingRepository,
-        DeciplusPaymentUrlResolver $deciplusPaymentUrlResolver,
-    ): RedirectResponse {
-        $booking = $bookingRepository->findOneBy(['reference' => $ref]);
-
-        if (!$booking) {
-            throw $this->createNotFoundException();
-        }
-
-        if ($booking->getClient() !== $this->getUser()) {
-            throw $this->createAccessDeniedException();
-        }
-
-        if ($booking->getStatus() !== Booking::STATUS_CONFIRMED) {
-            $this->addFlash('warning', 'Le paiement Xplor sera accessible une fois la séance confirmée par le coach.');
-            return $this->redirectToRoute('app_espace_client_rdv', ['reference' => $booking->getReference()]);
-        }
-
-        if ($booking->getPaymentMethod() !== null) {
-            $this->addFlash('success', 'Paiement déjà validé : ton QR de check-in est débloqué.');
-            return $this->redirectToRoute('app_espace_client_rdv', ['reference' => $booking->getReference()]);
-        }
-
-        if ($booking->getIntendedPaymentMethod() !== 'xplor') {
-            $this->addFlash('warning', "Cette séance n'est pas prévue en paiement Xplor Active.");
-            return $this->redirectToRoute('app_espace_client_rdv', ['reference' => $booking->getReference()]);
-        }
-
-        if (!$deciplusPaymentUrlResolver->hasDirectProductUrlFor($booking)) {
-            $this->addFlash('warning', "La prestation exacte n'est pas encore reliée à Deciplus : tu es redirigé vers la boutique SPORT+ Xplor Active.");
-        }
-
-        return $this->redirect($deciplusPaymentUrlResolver->paymentUrlFor($booking));
-    }
+    // Route /payer-xplor supprimée le 29/06 — remplacée par /payer-stripe
+    // (StripeController::bookingCheckout) qui redirige vers Stripe Checkout.
 
     #[Route('/{ref}/suivi', name: 'app_booking_status', methods: ['GET'])]
     #[IsGranted('ROLE_CLIENT')]

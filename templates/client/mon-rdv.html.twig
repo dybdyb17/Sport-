@@ -19,15 +19,8 @@
 
     <h1 class="rdv-title">Mon rendez-vous</h1>
 
-    {# ── Logique d'affichage du QR :
-       - Pending / Refused / Cancelled → pas de QR
-       - Confirmed + Xplor + non payé → QR bloqué, message "régler via Xplor"
-       - Sinon → QR visible
-    #}
-    {% set qrUnlocked = booking.status == 'confirmed' and (
-      booking.intendedPaymentMethod != 'xplor'
-      or booking.paymentMethod is not null
-    ) %}
+    {# Logique d'affichage du QR centralisée dans Booking::isQrUnlocked() #}
+    {% set qrUnlocked = booking.isQrUnlocked %}
 
     {% if booking.status == 'pending' %}
       <p class="rdv-sub">En attente de validation par le coach. Tu recevras une notification dès qu'il aura confirmé.</p>
@@ -45,25 +38,23 @@
       </div>
       <p class="rdv-qr-help">L'accueil scanne ce code pour valider ton arrivée.</p>
     {% else %}
-      {# Confirmed + Xplor + non payé : QR bloqué jusqu'à vérification réelle du paiement #}
-      <p class="rdv-sub">Ton QR sera débloqué dès que ton paiement Xplor sera vérifié.</p>
+      {# Confirmed + Stripe + non payé : QR bloqué jusqu'au paiement #}
+      <p class="rdv-sub">Ton QR sera débloqué dès que ton paiement en ligne sera vérifié.</p>
       <div class="rdv-qr-blocked">
         <i class="ti ti-lock" style="font-size:48px;color:var(--green);"></i>
         <div class="rdv-qr-blocked-title">QR verrouillé — Paiement requis</div>
         <div class="rdv-qr-blocked-sub">
-          Tu as choisi <strong>Xplor Active</strong>. Règle ta séance depuis ton espace Xplor — ton QR de check-in se débloquera automatiquement une fois le paiement validé côté SPORT+.
+          Tu as choisi de <strong>régler en ligne</strong>. Lance le paiement Stripe ci-dessous — ton QR de check-in se débloquera automatiquement dès validation.
         </div>
-        <button type="button" class="rdv-qr-blocked-cta"
-                data-xplor-open
-                data-xplor-url="{{ xplor_pay_url(booking) }}"
-                data-xplor-product="{{ booking.deciplusProductName }}"
-                data-xplor-amount="{{ booking.displayAmountFormatted }}"
-                data-xplor-is-pack="{{ booking.subscription ? 'true' : 'false' }}">
-          <i class="ti ti-credit-card-pay"></i> Régler maintenant via Xplor
-        </button>
+        <form method="post" action="{{ path('app_booking_checkout_stripe', {ref: booking.reference}) }}" style="margin:0;">
+          <input type="hidden" name="_token" value="{{ csrf_token('booking-stripe-' ~ booking.id) }}">
+          <button type="submit" class="rdv-qr-blocked-cta">
+            <i class="ti ti-credit-card-pay"></i> Régler {{ booking.prixFormatted }} en ligne
+          </button>
+        </form>
         <p style="margin-top:14px;font-size:12px;color:var(--text-dim);line-height:1.5;">
           <i class="ti ti-info-circle" style="vertical-align:middle;"></i>
-          Après ton paiement Xplor, présente ta confirmation à l'accueil à ton arrivée.
+          Paiement sécurisé Stripe. Tu peux aussi régler au coach sur place si tu préfères.
         </p>
       </div>
     {% endif %}
@@ -175,9 +166,9 @@
     {% set intent = booking.intendedPaymentMethod %}
     {% set declared = booking.paymentMethod %}
     {% set methodLabels = {
-      'cash':  {'icon': 'ti-cash',        'name': 'Espèces',        'color': 'gold'},
-      'card':  {'icon': 'ti-credit-card', 'name': 'Carte bancaire', 'color': 'gold'},
-      'xplor': {'icon': 'ti-leaf',        'name': 'Xplor Active',   'color': 'green'}
+      'cash':   {'icon': 'ti-cash',        'name': 'Espèces',        'color': 'gold'},
+      'card':   {'icon': 'ti-credit-card', 'name': 'Carte bancaire', 'color': 'gold'},
+      'stripe': {'icon': 'ti-lock',        'name': 'En ligne (Stripe)', 'color': 'green'}
     } %}
 
     {% set isPending   = booking.status == 'pending' %}
@@ -207,7 +198,7 @@
           <div>
             <div class="rdv-pay-chip-name">{{ lbl.name }}</div>
             <div class="rdv-pay-chip-sub">
-              {% if intent == 'xplor' %}Paiement en ligne via Xplor Active{% else %}Sur place, au coach{% endif %}
+              {% if intent == 'stripe' %}Paiement en ligne via Stripe (carte bancaire){% else %}Sur place, au coach{% endif %}
             </div>
           </div>
         </div>
@@ -217,7 +208,7 @@
           <p class="rdv-pay-help" style="background:rgba(200,169,81,.06);border:1px dashed rgba(200,169,81,.3);border-radius:var(--radius);padding:12px 14px;margin-top:12px;">
             <i class="ti ti-lock" style="color:var(--gold);"></i>
             <strong>Le paiement sera disponible une fois ton coach aura confirmé la séance.</strong> Tu recevras une notification dès validation et tu pourras
-            {% if intent == 'xplor' %}régler en ligne depuis ton espace Xplor Active{% else %}{{ intent == 'cash' ? 'prévoir ton paiement en espèces' : 'préparer ton paiement par carte' }}{% endif %}.
+            {% if intent == 'stripe' %}régler en ligne via Stripe en quelques secondes{% else %}{{ intent == 'cash' ? 'prévoir ton paiement en espèces' : 'préparer ton paiement par carte' }}{% endif %}.
           </p>
         {% elseif isRefused %}
           {% if booking.refusalReason and booking.status == 'refused' %}
@@ -237,17 +228,15 @@
               La séance a été {{ booking.status == 'refused' ? 'refusée par le coach' : 'annulée' }}, aucun paiement n'est attendu.
             </p>
           {% endif %}
-        {% elseif intent == 'xplor' %}
-          {# Confirmed + Xplor → on autorise le règlement en ligne #}
-          <button type="button" class="rdv-pay-link"
-                  data-xplor-open
-                  data-xplor-url="{{ xplor_pay_url(booking) }}"
-                  data-xplor-product="{{ booking.deciplusProductName }}"
-                  data-xplor-amount="{{ booking.displayAmountFormatted }}"
-                  data-xplor-is-pack="{{ booking.subscription ? 'true' : 'false' }}">
-            <i class="ti ti-credit-card-pay"></i> Régler depuis mon espace Xplor
-          </button>
-          <p class="rdv-pay-help">Tu peux régler maintenant depuis ton espace Xplor Active (Paylib), ou présenter ta carte au coach à l'arrivée.</p>
+        {% elseif intent == 'stripe' %}
+          {# Confirmed + Stripe → on autorise le règlement en ligne #}
+          <form method="post" action="{{ path('app_booking_checkout_stripe', {ref: booking.reference}) }}" style="margin:0;">
+            <input type="hidden" name="_token" value="{{ csrf_token('booking-stripe-' ~ booking.id) }}">
+            <button type="submit" class="rdv-pay-link">
+              <i class="ti ti-credit-card-pay"></i> Régler {{ booking.prixFormatted }} en ligne via Stripe
+            </button>
+          </form>
+          <p class="rdv-pay-help">Paiement sécurisé Stripe. Tu peux aussi régler au coach sur place si tu préfères (espèces ou CB).</p>
         {% elseif booking.coveredBy in ['subscription', 'founding'] %}
           {# Séance couverte (pack ou Fondateur) — pas de paiement à prévoir #}
           <p class="rdv-pay-help" style="color:var(--green);">
@@ -271,7 +260,7 @@
       {% else %}
         <p class="rdv-pay-help">
           <i class="ti ti-info-circle"></i>
-          3 modes possibles : <strong>Espèces</strong>, <strong>CB</strong> (sur place avec le coach) ou <strong>Xplor Active</strong> (en ligne).
+          3 modes possibles : <strong>Espèces</strong>, <strong>CB</strong> (sur place avec le coach) ou <strong>Stripe</strong> (en ligne, carte bancaire).
           {% if isPending %}<br>Le paiement sera ouvert une fois la séance confirmée.{% endif %}
         </p>
       {% endif %}

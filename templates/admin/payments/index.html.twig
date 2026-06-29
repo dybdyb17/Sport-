@@ -18,7 +18,7 @@
         <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;font-size:13px;">
           <div><span style="color:var(--text-dim);"><i class="ti ti-cash"></i> Espèces</span> <strong style="color:var(--white);">{{ st.cash|number_format(2, ',', ' ') }} €</strong></div>
           <div><span style="color:var(--text-dim);"><i class="ti ti-credit-card"></i> CB</span> <strong style="color:var(--white);">{{ st.card|number_format(2, ',', ' ') }} €</strong></div>
-          <div><span style="color:var(--text-dim);"><i class="ti ti-leaf" style="color:var(--green);"></i> Xplor</span> <strong style="color:var(--white);">{{ st.xplor|number_format(2, ',', ' ') }} €</strong></div>
+          <div><span style="color:var(--text-dim);"><i class="ti ti-lock" style="color:var(--green);"></i> Stripe</span> <strong style="color:var(--white);">{{ st.stripe|number_format(2, ',', ' ') }} €</strong></div>
           <div><span style="color:#ff9966;"><i class="ti ti-alert-triangle"></i> À déclarer</span> <strong style="color:#ff9966;">{{ st.pending|number_format(2, ',', ' ') }} €</strong></div>
         </div>
       </div>
@@ -31,7 +31,7 @@
   <a href="{{ path('app_admin_payments', {method: 'pending'}) }}" class="btn btn-sm {{ methodFilter == 'pending' ? 'btn-primary' : 'btn-secondary' }}"><i class="ti ti-alert-triangle"></i> Non déclarés</a>
   <a href="{{ path('app_admin_payments', {method: 'cash'}) }}" class="btn btn-sm {{ methodFilter == 'cash' ? 'btn-primary' : 'btn-secondary' }}"><i class="ti ti-cash"></i> Espèces</a>
   <a href="{{ path('app_admin_payments', {method: 'card'}) }}" class="btn btn-sm {{ methodFilter == 'card' ? 'btn-primary' : 'btn-secondary' }}"><i class="ti ti-credit-card"></i> CB</a>
-  <a href="{{ path('app_admin_payments', {method: 'xplor'}) }}" class="btn btn-sm {{ methodFilter == 'xplor' ? 'btn-primary' : 'btn-secondary' }}"><i class="ti ti-leaf"></i> Xplor</a>
+  <a href="{{ path('app_admin_payments', {method: 'stripe'}) }}" class="btn btn-sm {{ methodFilter == 'stripe' ? 'btn-primary' : 'btn-secondary' }}"><i class="ti ti-lock"></i> Stripe</a>
 </div>
 
 <div class="data-table-card">
@@ -72,8 +72,8 @@
                 <span><i class="ti ti-cash"></i> Espèces</span><div style="font-size:11px;color:var(--text-dim);">{{ b.paymentDeclaredAt|date('d/m H\\hi') }}</div>
               {% elseif b.paymentMethod == 'card' %}
                 <span><i class="ti ti-credit-card"></i> CB</span><div style="font-size:11px;color:var(--text-dim);">{{ b.paymentDeclaredAt|date('d/m H\\hi') }}</div>
-              {% elseif b.paymentMethod == 'xplor' %}
-                <span style="color:var(--green);"><i class="ti ti-leaf"></i> Xplor</span><div style="font-size:11px;color:var(--text-dim);">{{ b.paymentDeclaredAt|date('d/m H\\hi') }}</div>
+              {% elseif b.paymentMethod == 'stripe' %}
+                <span style="color:var(--green);"><i class="ti ti-lock"></i> Stripe</span><div style="font-size:11px;color:var(--text-dim);">{{ b.paymentDeclaredAt|date('d/m H\\hi') }}</div>
               {% else %}
                 <span style="color:#ff9966;"><i class="ti ti-alert-triangle"></i> Non déclaré</span>
               {% endif %}

@@ -76,14 +76,14 @@
           <span class="peek-pill peek-pill-red"><i class="ti ti-user-x"></i> Client absent — frais {{ b.noShowFee }} € à facturer</span>
           <span style="display:block;font-size:11px;color:var(--text-dim);margin-top:4px;">Marqué absent le {{ b.noShowMarkedAt|date('d/m/Y \\à H\\hi') }}</span>
         {% elseif b.paymentMethod %}
-          {% set methods = {'cash': 'Espèces', 'card': 'CB', 'xplor': 'Xplor Active'} %}
+          {% set methods = {'cash': 'Espèces', 'card': 'CB', 'stripe': 'En ligne (Stripe)'} %}
           <span class="peek-pill peek-pill-green"><i class="ti ti-check"></i> {{ methods[b.paymentMethod] ?? b.paymentMethod }}</span>
           {% if b.paymentDeclaredAt %}
             <span style="display:block;font-size:11px;color:var(--text-dim);margin-top:4px;">Déclaré le {{ b.paymentDeclaredAt|date('d/m/Y H\\hi') }}{% if b.paymentDeclaredBy %} par {{ b.paymentDeclaredBy.nomComplet }}{% endif %}</span>
           {% endif %}
         {% else %}
           {% if b.intendedPaymentMethod %}
-            {% set methods = {'cash': 'Espèces', 'card': 'CB', 'xplor': 'Xplor Active'} %}
+            {% set methods = {'cash': 'Espèces', 'card': 'CB', 'stripe': 'En ligne (Stripe)'} %}
             <span class="peek-pill peek-pill-gold"><i class="ti ti-flag"></i> Annoncé : {{ methods[b.intendedPaymentMethod] }}</span>
           {% else %}
             <span class="peek-pill peek-pill-neutral"><i class="ti ti-help"></i> Non déclaré</span>

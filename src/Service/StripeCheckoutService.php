@@ -2,11 +2,14 @@
 
 namespace App\Service;
 
+use App\Entity\Booking;
 use App\Entity\FoundingClaim;
 use App\Entity\FoundingOffer;
 use App\Entity\User;
+use App\Repository\BookingRepository;
 use App\Repository\FoundingOfferRepository;
 use App\Repository\UserRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Stripe\Checkout\Session;
 use Stripe\Event;
 use Stripe\StripeClient;
@@ -23,6 +26,8 @@ final class StripeCheckoutService
         private readonly FoundingOfferService $foundingOfferService,
         private readonly FoundingOfferRepository $foundingOfferRepository,
         private readonly UserRepository $userRepository,
+        private readonly BookingRepository $bookingRepository,
+        private readonly EntityManagerInterface $em,
     ) {
     }
 
@@ -124,10 +129,130 @@ final class StripeCheckoutService
         );
     }
 
+    // ─────────────────────────────────────────────────────────────────────────
+    //  BOOKING checkout (séance coaching) — Xplor remplacé par Stripe le 29/06
+    // ─────────────────────────────────────────────────────────────────────────
+
+    /**
+     * Crée une session Stripe Checkout pour régler une séance déjà confirmée
+     * par le coach. À ne PAS appeler tant que status != confirmed (paiement
+     * uniquement après acceptation coach, pas avant — décision Loïc).
+     */
+    public function createBookingCheckout(Booking $booking): Session
+    {
+        if ($booking->getStatus() !== Booking::STATUS_CONFIRMED) {
+            throw new \LogicException('La séance doit être confirmée par le coach avant paiement.');
+        }
+        if ($booking->getPaymentMethod() !== null) {
+            throw new \LogicException('Cette séance est déjà payée.');
+        }
+        if ($booking->getCoveredBy() !== null) {
+            throw new \LogicException('Cette séance est couverte par un pack/Fondateur, aucun paiement n\'est dû.');
+        }
+
+        $client = $booking->getClient();
+        if (!$client instanceof User || !$client->getEmail()) {
+            throw new \LogicException('Le client de cette séance n\'a pas d\'email valide.');
+        }
+
+        $session = $this->client()->checkout->sessions->create([
+            'mode' => 'payment',
+            'locale' => 'fr',
+            'customer_email' => $client->getEmail(),
+            'client_reference_id' => 'booking-' . $booking->getId(),
+            'line_items' => [[
+                'quantity' => 1,
+                'price_data' => [
+                    'currency' => 'eur',
+                    'unit_amount' => $this->bookingPriceInCents($booking),
+                    'product_data' => [
+                        'name' => sprintf('SPORT+ — %s', $booking->getOfferLabel()),
+                        'description' => sprintf(
+                            'Séance avec %s · %s à %s · Réf. %s',
+                            (string) $booking->getCoach()?->getNomComplet(),
+                            $booking->getStartAt()?->format('d/m/Y') ?? '?',
+                            $booking->getTimeRangeFormatted(),
+                            $booking->getReference(),
+                        ),
+                    ],
+                ],
+            ]],
+            'metadata' => $this->bookingMetadata($booking),
+            'payment_intent_data' => [
+                'metadata' => $this->bookingMetadata($booking),
+            ],
+            'success_url' => $this->absoluteUrl(sprintf('/reservation/%s/paiement/succes?session_id={CHECKOUT_SESSION_ID}', $booking->getReference())),
+            'cancel_url' => $this->absoluteUrl(sprintf('/reservation/%s/paiement/annule', $booking->getReference())),
+        ], [
+            'idempotency_key' => sprintf('booking-checkout-%d', $booking->getId()),
+        ]);
+
+        if (!$session->url) {
+            throw new \RuntimeException('Stripe n\'a pas retourné de page de paiement.');
+        }
+
+        return $session;
+    }
+
+    /**
+     * Appelé par la route success ET par le webhook. Idempotent : si le booking
+     * est déjà marqué payé, ne re-fait rien.
+     */
+    public function fulfillBookingCheckout(Session $session, ?User $expectedClient = null): Booking
+    {
+        if ($session->mode !== 'payment' || $session->payment_status !== 'paid') {
+            throw new \LogicException('Le paiement Stripe n\'est pas encore confirmé.');
+        }
+
+        $metadata = $session->metadata;
+        if (($metadata['purchase_type'] ?? null) !== 'booking_session') {
+            throw new \LogicException('Ce paiement ne correspond pas à une séance SPORT+.');
+        }
+
+        $bookingId = filter_var($metadata['booking_id'] ?? null, FILTER_VALIDATE_INT);
+        if (!$bookingId) {
+            throw new \LogicException('Les informations du paiement Stripe sont incomplètes.');
+        }
+
+        $booking = $this->bookingRepository->find($bookingId);
+        if (!$booking instanceof Booking) {
+            throw new \LogicException('La séance associée à ce paiement est introuvable.');
+        }
+        if ($expectedClient !== null && $expectedClient->getId() !== $booking->getClient()?->getId()) {
+            throw new \LogicException('Ce paiement Stripe appartient à un autre compte.');
+        }
+        if (strtolower((string) $session->currency) !== 'eur' || (int) $session->amount_total !== $this->bookingPriceInCents($booking)) {
+            throw new \LogicException('Le montant du paiement Stripe ne correspond pas à la séance.');
+        }
+
+        // Idempotence : webhook + return URL peuvent arriver en parallèle
+        if ($booking->getPaymentMethod() !== null) {
+            return $booking;
+        }
+
+        $paymentIntentId = is_string($session->payment_intent)
+            ? $session->payment_intent
+            : ($session->payment_intent->id ?? null);
+
+        $booking
+            ->setPaymentMethod('stripe')
+            ->setPaymentDeclaredAt(new \DateTimeImmutable())
+            ->setStripeData([
+                'session_id'        => $session->id,
+                'payment_intent_id' => $paymentIntentId,
+                'paid_at'           => (new \DateTimeImmutable())->format(\DateTimeInterface::ATOM),
+                'amount_cents'      => (int) $session->amount_total,
+            ]);
+
+        $this->em->flush();
+
+        return $booking;
+    }
+
     public function constructWebhookEvent(string $payload, string $signature): Event
     {
         if ($this->stripeWebhookSecret === '') {
-            throw new \RuntimeException('STRIPE_WEBHOOK_SECRET n’est pas configuré.');
+            throw new \RuntimeException('STRIPE_WEBHOOK_SECRET n\'est pas configuré.');
         }
 
         return Webhook::constructEvent($payload, $signature, $this->stripeWebhookSecret);
@@ -156,6 +281,22 @@ final class StripeCheckoutService
     private function priceInCents(FoundingOffer $offer): int
     {
         return (int) round((float) $offer->getPrice() * 100);
+    }
+
+    /** @return array<string, string> */
+    private function bookingMetadata(Booking $booking): array
+    {
+        return [
+            'purchase_type' => 'booking_session',
+            'booking_id'    => (string) $booking->getId(),
+            'booking_ref'   => (string) $booking->getReference(),
+            'client_id'     => (string) $booking->getClient()?->getId(),
+        ];
+    }
+
+    private function bookingPriceInCents(Booking $booking): int
+    {
+        return (int) round((float) $booking->getPrice() * 100);
     }
 
     private function absoluteUrl(string $path): string

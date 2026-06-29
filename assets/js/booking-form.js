@@ -128,8 +128,8 @@
     }
 
     // Groupe : pas de paiement en ligne possible → on affiche un avertissement
-    // et on masque la carte Xplor (via attribut data-format sur le block parent).
-    // Si le client avait coché Xplor, on bascule sur "cash" par défaut.
+    // et on masque la carte Stripe (via attribut data-format sur le block parent).
+    // Si le client avait coché Stripe, on bascule sur "cash" par défaut.
     const payBlock = document.querySelector('.bk-pay-block');
     const payWarn  = document.getElementById('bk-pay-group-warning');
     if (payBlock) {
@@ -139,12 +139,14 @@
       payWarn.hidden = format !== 'group';
     }
     if (format === 'group') {
-      const xplorRadio = document.querySelector('input[name="intended_payment_method"][value="xplor"]');
-      if (xplorRadio && xplorRadio.checked) {
+      const stripeRadio = document.querySelector('input[name="intended_payment_method"][value="stripe"]');
+      if (stripeRadio && stripeRadio.checked) {
         const cashRadio = document.querySelector('input[name="intended_payment_method"][value="cash"]');
-        if (cashRadio) cashRadio.checked = true;
-        // Trigger un event pour que les helpers (bk-pay-info) se mettent à jour
-        if (cashRadio) cashRadio.dispatchEvent(new Event('change', { bubbles: true }));
+        if (cashRadio) {
+          cashRadio.checked = true;
+          // Trigger un event pour que les helpers (bk-pay-info) se mettent à jour
+          cashRadio.dispatchEvent(new Event('change', { bubbles: true }));
+        }
       }
     }
   }
