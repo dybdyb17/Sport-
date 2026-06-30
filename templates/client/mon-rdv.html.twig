@@ -178,8 +178,9 @@
     <div class="rdv-pay">
       <div class="rdv-pay-head">
         <span class="rdv-pay-eyebrow"><i class="ti ti-credit-card"></i> Paiement</span>
-        {% if declared %}
-          <span class="rdv-pay-status rdv-pay-status-ok"><i class="ti ti-check"></i> Confirmé par le coach</span>
+        {% if booking.isPaid %}
+          {% set paidLabel = declared == 'stripe' ? 'Payé en ligne' : 'Confirmé par le coach' %}
+          <span class="rdv-pay-status rdv-pay-status-ok"><i class="ti ti-check"></i> {{ paidLabel }}</span>
         {% elseif isRefused %}
           <span class="rdv-pay-status rdv-pay-status-wait"><i class="ti ti-x"></i> Séance annulée</span>
         {% elseif isPending %}
@@ -191,7 +192,35 @@
         {% endif %}
       </div>
 
-      {% if intent %}
+      {# ── État terminal "PAYÉ" : on l'isole en premier pour ne pas mélanger
+            avec les branches "à régler". S'applique aussi bien à un paiement
+            Stripe automatique (webhook) qu'à un encaissement cash/CB déclaré
+            par le coach. Aucun bouton ici — la séance est réglée. ── #}
+      {% if booking.isPaid %}
+        {% set paidLabel = methodLabels[declared] ?? null %}
+        <div class="rdv-pay-chip rdv-pay-chip-green">
+          <i class="ti ti-check"></i>
+          <div>
+            <div class="rdv-pay-chip-name">
+              {{ booking.prixFormatted }} — Payé{% if paidLabel %} {{ declared == 'stripe' ? 'en ligne (Stripe)' : ('en ' ~ paidLabel.name|lower) }}{% endif %}
+            </div>
+            <div class="rdv-pay-chip-sub">
+              {% if booking.paymentDeclaredAt %}
+                Confirmé le {{ booking.paymentDeclaredAt|date('d/m/Y \\à H\\hi') }}
+              {% else %}
+                Paiement enregistré
+              {% endif %}
+            </div>
+          </div>
+        </div>
+        {% if declared == 'stripe' %}
+          <p class="rdv-pay-help" style="color:var(--green);font-size:13px;">
+            <i class="ti ti-shield-check" style="color:var(--green);"></i>
+            Ton QR de check-in est débloqué — présente-le à l'accueil le jour J.
+          </p>
+        {% endif %}
+
+      {% elseif intent %}
         {% set lbl = methodLabels[intent] %}
         <div class="rdv-pay-chip rdv-pay-chip-{{ lbl.color }}">
           <i class="ti {{ lbl.icon }}"></i>
@@ -228,8 +257,8 @@
               La séance a été {{ booking.status == 'refused' ? 'refusée par le coach' : 'annulée' }}, aucun paiement n'est attendu.
             </p>
           {% endif %}
-        {% elseif intent == 'stripe' %}
-          {# Confirmed + Stripe → on autorise le règlement en ligne #}
+        {% elseif booking.isAwaitingOnlinePayment %}
+          {# Confirmed + Stripe + pas encore payé → CTA paiement en ligne #}
           <form method="post" action="{{ path('app_booking_checkout_stripe', {ref: booking.reference}) }}" style="margin:0;">
             <input type="hidden" name="_token" value="{{ csrf_token('booking-stripe-' ~ booking.id) }}">
             <button type="submit" class="rdv-pay-link">
@@ -249,12 +278,6 @@
           <p class="rdv-pay-help">
             <i class="ti ti-info-circle"></i>
             Prévois <strong>{{ booking.prixFormatted }}</strong> {{ intent == 'cash' ? 'en espèces' : 'par carte' }} pour ton coach.
-          </p>
-        {% endif %}
-
-        {% if declared and declared != intent %}
-          <p class="rdv-pay-help" style="color:var(--text-dim);font-size:12px;">
-            Le coach a finalement encaissé en {{ methodLabels[declared].name }}.
           </p>
         {% endif %}
       {% else %}

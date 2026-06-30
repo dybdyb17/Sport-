@@ -461,6 +461,15 @@ class Booking
     }
 
     /**
+     * La séance est-elle déjà payée ? Vrai dès que paymentMethod est posé,
+     * que ce soit par le coach (cash/card) ou par le webhook Stripe.
+     */
+    public function isPaid(): bool
+    {
+        return $this->paymentMethod !== null;
+    }
+
+    /**
      * Label adaptatif selon la distance entre aujourd'hui et le jour de la séance.
      * Utilisé par le mail rappel pré-séance qui peut partir aujourd'hui-même,
      * demain ou à J-2 selon le contexte (envoi immédiat à la confirmation,
