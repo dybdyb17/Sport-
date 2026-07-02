@@ -212,17 +212,30 @@
   </div>
 </div>
 
-<!-- Flash messages -->
+{# ─── Toasts (remplace les .alert statiques par des notifications qui
+     disparaissent seules — durée conditionnelle selon le type) ────────
+     Le serveur écrit les flashes en JSON dans un data-attribute ; un JS
+     léger les transforme en toasts au chargement. Tout addFlash() côté
+     PHP continue de marcher tel quel — c'est juste le rendu qui change.
+
+     Types :
+       success / info    → auto-hide 5s
+       error / danger    → sticky (croix uniquement, une erreur ne disparaît pas seule)
+       warning           → sticky (croix uniquement)
+     ────────────────────────────────────────────────────────────────── #}
+{% set toasts_payload = [] %}
 {% for label, messages in app.flashes %}
   {% for message in messages %}
-    <div class="container" style="margin-top:12px;">
-      <div class="alert alert-{{ label }}">
-        <i class="ti ti-{% if label == 'success' %}circle-check{% elseif label == 'error' %}alert-circle{% else %}info-circle{% endif %}"></i>
-        {{ message }}
-      </div>
-    </div>
+    {% set toasts_payload = toasts_payload|merge([{
+      type: (label == 'danger' ? 'error' : label),
+      msg:  message,
+    }]) %}
   {% endfor %}
 {% endfor %}
+<div id="toast-stack" class="toast-stack" aria-live="polite" aria-atomic="false"></div>
+{% if toasts_payload|length > 0 %}
+  <script id="toast-payload" type="application/json">{{ toasts_payload|json_encode|raw }}</script>
+{% endif %}
 
 <main>{% block body %}{% endblock %}</main>
 
@@ -466,5 +479,88 @@ document.addEventListener('keydown', function(e) {
 </script>
 
 {% block mercure %}{% endblock %}
+
+{# ─── TOAST system (SPORT+ Notifications) ─────────────────────────────
+   API JS :
+     window.showToast(message, type = 'info', options = {})
+       - message : texte affiché
+       - type    : 'success' | 'error' | 'warning' | 'info'
+       - options.duration : override ms (par défaut 5000 pour succ/info,
+                            0 = sticky pour error/warning)
+     window.hideToast(el)  : ferme le toast passé en paramètre
+   Ex : window.showToast('Séance enregistrée', 'success');
+        window.showToast('Créneau pris', 'error'); // reste jusqu'au clic
+   ─────────────────────────────────────────────────────────────────── #}
+<script>
+(function () {
+  const stack = document.getElementById('toast-stack');
+  if (!stack) return;
+
+  const ICONS = {
+    success: 'ti-circle-check',
+    error:   'ti-alert-circle',
+    warning: 'ti-alert-triangle',
+    info:    'ti-info-circle',
+  };
+  // Types qui disparaissent seuls (les erreurs et warnings, elles, restent
+  // jusqu'à ce que l'utilisateur les ferme via la croix — pas d'évaporation
+  // avant lecture d'un message critique).
+  const AUTO_HIDE = { success: 5000, info: 5000, error: 0, warning: 0 };
+
+  function makeToast(msg, type) {
+    const el = document.createElement('div');
+    el.className = 'toast toast--' + type;
+    el.setAttribute('role', type === 'error' || type === 'warning' ? 'alert' : 'status');
+    el.innerHTML =
+      '<i class="ti ' + (ICONS[type] || ICONS.info) + ' toast-icon"></i>' +
+      '<span class="toast-msg"></span>' +
+      '<button type="button" class="toast-close" aria-label="Fermer"><i class="ti ti-x"></i></button>';
+    el.querySelector('.toast-msg').textContent = msg;
+    el.querySelector('.toast-close').addEventListener('click', function () {
+      hide(el);
+    });
+    return el;
+  }
+
+  function show(msg, type, options) {
+    if (!msg) return null;
+    type = type || 'info';
+    if (!ICONS[type]) type = 'info';
+    const el = makeToast(msg, type);
+    stack.appendChild(el);
+    // Force reflow puis ajoute .is-visible pour trigger la transition
+    void el.offsetWidth;
+    el.classList.add('is-visible');
+
+    const duration = (options && typeof options.duration === 'number')
+      ? options.duration
+      : (AUTO_HIDE[type] || 0);
+    if (duration > 0) {
+      setTimeout(() => hide(el), duration);
+    }
+    return el;
+  }
+
+  function hide(el) {
+    if (!el || !el.parentNode) return;
+    el.classList.remove('is-visible');
+    el.classList.add('is-leaving');
+    // Attendre la fin de la transition avant de retirer du DOM
+    setTimeout(() => { if (el.parentNode) el.parentNode.removeChild(el); }, 260);
+  }
+
+  window.showToast = show;
+  window.hideToast = hide;
+
+  // Bootstrap : afficher les flashes injectés côté serveur
+  const payload = document.getElementById('toast-payload');
+  if (payload) {
+    try {
+      const list = JSON.parse(payload.textContent);
+      list.forEach(function (t) { show(t.msg, t.type); });
+    } catch (e) { /* payload malformé — silencieux, dev voit dans console */ }
+  }
+})();
+</script>
 </body>
 </html>

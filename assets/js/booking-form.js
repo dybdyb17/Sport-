@@ -445,42 +445,94 @@
 })();
 
 // ── Choix mode de paiement (étape 4) : afficher l'info contextuelle
-// Le message affiché dépend maintenant de DEUX choix :
+//    + adapter le bouton de soumission + la note.
+//
+// L'affichage dépend de DEUX dimensions :
 //   1. mode de paiement (cash / card / stripe)
-//   2. séance à l'unité vs pack (packType != SINGLE)
-// Chaque bloc .bk-pay-info porte data-show-for="{mode}" ET
-// data-show-for-pack="0" (single) ou "1" (pack).
+//   2. séance à l'unité vs pack (packType != 'single')
+//
+// ⚠️ Source de vérité pour "pack sélectionné" : le SELECT caché
+//    #booking_packtype (ou name booking[packType]). Le formulaire utilise
+//    des div.bk-choice cliquables — PAS de radios — donc :checked ne
+//    match rien. Il faut lire .value du select, qui est synchro par
+//    setSelectValue() plus haut dans ce même fichier.
 (function() {
   document.addEventListener('DOMContentLoaded', function() {
     var radios     = document.querySelectorAll('.bk-pay-card input[type="radio"]');
     var infos      = document.querySelectorAll('.bk-pay-info');
-    var packInputs = document.querySelectorAll('input[name="booking[packType]"]');
+    var packSelect = document.getElementById('booking_packtype')
+                  || document.querySelector('[name="booking[packType]"]');
+    var packChoices = document.querySelectorAll('[data-selector="pack"] .bk-choice, [data-selector="pack"] .selector-card');
+
+    // ── Bouton + note dynamiques ───────────────────────────────────
+    var labelEl = document.getElementById('bk-submit-label');
+    var iconEl  = document.getElementById('bk-submit-icon');
+    var noteEl  = document.getElementById('bk-submit-note-text');
+    var noteIcon = document.getElementById('bk-submit-note-icon');
+
+    // Format : [icon-classe, label bouton, icon note, texte note]
+    var VARIANTS = {
+      'single|null':   ['ti-send',             'Envoyer la demande au coach',
+                        'ti-shield-check',     'Aucun paiement maintenant — uniquement si le coach confirme.'],
+      'single|cash':   ['ti-send',             'Envoyer la demande au coach',
+                        'ti-shield-check',     'Aucun paiement maintenant — tu régleras en espèces au club, une fois la séance confirmée par le coach.'],
+      'single|card':   ['ti-send',             'Envoyer la demande au coach',
+                        'ti-shield-check',     'Aucun paiement maintenant — tu régleras par carte au club, une fois la séance confirmée par le coach.'],
+      'single|stripe': ['ti-send',             'Envoyer la demande au coach',
+                        'ti-shield-check',     'Aucun paiement maintenant — tu régleras en ligne via Stripe une fois la séance confirmée par le coach.'],
+      'pack|cash':     ['ti-send',             'Envoyer ma demande de pack',
+                        'ti-info-circle',      'Ta demande sera enregistrée. Tu paies en espèces au club — le pack est activé dès que le coach confirme l\'encaissement.'],
+      'pack|card':     ['ti-send',             'Envoyer ma demande de pack',
+                        'ti-info-circle',      'Ta demande sera enregistrée. Tu paies par carte au club — le pack est activé dès que le coach confirme l\'encaissement.'],
+      'pack|stripe':   ['ti-credit-card-pay',  'Payer mon pack en ligne',
+                        'ti-lock',             'Tu vas être redirigé vers Stripe pour régler ton pack maintenant. Ton pack est activé dès validation du paiement.'],
+      'pack|null':     ['ti-send',             'Envoyer ma demande de pack',
+                        'ti-info-circle',      'Choisis un mode de paiement pour finaliser ta demande.'],
+    };
 
     function isPackSelected() {
-      var checked = document.querySelector('input[name="booking[packType]"]:checked');
-      return !!(checked && checked.value && checked.value !== 'single');
+      // Lit la vraie source utilisée par le formulaire (select caché).
+      // NE PAS utiliser :checked : les .bk-choice sont des div, pas des radios.
+      var v = packSelect ? packSelect.value : null;
+      return !!(v && v !== 'single');
     }
 
-    function syncPaymentInfo() {
-      var selMode = document.querySelector('.bk-pay-card input[type="radio"]:checked');
-      var mode    = selMode ? selMode.value : null;
-      var packBit = isPackSelected() ? '1' : '0';
+    function getMode() {
+      var sel = document.querySelector('.bk-pay-card input[type="radio"]:checked');
+      return sel ? sel.value : null;
+    }
+
+    function syncAll() {
+      var packBit = isPackSelected() ? 'pack' : 'single';
+      var mode    = getMode();
+      var modeBit = mode || 'null';
+
+      // 1) Blocs d'info explicatifs
       infos.forEach(function(info) {
-        var match = (info.dataset.showFor === mode)
-                 && (info.dataset.showForPack === packBit);
-        info.hidden = !match;
+        var matchMode = (info.dataset.showFor === mode);
+        var matchPack = (info.dataset.showForPack === (isPackSelected() ? '1' : '0'));
+        info.hidden = !(matchMode && matchPack);
       });
+
+      // 2) Bouton + note
+      var variant = VARIANTS[packBit + '|' + modeBit] || VARIANTS['single|null'];
+      if (iconEl)  { iconEl.className = 'ti ' + variant[0]; }
+      if (labelEl) { labelEl.textContent = variant[1]; }
+      if (noteIcon){ noteIcon.className = 'ti ' + variant[2]; }
+      if (noteEl)  { noteEl.textContent = variant[3]; }
     }
 
-    radios.forEach(function(radio) {
-      radio.addEventListener('change', syncPaymentInfo);
-    });
-    packInputs.forEach(function(inp) {
-      inp.addEventListener('change', syncPaymentInfo);
+    // Écoute tous les changements possibles
+    radios.forEach(function(radio) { radio.addEventListener('change', syncAll); });
+    // Le select caché est modifié par setSelectValue() qui dispatche 'change'
+    if (packSelect) { packSelect.addEventListener('change', syncAll); }
+    // Ceinture : écouter aussi les clics sur les div.bk-choice au cas où
+    // (setSelectValue devrait déclencher change mais safety net)
+    packChoices.forEach(function(el) {
+      el.addEventListener('click', function() { setTimeout(syncAll, 0); });
     });
 
-    // sync initial (au cas où une valeur est déjà cochée)
-    syncPaymentInfo();
+    syncAll();
   });
 })();
 

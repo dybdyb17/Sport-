@@ -425,16 +425,19 @@
           {{ form_errors(form.message) }}
         </div>
 
-        {# CTA final pulsant #}
+        {# CTA final pulsant — le texte du bouton et la note s'adaptent au
+           contexte (pack vs séance × mode de paiement) via booking-form.js #}
         <button type="submit" class="bk-submit">
-          <span class="bk-submit-text">
-            <i class="ti ti-send"></i> Envoyer la demande au coach
+          <span class="bk-submit-text" id="bk-submit-text">
+            <i class="ti ti-send" id="bk-submit-icon"></i>
+            <span id="bk-submit-label">Envoyer la demande au coach</span>
           </span>
           <span class="bk-submit-price" id="bk-submit-price">40 €</span>
         </button>
 
         <div class="bk-submit-note">
-          <i class="ti ti-shield-check"></i> Aucun paiement maintenant — uniquement si le coach confirme.
+          <i class="ti ti-shield-check" id="bk-submit-note-icon"></i>
+          <span id="bk-submit-note-text">Aucun paiement maintenant — uniquement si le coach confirme.</span>
         </div>
 
       </section>
