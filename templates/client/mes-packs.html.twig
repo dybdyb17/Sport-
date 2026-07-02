@@ -1,0 +1,151 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mes packs — SPORT+{% endblock %}
+
+{% block body %}
+<div class="container mes-packs-page">
+
+  <a href="{{ path('app_espace_client') }}" class="btn btn-ghost btn-sm" style="margin-bottom:20px;">
+    <i class="ti ti-arrow-left"></i> Mon espace
+  </a>
+
+  <div class="mes-packs-head" data-animate="fade-up">
+    <h1 class="mes-packs-title">Mes packs</h1>
+    <p class="mes-packs-sub">
+      {% if items|length == 0 %}
+        Tu n'as pas de pack actif. Réserve ta prochaine séance en pack pour économiser sur le tarif.
+      {% else %}
+        {{ items|length }} pack{{ items|length > 1 ? 's' : '' }} actif{{ items|length > 1 ? 's' : '' }}.
+        Séances non utilisées perdues à la date d'expiration indiquée.
+      {% endif %}
+    </p>
+  </div>
+
+  {# ══════════════════════════════════════════════════════════════════════
+     En attente de validation — packs sur place non encore activés.
+     Style grisé/or, pas cliquables, message d'info clair. Le pack n'est
+     pas utilisable tant que le coach n'a pas confirmé l'encaissement.
+     ══════════════════════════════════════════════════════════════════════ #}
+  {% if pendingOnSite|length > 0 %}
+    <div class="pack-list pack-list--pending" data-animate="fade-up" style="margin-bottom:22px;">
+      <div class="pack-list-eyebrow">
+        <i class="ti ti-hourglass"></i>
+        En attente de validation ({{ pendingOnSite|length }})
+      </div>
+      {% for p in pendingOnSite %}
+        {% set modeLabel = p.paymentMethod == 'cash' ? 'espèces' : 'carte bancaire' %}
+        <div class="pack-card pack-card--pending">
+          <div class="pack-card-header">
+            <div class="pack-card-emblem"><i class="ti ti-hourglass-high"></i></div>
+            <div class="pack-card-titles">
+              <div class="pack-card-title">{{ p.packType.label }}</div>
+              <div class="pack-card-format">
+                {{ p.format.value|capitalize }} · {{ p.timeSlot.value|capitalize }}
+              </div>
+            </div>
+            <span class="pack-card-badge pack-card-badge--warn">
+              <i class="ti ti-clock"></i> En attente
+            </span>
+          </div>
+
+          <p class="pack-card-pending-msg">
+            Ta demande de pack est enregistrée. Paie <strong>{{ modeLabel }}</strong> au club — dès que le coach confirme l'encaissement, ton pack sera activé et ta 1ʳᵉ séance du <strong>{{ p.startAt|date('d/m/Y \\à H\\hi') }}</strong> sera programmée.
+          </p>
+
+          <div class="pack-card-meta">
+            <span><i class="ti ti-calendar"></i> 1ʳᵉ séance : {{ p.startAt|date('d/m/Y \\à H\\hi') }}</span>
+            <span><i class="ti ti-cash"></i> Paiement : {{ modeLabel }}</span>
+            <span class="pack-card-ref">Demande #{{ p.id }}</span>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  {% if items|length == 0 and pendingOnSite|length == 0 %}
+    <div class="empty-state" data-animate="fade-up" style="margin-top:24px;">
+      <div class="empty-state-icon"><i class="ti ti-barbell"></i></div>
+      <h2 class="empty-state-title">Aucun pack actif</h2>
+      <p class="empty-state-text">Quand tu achèteras un pack, il s'affichera ici avec ses séances restantes et sa date d'expiration.</p>
+      <a href="{{ path('app_booking_new') }}" class="btn btn-primary">
+        <i class="ti ti-calendar-plus"></i> Réserver une séance
+      </a>
+    </div>
+  {% elseif items|length == 0 %}
+    {# Uniquement des demandes en attente — pas de bloc "actifs" vide #}
+  {% else %}
+    <div class="pack-list" data-animate="fade-up">
+      {% for item in items %}
+        {% set pack     = item.pack %}
+        {% set expiring = item.expiring %}
+        {% set daysLeft = item.daysLeft %}
+        {% set total    = pack.packType.sessionsCount %}
+        {% set restant  = pack.sessionsRemaining %}
+        {% set pctRest  = total > 0 ? (restant / total * 100)|round : 0 %}
+
+        <div class="pack-card {{ expiring ? 'pack-card--expiring' : '' }}">
+          <div class="pack-card-header">
+            <div class="pack-card-emblem"><i class="ti ti-barbell"></i></div>
+            <div class="pack-card-titles">
+              <div class="pack-card-title">{{ pack.packType.label }}</div>
+              <div class="pack-card-format">
+                {{ pack.format.value|capitalize }} · {{ pack.timeSlot.value|capitalize }}
+              </div>
+            </div>
+            <span class="pack-card-badge {{ expiring ? 'pack-card-badge--warn' : 'pack-card-badge--ok' }}">
+              <i class="ti {{ expiring ? 'ti-alert-triangle' : 'ti-check' }}"></i>
+              {{ expiring ? 'Expire bientôt' : 'Actif' }}
+            </span>
+          </div>
+
+          <div class="pack-card-counter">
+            <span class="pack-card-counter-num">{{ restant }}</span>
+            <span class="pack-card-counter-total">/ {{ total }}</span>
+            <span class="pack-card-counter-label">séances restantes</span>
+          </div>
+
+          <div class="pack-card-progress" aria-hidden="true"
+               role="progressbar" aria-valuenow="{{ pctRest }}" aria-valuemin="0" aria-valuemax="100">
+            <div class="pack-card-progress-bar" style="width: {{ pctRest }}%;"></div>
+          </div>
+
+          <div class="pack-card-meta">
+            {% if expiring %}
+              <span class="pack-card-expires pack-card-expires--warn">
+                <i class="ti ti-clock-exclamation"></i>
+                {% if daysLeft == 0 %}
+                  Expire aujourd'hui — {{ pack.endsAt|date('d/m/Y') }}
+                {% elseif daysLeft == 1 %}
+                  Expire demain — {{ pack.endsAt|date('d/m/Y') }}
+                {% else %}
+                  Expire dans {{ daysLeft }} jours — {{ pack.endsAt|date('d/m/Y') }}
+                {% endif %}
+              </span>
+            {% else %}
+              <span class="pack-card-expires">
+                <i class="ti ti-calendar-check"></i>
+                Valable jusqu'au {{ pack.endsAt|date('d/m/Y') }}
+              </span>
+            {% endif %}
+            {% if pack.reference %}
+              <span class="pack-card-ref">Réf. {{ pack.reference }}</span>
+            {% endif %}
+          </div>
+
+          <div class="pack-card-actions">
+            <a href="{{ path('app_booking_new') }}" class="btn btn-primary btn-sm">
+              <i class="ti ti-calendar-plus"></i> Réserver une séance
+            </a>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+
+    <p class="mes-packs-note">
+      <i class="ti ti-info-circle"></i>
+      Les séances non utilisées avant la date d'expiration sont perdues. Pense à réserver tes créneaux à l'avance.
+    </p>
+  {% endif %}
+
+</div>
+{% endblock %}

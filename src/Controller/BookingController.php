@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Booking;
 use App\Entity\Enum\BookingFormat;
 use App\Entity\Enum\PackType;
+use App\Entity\PendingPackRequest;
 use App\Form\BookingType;
 use App\Repository\BookingRepository;
 use App\Service\BookingManager;
@@ -56,23 +57,70 @@ class BookingController extends AbstractController
                 }
                 $booking->setPersonsCount($personsCount);
 
-                // Créer un abonnement si l'utilisateur a choisi un pack mensuel
                 $packType   = $form->get('packType')->getData();   // PackType enum
                 $fullAccess = (bool) $form->get('fullAccess')->getData();
-                $subscription = null;
+                $intended   = $request->request->get('intended_payment_method');
 
-                if ($packType instanceof PackType && $packType !== PackType::SINGLE) {
-                    $subscription = $manager->createSubscription(
-                        $client,
-                        $format,
-                        $booking->getTimeSlot(),
-                        $packType,
-                        $personsCount,
-                        $fullAccess,
-                        $booking->getCoach(),
-                    );
+                // Format Groupe : paiement en ligne interdit (règle métier),
+                // on rebascule sur cash si un client tente de forger stripe.
+                if ($format === BookingFormat::GROUP && $intended === 'stripe') {
+                    $intended = 'cash';
                 }
 
+                // ── CAS PACK (multi-séances) ────────────────────────────────
+                // ⚠️ Correction 01/07 : on NE crée PLUS le Subscription à cette
+                // étape. Un client pouvait s'octroyer un pack 12 séances gratuit
+                // en soumettant le form sans payer. Le pack n'est activé que par
+                // le webhook Stripe après confirmation du paiement.
+                if ($packType instanceof PackType && $packType !== PackType::SINGLE) {
+                    if ($format === BookingFormat::GROUP) {
+                        $this->addFlash('warning', 'Les packs en format Groupe ne sont pas ouverts en ligne. Contacte-nous pour organiser un pack Groupe.');
+                        return $this->redirectToRoute('app_booking_new');
+                    }
+                    if (!in_array($intended, ['stripe', 'cash', 'card'], true)) {
+                        $this->addFlash('warning', 'Choisis un mode de paiement pour valider ta demande de pack.');
+                        return $this->redirectToRoute('app_booking_new');
+                    }
+
+                    // Toujours créer un PendingPackRequest (mêmes champs pour les 2 flows).
+                    // La différence est le status : PENDING dans les 2 cas au départ,
+                    // paymentMethod discrimine online (stripe) vs sur-place (cash/card).
+                    $ppr = new PendingPackRequest();
+                    $ppr
+                        ->setClient($client)
+                        ->setCoach($booking->getCoach())
+                        ->setFormat($format)
+                        ->setTimeSlot($booking->getTimeSlot())
+                        ->setPackType($packType)
+                        ->setPersonsCount($personsCount)
+                        ->setFullAccess($fullAccess)
+                        ->setStartAt($booking->getStartAt())
+                        ->setMessage($booking->getMessage())
+                        ->setPaymentMethod($intended);
+                    $em->persist($ppr);
+                    $em->flush();
+
+                    if ($intended === 'stripe') {
+                        // Flow online : template auto-POST vers Stripe Checkout
+                        return $this->render('booking/pack_checkout_redirect.html.twig', [
+                            'ppr' => $ppr,
+                        ]);
+                    }
+
+                    // Flow SUR PLACE : la demande est en attente du coach.
+                    // Aucun Subscription créé, aucune séance créée. Le pack ne
+                    // devient utilisable QU'APRÈS validation coach (verrou serveur).
+                    $modeLabel = $intended === 'cash' ? 'en espèces' : 'par carte bancaire';
+                    $this->addFlash('success', sprintf(
+                        'Ta demande de pack est enregistrée. Paie %s au club — dès que le coach confirme l\'encaissement, ton pack sera activé et ta 1ʳᵉ séance programmée.',
+                        $modeLabel,
+                    ));
+                    return $this->redirectToRoute('app_espace_client_packs');
+                }
+
+                // ── CAS SÉANCE SIMPLE (SINGLE) ──────────────────────────────
+                // Comportement inchangé : on crée le booking en pending et on
+                // laisse le client choisir son mode de paiement (cash/card/stripe).
                 $created = $manager->create(
                     $client,
                     $booking->getCoach(),
@@ -81,16 +129,10 @@ class BookingController extends AbstractController
                     $personsCount,
                     $booking->getStartAt(),
                     $booking->getMessage(),
-                    $subscription,
+                    null, // pas de subscription pour SINGLE
                 );
 
-                $intended = $request->request->get('intended_payment_method');
                 if (in_array($intended, ['cash', 'card', 'stripe'], true)) {
-                    // Groupe : paiement en ligne interdit côté UX et côté serveur.
-                    // Si quelqu'un force "stripe" via DevTools sur un Groupe, on rebascule en cash.
-                    if ($format === BookingFormat::GROUP && $intended === 'stripe') {
-                        $intended = 'cash';
-                    }
                     $created->setIntendedPaymentMethod($intended);
                     $em->flush();
                 }
@@ -162,7 +204,7 @@ class BookingController extends AbstractController
      * Confirmation J-1 par le client via le lien reçu dans le mail.
      * Pas besoin d'auth : on protège avec un hash signé du booking ID + APP_SECRET.
      */
-    #[Route('/{ref}/confirmer/{sig}', name: 'app_booking_confirm_attendance', methods: ['GET'])]
+    #[Route('/{ref}/confirmer/{sig}', name: 'app_booking_confirm_attendance', methods: ['GET'], requirements: ['ref' => 'SPT-[A-F0-9]{8}'])]
     public function confirmAttendance(
         string $ref,
         string $sig,
@@ -193,7 +235,7 @@ class BookingController extends AbstractController
     // Route /payer-xplor supprimée le 29/06 — remplacée par /payer-stripe
     // (StripeController::bookingCheckout) qui redirige vers Stripe Checkout.
 
-    #[Route('/{ref}/suivi', name: 'app_booking_status', methods: ['GET'])]
+    #[Route('/{ref}/suivi', name: 'app_booking_status', methods: ['GET'], requirements: ['ref' => 'SPT-[A-F0-9]{8}'])]
     #[IsGranted('ROLE_CLIENT')]
     public function status(string $ref, BookingRepository $bookingRepository): Response
     {
@@ -212,7 +254,7 @@ class BookingController extends AbstractController
         ]);
     }
 
-    #[Route('/{ref}/status.json', name: 'app_booking_status_json', methods: ['GET'])]
+    #[Route('/{ref}/status.json', name: 'app_booking_status_json', methods: ['GET'], requirements: ['ref' => 'SPT-[A-F0-9]{8}'])]
     #[IsGranted('ROLE_CLIENT')]
     public function statusJson(string $ref, BookingRepository $bookingRepository): Response
     {
@@ -235,7 +277,7 @@ class BookingController extends AbstractController
      * Le client confirme avoir effectivement payé la séance (cash ou CB).
      * Posté depuis la modal "Confirmer mon paiement" sur Mon RDV / Espace.
      */
-    #[Route('/{ref}/paiement/confirmer', name: 'app_booking_payment_confirm', methods: ['POST'])]
+    #[Route('/{ref}/paiement/confirmer', name: 'app_booking_payment_confirm', methods: ['POST'], requirements: ['ref' => 'SPT-[A-F0-9]{8}'])]
     #[IsGranted('ROLE_CLIENT')]
     public function confirmPayment(
         string $ref,
@@ -274,7 +316,7 @@ class BookingController extends AbstractController
      * Le client conteste le paiement déclaré par le coach.
      * Génère une alerte admin via le journal d'audit.
      */
-    #[Route('/{ref}/paiement/contester', name: 'app_booking_payment_dispute', methods: ['POST'])]
+    #[Route('/{ref}/paiement/contester', name: 'app_booking_payment_dispute', methods: ['POST'], requirements: ['ref' => 'SPT-[A-F0-9]{8}'])]
     #[IsGranted('ROLE_CLIENT')]
     public function disputePayment(
         string $ref,

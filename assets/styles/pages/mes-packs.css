@@ -1,0 +1,275 @@
+/* ════════════════════════════════════════════════════════════════════════
+   PAGE MES PACKS — /mon-espace/mes-packs
+   ════════════════════════════════════════════════════════════════════════
+   Liste des packs actifs du client. 1 carte par pack avec compteur en gros,
+   barre de progression (représente ce qu'il RESTE), badge Actif/Expire.
+   Cohérent avec l'espace client (Barlow Condensed, --bg-card, --green,
+   --gold) et la page historique (structure).
+   ════════════════════════════════════════════════════════════════════════ */
+
+.mes-packs-page {
+  max-width: 720px;
+}
+
+.mes-packs-head {
+  margin-bottom: 28px;
+}
+.mes-packs-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: clamp(26px, 3vw, 34px);
+  font-weight: 900;
+  color: var(--white);
+  margin: 0 0 6px;
+  letter-spacing: -0.5px;
+}
+.mes-packs-sub {
+  font-size: 14.5px;
+  color: var(--text-soft);
+  margin: 0;
+}
+
+.pack-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.pack-list-eyebrow {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  color: var(--gold);
+  text-transform: uppercase;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.pack-list-eyebrow i { color: var(--gold-dim); }
+
+/* Variante "en attente" — carte grisée, non cliquable */
+.pack-card--pending {
+  border-color: rgba(200,169,81,.20) !important;
+  border-left-color: var(--gold-dim) !important;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.01), transparent 30%),
+    var(--bg-card) !important;
+  opacity: .92;
+}
+.pack-card--pending .pack-card-emblem {
+  background: rgba(200,169,81,.10);
+  border-color: rgba(200,169,81,.25);
+  color: var(--gold-dim);
+}
+.pack-card--pending .pack-card-title,
+.pack-card--pending .pack-card-format {
+  color: var(--text-soft);
+}
+.pack-card-pending-msg {
+  margin: 0 0 14px;
+  padding: 12px 14px;
+  background: rgba(200,169,81,.06);
+  border: 1px dashed rgba(200,169,81,.25);
+  border-radius: 10px;
+  font-size: 13px;
+  color: var(--text-soft);
+  line-height: 1.55;
+}
+.pack-card-pending-msg strong { color: var(--gold); }
+
+/* ── Carte pack ─────────────────────────────────────────────────────── */
+.pack-card {
+  padding: 20px 22px;
+  background:
+    radial-gradient(ellipse at top left, rgba(46,204,113,.08) 0%, transparent 55%),
+    var(--bg-card);
+  border: 1px solid rgba(46,204,113,.30);
+  border-left: 3px solid var(--green);
+  border-radius: 16px;
+}
+.pack-card--expiring {
+  border-color: rgba(200,169,81,.35);
+  border-left-color: var(--gold);
+  background:
+    radial-gradient(ellipse at top left, rgba(200,169,81,.08) 0%, transparent 55%),
+    var(--bg-card);
+}
+
+/* Header : emblème + titres + badge */
+.pack-card-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  margin-bottom: 18px;
+}
+.pack-card-emblem {
+  width: 48px; height: 48px;
+  border-radius: 13px;
+  background: linear-gradient(135deg, rgba(46,204,113,.20), rgba(46,204,113,.05));
+  border: 1px solid rgba(46,204,113,.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--green);
+  font-size: 22px;
+  flex-shrink: 0;
+}
+.pack-card--expiring .pack-card-emblem {
+  background: linear-gradient(135deg, rgba(200,169,81,.18), rgba(200,169,81,.05));
+  border-color: rgba(200,169,81,.35);
+  color: var(--gold);
+}
+.pack-card-titles {
+  flex: 1;
+  min-width: 0;
+}
+.pack-card-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 20px;
+  font-weight: 900;
+  color: var(--white);
+  line-height: 1.15;
+}
+.pack-card-format {
+  font-size: 13px;
+  color: var(--green);
+  font-weight: 600;
+  margin-top: 2px;
+  letter-spacing: .3px;
+}
+.pack-card--expiring .pack-card-format { color: var(--gold); }
+
+/* Badge Actif / Expire bientôt */
+.pack-card-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 11px;
+  border-radius: 100px;
+  font-size: 11.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.pack-card-badge--ok {
+  background: rgba(46,204,113,.10);
+  border: 1px solid rgba(46,204,113,.30);
+  color: var(--green);
+}
+.pack-card-badge--warn {
+  background: rgba(200,169,81,.10);
+  border: 1px solid rgba(200,169,81,.35);
+  color: var(--gold);
+}
+
+/* Compteur en gros */
+.pack-card-counter {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+.pack-card-counter-num {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 44px;
+  font-weight: 900;
+  color: var(--green);
+  line-height: 1;
+}
+.pack-card--expiring .pack-card-counter-num { color: var(--gold); }
+.pack-card-counter-total {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text-soft);
+}
+.pack-card-counter-label {
+  font-size: 13px;
+  color: var(--text-dim);
+  margin-left: 6px;
+}
+
+/* Barre de progression — représente ce qu'il RESTE (pleine = tout dispo) */
+.pack-card-progress {
+  height: 8px;
+  background: rgba(255,255,255,.05);
+  border-radius: 100px;
+  overflow: hidden;
+  margin-bottom: 14px;
+}
+.pack-card-progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, var(--green), rgba(46,204,113,.6));
+  border-radius: 100px;
+  transition: width .3s ease;
+}
+.pack-card--expiring .pack-card-progress-bar {
+  background: linear-gradient(90deg, var(--gold), var(--gold-dim));
+}
+
+/* Meta : date + réf */
+.pack-card-meta {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  align-items: center;
+  font-size: 13px;
+  color: var(--text-soft);
+  margin-bottom: 16px;
+}
+.pack-card-expires i {
+  color: var(--gold-dim);
+  margin-right: 3px;
+  vertical-align: middle;
+}
+.pack-card-expires--warn {
+  color: var(--gold);
+  font-weight: 600;
+}
+.pack-card-expires--warn i {
+  color: var(--gold);
+}
+.pack-card-ref {
+  font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+  font-size: 11px;
+  color: var(--text-dim);
+  letter-spacing: 1px;
+}
+
+.pack-card-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+/* Note bas de page */
+.mes-packs-note {
+  margin: 24px 0 0;
+  padding: 12px 16px;
+  background: rgba(255,255,255,.02);
+  border: 1px dashed var(--border);
+  border-radius: var(--radius);
+  font-size: 12.5px;
+  color: var(--text-dim);
+  line-height: 1.5;
+}
+.mes-packs-note i {
+  color: var(--gold-dim);
+  vertical-align: middle;
+  margin-right: 4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pack-card-progress-bar { transition: none; }
+}
+html.performance-lite .pack-card-progress-bar { transition: none; }
+
+@media (max-width: 580px) {
+  .pack-card { padding: 16px 18px; }
+  .pack-card-counter-num { font-size: 38px; }
+  .pack-card-badge {
+    align-self: flex-start;
+    margin-top: 4px;
+  }
+}

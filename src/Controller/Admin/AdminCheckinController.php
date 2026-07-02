@@ -30,7 +30,7 @@ class AdminCheckinController extends AbstractController
      * Route et nom INCHANGÉS — le QR client encode déjà cette URL,
      * la modifier invaliderait tous les QR déjà générés.
      */
-    #[Route('/{reference}', name: 'app_admin_checkin_validate', methods: ['GET', 'POST'])]
+    #[Route('/{reference}', name: 'app_admin_checkin_validate', methods: ['GET', 'POST'], requirements: ['reference' => 'SPT-[A-F0-9]{8}'])]
     #[IsGranted('ROLE_COACH')]
     public function validate(
         string $reference,

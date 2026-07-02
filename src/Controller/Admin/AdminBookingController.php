@@ -42,7 +42,7 @@ class AdminBookingController extends AbstractController
      * dans une modal ouverte depuis n'importe où dans l'admin
      * (calendrier, tableaux, dashboard...).
      */
-    #[Route('/{ref}/peek', name: 'app_admin_booking_peek', methods: ['GET'])]
+    #[Route('/{ref}/peek', name: 'app_admin_booking_peek', methods: ['GET'], requirements: ['ref' => 'SPT-[A-F0-9]{8}'])]
     public function peek(string $ref, BookingRepository $bookingRepository): Response
     {
         $booking = $bookingRepository->findOneBy(['reference' => $ref]);

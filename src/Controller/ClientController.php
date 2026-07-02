@@ -8,6 +8,8 @@ use App\Form\PasswordChangeFormType;
 use App\Form\PreferencesFormType;
 use App\Form\ProfilFormType;
 use App\Repository\BookingRepository;
+use App\Repository\PendingPackRequestRepository;
+use App\Repository\SubscriptionRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -19,13 +21,51 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[IsGranted('ROLE_CLIENT')]
 class ClientController extends AbstractController
 {
+    /**
+     * Seuil (en jours) à partir duquel un pack passe en "expire bientôt"
+     * (badge or au lieu de vert). Une seule constante, réutilisée par
+     * l'espace client et la page /mon-espace/mes-packs.
+     */
+    private const PACK_EXPIRING_SOON_DAYS = 7;
+
     #[Route('/mon-espace', name: 'app_espace_client', methods: ['GET'])]
-    public function index(BookingRepository $bookingRepository): Response
-    {
+    public function index(
+        BookingRepository $bookingRepository,
+        SubscriptionRepository $subscriptionRepository,
+        PendingPackRequestRepository $pprRepository,
+    ): Response {
         /** @var \App\Entity\User $user */
         $user = $this->getUser();
         $all  = $bookingRepository->findForClient($user);
         $now  = new \DateTimeImmutable();
+
+        // Packs actifs du client — filtrés par le repo (status=active
+        // + sessions_remaining > 0). Un pack peut avoir toutes ses séances utilisées
+        // avant expiration → on ne veut pas afficher un pack vide.
+        $packsActifs = $subscriptionRepository->findActiveForClient($user);
+
+        // Compteurs pour la barre compacte de l'espace.
+        // Un flag "anyExpiring" bascule la barre en accent or si au moins un pack
+        // arrive à expiration bientôt OU s'il y a des demandes en attente.
+        $totalSessions = 0;
+        $anyExpiring   = false;
+        foreach ($packsActifs as $p) {
+            $totalSessions += $p->getSessionsRemaining();
+            $daysLeft = max(0, (int) $now->diff($p->getEndsAt())->days);
+            if ($p->getEndsAt() >= $now && $daysLeft <= self::PACK_EXPIRING_SOON_DAYS) {
+                $anyExpiring = true;
+            }
+        }
+        // Demandes sur place en attente de validation coach.
+        // La barre doit s'afficher AUSSI dans ce cas (même si aucun pack actif),
+        // pour que le client sache où en est sa demande.
+        $pendingOnSiteCount = count($pprRepository->findPendingOnSiteForClient($user));
+        $packsStrip = [
+            'count'         => count($packsActifs),
+            'totalSessions' => $totalSessions,
+            'anyExpiring'   => $anyExpiring || $pendingOnSiteCount > 0,
+            'pendingCount'  => $pendingOnSiteCount,
+        ];
 
         // Séances à venir (pending ou confirmed), triées du plus proche au plus lointain
         $aVenir = array_values(array_filter($all, static fn (Booking $b): bool =>
@@ -85,9 +125,43 @@ class ClientController extends AbstractController
             'prochaine'      => $prochaine,
             'autresSeances'  => $autresSeances,
             'actionAttente'  => $actionAttente,
+            'packsStrip'     => $packsStrip,
             'greeting'       => $greeting,
             'heroMessage'    => $heroMessage,
             'heroIcon'       => $heroIcon,
+        ]);
+    }
+
+    #[Route('/mon-espace/mes-packs', name: 'app_espace_client_packs', methods: ['GET'])]
+    public function packs(
+        SubscriptionRepository $subscriptionRepository,
+        PendingPackRequestRepository $pprRepository,
+    ): Response {
+        /** @var \App\Entity\User $user */
+        $user           = $this->getUser();
+        $packs          = $subscriptionRepository->findActiveForClient($user);
+        $pendingOnSite  = $pprRepository->findPendingOnSiteForClient($user);
+        $now            = new \DateTimeImmutable();
+
+        // On enrichit chaque pack de "expiring" (bool) et "daysLeft" (int).
+        // Le template se contente d'afficher — pas de calcul dans le Twig.
+        $items = [];
+        foreach ($packs as $pack) {
+            $daysLeft  = max(0, (int) $now->diff($pack->getEndsAt())->days);
+            $isPast    = $pack->getEndsAt() < $now;
+            $daysLeft  = $isPast ? 0 : $daysLeft;
+            $expiring  = !$isPast && $daysLeft <= self::PACK_EXPIRING_SOON_DAYS;
+
+            $items[] = [
+                'pack'     => $pack,
+                'expiring' => $expiring,
+                'daysLeft' => $daysLeft,
+            ];
+        }
+
+        return $this->render('client/mes-packs.html.twig', [
+            'items'         => $items,
+            'pendingOnSite' => $pendingOnSite,
         ]);
     }
 
@@ -171,7 +245,7 @@ class ClientController extends AbstractController
         ]);
     }
 
-    #[Route('/reservation/{ref}/annuler', name: 'app_booking_cancel', methods: ['POST'])]
+    #[Route('/reservation/{ref}/annuler', name: 'app_booking_cancel', methods: ['POST'], requirements: ['ref' => 'SPT-[A-F0-9]{8}'])]
     public function cancel(
         string $ref,
         Request $request,
@@ -212,7 +286,7 @@ class ClientController extends AbstractController
         return $this->redirectToRoute('app_espace_client');
     }
 
-    #[Route('/mon-espace/mon-rdv/{reference}', name: 'app_espace_client_rdv', methods: ['GET'])]
+    #[Route('/mon-espace/mon-rdv/{reference}', name: 'app_espace_client_rdv', methods: ['GET'], requirements: ['reference' => 'SPT-[A-F0-9]{8}'])]
     public function monRdv(string $reference, BookingRepository $bookings): Response
     {
         /** @var User $user */

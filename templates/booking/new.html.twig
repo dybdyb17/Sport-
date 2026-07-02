@@ -355,15 +355,46 @@
             </label>
           </div>
 
-          <div class="bk-pay-info" data-show-for="cash" hidden>
+          {# Infos par mode — chaque bloc a 2 variantes : séance à l'unité (single)
+             ou pack. Le JS active data-show-for={mode} + data-show-for-pack={0|1}
+             selon le choix du user. #}
+
+          {# CASH #}
+          <div class="bk-pay-info" data-show-for="cash" data-show-for-pack="0" hidden>
             <i class="ti ti-info-circle"></i>
-            <span>Pense à prévoir le montant exact si possible. Le coach pourra te remettre un reçu.</span>
+            <span>Le coach confirme d'abord ta séance, puis tu règles <strong>en espèces</strong> directement au club le jour de la séance. Pense à prévoir le montant exact si possible.</span>
           </div>
-          <div class="bk-pay-info" data-show-for="card" hidden>
+          <div class="bk-pay-info" data-show-for="cash" data-show-for-pack="1" hidden>
+            <i class="ti ti-hourglass"></i>
+            <div>
+              <strong>Pack payé en espèces</strong>
+              <p>Ta demande de pack sera enregistrée. Tu paies <strong>en espèces</strong> au club ; dès que le coach confirme l'encaissement, ton pack est activé et ta 1ʳᵉ séance est programmée.</p>
+              <div class="bk-pay-important">
+                <i class="ti ti-info-circle"></i>
+                <span>Le pack n'est utilisable qu'après validation du coach.</span>
+              </div>
+            </div>
+          </div>
+
+          {# CARD #}
+          <div class="bk-pay-info" data-show-for="card" data-show-for-pack="0" hidden>
             <i class="ti ti-info-circle"></i>
-            <span>Le règlement se fera directement auprès du coach à la fin de la séance.</span>
+            <span>Le coach confirme d'abord ta séance, puis tu règles <strong>par carte bancaire</strong> directement au club le jour de la séance (TPE ou paiement mobile).</span>
           </div>
-          <div class="bk-pay-info bk-pay-info-stripe" data-show-for="stripe" hidden>
+          <div class="bk-pay-info" data-show-for="card" data-show-for-pack="1" hidden>
+            <i class="ti ti-hourglass"></i>
+            <div>
+              <strong>Pack payé par carte au club</strong>
+              <p>Ta demande de pack sera enregistrée. Tu paies <strong>par carte bancaire</strong> au club ; dès que le coach confirme l'encaissement, ton pack est activé et ta 1ʳᵉ séance est programmée.</p>
+              <div class="bk-pay-important">
+                <i class="ti ti-info-circle"></i>
+                <span>Le pack n'est utilisable qu'après validation du coach.</span>
+              </div>
+            </div>
+          </div>
+
+          {# STRIPE #}
+          <div class="bk-pay-info bk-pay-info-stripe" data-show-for="stripe" data-show-for-pack="0" hidden>
             <i class="ti ti-lock"></i>
             <div>
               <strong>Paiement en ligne via Stripe</strong>
@@ -371,6 +402,17 @@
               <div class="bk-pay-important">
                 <i class="ti ti-shield-check"></i>
                 <span><strong>Aucun débit avant confirmation :</strong> tu ne payes qu'après acceptation par le coach.</span>
+              </div>
+            </div>
+          </div>
+          <div class="bk-pay-info bk-pay-info-stripe" data-show-for="stripe" data-show-for-pack="1" hidden>
+            <i class="ti ti-lock"></i>
+            <div>
+              <strong>Pack payé en ligne via Stripe</strong>
+              <p>Tu vas être redirigé vers une page Stripe sécurisée pour régler ton pack. Dès validation du paiement, ton pack est activé et ta 1ʳᵉ séance est programmée automatiquement.</p>
+              <div class="bk-pay-important">
+                <i class="ti ti-shield-check"></i>
+                <span><strong>Le pack est utilisable dès le paiement confirmé</strong> (pas d'attente coach pour le paiement).</span>
               </div>
             </div>
           </div>

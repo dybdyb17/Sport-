@@ -5,11 +5,16 @@ namespace App\Service;
 use App\Entity\Booking;
 use App\Entity\FoundingClaim;
 use App\Entity\FoundingOffer;
+use App\Entity\PendingPackRequest;
+use App\Entity\Subscription;
 use App\Entity\User;
 use App\Repository\BookingRepository;
 use App\Repository\FoundingOfferRepository;
+use App\Repository\PendingPackRequestRepository;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 use Stripe\Checkout\Session;
 use Stripe\Event;
 use Stripe\StripeClient;
@@ -18,6 +23,7 @@ use Stripe\Webhook;
 final class StripeCheckoutService
 {
     private ?StripeClient $client = null;
+    private readonly LoggerInterface $logger;
 
     public function __construct(
         private readonly string $stripeSecretKey,
@@ -28,7 +34,12 @@ final class StripeCheckoutService
         private readonly UserRepository $userRepository,
         private readonly BookingRepository $bookingRepository,
         private readonly EntityManagerInterface $em,
+        private readonly PricingCalculator $pricing,
+        private readonly BookingManager $bookingManager,
+        private readonly PendingPackRequestRepository $pendingPackRepository,
+        ?LoggerInterface $logger = null,
     ) {
+        $this->logger = $logger ?? new NullLogger();
     }
 
     public function createFoundingCheckout(User $user, FoundingOffer $offer): Session
@@ -249,6 +260,155 @@ final class StripeCheckoutService
         return $booking;
     }
 
+    // ─────────────────────────────────────────────────────────────────────────
+    //  PACK checkout (abonnement multi-séances) — ajouté le 01/07
+    //
+    //  Le pack n'est JAMAIS créé côté BookingController — on persiste juste
+    //  un PendingPackRequest avec toutes les infos, on redirige vers Stripe,
+    //  et c'est fulfillPackCheckout (déclenché par le webhook) qui crée la
+    //  Subscription + le Booking APRÈS validation du paiement.
+    // ─────────────────────────────────────────────────────────────────────────
+
+    public function createPackCheckout(PendingPackRequest $ppr): Session
+    {
+        if ($ppr->isFulfilled()) {
+            throw new \LogicException('Ce pack est déjà réglé et créé.');
+        }
+
+        $client = $ppr->getClient();
+        if (!$client->getEmail()) {
+            throw new \LogicException('Le client de ce pack n\'a pas d\'email valide.');
+        }
+
+        $amountCents = $this->packPriceInCents($ppr);
+
+        $session = $this->client()->checkout->sessions->create([
+            'mode' => 'payment',
+            'locale' => 'fr',
+            'customer_email' => $client->getEmail(),
+            'client_reference_id' => 'pack-' . $ppr->getId(),
+            'line_items' => [[
+                'quantity' => 1,
+                'price_data' => [
+                    'currency' => 'eur',
+                    'unit_amount' => $amountCents,
+                    'product_data' => [
+                        'name' => sprintf(
+                            'SPORT+ — Pack %s (%s / %s)',
+                            $ppr->getPackType()->label(),
+                            $ppr->getFormat()->value,
+                            $ppr->getTimeSlot()->value,
+                        ),
+                        'description' => sprintf(
+                            'Pack mensuel · 1ʳᵉ séance : %s à %s · avec %s',
+                            $ppr->getStartAt()->format('d/m/Y'),
+                            $ppr->getStartAt()->format('H\hi'),
+                            (string) $ppr->getCoach()->getNomComplet(),
+                        ),
+                    ],
+                ],
+            ]],
+            'metadata' => $this->packMetadata($ppr),
+            'payment_intent_data' => [
+                'metadata' => $this->packMetadata($ppr),
+            ],
+            'success_url' => $this->absoluteUrl(sprintf(
+                '/pack-checkout/paiement/succes?ppr=%d&session_id={CHECKOUT_SESSION_ID}',
+                $ppr->getId(),
+            )),
+            'cancel_url' => $this->absoluteUrl(sprintf(
+                '/pack-checkout/paiement/annule?ppr=%d',
+                $ppr->getId(),
+            )),
+        ], [
+            'idempotency_key' => sprintf('pack-checkout-%d', $ppr->getId()),
+        ]);
+
+        if (!$session->url) {
+            throw new \RuntimeException('Stripe n\'a pas retourné de page de paiement.');
+        }
+
+        return $session;
+    }
+
+    /**
+     * Appelé par la route success ET par le webhook. Idempotent : si la
+     * PendingPackRequest est déjà fulfilled, ne re-fait rien.
+     */
+    public function fulfillPackCheckout(Session $session, ?User $expectedClient = null): Subscription
+    {
+        if ($session->mode !== 'payment' || $session->payment_status !== 'paid') {
+            throw new \LogicException('Le paiement Stripe n\'est pas encore confirmé.');
+        }
+
+        $metadata = $session->metadata;
+        if (($metadata['purchase_type'] ?? null) !== 'pack_purchase') {
+            throw new \LogicException('Ce paiement ne correspond pas à un pack SPORT+.');
+        }
+
+        $pprId = filter_var($metadata['pending_pack_id'] ?? null, FILTER_VALIDATE_INT);
+        if (!$pprId) {
+            throw new \LogicException('Les informations du paiement Stripe sont incomplètes.');
+        }
+
+        $ppr = $this->pendingPackRepository->find($pprId);
+        if (!$ppr instanceof PendingPackRequest) {
+            throw new \LogicException('La demande de pack associée à ce paiement est introuvable.');
+        }
+        if ($expectedClient !== null && $expectedClient->getId() !== $ppr->getClient()->getId()) {
+            throw new \LogicException('Ce paiement Stripe appartient à un autre compte.');
+        }
+
+        // Idempotence (protège contre les doublons webhook)
+        if ($ppr->isFulfilled() && $ppr->getSubscription() !== null) {
+            return $ppr->getSubscription();
+        }
+
+        // Vérif montant AVANT création
+        if (strtolower((string) $session->currency) !== 'eur'
+            || (int) $session->amount_total !== $this->packPriceInCents($ppr)) {
+            throw new \LogicException('Le montant du paiement Stripe ne correspond pas au pack.');
+        }
+
+        // Matérialisation UNIFIÉE (même code que le sur-place côté coach) :
+        // 1) Subscription (actif, sessionsRemaining = N)
+        // 2) 1ère séance sur startAt (pending — décomptée à la confirm coach)
+        // 3) PPR marqué CONFIRMED + lié au Subscription
+        //
+        // Si la 1ère séance échoue (créneau pris), PackFirstBookingFailedException
+        // est jetée — le pack reste actif, on logge et on laisse le webhook
+        // retourner 200 (paiement acquitté OK côté Stripe).
+        try {
+            $subscription = $this->bookingManager->materializePackFromRequest($ppr, 'stripe');
+        } catch (PackFirstBookingFailedException $e) {
+            $this->logger->error('Pack Stripe payé mais création 1ʳᵉ séance échouée — pack reste actif, client à recontacter.', [
+                'ppr_id'    => $ppr->getId(),
+                'client_id' => $ppr->getClient()->getId(),
+                'coach_id'  => $ppr->getCoach()->getId(),
+                'start_at'  => $ppr->getStartAt()->format(\DateTimeInterface::ATOM),
+                'reason'    => $e->getMessage(),
+            ]);
+            $subscription = $ppr->getSubscription()
+                ?? throw new \LogicException('Pack materialization failed without subscription trace.');
+        }
+
+        // Trace Stripe spécifique (le sur-place n'en aura pas)
+        $paymentIntentId = is_string($session->payment_intent)
+            ? $session->payment_intent
+            : ($session->payment_intent->id ?? null);
+
+        $subscription->setStripeCheckoutSessionId($session->id);
+        $subscription->setStripePaymentIntentId($paymentIntentId);
+
+        // Compat historique — fulfilledAt était utilisé avant l'enum status
+        $ppr->setFulfilledAt($ppr->getValidatedAt());
+        $ppr->setStripeSessionId($session->id);
+
+        $this->em->flush();
+
+        return $subscription;
+    }
+
     public function constructWebhookEvent(string $payload, string $signature): Event
     {
         if ($this->stripeWebhookSecret === '') {
@@ -297,6 +457,34 @@ final class StripeCheckoutService
     private function bookingPriceInCents(Booking $booking): int
     {
         return (int) round((float) $booking->getPrice() * 100);
+    }
+
+    /** @return array<string, string> */
+    private function packMetadata(PendingPackRequest $ppr): array
+    {
+        return [
+            'purchase_type'    => 'pack_purchase',
+            'pending_pack_id'  => (string) $ppr->getId(),
+            'client_id'        => (string) $ppr->getClient()->getId(),
+            'format'           => $ppr->getFormat()->value,
+            'time_slot'        => $ppr->getTimeSlot()->value,
+            'pack_type'        => $ppr->getPackType()->value,
+        ];
+    }
+
+    private function packPriceInCents(PendingPackRequest $ppr): int
+    {
+        // Prix TOTAL du pack. Le PricingCalculator retourne le prix par personne ;
+        // en Solo/Duo l'unité de facturation est le client (1 pack couvre le compte).
+        // En Group, chaque personne aurait son propre pack — mais le paiement en
+        // ligne Group n'est pas ouvert dans cette Partie 1 (règle métier).
+        $unit = $this->pricing->monthlyPackPrice(
+            $ppr->getFormat(),
+            $ppr->getPackType(),
+            $ppr->getTimeSlot(),
+            $ppr->isFullAccess(),
+        );
+        return (int) round((float) $unit * 100);
     }
 
     private function absoluteUrl(string $path): string

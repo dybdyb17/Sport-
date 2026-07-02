@@ -61,6 +61,74 @@
     </div>
   </div>
 
+  {# ══════════════════════════════════════════════════════════════════════
+     PACKS À VALIDER — demandes sur place en attente d'encaissement
+     Le coach voit ici les clients qui ont demandé un pack et attendent
+     de payer au club. Valider = créer le Subscription + 1ère séance.
+     ══════════════════════════════════════════════════════════════════════ #}
+  {% if pendingPackItems is defined and pendingPackItems|length > 0 %}
+    <div class="pack-validate-block">
+      <h2 class="section-title" style="margin-top:36px;">
+        <i class="ti ti-package" style="margin-right:6px;color:var(--gold);"></i>
+        Packs à valider — encaissement sur place
+        <span class="section-count">{{ pendingPackItems|length }}</span>
+      </h2>
+      <p class="section-hint">
+        Ces clients ont demandé un pack payable sur place. Encaisse le montant indiqué, puis clique « J'ai encaissé — valider le pack » pour activer le pack + programmer la 1ʳᵉ séance.
+      </p>
+
+      {% for item in pendingPackItems %}
+        {% set p = item.request %}
+        <div class="pack-validate-card">
+          <div class="pack-validate-head">
+            <div class="pack-validate-client">
+              <i class="ti ti-user"></i> {{ p.client.nomComplet }}
+              {% if p.client.phone %}
+                <a href="tel:{{ p.client.phone|replace({' ': '', '.': '', '-': ''}) }}" class="pack-validate-phone">
+                  <i class="ti ti-phone"></i> {{ p.client.phone }}
+                </a>
+              {% endif %}
+            </div>
+            <div class="pack-validate-amount">
+              À encaisser : <strong>{{ item.amount|number_format(2, ',', ' ') }} €</strong>
+              <span class="pack-validate-method">
+                {{ p.paymentMethod == 'cash' ? 'espèces' : 'carte bancaire' }}
+              </span>
+            </div>
+          </div>
+
+          <div class="pack-validate-meta">
+            <span><i class="ti ti-package"></i> {{ p.packType.label }}</span>
+            <span><i class="ti ti-tag"></i> {{ p.format.value|capitalize }} · {{ p.timeSlot.value|capitalize }}</span>
+            <span><i class="ti ti-calendar"></i> 1ʳᵉ séance : {{ p.startAt|date('d/m/Y \\à H\\hi') }}</span>
+            {% if p.fullAccess %}
+              <span><i class="ti ti-24-hours"></i> FullAccess salle 24h/24</span>
+            {% endif %}
+            <span class="pack-validate-since">
+              Demande créée le {{ p.createdAt|date('d/m/Y \\à H\\hi') }}
+            </span>
+          </div>
+
+          {% if p.message %}
+            <div class="pack-validate-message">
+              <i class="ti ti-message-circle"></i> « {{ p.message }} »
+            </div>
+          {% endif %}
+
+          <form method="post" action="{{ path('app_coach_validate_pack', {id: p.id}) }}" class="pack-validate-form"
+                data-confirm="Confirme que tu as bien encaissé {{ item.amount|number_format(2, ',', ' ') }} € en {{ p.paymentMethod == 'cash' ? 'espèces' : 'carte bancaire' }} auprès de {{ p.client.nomComplet }} ?"
+                data-confirm-title="Valider l'encaissement du pack ?"
+                data-confirm-button="Oui, j'ai encaissé">
+            <input type="hidden" name="_token" value="{{ csrf_token('validate_pack_' ~ p.id) }}">
+            <button type="submit" class="pack-validate-submit">
+              <i class="ti ti-check"></i> J'ai encaissé — valider le pack
+            </button>
+          </form>
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+
   {# ── DÉCLARATIONS DE PAIEMENT EN ATTENTE ──
      On exclut les séances couvertes par un pack mensuel ou l'offre Fondateur :
      le client a déjà payé en amont, il n'y a rien à déclarer comme mode d'encaissement. #}

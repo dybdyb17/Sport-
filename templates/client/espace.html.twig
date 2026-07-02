@@ -395,6 +395,34 @@
   {% endif %}
 
   {# ══════════════════════════════════════════════════════════════════════
+     Barre compacte "Mes packs" — n'apparaît QUE si ≥1 pack actif.
+     Cliquable → page dédiée /mon-espace/mes-packs avec le détail.
+     Accent or si au moins un pack arrive à expiration bientôt.
+     ══════════════════════════════════════════════════════════════════════ #}
+  {% if packsStrip.count > 0 or packsStrip.pendingCount > 0 %}
+    <a href="{{ path('app_espace_client_packs') }}"
+       class="packs-strip {{ packsStrip.anyExpiring ? 'packs-strip--warn' : '' }}"
+       data-animate="fade-up">
+      <div class="packs-strip-emblem"><i class="ti ti-barbell"></i></div>
+      <div class="packs-strip-body">
+        <div class="packs-strip-title">Mes packs</div>
+        <div class="packs-strip-sub">
+          {% if packsStrip.count > 0 %}
+            {{ packsStrip.count }} pack{{ packsStrip.count > 1 ? 's' : '' }} actif{{ packsStrip.count > 1 ? 's' : '' }}
+            · {{ packsStrip.totalSessions }} séance{{ packsStrip.totalSessions > 1 ? 's' : '' }} restante{{ packsStrip.totalSessions > 1 ? 's' : '' }}
+            {% if packsStrip.pendingCount > 0 %}
+              · <strong>{{ packsStrip.pendingCount }} en attente</strong>
+            {% endif %}
+          {% else %}
+            {{ packsStrip.pendingCount }} pack{{ packsStrip.pendingCount > 1 ? 's' : '' }} en attente de validation
+          {% endif %}
+        </div>
+      </div>
+      <i class="ti ti-chevron-right packs-strip-chevron"></i>
+    </a>
+  {% endif %}
+
+  {# ══════════════════════════════════════════════════════════════════════
      Founding thanks card — gardée telle quelle
      ══════════════════════════════════════════════════════════════════════ #}
   {% if app.user.foundingClaim %}

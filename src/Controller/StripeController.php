@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Repository\BookingRepository;
+use App\Repository\PendingPackRequestRepository;
 use App\Service\FoundingOfferService;
 use App\Service\StripeCheckoutService;
 use Psr\Log\LoggerInterface;
@@ -111,7 +112,7 @@ final class StripeController extends AbstractController
      * Vérifie côté contrôleur que le booking appartient bien au user connecté
      * et qu'il est confirmé par le coach (le service revérifie aussi en interne).
      */
-    #[Route('/reservation/{ref}/payer-stripe', name: 'app_booking_checkout_stripe', methods: ['POST'])]
+    #[Route('/reservation/{ref}/payer-stripe', name: 'app_booking_checkout_stripe', methods: ['POST'], requirements: ['ref' => 'SPT-[A-F0-9]{8}'])]
     #[IsGranted('ROLE_CLIENT')]
     public function bookingCheckout(
         string $ref,
@@ -148,7 +149,7 @@ final class StripeController extends AbstractController
         }
     }
 
-    #[Route('/reservation/{ref}/paiement/succes', name: 'app_booking_checkout_success', methods: ['GET'])]
+    #[Route('/reservation/{ref}/paiement/succes', name: 'app_booking_checkout_success', methods: ['GET'], requirements: ['ref' => 'SPT-[A-F0-9]{8}'])]
     #[IsGranted('ROLE_CLIENT')]
     public function bookingCheckoutSuccess(
         string $ref,
@@ -177,11 +178,98 @@ final class StripeController extends AbstractController
         return $this->redirectToRoute('app_espace_client_rdv', ['reference' => $ref]);
     }
 
-    #[Route('/reservation/{ref}/paiement/annule', name: 'app_booking_checkout_cancel', methods: ['GET'])]
+    #[Route('/reservation/{ref}/paiement/annule', name: 'app_booking_checkout_cancel', methods: ['GET'], requirements: ['ref' => 'SPT-[A-F0-9]{8}'])]
     public function bookingCheckoutCancel(string $ref): RedirectResponse
     {
         $this->addFlash('info', 'Paiement annulé : aucun montant n\'a été débité. Tu peux réessayer quand tu veux ou régler sur place.');
         return $this->redirectToRoute('app_espace_client_rdv', ['reference' => $ref]);
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    //  PACK checkout (abonnement multi-séances) — ajouté le 01/07
+    // ─────────────────────────────────────────────────────────────────────────
+
+    /**
+     * Démarre le Stripe Checkout pour régler un pack.
+     * Le PendingPackRequest a été créé par BookingController::new juste avant
+     * de rediriger vers cette route. Aucun Subscription n'existe encore : la
+     * création se fait dans le webhook après paiement.
+     */
+    #[Route('/pack-checkout/{id}/payer-stripe', name: 'app_pack_checkout_stripe', methods: ['POST'], requirements: ['id' => '\d+'])]
+    #[IsGranted('ROLE_CLIENT')]
+    public function packCheckout(
+        int $id,
+        Request $request,
+        PendingPackRequestRepository $pprRepo,
+        StripeCheckoutService $stripeCheckout,
+        LoggerInterface $logger,
+    ): RedirectResponse {
+        $ppr = $pprRepo->find($id);
+        if (!$ppr) {
+            throw $this->createNotFoundException();
+        }
+
+        $user = $this->getUser();
+        if (!$user instanceof User || $ppr->getClient()->getId() !== $user->getId()) {
+            throw $this->createAccessDeniedException();
+        }
+
+        if (!$this->isCsrfTokenValid('pack-stripe-' . $ppr->getId(), (string) $request->request->get('_token'))) {
+            $this->addFlash('error', 'Token de sécurité invalide. Réessaie depuis la page de réservation.');
+            return $this->redirectToRoute('app_booking_new');
+        }
+
+        if ($ppr->isFulfilled()) {
+            $this->addFlash('info', 'Ce pack est déjà réglé et actif.');
+            return $this->redirectToRoute('app_espace_client');
+        }
+
+        try {
+            $session = $stripeCheckout->createPackCheckout($ppr);
+            return new RedirectResponse((string) $session->url, Response::HTTP_SEE_OTHER);
+        } catch (\Throwable $exception) {
+            $logger->error('Unable to create Stripe Checkout session for pack.', [
+                'ppr_id'    => $ppr->getId(),
+                'exception' => $exception,
+            ]);
+            $this->addFlash('error', 'Impossible d\'ouvrir le paiement Stripe pour le moment. Réessaie dans un instant.');
+            return $this->redirectToRoute('app_booking_new');
+        }
+    }
+
+    #[Route('/pack-checkout/paiement/succes', name: 'app_pack_checkout_success', methods: ['GET'])]
+    #[IsGranted('ROLE_CLIENT')]
+    public function packCheckoutSuccess(
+        Request $request,
+        StripeCheckoutService $stripeCheckout,
+        LoggerInterface $logger,
+    ): RedirectResponse {
+        $user = $this->getUser();
+        if (!$user instanceof User) {
+            return $this->redirectToRoute('app_login');
+        }
+
+        try {
+            $session = $stripeCheckout->retrieveSession((string) $request->query->get('session_id'));
+            $stripeCheckout->fulfillPackCheckout($session, $user);
+            $this->addFlash('success', 'Ton pack est actif ! Ta 1ʳᵉ séance est en attente de validation par le coach.');
+        } catch (\Throwable $exception) {
+            $logger->warning('Stripe Checkout pack return could not be fulfilled immediately.', [
+                'session_id' => (string) $request->query->get('session_id'),
+                'reason'     => $exception->getMessage(),
+            ]);
+            $this->addFlash('info', 'Ton paiement est en cours de vérification. Ton pack sera actif dans un instant.');
+        }
+
+        return $this->redirectToRoute('app_espace_client');
+    }
+
+    #[Route('/pack-checkout/paiement/annule', name: 'app_pack_checkout_cancel', methods: ['GET'])]
+    #[IsGranted('ROLE_CLIENT')]
+    public function packCheckoutCancel(): RedirectResponse
+    {
+        $this->addFlash('info', 'Paiement annulé : aucun montant n\'a été débité et le pack n\'a pas été activé.');
+        return $this->redirectToRoute('app_booking_new');
     }
 
     #[Route('/stripe/webhook', name: 'app_stripe_webhook', methods: ['POST'])]
@@ -212,6 +300,8 @@ final class StripeController extends AbstractController
                 try {
                     if ($purchaseType === 'booking_session') {
                         $stripeCheckout->fulfillBookingCheckout($session);
+                    } elseif ($purchaseType === 'pack_purchase') {
+                        $stripeCheckout->fulfillPackCheckout($session);
                     } else {
                         // Default = founding_offer (compat historique)
                         $stripeCheckout->fulfillFoundingCheckout($session);

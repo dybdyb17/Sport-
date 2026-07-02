@@ -769,6 +769,73 @@ html.performance-lite .status-dot { animation: none; }
   max-width: 440px;
 }
 
+/* ── PACKS STRIP — barre compacte cliquable vers /mon-espace/mes-packs ─ */
+.packs-strip {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 18px;
+  margin-bottom: 22px;
+  background:
+    radial-gradient(ellipse at top left, rgba(46,204,113,.08) 0%, transparent 55%),
+    var(--bg-card);
+  border: 1px solid rgba(46,204,113,.30);
+  border-left: 3px solid var(--green);
+  border-radius: 14px;
+  text-decoration: none;
+  color: inherit;
+  transition: background .2s ease, transform .2s ease, border-color .2s ease;
+}
+.packs-strip:hover {
+  transform: translateY(-1px);
+  border-color: rgba(46,204,113,.55);
+}
+.packs-strip--warn {
+  border-color: rgba(200,169,81,.35);
+  border-left-color: var(--gold);
+  background:
+    radial-gradient(ellipse at top left, rgba(200,169,81,.08) 0%, transparent 55%),
+    var(--bg-card);
+}
+.packs-strip--warn:hover { border-color: rgba(200,169,81,.55); }
+.packs-strip-emblem {
+  width: 40px; height: 40px;
+  border-radius: 11px;
+  background: rgba(46,204,113,.15);
+  border: 1px solid rgba(46,204,113,.30);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--green);
+  font-size: 20px;
+  flex-shrink: 0;
+}
+.packs-strip--warn .packs-strip-emblem {
+  background: rgba(200,169,81,.15);
+  border-color: rgba(200,169,81,.35);
+  color: var(--gold);
+}
+.packs-strip-body { flex: 1; min-width: 0; }
+.packs-strip-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  font-size: 15px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--white);
+}
+.packs-strip-sub {
+  font-size: 13px;
+  color: var(--text-dim);
+  margin-top: 2px;
+}
+.packs-strip-chevron {
+  color: var(--green);
+  font-size: 22px;
+  flex-shrink: 0;
+}
+.packs-strip--warn .packs-strip-chevron { color: var(--gold); }
+
 /* ── FOUNDING THANKS CARD (gardée) ──────────────────────────────────── */
 .founding-thanks-card {
   display: flex;

@@ -77,6 +77,26 @@ class Subscription
     #[ORM\Column(type: Types::DATETIME_IMMUTABLE)]
     private \DateTimeImmutable $createdAt;
 
+    // ── Trace paiement Stripe (packs payés en ligne, ajouté le 01/07) ─────
+    // Ces champs restent NULL pour les packs payés sur place (Partie 2 future).
+
+    #[ORM\Column(length: 100, nullable: true)]
+    private ?string $stripeCheckoutSessionId = null;
+
+    #[ORM\Column(length: 100, nullable: true)]
+    private ?string $stripePaymentIntentId = null;
+
+    #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
+    private ?\DateTimeImmutable $paidAt = null;
+
+    /**
+     * Mode de paiement du pack : 'stripe', 'cash', 'card'.
+     * Set par materializePackFromRequest côté BookingManager. Utile pour la
+     * compta admin (savoir quelle part du CA est en ligne vs sur place).
+     */
+    #[ORM\Column(length: 20, nullable: true)]
+    private ?string $paymentMethod = null;
+
     /**
      * @var Collection<int, Booking>
      */
@@ -133,6 +153,18 @@ class Subscription
     public function setEndsAt(\DateTimeImmutable $dt): static { $this->endsAt = $dt; return $this; }
 
     public function getCreatedAt(): \DateTimeImmutable { return $this->createdAt; }
+
+    public function getStripeCheckoutSessionId(): ?string { return $this->stripeCheckoutSessionId; }
+    public function setStripeCheckoutSessionId(?string $id): static { $this->stripeCheckoutSessionId = $id; return $this; }
+
+    public function getStripePaymentIntentId(): ?string { return $this->stripePaymentIntentId; }
+    public function setStripePaymentIntentId(?string $id): static { $this->stripePaymentIntentId = $id; return $this; }
+
+    public function getPaidAt(): ?\DateTimeImmutable { return $this->paidAt; }
+    public function setPaidAt(?\DateTimeImmutable $dt): static { $this->paidAt = $dt; return $this; }
+
+    public function getPaymentMethod(): ?string { return $this->paymentMethod; }
+    public function setPaymentMethod(?string $method): static { $this->paymentMethod = $method; return $this; }
 
     /** @return Collection<int, Booking> */
     public function getBookings(): Collection { return $this->bookings; }

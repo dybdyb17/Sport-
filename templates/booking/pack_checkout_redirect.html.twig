@@ -1,0 +1,33 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Redirection vers le paiement — SPORT+{% endblock %}
+
+{% block body %}
+<div class="container" style="max-width:520px;padding-top:60px;padding-bottom:60px;text-align:center;">
+  <div style="width:64px;height:64px;margin:0 auto 20px;border-radius:50%;background:rgba(200,169,81,.10);border:1px solid rgba(200,169,81,.30);display:flex;align-items:center;justify-content:center;color:var(--gold);font-size:28px;">
+    <i class="ti ti-loader-2" style="animation:spin 1s linear infinite;"></i>
+  </div>
+  <h1 style="font-family:'Barlow Condensed',sans-serif;font-size:24px;font-weight:800;color:var(--white);margin:0 0 8px;">
+    Redirection vers Stripe…
+  </h1>
+  <p style="color:var(--text-soft);margin:0 0 24px;">
+    On te bascule sur la page de paiement sécurisée. Si rien ne se passe, clique sur le bouton ci-dessous.
+  </p>
+
+  <form method="post" action="{{ path('app_pack_checkout_stripe', {id: ppr.id}) }}" id="pack-auto-submit">
+    <input type="hidden" name="_token" value="{{ csrf_token('pack-stripe-' ~ ppr.id) }}">
+    <button type="submit" class="btn btn-primary">
+      <i class="ti ti-credit-card-pay"></i> Continuer vers le paiement
+    </button>
+  </form>
+
+  <script>
+    // Auto-submit dans 300ms pour laisser le user voir l'écran (pas juste un flash).
+    setTimeout(function () {
+      document.getElementById('pack-auto-submit').submit();
+    }, 300);
+  </script>
+
+  <style>@keyframes spin { to { transform: rotate(360deg); } }</style>
+</div>
+{% endblock %}

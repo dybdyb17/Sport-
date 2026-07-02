@@ -445,25 +445,42 @@
 })();
 
 // ── Choix mode de paiement (étape 4) : afficher l'info contextuelle
+// Le message affiché dépend maintenant de DEUX choix :
+//   1. mode de paiement (cash / card / stripe)
+//   2. séance à l'unité vs pack (packType != SINGLE)
+// Chaque bloc .bk-pay-info porte data-show-for="{mode}" ET
+// data-show-for-pack="0" (single) ou "1" (pack).
 (function() {
   document.addEventListener('DOMContentLoaded', function() {
-    var radios = document.querySelectorAll('.bk-pay-card input[type="radio"]');
-    var infos  = document.querySelectorAll('.bk-pay-info');
+    var radios     = document.querySelectorAll('.bk-pay-card input[type="radio"]');
+    var infos      = document.querySelectorAll('.bk-pay-info');
+    var packInputs = document.querySelectorAll('input[name="booking[packType]"]');
 
-    function syncPaymentInfo(value) {
+    function isPackSelected() {
+      var checked = document.querySelector('input[name="booking[packType]"]:checked');
+      return !!(checked && checked.value && checked.value !== 'single');
+    }
+
+    function syncPaymentInfo() {
+      var selMode = document.querySelector('.bk-pay-card input[type="radio"]:checked');
+      var mode    = selMode ? selMode.value : null;
+      var packBit = isPackSelected() ? '1' : '0';
       infos.forEach(function(info) {
-        info.hidden = (info.dataset.showFor !== value);
+        var match = (info.dataset.showFor === mode)
+                 && (info.dataset.showForPack === packBit);
+        info.hidden = !match;
       });
     }
 
     radios.forEach(function(radio) {
-      radio.addEventListener('change', function() {
-        syncPaymentInfo(radio.value);
-      });
+      radio.addEventListener('change', syncPaymentInfo);
+    });
+    packInputs.forEach(function(inp) {
+      inp.addEventListener('change', syncPaymentInfo);
     });
 
-    var selectedPayment = document.querySelector('.bk-pay-card input[type="radio"]:checked');
-    if (selectedPayment) syncPaymentInfo(selectedPayment.value);
+    // sync initial (au cas où une valeur est déjà cochée)
+    syncPaymentInfo();
   });
 })();
 

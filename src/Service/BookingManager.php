@@ -250,4 +250,92 @@ class BookingManager
 
         return $subscription;
     }
+
+    /**
+     * Matérialise un pack à partir d'une PendingPackRequest confirmée :
+     * crée le Subscription + tente la création de la 1ère séance.
+     *
+     * Point d'entrée UNIQUE pour les 2 flows :
+     *  - online  : appelé par StripeCheckoutService::fulfillPackCheckout (webhook)
+     *  - on-site : appelé par CoachController::validatePack (action coach)
+     *
+     * Idempotent : si le PPR est déjà validé et lié à un Subscription, on
+     * retourne l'existant sans rien créer.
+     *
+     * Si la création de la 1ère séance échoue (créneau pris entre la demande
+     * et la validation), le pack est QUAND MÊME activé (client a payé) et
+     * l'erreur est loggée pour info coach/admin. La cause est retournée via
+     * $firstBookingError pour permettre à l'appelant d'informer l'humain.
+     */
+    public function materializePackFromRequest(
+        \App\Entity\PendingPackRequest $ppr,
+        string $paymentMethod,
+        ?User $validatedBy = null,
+    ): Subscription {
+        // Idempotence — protège contre les webhooks doublons + doubles clics coach
+        if ($ppr->getSubscription() !== null
+            && $ppr->getStatus() === \App\Entity\Enum\PackRequestStatus::CONFIRMED
+        ) {
+            return $ppr->getSubscription();
+        }
+
+        // 1) Créer le Subscription
+        $subscription = $this->createSubscription(
+            $ppr->getClient(),
+            $ppr->getFormat(),
+            $ppr->getTimeSlot(),
+            $ppr->getPackType(),
+            $ppr->getPersonsCount(),
+            $ppr->isFullAccess(),
+            $ppr->getCoach(),
+        );
+
+        $subscription
+            ->setPaymentMethod($paymentMethod)
+            ->setPaidAt(new \DateTimeImmutable());
+
+        // 2) Créer la 1ʳᵉ séance — cas créneau pris n'invalide PAS le pack
+        try {
+            $this->create(
+                $ppr->getClient(),
+                $ppr->getCoach(),
+                $ppr->getFormat(),
+                $ppr->getTimeSlot(),
+                $ppr->getPersonsCount(),
+                $ppr->getStartAt(),
+                $ppr->getMessage(),
+                $subscription,
+            );
+        } catch (\Throwable $e) {
+            // Pack activé quand même. Le client verra son pack actif + 0 séance
+            // programmée et pourra réserver un autre créneau depuis /mes-packs.
+            // L'appelant peut choisir de flash un message au coach/admin.
+            $ppr->setStatus(\App\Entity\Enum\PackRequestStatus::CONFIRMED);
+            $ppr->setSubscription($subscription);
+            $ppr->setValidatedAt(new \DateTimeImmutable());
+            if ($validatedBy) {
+                $ppr->setValidatedBy($validatedBy);
+            }
+            $this->em->flush();
+
+            throw new PackFirstBookingFailedException(
+                sprintf('Pack activé (id=%d) mais créneau du %s non dispo : %s',
+                    $subscription->getId(),
+                    $ppr->getStartAt()->format('d/m/Y à H\hi'),
+                    $e->getMessage()),
+                previous: $e,
+            );
+        }
+
+        // 3) Marquer le PPR confirmed + lien
+        $ppr->setStatus(\App\Entity\Enum\PackRequestStatus::CONFIRMED);
+        $ppr->setSubscription($subscription);
+        $ppr->setValidatedAt(new \DateTimeImmutable());
+        if ($validatedBy) {
+            $ppr->setValidatedBy($validatedBy);
+        }
+        $this->em->flush();
+
+        return $subscription;
+    }
 }
