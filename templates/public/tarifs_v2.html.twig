@@ -380,7 +380,7 @@
 
       {# Pilates Reformer #}
       <article class="formule-card formule-card-pilates"
-               data-img="{{ asset('img/club-photos/portrait-souriante-original.jpg') }}"
+               data-img="{{ asset('img/formules/PilateReformeur.jpeg') }}"
                data-name="Pilates Reformer"
                data-price="35"
                data-period="/ séance · offre de lancement"
@@ -533,6 +533,7 @@
       var fees     = card.getAttribute('data-fees') || '';
       var features = [];
       try { features = JSON.parse(card.getAttribute('data-features') || '[]'); } catch (e) {}
+      modal.classList.toggle('is-pilates', card.classList.contains('formule-card-pilates'));
 
       modalImg.src    = img;
       modalImg.alt    = 'Formule ' + name + ' — SPORT+ Marseille';
@@ -561,6 +562,7 @@
 
   window.closeFormuleModal = function() {
     modal.classList.remove('is-open');
+    modal.classList.remove('is-pilates');
     modal.setAttribute('aria-hidden', 'true');
     document.body.style.overflow = '';
     setTimeout(function() { modalImg.src = ''; }, 300);

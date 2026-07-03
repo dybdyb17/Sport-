@@ -41,6 +41,10 @@
   animation: modalSlideUp .4s cubic-bezier(.2, .8, .2, 1);
 }
 
+.formule-modal.is-pilates .formule-modal-content {
+  max-width: 860px;
+}
+
 @keyframes modalSlideUp {
   from { opacity: 0; transform: translateY(40px) scale(.96); }
   to   { opacity: 1; transform: translateY(0) scale(1); }
@@ -94,6 +98,14 @@
   animation: imgScaleIn .5s cubic-bezier(.2, .8, .2, 1) .1s both;
 }
 
+.formule-modal.is-pilates .formule-modal-visual {
+  min-height: 360px;
+}
+
+.formule-modal.is-pilates .formule-modal-visual img {
+  max-height: 58vh;
+}
+
 @keyframes imgScaleIn {
   from { opacity: 0; transform: scale(.92); }
   to   { opacity: 1; transform: scale(1); }
@@ -107,6 +119,11 @@
   gap: 16px;
   background: linear-gradient(180deg, var(--bg-card) 0%, var(--bg-3) 100%);
   position: relative;
+}
+
+.formule-modal.is-pilates .formule-modal-info {
+  padding: 34px 30px;
+  gap: 12px;
 }
 
 .formule-modal-tag {
@@ -137,6 +154,11 @@
   animation: infoSlideIn .4s ease .2s both;
 }
 
+.formule-modal.is-pilates .formule-modal-name {
+  font-size: clamp(32px, 4vw, 42px);
+  line-height: .98;
+}
+
 .formule-modal-price-block {
   padding: 18px 0;
   border-top: 1px solid var(--border);
@@ -156,6 +178,10 @@
   line-height: 1;
   letter-spacing: -2px;
   text-shadow: 0 0 24px rgba(255,255,255,.15);
+}
+
+.formule-modal.is-pilates .formule-modal-price {
+  font-size: clamp(50px, 6vw, 66px);
 }
 
 .formule-modal-price .euro {
@@ -182,6 +208,10 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
+}
+
+.formule-modal.is-pilates .formule-modal-features {
+  gap: 8px;
 }
 
 .formule-modal-features li {
