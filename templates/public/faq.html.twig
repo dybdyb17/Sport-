@@ -60,42 +60,6 @@
 }
 </script>
 
-{# Bouton flottant "Catégories" (mobile uniquement, masqué en desktop via CSS) #}
-<button type="button" id="faq-fab" class="faq-fab" aria-label="Ouvrir les catégories" aria-expanded="false">
-  <i class="ti ti-list"></i>
-</button>
-<nav id="faq-fab-panel" class="faq-fab-panel" aria-label="Catégories FAQ rapides">
-  <a href="#reservations"><i class="ti ti-calendar"></i> Réservations</a>
-  <a href="#coachs"><i class="ti ti-user-check"></i> Coachs &amp; séances</a>
-  <a href="#nuit"><i class="ti ti-moon-stars"></i> Coaching de nuit</a>
-  <a href="#founding"><i class="ti ti-crown"></i> Membres Fondateurs</a>
-  <a href="#tarifs"><i class="ti ti-coin"></i> Tarifs &amp; packs</a>
-  <a href="#salle"><i class="ti ti-building"></i> La salle</a>
-  <a href="#compte"><i class="ti ti-user-cog"></i> Compte &amp; données</a>
-  <a href="#pilates-reformer"><i class="ti ti-stretching"></i> Pilates Reformer</a>
-</nav>
-<script>
-(function() {
-  var btn = document.getElementById('faq-fab');
-  var panel = document.getElementById('faq-fab-panel');
-  if (!btn || !panel) return;
-  function close() { btn.classList.remove('is-open'); panel.classList.remove('is-open'); btn.setAttribute('aria-expanded', 'false'); }
-  btn.addEventListener('click', function(e) {
-    e.stopPropagation();
-    var willOpen = !panel.classList.contains('is-open');
-    btn.classList.toggle('is-open', willOpen);
-    panel.classList.toggle('is-open', willOpen);
-    btn.setAttribute('aria-expanded', String(willOpen));
-  });
-  panel.addEventListener('click', function(e) {
-    if (e.target.closest('a')) close();
-  });
-  document.addEventListener('click', function(e) {
-    if (!panel.contains(e.target) && e.target !== btn) close();
-  });
-})();
-</script>
-
 {# Mini hero #}
 <section class="pub-hero-sober">
   <div class="container">
