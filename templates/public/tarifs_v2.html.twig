@@ -386,7 +386,7 @@
                data-period="/ séance · offre de lancement"
                data-tag="Pilates"
                data-fees="Paiement sur place — places limitées"
-               data-features='["Coaching privé Pilates Reformer","Accompagnement 100% personnalisé","Vague 1 : 35€/séance","Vague 2 : 45€/séance","Après lancement : 60€/séance"]'>
+               data-features='[]'>
         <div class="formule-badge-top formule-badge-sage">Nouveau</div>
         <div class="formule-tag">Pilates</div>
         <div class="formule-name">Pilates <span style="color:#A8B58F;">Reformer</span></div>
@@ -533,8 +533,6 @@
       var fees     = card.getAttribute('data-fees') || '';
       var features = [];
       try { features = JSON.parse(card.getAttribute('data-features') || '[]'); } catch (e) {}
-      modal.classList.toggle('is-pilates', card.classList.contains('formule-card-pilates'));
-
       modalImg.src    = img;
       modalImg.alt    = 'Formule ' + name + ' — SPORT+ Marseille';
       modalTag.textContent    = tag;
