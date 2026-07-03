@@ -1,7 +1,7 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}FAQ — SPORT+ Marseille{% endblock %}
-{% block meta_description %}<meta name="description" content="Questions fréquentes sur SPORT+ Marseille : coaching de nuit, accès salle 24h/24, réservation, tarifs, Night Coach, Membres Fondateurs, annulation. 36 questions, 36 réponses.">{% endblock %}
+{% block meta_description %}<meta name="description" content="Questions fréquentes sur SPORT+ Marseille : coaching de nuit, accès salle 24h/24, réservation, tarifs, Night Coach, Pilates Reformer, Membres Fondateurs, annulation.">{% endblock %}
 
 {% block body %}
 
@@ -49,7 +49,13 @@
     {"@type":"Question","name":"Comment fonctionne le Night Coach ?","acceptedAnswer":{"@type":"Answer","text":"Vous réservez votre créneau dès 20h. Un coach dédié vous attend en salle. Solo, duo ou groupe jusqu'à 6 personnes."}},
     {"@type":"Question","name":"Comment supprimer mon compte SPORT+ ?","acceptedAnswer":{"@type":"Answer","text":"Envoie ta demande de suppression depuis la page Contact. Nous traitons toutes les demandes dans les 72h et supprimons définitivement tes données conformément au RGPD."}},
     {"@type":"Question","name":"Mes données sont-elles vendues ?","acceptedAnswer":{"@type":"Answer","text":"Non, jamais. Tes données sont exclusivement utilisées pour faire fonctionner SPORT+. Aucune transmission à des tiers à des fins commerciales."}},
-    {"@type":"Question","name":"Comment exercer mes droits RGPD ?","acceptedAnswer":{"@type":"Answer","text":"Tu peux exercer tes droits (accès, rectification, effacement, portabilité, opposition) en nous contactant directement par email depuis la page Contact. Nous répondons dans un délai maximum de 30 jours."}}
+    {"@type":"Question","name":"Comment exercer mes droits RGPD ?","acceptedAnswer":{"@type":"Answer","text":"Tu peux exercer tes droits (accès, rectification, effacement, portabilité, opposition) en nous contactant directement par email depuis la page Contact. Nous répondons dans un délai maximum de 30 jours."}},
+    {"@type":"Question","name":"Qu'est-ce que le Pilates Reformer chez SPORT+ ?","acceptedAnswer":{"@type":"Answer","text":"Le Pilates Reformer est un accompagnement privé sur machine Reformer, pensé pour renforcer les muscles profonds, améliorer la posture, la mobilité et le contrôle du mouvement. Chez SPORT+, il se pratique en coaching privé avec un accompagnement personnalisé."}},
+    {"@type":"Question","name":"Combien coûte une séance de Pilates Reformer à Marseille chez SPORT+ ?","acceptedAnswer":{"@type":"Answer","text":"L'offre de lancement Pilates Reformer commence à 35 euros par séance pour la première vague, puis 45 euros par séance pour la deuxième vague. Après l'offre de lancement, la séance est à 60 euros. Les places sont limitées."}},
+    {"@type":"Question","name":"Comment réserver une séance de Pilates Reformer ?","acceptedAnswer":{"@type":"Answer","text":"La réservation Pilates Reformer se fait directement auprès de la salle SPORT+ par téléphone ou par email. Le paiement se fait sur place, avec l'équipe SPORT+."}},
+    {"@type":"Question","name":"Faut-il être abonné à SPORT+ pour faire du Pilates Reformer ?","acceptedAnswer":{"@type":"Answer","text":"Non, le Pilates Reformer peut être réservé comme une prestation dédiée. L'équipe SPORT+ confirme les modalités au moment de la prise de contact."}},
+    {"@type":"Question","name":"Le Pilates Reformer est-il adapté aux débutants ?","acceptedAnswer":{"@type":"Answer","text":"Oui. Le coaching privé permet d'adapter la séance à ton niveau, à tes objectifs et à tes éventuelles contraintes physiques. C'est justement l'intérêt d'un accompagnement personnalisé."}},
+    {"@type":"Question","name":"Où ont lieu les séances de Pilates Reformer à Marseille ?","acceptedAnswer":{"@type":"Answer","text":"Les séances ont lieu chez SPORT+, au 164 Chemin de Saint-Jean du Désert, 13005 Marseille."}}
   ]
 }
 </script>
@@ -66,6 +72,7 @@
   <a href="#tarifs"><i class="ti ti-coin"></i> Tarifs &amp; packs</a>
   <a href="#salle"><i class="ti ti-building"></i> La salle</a>
   <a href="#compte"><i class="ti ti-user-cog"></i> Compte &amp; données</a>
+  <a href="#pilates-reformer"><i class="ti ti-stretching"></i> Pilates Reformer</a>
 </nav>
 <script>
 (function() {
@@ -94,7 +101,7 @@
   <div class="container">
     <div class="hero-badge">Questions fréquentes</div>
     <h1 class="section-title">Tout ce que tu veux <span style="color:var(--gold)">savoir</span></h1>
-    <p class="section-sub">36 questions, 36 réponses. Tu ne trouves pas la tienne ?
+    <p class="section-sub">Toutes les réponses utiles avant de réserver, t'abonner ou découvrir le Pilates Reformer. Tu ne trouves pas la tienne ?
       <a href="{{ path('app_contact') }}" style="color:var(--gold);text-decoration:underline;">Écris-nous via le formulaire de contact.</a>
     </p>
   </div>
@@ -125,6 +132,9 @@
       </a>
       <a href="#compte" class="faq-nav-link">
         <i class="ti ti-user-cog"></i> Compte & données
+      </a>
+      <a href="#pilates-reformer" class="faq-nav-link">
+        <i class="ti ti-stretching"></i> Pilates Reformer
       </a>
     </nav>
 
@@ -403,6 +413,47 @@
         <details class="faq-item">
           <summary>Comment exercer mes droits RGPD ?</summary>
           <div class="faq-answer">Tu peux exercer tes droits (accès, rectification, effacement, portabilité, opposition) en nous contactant directement par email depuis la page <a href="{{ path('app_contact') }}" style="color:var(--gold)">Contact</a>. Nous répondons dans un délai maximum de 30 jours.</div>
+        </details>
+
+      </div>
+    </section>
+
+    {# G. Pilates Reformer — boost SEO local sans page dédiée #}
+    <section id="pilates-reformer" style="margin-bottom:56px;">
+      <div class="section-label" style="margin-top:0;margin-bottom:8px;">Nouveau chez SPORT+</div>
+      <h2 style="font-family:'Barlow Condensed',sans-serif;font-size:32px;font-weight:900;
+                 text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">Pilates Reformer</h2>
+      <p style="color:var(--text-dim);font-size:14px;margin-bottom:24px;">Coaching privé Pilates Reformer à Marseille, offre de lancement et réservation directe auprès de la salle.</p>
+      <div class="faq-list">
+
+        <details class="faq-item">
+          <summary>Qu'est-ce que le Pilates Reformer chez SPORT+ ?</summary>
+          <div class="faq-answer">Le <strong>Pilates Reformer</strong> est un accompagnement privé sur machine Reformer, pensé pour renforcer les muscles profonds, améliorer la posture, la mobilité et le contrôle du mouvement. Chez SPORT+, il se pratique en <strong>coaching privé</strong> avec un accompagnement personnalisé.</div>
+        </details>
+
+        <details class="faq-item">
+          <summary>Combien coûte une séance de Pilates Reformer à Marseille chez SPORT+ ?</summary>
+          <div class="faq-answer">L'offre de lancement Pilates Reformer commence à <strong>35€ / séance</strong> pour la première vague, puis <strong>45€ / séance</strong> pour la deuxième vague. Après l'offre de lancement, la séance est à <strong>60€</strong>. Les places sont limitées.</div>
+        </details>
+
+        <details class="faq-item">
+          <summary>Comment réserver une séance de Pilates Reformer ?</summary>
+          <div class="faq-answer">La réservation Pilates Reformer se fait directement auprès de la salle SPORT+ par <a href="tel:0491422207" style="color:var(--gold)">téléphone</a> ou par <a href="mailto:ls.sportplus13@gmail.com" style="color:var(--gold)">email</a>. Le paiement se fait <strong>sur place</strong>, avec l'équipe SPORT+.</div>
+        </details>
+
+        <details class="faq-item">
+          <summary>Faut-il être abonné à SPORT+ pour faire du Pilates Reformer ?</summary>
+          <div class="faq-answer">Non, le Pilates Reformer peut être réservé comme une prestation dédiée. L'équipe SPORT+ confirme les modalités au moment de la prise de contact.</div>
+        </details>
+
+        <details class="faq-item">
+          <summary>Le Pilates Reformer est-il adapté aux débutants ?</summary>
+          <div class="faq-answer">Oui. Le coaching privé permet d'adapter la séance à ton niveau, à tes objectifs et à tes éventuelles contraintes physiques. C'est justement l'intérêt d'un accompagnement personnalisé.</div>
+        </details>
+
+        <details class="faq-item">
+          <summary>Où ont lieu les séances de Pilates Reformer à Marseille ?</summary>
+          <div class="faq-answer">Les séances ont lieu chez SPORT+, au <strong>164 Chemin de Saint-Jean du Désert, 13005 Marseille</strong>.</div>
         </details>
 
       </div>

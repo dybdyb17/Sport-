@@ -107,7 +107,8 @@
 }
 
 /* ── Bouton flottant "Catégories" en mobile (FAB) ─────────────────── */
-.faq-fab {
+.faq-fab,
+.faq-fab-panel {
   display: none;
 }
 @media (max-width: 720px) {
@@ -178,6 +179,7 @@
 [id="founding"],
 [id="tarifs"],
 [id="salle"],
-[id="compte"] {
+[id="compte"],
+[id="pilates-reformer"] {
   scroll-margin-top: 160px;
 }
