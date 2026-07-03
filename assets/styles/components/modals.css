@@ -218,6 +218,11 @@
   padding-top: 6px;
 }
 
+.formule-modal-contact-actions {
+  display: grid;
+  gap: 10px;
+}
+
 .formule-modal-cta {
   margin-top: 8px;
   width: 100%;
