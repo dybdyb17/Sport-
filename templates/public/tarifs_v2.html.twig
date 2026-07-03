@@ -560,6 +560,7 @@
 
   window.closeFormuleModal = function() {
     modal.classList.remove('is-open');
+    modal.classList.remove('is-pilates');
     modal.setAttribute('aria-hidden', 'true');
     document.body.style.overflow = '';
     setTimeout(function() { modalImg.src = ''; }, 300);
