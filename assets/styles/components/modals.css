@@ -218,6 +218,11 @@
   padding-top: 6px;
 }
 
+.formule-modal-contact-actions {
+  display: grid;
+  gap: 10px;
+}
+
 .formule-modal-cta {
   margin-top: 8px;
   width: 100%;
@@ -289,7 +294,20 @@
   .formule-name { font-size: 26px; }
   .formule-price { font-size: 48px; }
   .formule-price span { font-size: 22px; }
-  .formule-modal { padding: 12px; }
+  .formule-modal {
+    align-items: flex-start;
+    padding: max(12px, env(safe-area-inset-top)) 12px max(12px, env(safe-area-inset-bottom));
+  }
+  .formule-modal-content {
+    max-height: calc(100dvh - 24px);
+  }
+  .formule-modal-close {
+    top: max(14px, calc(env(safe-area-inset-top) + 10px));
+    right: max(14px, calc(env(safe-area-inset-right) + 10px));
+    z-index: 1002;
+    background: rgba(6,6,6,.82);
+    box-shadow: 0 10px 26px rgba(0,0,0,.42);
+  }
   .formule-modal-info { padding: 22px 18px; }
   .formule-modal-price-block { gap: 8px; }
 }
@@ -525,5 +543,3 @@
   margin-right: 6px;
 }
 .start-modal-footer strong { color: var(--gold); }
-
-
