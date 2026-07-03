@@ -132,8 +132,37 @@
             {% endif %}
           </div>
 
+          {# ── Point 1 : séances déjà programmées avec ce pack ──
+             Rend visible que la 1ère séance (créée à l'achat) existe bien
+             et permet au client de suivre son planning pack. #}
+          {% if item.upcomingBookings|length > 0 %}
+            <div class="pack-card-upcoming">
+              <div class="pack-card-upcoming-title">
+                <i class="ti ti-calendar-event"></i>
+                Séances programmées ({{ item.upcomingBookings|length }})
+              </div>
+              <ul class="pack-card-upcoming-list">
+                {% for b in item.upcomingBookings %}
+                  {% set isConfirmed = b.status == 'confirmed' %}
+                  <li class="pack-card-upcoming-item">
+                    <span class="pack-card-upcoming-when">
+                      {{ b.startAt|date('d/m/Y') }} · {{ b.startAt|date('H\\hi') }}
+                    </span>
+                    <span class="pack-card-upcoming-coach">
+                      avec {{ b.coach.nomComplet|split(' ')|first }}
+                    </span>
+                    <span class="pack-card-upcoming-badge {{ isConfirmed ? 'is-confirmed' : 'is-pending' }}">
+                      <i class="ti {{ isConfirmed ? 'ti-check' : 'ti-hourglass' }}"></i>
+                      {{ isConfirmed ? 'Confirmée' : 'En attente' }}
+                    </span>
+                  </li>
+                {% endfor %}
+              </ul>
+            </div>
+          {% endif %}
+
           <div class="pack-card-actions">
-            <a href="{{ path('app_booking_new') }}" class="btn btn-primary btn-sm">
+            <a href="{{ path('app_pack_booking_new', {id: pack.id}) }}" class="btn btn-primary btn-sm">
               <i class="ti ti-calendar-plus"></i> Réserver une séance
             </a>
           </div>

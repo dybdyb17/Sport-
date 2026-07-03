@@ -1,0 +1,211 @@
+/* ════════════════════════════════════════════════════════════════════════
+   PAGE PACK RÉSERVER — /mon-espace/mes-packs/{id}/reserver (temps 1)
+   ════════════════════════════════════════════════════════════════════════
+   Simplifié à l'extrême : bandeau pack + formulaire coach/date/message +
+   hint créneau. Le temps 2 remplacera l'input datetime par un vrai
+   sélecteur visuel de créneaux.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.pack-reserver-page {
+  max-width: 640px;
+}
+
+.pack-reserver-head {
+  margin-bottom: 22px;
+}
+.pack-reserver-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: clamp(26px, 3vw, 32px);
+  font-weight: 900;
+  color: var(--white);
+  margin: 0 0 6px;
+  letter-spacing: -0.5px;
+}
+.pack-reserver-sub {
+  font-size: 14.5px;
+  color: var(--text-soft);
+  margin: 0;
+  line-height: 1.55;
+}
+
+/* ── Bandeau récap pack ─────────────────────────────────────────── */
+.pack-reserver-summary {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 20px;
+  margin-bottom: 22px;
+  background:
+    radial-gradient(ellipse at top left, rgba(46,204,113,.08) 0%, transparent 55%),
+    var(--bg-card);
+  border: 1px solid rgba(46,204,113,.30);
+  border-left: 3px solid var(--green);
+  border-radius: 14px;
+}
+.pack-reserver-summary-emblem {
+  width: 42px; height: 42px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(46,204,113,.20), rgba(46,204,113,.05));
+  border: 1px solid rgba(46,204,113,.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--green);
+  font-size: 20px;
+  flex-shrink: 0;
+}
+.pack-reserver-summary-body { flex: 1; min-width: 0; }
+.pack-reserver-summary-eyebrow {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+}
+.pack-reserver-summary-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 18px;
+  font-weight: 900;
+  color: var(--white);
+  line-height: 1.2;
+  margin-top: 2px;
+}
+.pack-reserver-summary-meta {
+  font-size: 13px;
+  color: var(--text-soft);
+  margin-top: 4px;
+}
+.pack-reserver-summary-meta strong { color: var(--green); }
+.pack-reserver-summary-meta .pack-dot { color: var(--text-dim); margin: 0 4px; }
+.pack-reserver-summary-paid {
+  font-size: 12px;
+  color: var(--green);
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 11px;
+  background: rgba(46,204,113,.08);
+  border: 1px solid rgba(46,204,113,.25);
+  border-radius: 100px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* ── Formulaire ─────────────────────────────────────────────────── */
+.pack-reserver-form {
+  padding: 24px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+}
+.pack-reserver-field {
+  margin-bottom: 18px;
+}
+.pack-reserver-field label {
+  display: block;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.pack-reserver-field .form-control,
+.pack-reserver-field input,
+.pack-reserver-field select,
+.pack-reserver-field textarea {
+  width: 100%;
+  padding: 12px 14px;
+  background: rgba(255,255,255,.03);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  color: var(--white);
+  font-family: 'Inter', -apple-system, sans-serif;
+  font-size: 14.5px;
+  transition: border-color .15s ease, background .15s ease;
+}
+.pack-reserver-field .form-control:focus,
+.pack-reserver-field input:focus,
+.pack-reserver-field select:focus,
+.pack-reserver-field textarea:focus {
+  outline: none;
+  border-color: var(--green);
+  background: rgba(255,255,255,.05);
+}
+
+/* Hint créneau — sous l'input datetime */
+.pack-reserver-slot-hint {
+  margin-top: 8px;
+  padding: 10px 14px;
+  background: rgba(200,169,81,.06);
+  border: 1px dashed rgba(200,169,81,.30);
+  border-radius: 10px;
+  font-size: 12.5px;
+  color: var(--text-soft);
+  line-height: 1.5;
+}
+.pack-reserver-slot-hint i {
+  color: var(--gold);
+  margin-right: 4px;
+  vertical-align: middle;
+}
+.pack-reserver-slot-hint strong { color: var(--gold); }
+
+/* Bouton principal — vert (pas de paiement, séance safe) */
+.pack-reserver-submit {
+  width: 100%;
+  padding: 14px 20px;
+  margin-top: 8px;
+  background: linear-gradient(135deg, var(--green), rgba(46,204,113,.85));
+  color: #000;
+  border: none;
+  border-radius: 100px;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: transform .15s ease, box-shadow .15s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.pack-reserver-submit:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 22px rgba(46,204,113,.35);
+}
+
+/* Note sous le bouton */
+.pack-reserver-note {
+  margin: 14px 0 0;
+  padding: 10px 14px;
+  background: rgba(255,255,255,.02);
+  border: 1px dashed var(--border);
+  border-radius: 10px;
+  font-size: 12.5px;
+  color: var(--text-dim);
+  line-height: 1.5;
+}
+.pack-reserver-note i {
+  color: var(--gold-dim);
+  margin-right: 4px;
+  vertical-align: middle;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pack-reserver-submit,
+  .pack-reserver-field .form-control { transition: none; }
+}
+html.performance-lite .pack-reserver-submit,
+html.performance-lite .pack-reserver-field .form-control { transition: none; }
+
+@media (max-width: 640px) {
+  .pack-reserver-summary { flex-wrap: wrap; }
+  .pack-reserver-summary-paid { width: 100%; justify-content: center; }
+  .pack-reserver-form { padding: 18px; }
+}

@@ -1,0 +1,75 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Réserver avec mon pack — SPORT+{% endblock %}
+
+{% block body %}
+<div class="container pack-reserver-page">
+
+  <a href="{{ path('app_espace_client_packs') }}" class="btn btn-ghost btn-sm" style="margin-bottom:20px;">
+    <i class="ti ti-arrow-left"></i> Mes packs
+  </a>
+
+  <div class="pack-reserver-head" data-animate="fade-up">
+    <h1 class="pack-reserver-title">Réserver une séance avec mon pack</h1>
+    <p class="pack-reserver-sub">
+      Choisis ton coach, ta date et ton heure. Tout le reste (format, créneau, paiement) est déjà défini par ton pack.
+    </p>
+  </div>
+
+  {# ── Bandeau récap du pack utilisé ────────────────────────────── #}
+  <div class="pack-reserver-summary" data-animate="fade-up">
+    <div class="pack-reserver-summary-emblem"><i class="ti ti-barbell"></i></div>
+    <div class="pack-reserver-summary-body">
+      <div class="pack-reserver-summary-eyebrow">TU RÉSERVES AVEC</div>
+      <div class="pack-reserver-summary-title">{{ pack.packType.label }}</div>
+      <div class="pack-reserver-summary-meta">
+        <span>{{ pack.format.value|capitalize }}</span>
+        <span class="pack-dot">·</span>
+        <span>{{ pack.timeSlot.value|capitalize }}</span>
+        <span class="pack-dot">·</span>
+        <span><strong>{{ pack.sessionsRemaining }}</strong> / {{ pack.packType.sessionsCount }} séances restantes</span>
+      </div>
+    </div>
+    <div class="pack-reserver-summary-paid">
+      <i class="ti ti-shield-check"></i> Déjà payé
+    </div>
+  </div>
+
+  {# ── Formulaire simplifié ─────────────────────────────────────── #}
+  {{ form_start(form, {attr: {class: 'pack-reserver-form'}}) }}
+    <div class="pack-reserver-field">
+      {{ form_label(form.coach) }}
+      {{ form_widget(form.coach, {attr: {class: 'form-control'}}) }}
+      {{ form_errors(form.coach) }}
+    </div>
+
+    <div class="pack-reserver-field">
+      {{ form_label(form.startAt) }}
+      {{ form_widget(form.startAt, {attr: {class: 'form-control'}}) }}
+      {{ form_errors(form.startAt) }}
+      <div class="pack-reserver-slot-hint">
+        <i class="ti ti-clock"></i>
+        Créneau {{ pack.timeSlot.value|capitalize }} : entre <strong>{{ slotRange.from }}</strong> et
+        <strong>{{ slotRange.to }}</strong>. Toute heure hors de cette plage sera refusée.
+      </div>
+    </div>
+
+    <div class="pack-reserver-field">
+      {{ form_label(form.message) }}
+      {{ form_widget(form.message, {attr: {class: 'form-control', placeholder: 'Objectifs, préférences, contraintes physiques…'}}) }}
+      {{ form_errors(form.message) }}
+    </div>
+
+    <button type="submit" class="pack-reserver-submit">
+      <i class="ti ti-calendar-plus"></i> Réserver cette séance
+    </button>
+
+    <p class="pack-reserver-note">
+      <i class="ti ti-info-circle"></i>
+      Cette séance sera décomptée de ton pack UNIQUEMENT une fois confirmée par le coach.
+      Si le coach refuse, ton pack reste intact.
+    </p>
+  {{ form_end(form) }}
+
+</div>
+{% endblock %}

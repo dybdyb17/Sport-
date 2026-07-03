@@ -3,14 +3,20 @@
 namespace App\Controller;
 
 use App\Entity\Booking;
+use App\Entity\Coach;
+use App\Entity\Enum\TimeSlot;
+use App\Entity\Subscription;
 use App\Entity\User;
+use App\Form\PackBookingType;
 use App\Form\PasswordChangeFormType;
 use App\Form\PreferencesFormType;
 use App\Form\ProfilFormType;
 use App\Repository\BookingRepository;
 use App\Repository\PendingPackRequestRepository;
 use App\Repository\SubscriptionRepository;
+use App\Service\BookingManager;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -143,7 +149,8 @@ class ClientController extends AbstractController
         $pendingOnSite  = $pprRepository->findPendingOnSiteForClient($user);
         $now            = new \DateTimeImmutable();
 
-        // On enrichit chaque pack de "expiring" (bool) et "daysLeft" (int).
+        // On enrichit chaque pack de "expiring" (bool), "daysLeft" (int) et
+        // "upcomingBookings" (les séances liées à ce pack, à venir, triées).
         // Le template se contente d'afficher — pas de calcul dans le Twig.
         $items = [];
         foreach ($packs as $pack) {
@@ -152,16 +159,155 @@ class ClientController extends AbstractController
             $daysLeft  = $isPast ? 0 : $daysLeft;
             $expiring  = !$isPast && $daysLeft <= self::PACK_EXPIRING_SOON_DAYS;
 
+            // Séances liées au pack, à venir (pending ou confirmed), triées.
+            // Point 1 : le client doit voir que sa 1ère séance existe déjà.
+            $upcoming = [];
+            foreach ($pack->getBookings() as $b) {
+                if ($b->getStartAt() >= $now
+                    && in_array($b->getStatus(), [Booking::STATUS_PENDING, Booking::STATUS_CONFIRMED], true)
+                ) {
+                    $upcoming[] = $b;
+                }
+            }
+            usort($upcoming, static fn (Booking $a, Booking $b): int => $a->getStartAt() <=> $b->getStartAt());
+
             $items[] = [
-                'pack'     => $pack,
-                'expiring' => $expiring,
-                'daysLeft' => $daysLeft,
+                'pack'             => $pack,
+                'expiring'         => $expiring,
+                'daysLeft'         => $daysLeft,
+                'upcomingBookings' => $upcoming,
             ];
         }
 
         return $this->render('client/mes-packs.html.twig', [
             'items'         => $items,
             'pendingOnSite' => $pendingOnSite,
+        ]);
+    }
+
+    /**
+     * Réservation d'une séance avec un pack déjà acheté.
+     *
+     * Simplifié à l'extrême : le format/timeSlot/personsCount/fullAccess sont
+     * ceux du pack. Le client choisit UNIQUEMENT coach + date/heure + message.
+     * L'heure doit tomber dans la plage horaire du pack (DAY/NIGHT/ASTREINTE)
+     * — vérifié via TimeSlot::fromDateTime (source de vérité de l'enum).
+     *
+     * Sécurité :
+     *  - le pack {id} DOIT appartenir au user connecté (sinon 404 silencieux
+     *    pour ne pas révéler l'existence d'autres packs)
+     *  - il DOIT être actif (status=active, sessions_remaining>0, non expiré)
+     *  - la séance créée est en PENDING, liée au pack, décomptée à la
+     *    confirmation coach (BookingManager::confirm appelle consume())
+     */
+    #[Route(
+        '/mon-espace/mes-packs/{id}/reserver',
+        name: 'app_pack_booking_new',
+        methods: ['GET', 'POST'],
+        requirements: ['id' => '\d+'],
+    )]
+    public function packBookingNew(
+        int $id,
+        Request $request,
+        SubscriptionRepository $subscriptionRepository,
+        BookingManager $manager,
+    ): Response {
+        /** @var User $user */
+        $user = $this->getUser();
+        $pack = $subscriptionRepository->find($id);
+
+        // Vérifs d'appartenance et d'utilisabilité (verrous serveur, pas juste UI)
+        if (!$pack || $pack->getClient()?->getId() !== $user->getId()) {
+            throw $this->createNotFoundException('Ce pack n\'existe pas ou ne t\'appartient pas.');
+        }
+        if ($pack->getStatus() !== Subscription::STATUS_ACTIVE
+            || $pack->getSessionsRemaining() <= 0
+            || $pack->getEndsAt() < new \DateTimeImmutable()
+        ) {
+            $this->addFlash('error', 'Ce pack n\'est plus utilisable (épuisé, expiré ou inactif).');
+            return $this->redirectToRoute('app_espace_client_packs');
+        }
+
+        $form = $this->createForm(PackBookingType::class);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $data    = $form->getData();
+            $coach   = $data['coach'] ?? null;
+            $startAt = $data['startAt'] ?? null;
+            $message = $data['message'] ?? null;
+
+            if (!$coach instanceof Coach) {
+                $this->addFlash('error', 'Coach invalide.');
+                return $this->redirectToRoute('app_pack_booking_new', ['id' => $id]);
+            }
+            if (!$startAt instanceof \DateTimeInterface) {
+                $this->addFlash('error', 'Date et heure invalides.');
+                return $this->redirectToRoute('app_pack_booking_new', ['id' => $id]);
+            }
+
+            // Normalise en Immutable (le form peut renvoyer un DateTime muable)
+            $startAt = $startAt instanceof \DateTimeImmutable
+                ? $startAt
+                : \DateTimeImmutable::createFromInterface($startAt);
+
+            // Refuse une résa dans le passé
+            if ($startAt < new \DateTimeImmutable()) {
+                $this->addFlash('error', 'La date choisie est dans le passé.');
+                return $this->redirectToRoute('app_pack_booking_new', ['id' => $id]);
+            }
+
+            // Contrainte de créneau : l'heure DOIT tomber dans la plage du pack
+            $expectedSlot = $pack->getTimeSlot();
+            $actualSlot   = TimeSlot::fromDateTime($startAt);
+            if ($actualSlot !== $expectedSlot) {
+                $this->addFlash('error', sprintf(
+                    'L\'heure choisie tombe sur le créneau %s, alors que ton pack est %s. Choisis une heure dans la plage %s.',
+                    strtolower($actualSlot->label()),
+                    strtolower($expectedSlot->label()),
+                    $expectedSlot->label(),
+                ));
+                return $this->redirectToRoute('app_pack_booking_new', ['id' => $id]);
+            }
+
+            try {
+                $created = $manager->create(
+                    $user,
+                    $coach,
+                    $pack->getFormat(),
+                    $pack->getTimeSlot(),
+                    $pack->getPersonsCount(),
+                    $startAt,
+                    $message,
+                    $pack, // ← subscription liée : décompte à la confirm coach
+                );
+                $this->addFlash('success', sprintf(
+                    'Ta séance du %s est enregistrée. Elle sera décomptée de ton pack dès que le coach l\'aura confirmée.',
+                    $startAt->format('d/m/Y à H\hi'),
+                ));
+                return $this->redirectToRoute('app_espace_client_packs');
+            } catch (ConflictHttpException $e) {
+                // Créneau pris (rare mais possible) — message clair, pas 500
+                $this->addFlash('error', 'Ce créneau n\'est plus disponible pour ce coach. Choisis-en un autre.');
+                return $this->redirectToRoute('app_pack_booking_new', ['id' => $id]);
+            } catch (\Throwable $e) {
+                $this->addFlash('error', 'Impossible de créer la séance : ' . $e->getMessage());
+                return $this->redirectToRoute('app_pack_booking_new', ['id' => $id]);
+            }
+        }
+
+        // Bornes horaires (HH:MM) à afficher au client pour guider la saisie.
+        // On garde les données brutes plutôt que d'importer des consts ailleurs.
+        $slotRanges = [
+            TimeSlot::DAY->value       => ['from' => '06:00', 'to' => '20:00'],
+            TimeSlot::NIGHT->value     => ['from' => '20:00', 'to' => '00:00'],
+            TimeSlot::ASTREINTE->value => ['from' => '00:00', 'to' => '06:00'],
+        ];
+
+        return $this->render('client/pack-reserver.html.twig', [
+            'pack'      => $pack,
+            'form'      => $form->createView(),
+            'slotRange' => $slotRanges[$pack->getTimeSlot()->value],
         ]);
     }
 
