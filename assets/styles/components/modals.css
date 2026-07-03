@@ -42,7 +42,7 @@
 }
 
 .formule-modal.is-pilates .formule-modal-content {
-  max-width: 860px;
+  max-width: 920px;
 }
 
 @keyframes modalSlideUp {
@@ -59,6 +59,10 @@
   border-radius: var(--radius-lg);
   overflow: hidden;
   box-shadow: 0 40px 100px rgba(0,0,0,.8), 0 0 80px rgba(46,204,113,.12);
+}
+
+.formule-modal.is-pilates .formule-modal-split {
+  grid-template-columns: .9fr 1fr;
 }
 
 /* Visuel à gauche */
@@ -99,11 +103,14 @@
 }
 
 .formule-modal.is-pilates .formule-modal-visual {
-  min-height: 360px;
+  min-height: 400px;
+  padding: 22px;
 }
 
 .formule-modal.is-pilates .formule-modal-visual img {
-  max-height: 58vh;
+  width: min(100%, 420px);
+  max-height: 46vh;
+  object-fit: contain;
 }
 
 @keyframes imgScaleIn {
