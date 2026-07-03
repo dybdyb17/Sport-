@@ -2,6 +2,11 @@
 
 {% block title %}Réserver avec mon pack — SPORT+{% endblock %}
 
+{% block stylesheets %}
+  {{ parent() }}
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+{% endblock %}
+
 {% block body %}
 <div class="container pack-reserver-page">
 
@@ -45,12 +50,17 @@
 
     <div class="pack-reserver-field">
       {{ form_label(form.startAt) }}
-      {{ form_widget(form.startAt, {attr: {class: 'form-control'}}) }}
+      {{ form_widget(form.startAt, {attr: {
+        class: 'form-control',
+        'data-slot': pack.timeSlot.value,
+        'data-min-time': slotRange.minTime,
+        'data-max-time': slotRange.maxTime,
+      }}) }}
       {{ form_errors(form.startAt) }}
       <div class="pack-reserver-slot-hint">
         <i class="ti ti-clock"></i>
         Créneau {{ pack.timeSlot.value|capitalize }} : entre <strong>{{ slotRange.from }}</strong> et
-        <strong>{{ slotRange.to }}</strong>. Toute heure hors de cette plage sera refusée.
+        <strong>{{ slotRange.to }}</strong>. Le calendrier ne te laisse choisir qu'une heure valide.
       </div>
     </div>
 
@@ -72,4 +82,10 @@
   {{ form_end(form) }}
 
 </div>
+
+{# Flatpickr (même CDN que la page réservation) + notre init dédié.
+   defer garantit l'ordre : Flatpickr chargé, puis pack-datepicker.js. #}
+<script src="https://cdn.jsdelivr.net/npm/flatpickr" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/fr.js" defer></script>
+<script src="{{ asset('js/pack-datepicker.js') }}" defer></script>
 {% endblock %}

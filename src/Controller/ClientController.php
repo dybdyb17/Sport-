@@ -296,12 +296,28 @@ class ClientController extends AbstractController
             }
         }
 
-        // Bornes horaires (HH:MM) à afficher au client pour guider la saisie.
-        // On garde les données brutes plutôt que d'importer des consts ailleurs.
+        // Bornes horaires du créneau :
+        //  - from/to        : labels lisibles pour l'affichage humain (hint)
+        //  - minTime/maxTime: bornes INCLUSIVES pour Flatpickr, alignées
+        //    EXACTEMENT sur TimeSlot::fromDateTime (source de vérité serveur).
+        //
+        // Rappel du enum :
+        //   6 ≤ h < 20 → DAY        → clampe [06:00 → 19:59]
+        //   20 ≤ h     → NIGHT      → clampe [20:00 → 23:59]
+        //   h < 6      → ASTREINTE  → clampe [00:00 → 05:59]
         $slotRanges = [
-            TimeSlot::DAY->value       => ['from' => '06:00', 'to' => '20:00'],
-            TimeSlot::NIGHT->value     => ['from' => '20:00', 'to' => '00:00'],
-            TimeSlot::ASTREINTE->value => ['from' => '00:00', 'to' => '06:00'],
+            TimeSlot::DAY->value => [
+                'from' => '06:00', 'to' => '20:00',
+                'minTime' => '06:00', 'maxTime' => '19:59',
+            ],
+            TimeSlot::NIGHT->value => [
+                'from' => '20:00', 'to' => '00:00',
+                'minTime' => '20:00', 'maxTime' => '23:59',
+            ],
+            TimeSlot::ASTREINTE->value => [
+                'from' => '00:00', 'to' => '06:00',
+                'minTime' => '00:00', 'maxTime' => '05:59',
+            ],
         ];
 
         return $this->render('client/pack-reserver.html.twig', [
