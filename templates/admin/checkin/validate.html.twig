@@ -61,21 +61,117 @@
       </div>
     </div>
 
+    {# ─── ARRIVÉE ────────────────────────────────────────────────── #}
+    <div class="checkin-section-title">
+      <i class="ti ti-user-check"></i> Arrivée du client
+    </div>
     {% if booking.checkinAt %}
-      <div style="background:rgba(46,204,113,.1);border:1px solid rgba(46,204,113,.3);border-radius:var(--radius);padding:16px;text-align:center;">
-        <i class="ti ti-check" style="color:var(--green);font-size:24px;"></i>
-        <div style="font-weight:700;color:var(--green);margin-top:6px;">
-          Déjà validé le {{ booking.checkinAt|date('d/m/Y \\à H\\hi') }}
+      <div class="checkin-arrived">
+        <i class="ti ti-check checkin-arrived-icon"></i>
+        <div class="checkin-arrived-text">
+          <div class="checkin-arrived-title">
+            Validé le {{ booking.checkinAt|date('d/m/Y \\à H\\hi') }}
+          </div>
+          {% if booking.checkinBy %}
+            <div class="checkin-arrived-sub">par {{ booking.checkinBy.nomComplet }}</div>
+          {% endif %}
         </div>
-        {% if booking.checkinBy %}
-          <div style="font-size:13px;color:var(--text-dim);margin-top:4px;">par {{ booking.checkinBy.nomComplet }}</div>
-        {% endif %}
       </div>
     {% else %}
-      <form method="post">
+      <form method="post" action="{{ path('app_admin_checkin_validate', {reference: booking.reference}) }}" class="checkin-arrival-form">
         <input type="hidden" name="_token" value="{{ csrf_token('checkin_' ~ booking.reference) }}">
-        <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;font-size:16px;padding:16px;">
+        <button type="submit" class="checkin-btn checkin-btn--primary">
           <i class="ti ti-check"></i> Valider l'arrivée du client
+        </button>
+      </form>
+    {% endif %}
+
+    {# ─── PAIEMENT ──────────────────────────────────────────────────
+       3 états selon la séance :
+        1. Réglé (paymentMethod posé) → badge, pas de bouton
+        2. Couverte par pack/founding → badge "Rien à encaisser"
+        3. À encaisser → montant + 2 boutons cash/card
+       Cas limite : intent=stripe non encore payé → info "en attente" +
+       possibilité de basculer en encaissement sur place (le client peut
+       changer d'avis au dernier moment). #}
+    {% set methodLabels = {
+      'cash':   'espèces',
+      'card':   'carte bancaire',
+      'stripe': 'en ligne (Stripe)',
+    } %}
+
+    <div class="checkin-section-title" style="margin-top:24px;">
+      <i class="ti ti-cash"></i> Paiement
+    </div>
+
+    {% if booking.paymentMethod %}
+      {# ── État 1 : déjà réglé ── #}
+      <div class="checkin-paid">
+        <i class="ti ti-check checkin-arrived-icon"></i>
+        <div class="checkin-arrived-text">
+          <div class="checkin-arrived-title">
+            Réglé — {{ methodLabels[booking.paymentMethod] ?? booking.paymentMethod }}
+          </div>
+          {% if booking.paymentDeclaredAt %}
+            <div class="checkin-arrived-sub">
+              Enregistré le {{ booking.paymentDeclaredAt|date('d/m/Y \\à H\\hi') }}
+              {%- if booking.paymentDeclaredBy -%}
+                {{ ' ' }}· par {{ booking.paymentDeclaredBy.nomComplet }}
+              {%- endif -%}
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    {% elseif booking.coveredBy == 'founding' %}
+      {# ── État 2a : offre Fondateur ── #}
+      <div class="checkin-covered">
+        <i class="ti ti-crown"></i>
+        <div>
+          <strong>Offre Fondateur</strong>
+          <div class="checkin-covered-sub">Rien à encaisser — séance déjà couverte.</div>
+        </div>
+      </div>
+    {% elseif booking.coveredBy == 'subscription' and booking.subscription %}
+      {# ── État 2b : couverte par un pack ── #}
+      <div class="checkin-covered">
+        <i class="ti ti-package"></i>
+        <div>
+          <strong>Couverte par son pack</strong>
+          <div class="checkin-covered-sub">
+            {{ booking.subscription.packType.label }} — rien à encaisser.
+          </div>
+        </div>
+      </div>
+    {% else %}
+      {# ── État 3 : à encaisser ── #}
+      {% if booking.intendedPaymentMethod == 'stripe' %}
+        <div class="checkin-stripe-pending">
+          <i class="ti ti-clock"></i>
+          <div>
+            <strong>Paiement en ligne annoncé (non reçu)</strong>
+            <div class="checkin-covered-sub">
+              Le client peut aussi régler sur place — les deux boutons ci-dessous sont disponibles.
+            </div>
+          </div>
+        </div>
+      {% endif %}
+
+      <div class="checkin-amount">
+        À encaisser :
+        <strong>{{ booking.prixFormatted }}</strong>
+      </div>
+
+      <form method="post" action="{{ path('app_admin_checkin_declare_payment', {reference: booking.reference}) }}" class="checkin-pay-form"
+            data-confirm-title="Confirme l'encaissement"
+            data-confirm-button="Oui, j'ai encaissé">
+        <input type="hidden" name="_token" value="{{ csrf_token('checkin_pay_' ~ booking.reference) }}">
+        <button type="submit" name="method" value="cash" class="checkin-btn checkin-btn--cash"
+                data-confirm="Confirme que tu as bien encaissé {{ booking.prixFormatted }} en espèces auprès de {{ booking.client.nomComplet }} ?">
+          <i class="ti ti-cash"></i> Encaissé en espèces
+        </button>
+        <button type="submit" name="method" value="card" class="checkin-btn checkin-btn--card"
+                data-confirm="Confirme que tu as bien encaissé {{ booking.prixFormatted }} par carte auprès de {{ booking.client.nomComplet }} ?">
+          <i class="ti ti-credit-card"></i> Encaissé par carte
         </button>
       </form>
     {% endif %}

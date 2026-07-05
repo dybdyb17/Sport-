@@ -2,7 +2,9 @@
 
 namespace App\Controller\Admin;
 
+use App\Entity\Booking;
 use App\Repository\BookingRepository;
+use App\Service\BookingManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -43,24 +45,8 @@ class AdminCheckinController extends AbstractController
             throw $this->createNotFoundException('Réservation introuvable.');
         }
 
-        // Contrôle fin : un coach ne peut valider QUE ses propres séances.
-        // S'applique en GET (affichage) ET en POST (validation effective) — sinon
-        // un coach non assigné pourrait forger la requête POST.
-        //
-        // Comparaison par ID (et PAS par instance via ===) : le projet a
-        // enable_native_lazy_objects activé (PHP 8.4 + Doctrine ORM 3.x), donc
-        // $booking->getCoach()->getUser() peut renvoyer un proxy lazy différent
-        // de $this->getUser() même si c'est le même user en DB. Le === échouait
-        // alors → coach assigné injustement bloqué (cas vécu en prod 23/06).
-        $user            = $this->getUser();
-        $isAdmin         = $this->isGranted('ROLE_ADMIN');
-        $coachUserId     = $booking->getCoach()?->getUser()?->getId();
-        $isAssignedCoach = $coachUserId !== null && $coachUserId === $user?->getId();
-
-        if (!$isAdmin && !$isAssignedCoach) {
-            return $this->render('admin/checkin/forbidden.html.twig', [
-                'booking' => $booking,
-            ], new Response('', Response::HTTP_FORBIDDEN));
+        if (($forbidden = $this->enforceCoachAssigned($booking)) !== null) {
+            return $forbidden;
         }
 
         if ($request->isMethod('POST')) {
@@ -76,5 +62,89 @@ class AdminCheckinController extends AbstractController
         }
 
         return $this->render('admin/checkin/validate.html.twig', ['booking' => $booking]);
+    }
+
+    /**
+     * Encaissement d'une séance directement depuis la page de scan QR.
+     *
+     * Même mécanique métier que CoachController::declarePayment (mêmes règles :
+     * cash/card uniquement, jamais stripe, idempotent, audit) — délègue à
+     * BookingManager::declareOnSitePayment avec source 'checkin_scan' pour
+     * distinguer dans les logs.
+     *
+     * Route et chemin volontairement dérivés de la route de validation existante
+     * (préfixe /admin/checkin/{reference}) pour rester cohérent, avec le même
+     * requirement regex sur la reference (empêche 'pack' ou autre valeur bizarre).
+     */
+    #[Route(
+        '/{reference}/encaisser',
+        name: 'app_admin_checkin_declare_payment',
+        methods: ['POST'],
+        requirements: ['reference' => 'SPT-[A-F0-9]{8}'],
+    )]
+    #[IsGranted('ROLE_COACH')]
+    public function declarePaymentOnScan(
+        string $reference,
+        Request $request,
+        BookingRepository $bookings,
+        BookingManager $bookingManager,
+    ): Response {
+        $booking = $bookings->findOneBy(['reference' => $reference]);
+        if (!$booking) {
+            throw $this->createNotFoundException('Réservation introuvable.');
+        }
+
+        // Même garde coach assigné que la validation (POST peut être forgé sinon)
+        if (($forbidden = $this->enforceCoachAssigned($booking)) !== null) {
+            return $forbidden;
+        }
+
+        if (!$this->isCsrfTokenValid('checkin_pay_'.$booking->getReference(), (string) $request->request->get('_token'))) {
+            $this->addFlash('danger', 'Jeton CSRF invalide.');
+            return $this->redirectToRoute('app_admin_checkin_validate', ['reference' => $reference]);
+        }
+
+        try {
+            /** @var \App\Entity\User $user */
+            $user = $this->getUser();
+            $bookingManager->declareOnSitePayment(
+                $booking,
+                (string) $request->request->get('method'),
+                null,
+                $user,
+                'checkin_scan',
+            );
+            $this->addFlash('success', 'Paiement enregistré.');
+        } catch (\InvalidArgumentException $e) {
+            $this->addFlash('danger', 'Mode de paiement invalide.');
+        } catch (\LogicException $e) {
+            $this->addFlash('info', $e->getMessage());
+        }
+
+        return $this->redirectToRoute('app_admin_checkin_validate', ['reference' => $reference]);
+    }
+
+    /**
+     * Vérifie que le user connecté est admin OU le coach assigné du booking.
+     * Retourne une Response 403 lisible sinon (partagée avec la vue forbidden).
+     *
+     * Comparaison par ID (et PAS par instance via ===) : le projet a
+     * enable_native_lazy_objects activé (PHP 8.4 + Doctrine ORM 3.x), le
+     * proxy lazy peut renvoyer une autre instance du même user en DB.
+     */
+    private function enforceCoachAssigned(Booking $booking): ?Response
+    {
+        $user            = $this->getUser();
+        $isAdmin         = $this->isGranted('ROLE_ADMIN');
+        $coachUserId     = $booking->getCoach()?->getUser()?->getId();
+        $isAssignedCoach = $coachUserId !== null && $coachUserId === $user?->getId();
+
+        if (!$isAdmin && !$isAssignedCoach) {
+            return $this->render('admin/checkin/forbidden.html.twig', [
+                'booking' => $booking,
+            ], new Response('', Response::HTTP_FORBIDDEN));
+        }
+
+        return null;
     }
 }
