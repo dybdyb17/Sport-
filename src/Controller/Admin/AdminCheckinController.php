@@ -4,7 +4,7 @@ namespace App\Controller\Admin;
 
 use App\Entity\Booking;
 use App\Repository\BookingRepository;
-use App\Service\BookingManager;
+use App\Repository\PromoPurchaseRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -65,86 +65,63 @@ class AdminCheckinController extends AbstractController
     }
 
     /**
-     * Encaissement d'une séance directement depuis la page de scan QR.
-     *
-     * Même mécanique métier que CoachController::declarePayment (mêmes règles :
-     * cash/card uniquement, jamais stripe, idempotent, audit) — délègue à
-     * BookingManager::declareOnSitePayment avec source 'checkin_scan' pour
-     * distinguer dans les logs.
-     *
-     * Route et chemin volontairement dérivés de la route de validation existante
-     * (préfixe /admin/checkin/{reference}) pour rester cohérent, avec le même
-     * requirement regex sur la reference (empêche 'pack' ou autre valeur bizarre).
+     * Validation d'une offre promotionnelle payée via lien Instagram.
+     * URL encodée dans le QR promo : /admin/checkin/offre/OFR-XXXXXXXX?token=...
      */
-    #[Route(
-        '/{reference}/encaisser',
-        name: 'app_admin_checkin_declare_payment',
-        methods: ['POST'],
-        requirements: ['reference' => 'SPT-[A-F0-9]{8}'],
-    )]
+    #[Route('/offre/{reference}', name: 'app_admin_promo_checkin_validate', methods: ['GET', 'POST'], requirements: ['reference' => 'OFR-[A-F0-9]{8}'])]
     #[IsGranted('ROLE_COACH')]
-    public function declarePaymentOnScan(
+    public function validatePromoOffer(
         string $reference,
         Request $request,
-        BookingRepository $bookings,
-        BookingManager $bookingManager,
+        PromoPurchaseRepository $purchases,
+        EntityManagerInterface $em,
     ): Response {
-        $booking = $bookings->findOneBy(['reference' => $reference]);
-        if (!$booking) {
-            throw $this->createNotFoundException('Réservation introuvable.');
+        $purchase = $purchases->findOneBy(['reference' => $reference]);
+        if (!$purchase) {
+            throw $this->createNotFoundException('Réservation promotionnelle introuvable.');
         }
 
-        // Même garde coach assigné que la validation (POST peut être forgé sinon)
-        if (($forbidden = $this->enforceCoachAssigned($booking)) !== null) {
-            return $forbidden;
-        }
-
-        if (!$this->isCsrfTokenValid('checkin_pay_'.$booking->getReference(), (string) $request->request->get('_token'))) {
-            $this->addFlash('danger', 'Jeton CSRF invalide.');
-            return $this->redirectToRoute('app_admin_checkin_validate', ['reference' => $reference]);
-        }
-
-        try {
-            /** @var \App\Entity\User $user */
-            $user = $this->getUser();
-            $bookingManager->declareOnSitePayment(
-                $booking,
-                (string) $request->request->get('method'),
-                null,
-                $user,
-                'checkin_scan',
-            );
-            $this->addFlash('success', 'Paiement enregistré.');
-        } catch (\InvalidArgumentException $e) {
-            $this->addFlash('danger', 'Mode de paiement invalide.');
-        } catch (\LogicException $e) {
-            $this->addFlash('info', $e->getMessage());
-        }
-
-        return $this->redirectToRoute('app_admin_checkin_validate', ['reference' => $reference]);
-    }
-
-    /**
-     * Vérifie que le user connecté est admin OU le coach assigné du booking.
-     * Retourne une Response 403 lisible sinon (partagée avec la vue forbidden).
-     *
-     * Comparaison par ID (et PAS par instance via ===) : le projet a
-     * enable_native_lazy_objects activé (PHP 8.4 + Doctrine ORM 3.x), le
-     * proxy lazy peut renvoyer une autre instance du même user en DB.
-     */
-    private function enforceCoachAssigned(Booking $booking): ?Response
-    {
-        $user            = $this->getUser();
-        $isAdmin         = $this->isGranted('ROLE_ADMIN');
-        $coachUserId     = $booking->getCoach()?->getUser()?->getId();
-        $isAssignedCoach = $coachUserId !== null && $coachUserId === $user?->getId();
-
-        if (!$isAdmin && !$isAssignedCoach) {
-            return $this->render('admin/checkin/forbidden.html.twig', [
-                'booking' => $booking,
+        $token = (string) $request->query->get('token');
+        if (!hash_equals($purchase->getQrToken(), $token)) {
+            return $this->render('admin/checkin/promo_validate.html.twig', [
+                'purchase' => $purchase,
+                'tokenValid' => false,
             ], new Response('', Response::HTTP_FORBIDDEN));
         }
 
-        return null;
+        if ($request->isMethod('POST')) {
+            if (!$this->isCsrfTokenValid('promo_checkin_' . $purchase->getReference(), (string) $request->request->get('_token'))) {
+                $this->addFlash('danger', 'Jeton CSRF invalide.');
+                return $this->redirectToRoute('app_admin_promo_checkin_validate', [
+                    'reference' => $reference,
+                    'token' => $token,
+                ]);
+            }
+
+            if (!$purchase->isPaid()) {
+                $this->addFlash('danger', 'Impossible de valider : le paiement Stripe n’est pas confirmé.');
+                return $this->redirectToRoute('app_admin_promo_checkin_validate', [
+                    'reference' => $reference,
+                    'token' => $token,
+                ]);
+            }
+
+            if (!$purchase->isCheckedIn()) {
+                $purchase->setCheckinAt(new \DateTimeImmutable());
+                $purchase->setCheckinBy($this->getUser());
+                $em->flush();
+                $this->addFlash('success', 'Check-in promo validé pour ' . $purchase->getBuyerName());
+            }
+
+            return $this->redirectToRoute('app_admin_promo_checkin_validate', [
+                'reference' => $reference,
+                'token' => $token,
+            ]);
+        }
+
+        return $this->render('admin/checkin/promo_validate.html.twig', [
+            'purchase' => $purchase,
+            'tokenValid' => true,
+        ]);
     }
 }

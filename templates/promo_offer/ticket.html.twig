@@ -11,7 +11,7 @@
       <p class="section-sub" style="font-size:16px;">{{ purchase.offer.title }} · {{ purchase.amountFormatted }}</p>
 
       {% if purchase.qrUnlocked %}
-        <div id="promo-qr" data-ticket-url="{{ url('app_promo_offer_ticket', {reference: purchase.reference}) }}?token={{ purchase.qrToken }}" style="display:flex;justify-content:center;margin:28px 0;"></div>
+        <div id="promo-qr" data-ticket-url="{{ url('app_admin_promo_checkin_validate', {reference: purchase.reference}) }}?token={{ purchase.qrToken }}" style="display:flex;justify-content:center;margin:28px 0;"></div>
         <p style="color:var(--text-soft);line-height:1.7;">Présente ce QR à l'accueil SPORT+. Il prouve que le paiement Stripe est validé.</p>
       {% else %}
         <div class="alert alert-warning">Paiement en cours de vérification. Recharge cette page dans quelques secondes.</div>

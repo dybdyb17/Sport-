@@ -54,6 +54,13 @@ class PromoPurchase
     #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
     private ?\DateTimeImmutable $paidAt = null;
 
+    #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
+    private ?\DateTimeImmutable $checkinAt = null;
+
+    #[ORM\ManyToOne]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
+    private ?User $checkinBy = null;
+
     #[ORM\Column(length: 64, unique: true)]
     private string $qrToken;
 
@@ -89,10 +96,15 @@ class PromoPurchase
     public function setStripePaymentIntentId(?string $id): static { $this->stripePaymentIntentId = $id; return $this; }
     public function getPaidAt(): ?\DateTimeImmutable { return $this->paidAt; }
     public function setPaidAt(?\DateTimeImmutable $paidAt): static { $this->paidAt = $paidAt; return $this; }
+    public function getCheckinAt(): ?\DateTimeImmutable { return $this->checkinAt; }
+    public function setCheckinAt(?\DateTimeImmutable $checkinAt): static { $this->checkinAt = $checkinAt; return $this; }
+    public function getCheckinBy(): ?User { return $this->checkinBy; }
+    public function setCheckinBy(?User $checkinBy): static { $this->checkinBy = $checkinBy; return $this; }
     public function getQrToken(): string { return $this->qrToken; }
     public function getCreatedAt(): \DateTimeImmutable { return $this->createdAt; }
     public function isPaid(): bool { return $this->status === self::STATUS_PAID && $this->paidAt !== null; }
     public function isQrUnlocked(): bool { return $this->isPaid(); }
+    public function isCheckedIn(): bool { return $this->checkinAt !== null; }
 
     public function getAmountFormatted(): string
     {

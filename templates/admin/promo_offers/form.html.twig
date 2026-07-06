@@ -60,4 +60,54 @@
   </div>
   <button class="btn btn-primary btn-lg" type="submit"><i class="ti ti-device-floppy"></i> Enregistrer l’offre</button>
 </form>
+
+{% if offer.id %}
+  <div class="data-table-card" style="margin-top:28px;max-width:1100px;">
+    <div class="data-table-header">
+      <h3>Achats & check-ins</h3>
+      <p class="page-subtitle" style="margin:0;">Cette liste se met à jour après le scan du QR par le coach.</p>
+    </div>
+
+    {% if offer.purchases is empty %}
+      <div class="empty-placeholder" style="padding:36px;text-align:center;">Aucun achat pour cette offre.</div>
+    {% else %}
+      <table>
+        <thead>
+          <tr>
+            <th>Référence</th>
+            <th>Client</th>
+            <th>Paiement</th>
+            <th>Check-in</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for purchase in offer.purchases %}
+            <tr>
+              <td style="font-family:'Barlow Condensed',sans-serif;font-weight:800;letter-spacing:1px;">{{ purchase.reference }}</td>
+              <td>
+                <strong style="color:var(--white);">{{ purchase.buyerName }}</strong>
+                <div style="font-size:12px;color:var(--text-dim);overflow-wrap:anywhere;">{{ purchase.buyerEmail }}</div>
+              </td>
+              <td>
+                <span class="status-badge {{ purchase.paid ? 'confirmed' : 'pending' }}">{{ purchase.paid ? 'Payé' : 'En attente' }}</span>
+                <div style="font-size:12px;color:var(--text-dim);margin-top:4px;">{{ purchase.paidAt ? purchase.paidAt|date('d/m/Y H:i') : '—' }}</div>
+              </td>
+              <td>
+                {% if purchase.checkedIn %}
+                  <span class="status-badge confirmed">Validé</span>
+                  <div style="font-size:12px;color:var(--text-dim);margin-top:4px;">
+                    {{ purchase.checkinAt|date('d/m/Y H:i') }}{% if purchase.checkinBy %} · {{ purchase.checkinBy.nomComplet }}{% endif %}
+                  </div>
+                {% else %}
+                  <span class="status-badge pending">Pas encore scanné</span>
+                {% endif %}
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% endif %}
+  </div>
+{% endif %}
+
 {% endblock %}
