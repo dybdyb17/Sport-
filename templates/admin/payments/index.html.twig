@@ -1,95 +1,219 @@
 {% extends 'admin/base.html.twig' %}
 
+{% block title %}Paiements — Admin SPORT+{% endblock %}
+
+{#
+  Macro dropdown réutilisable. Génère le markup ui-dropdown avec les hrefs
+  qui conservent les autres query params (marge des filtres).
+  - param     : nom du query param à modifier (ex: 'method')
+  - eyebrow   : label gris fin (ex: "Méthode")
+  - current   : valeur actuelle du filtre (ex: 'all')
+  - options   : tableau {value, label, icon}
+  - align     : 'left' (défaut) ou 'right'
+#}
+{% macro filterDropdown(param, eyebrow, current, options, align = 'left') %}
+  {% set currentLabel = 'Toutes' %}
+  {% for o in options %}
+    {% if o.value == current %}{% set currentLabel = o.label %}{% endif %}
+  {% endfor %}
+  <div class="ui-dropdown"
+       data-dropdown
+       {% if align == 'right' %}data-dropdown-align="right"{% endif %}>
+    <button type="button" class="ui-dropdown-trigger"
+            aria-haspopup="listbox" aria-expanded="false">
+      <span class="ui-dropdown-eyebrow">{{ eyebrow }}</span>
+      <span class="ui-dropdown-current">{{ currentLabel }}</span>
+      <i class="ti ti-chevron-down ui-dropdown-caret" aria-hidden="true"></i>
+    </button>
+    <div class="ui-dropdown-panel" role="listbox">
+      {% for o in options %}
+        {% set qs = app.request.query.all|merge({(param): o.value}) %}
+        <a href="{{ path('app_admin_payments', qs) }}"
+           class="ui-dropdown-option{{ o.value == current ? ' is-active' : '' }}"
+           data-value="{{ o.value }}"
+           role="option"
+           aria-selected="{{ o.value == current ? 'true' : 'false' }}">
+          <i class="ti {{ o.icon|default('ti-point') }} ui-dropdown-option-icon" aria-hidden="true"></i>
+          <span class="ui-dropdown-option-label">{{ o.label }}</span>
+          <i class="ti ti-check ui-dropdown-option-check" aria-hidden="true"></i>
+        </a>
+      {% endfor %}
+    </div>
+  </div>
+{% endmacro %}
+
+{% import _self as ui %}
+
+{% set typeOptions = [
+  {value: 'all',       label: 'Tous les types',  icon: 'ti-list'},
+  {value: 'seance',    label: 'Séances',          icon: 'ti-run'},
+  {value: 'pack',      label: 'Packs',            icon: 'ti-calendar-stats'},
+  {value: 'fondateur', label: 'Fondateur',        icon: 'ti-crown'},
+] %}
+{% set methodOptions = [
+  {value: 'all',    label: 'Toutes',    icon: 'ti-wallet'},
+  {value: 'stripe', label: 'Stripe',    icon: 'ti-lock'},
+  {value: 'cash',   label: 'Espèces',   icon: 'ti-cash'},
+  {value: 'card',   label: 'CB',        icon: 'ti-credit-card'},
+] %}
+{% set statusOptions = [
+  {value: 'all',     label: 'Tout',           icon: 'ti-adjustments-horizontal'},
+  {value: 'paid',    label: 'Réglés',         icon: 'ti-check'},
+  {value: 'pending', label: 'À encaisser',    icon: 'ti-hourglass'},
+] %}
+{% set coachOptions = [{value: 'all', label: 'Tous les coachs', icon: 'ti-users'}] %}
+{% for c in coachList %}
+  {% set coachOptions = coachOptions|merge([{
+    value: c.id,
+    label: c.nomComplet ?? '—',
+    icon: 'ti-user'
+  }]) %}
+{% endfor %}
+{% set periodDropdownOptions = [] %}
+{% for p in periodOptions %}
+  {% set periodDropdownOptions = periodDropdownOptions|merge([{
+    value: p.key,
+    label: p.label,
+    icon: p.key == 'current' ? 'ti-calendar-event' : (p.key == 'all' ? 'ti-history' : 'ti-calendar')
+  }]) %}
+{% endfor %}
+
+{% set currentCoach = filters.coachId is null ? 'all' : filters.coachId %}
+
 {% block admin_body %}
-<div class="page-header">
-  <div>
-    <h1><span style="color:var(--gold)">Paiements</span></h1>
-    <p class="page-subtitle">Suivi des paiements déclarés par les coachs — anti-magouille.</p>
+<div class="ap-page">
+
+  <div class="ap-header">
+    <div>
+      <h1 class="ap-title">
+        <i class="ti ti-cash-banknote"></i>
+        <span>Paiements</span>
+      </h1>
+      <p class="ap-subtitle">Journal unifié des encaissements — séances, packs, offres Fondateur.</p>
+    </div>
+    <div class="ap-header-period">
+      {{ ui.filterDropdown('period', 'Période', filters.periodKey, periodDropdownOptions, 'right') }}
+    </div>
   </div>
-</div>
 
-{# ── RÉCAP PAR COACH ── #}
-{% if statsByCoach|length > 0 %}
-  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;margin-bottom:32px;">
-    {% for st in statsByCoach %}
-      <div class="form-card" style="padding:20px;">
-        <div style="font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:800;color:var(--white);margin-bottom:12px;">{{ st.name }}</div>
-        <div style="font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:900;color:var(--gold);margin-bottom:12px;">{{ st.total|number_format(2, ',', ' ') }} €</div>
-        <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;font-size:13px;">
-          <div><span style="color:var(--text-dim);"><i class="ti ti-cash"></i> Espèces</span> <strong style="color:var(--white);">{{ st.cash|number_format(2, ',', ' ') }} €</strong></div>
-          <div><span style="color:var(--text-dim);"><i class="ti ti-credit-card"></i> CB</span> <strong style="color:var(--white);">{{ st.card|number_format(2, ',', ' ') }} €</strong></div>
-          <div><span style="color:var(--text-dim);"><i class="ti ti-lock" style="color:var(--green);"></i> Stripe</span> <strong style="color:var(--white);">{{ st.stripe|number_format(2, ',', ' ') }} €</strong></div>
-          <div><span style="color:#ff9966;"><i class="ti ti-alert-triangle"></i> À déclarer</span> <strong style="color:#ff9966;">{{ st.pending|number_format(2, ',', ' ') }} €</strong></div>
-        </div>
-      </div>
-    {% endfor %}
+  {# ── 4 CARTES COMPTEURS ─────────────────────────────────────────── #}
+  <div class="ap-metrics">
+    <div class="ap-metric">
+      <div class="ap-metric-eyebrow">Total encaissé</div>
+      <div class="ap-metric-value">{{ totals.total|number_format(2, ',', ' ') }} €</div>
+      <div class="ap-metric-hint">Sur la période sélectionnée</div>
+    </div>
+    <div class="ap-metric">
+      <div class="ap-metric-eyebrow"><i class="ti ti-lock"></i> En ligne (Stripe)</div>
+      <div class="ap-metric-value">{{ totals.stripe|number_format(2, ',', ' ') }} €</div>
+      <div class="ap-metric-hint">Paiements automatiques</div>
+    </div>
+    <div class="ap-metric">
+      <div class="ap-metric-eyebrow"><i class="ti ti-cash"></i> Sur place</div>
+      <div class="ap-metric-value">{{ totals.onSite|number_format(2, ',', ' ') }} €</div>
+      <div class="ap-metric-hint">Espèces + CB déclarés</div>
+    </div>
+    <div class="ap-metric ap-metric--pending">
+      <div class="ap-metric-eyebrow"><i class="ti ti-hourglass"></i> À encaisser</div>
+      <div class="ap-metric-value">{{ totals.pending|number_format(2, ',', ' ') }} €</div>
+      <div class="ap-metric-hint">Séances confirmées et packs sur place en attente</div>
+    </div>
   </div>
-{% endif %}
 
-<div class="filter-bar">
-  <a href="{{ path('app_admin_payments') }}" class="btn btn-sm {{ methodFilter is null ? 'btn-primary' : 'btn-secondary' }}">Tous</a>
-  <a href="{{ path('app_admin_payments', {method: 'pending'}) }}" class="btn btn-sm {{ methodFilter == 'pending' ? 'btn-primary' : 'btn-secondary' }}"><i class="ti ti-alert-triangle"></i> Non déclarés</a>
-  <a href="{{ path('app_admin_payments', {method: 'cash'}) }}" class="btn btn-sm {{ methodFilter == 'cash' ? 'btn-primary' : 'btn-secondary' }}"><i class="ti ti-cash"></i> Espèces</a>
-  <a href="{{ path('app_admin_payments', {method: 'card'}) }}" class="btn btn-sm {{ methodFilter == 'card' ? 'btn-primary' : 'btn-secondary' }}"><i class="ti ti-credit-card"></i> CB</a>
-  <a href="{{ path('app_admin_payments', {method: 'stripe'}) }}" class="btn btn-sm {{ methodFilter == 'stripe' ? 'btn-primary' : 'btn-secondary' }}"><i class="ti ti-lock"></i> Stripe</a>
-</div>
+  {# ── BARRE DE FILTRES ───────────────────────────────────────────── #}
+  <div class="ap-filterbar">
+    <div class="ap-filterbar-filters">
+      {{ ui.filterDropdown('type',   'Type',    filters.type,   typeOptions) }}
+      {{ ui.filterDropdown('method', 'Méthode', filters.method, methodOptions) }}
+      {{ ui.filterDropdown('status', 'Statut',  filters.status, statusOptions) }}
+      {{ ui.filterDropdown('coach',  'Coach',   currentCoach,   coachOptions) }}
+    </div>
+    <a href="{{ path('app_admin_payments_export', app.request.query.all) }}"
+       class="ap-export-btn" title="Export CSV de la vue actuelle">
+      <i class="ti ti-file-download"></i>
+      <span>Export CSV</span>
+    </a>
+  </div>
 
-<div class="data-table-card">
-  <div class="data-table-header"><h3>Toutes les séances confirmées</h3></div>
-  {% if rows is empty %}
-    <div class="empty-placeholder" style="padding:60px;text-align:center;">Aucun résultat.</div>
+  {# ── TABLE JOURNAL ──────────────────────────────────────────────── #}
+  {% if events is empty %}
+    <div class="ap-empty">
+      <i class="ti ti-inbox"></i>
+      <div class="ap-empty-title">Aucun paiement sur cette période</div>
+      <div class="ap-empty-sub">Change de mois ou de filtre pour voir plus.</div>
+    </div>
   {% else %}
-    <table>
-      <thead>
-        <tr>
-          <th>Réf.</th>
-          <th>Date</th>
-          <th>Client</th>
-          <th>Coach</th>
-          <th>Montant</th>
-          <th>Paiement</th>
-          <th>Check-in</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for b in rows %}
-          <tr data-peek-ref="{{ b.reference }}" class="row-peek">
-            <td style="font-family:'Barlow Condensed',sans-serif;letter-spacing:1.5px;color:var(--gold);font-weight:700;">{{ b.reference }}</td>
-            <td style="color:var(--text-dim);">{{ b.startAt|date('d/m/Y H\\hi') }}</td>
-            <td style="color:var(--text-dim);">{{ b.client.nomComplet }}</td>
-            <td style="color:var(--text-dim);">{{ b.coach.nomComplet }}</td>
-            <td style="color:var(--gold);font-family:'Barlow Condensed',sans-serif;font-weight:700;">
-              {{ b.prixFormatted }}
-              {% if b.coveredBy == 'founding' %}<br><span style="font-size:10px;color:var(--gold);font-weight:600;letter-spacing:1px;">FONDATEUR</span>{% endif %}
-              {% if b.coveredBy == 'subscription' and b.subscription %}<br><span style="font-size:10px;color:var(--green);font-weight:600;letter-spacing:1px;">VIA {{ b.subscription.packType.label|upper }}</span>{% endif %}
-            </td>
-            <td>
-              {% if b.noShow %}
-                <span style="color:#ff6b6b;font-weight:700;"><i class="ti ti-user-x"></i> Client absent</span>
-                <div style="font-size:11px;color:#ff8a8a;margin-top:2px;">Frais à facturer : <strong>{{ b.noShowFee }} €</strong></div>
-                <div style="font-size:11px;color:var(--text-dim);">Marqué le {{ b.noShowMarkedAt|date('d/m H\\hi') }}</div>
-              {% elseif b.paymentMethod == 'cash' %}
-                <span><i class="ti ti-cash"></i> Espèces</span><div style="font-size:11px;color:var(--text-dim);">{{ b.paymentDeclaredAt|date('d/m H\\hi') }}</div>
-              {% elseif b.paymentMethod == 'card' %}
-                <span><i class="ti ti-credit-card"></i> CB</span><div style="font-size:11px;color:var(--text-dim);">{{ b.paymentDeclaredAt|date('d/m H\\hi') }}</div>
-              {% elseif b.paymentMethod == 'stripe' %}
-                <span style="color:var(--green);"><i class="ti ti-lock"></i> Stripe</span><div style="font-size:11px;color:var(--text-dim);">{{ b.paymentDeclaredAt|date('d/m H\\hi') }}</div>
-              {% else %}
-                <span style="color:#ff9966;"><i class="ti ti-alert-triangle"></i> Non déclaré</span>
+    <div class="ap-journal">
+      <div class="ap-journal-head">
+        <div>Date</div>
+        <div>Type</div>
+        <div>Détail</div>
+        <div>Méthode</div>
+        <div class="ap-align-right">Montant</div>
+      </div>
+      {% for e in events %}
+        {% set typeBadge = {
+          'seance':    {label: 'Séance',    className: 'ap-badge--seance'},
+          'pack':      {label: 'Pack',      className: 'ap-badge--pack'},
+          'fondateur': {label: 'Fondateur', className: 'ap-badge--fondateur'},
+        } %}
+        {% set methodDisplay = {
+          'stripe': {label: 'Stripe',  icon: 'ti-lock'},
+          'cash':   {label: 'Espèces', icon: 'ti-cash'},
+          'card':   {label: 'CB',      icon: 'ti-credit-card'},
+        } %}
+        <div class="ap-journal-row{{ e.pending ? ' is-pending' : '' }}">
+          <div class="ap-cell ap-cell-date" data-label="Date">
+            {{ e.paidAt|date('d/m H:i') }}
+          </div>
+          <div class="ap-cell ap-cell-type" data-label="Type">
+            <span class="ap-badge {{ typeBadge[e.type].className }}">{{ typeBadge[e.type].label }}</span>
+          </div>
+          <div class="ap-cell ap-cell-detail" data-label="Détail">
+            <div class="ap-client">{{ e.clientName }}</div>
+            <div class="ap-detail">{{ e.detail }}</div>
+          </div>
+          <div class="ap-cell ap-cell-method" data-label="Méthode">
+            {% if e.pending %}
+              <span class="ap-pending-badge">
+                <i class="ti ti-hourglass"></i>
+                {{ e.pendingLabel|default('À encaisser') }}
+              </span>
+              {% if e.method and methodDisplay[e.method] %}
+                <div class="ap-method-hint">
+                  <i class="ti {{ methodDisplay[e.method].icon }}"></i>
+                  intention : {{ methodDisplay[e.method].label }}
+                </div>
               {% endif %}
-            </td>
-            <td>
-              {% if b.checkinAt %}
-                <i class="ti ti-check" style="color:var(--green);"></i>
-                <span style="font-size:12px;color:var(--text-dim);">{{ b.checkinAt|date('d/m H\\hi') }}</span>
-              {% else %}
-                <span style="color:var(--text-dim);">—</span>
+            {% else %}
+              {% set md = methodDisplay[e.method] %}
+              <div class="ap-method">
+                <i class="ti {{ md.icon }}"></i>
+                <span>{{ md.label }}</span>
+                {% if e.stripeUrl %}
+                  <a href="{{ e.stripeUrl }}" target="_blank" rel="noopener"
+                     class="ap-stripe-link" title="Voir le paiement Stripe">
+                    <i class="ti ti-external-link"></i>
+                  </a>
+                {% endif %}
+              </div>
+              {% if e.canal or e.validatedBy %}
+                <div class="ap-method-hint">
+                  {% if e.canal %}· {{ e.canal }}{% endif %}
+                  {%- if e.validatedBy %}{% if e.canal %} {% endif %}· validé {{ e.validatedBy }}{% endif -%}
+                </div>
               {% endif %}
-            </td>
-          </tr>
-        {% endfor %}
-      </tbody>
-    </table>
+            {% endif %}
+          </div>
+          <div class="ap-cell ap-cell-amount ap-align-right" data-label="Montant">
+            {{ e.amount|number_format(2, ',', ' ') }} €
+          </div>
+        </div>
+      {% endfor %}
+    </div>
   {% endif %}
+
 </div>
+
+<script src="{{ asset('js/ui-dropdown.js') }}" defer></script>
 {% endblock %}

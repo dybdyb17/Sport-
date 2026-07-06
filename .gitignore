@@ -14,3 +14,5 @@
 /assets/vendor/
 ###< symfony/asset-mapper ###
 .idea/
+.claude/
+.DS_Store

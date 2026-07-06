@@ -1152,3 +1152,175 @@
     grid-template-columns: 1fr;       /* mobile : tout en colonne */
   }
 }
+
+/* ── PAGE CHECKIN QR (scan tout-en-un : arrivée + encaissement) ─────
+   Optimisée mobile (le coach scanne avec son tel) — gros boutons,
+   pas de tableau, styles compacts. */
+.checkin-section-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  color: var(--gold);
+  text-transform: uppercase;
+  margin-bottom: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.checkin-section-title i { color: var(--gold-dim); }
+
+/* État "validé" (arrivée ET paiement) — même carte verte, réutilisée */
+.checkin-arrived,
+.checkin-paid {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px;
+  background: rgba(46,204,113,.10);
+  border: 1px solid rgba(46,204,113,.30);
+  border-left: 3px solid var(--green);
+  border-radius: 12px;
+  margin-bottom: 4px;
+}
+.checkin-arrived-icon {
+  color: var(--green);
+  font-size: 28px;
+  flex-shrink: 0;
+}
+.checkin-arrived-text { flex: 1; min-width: 0; }
+.checkin-arrived-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--green);
+  line-height: 1.2;
+}
+.checkin-arrived-sub {
+  font-size: 12.5px;
+  color: var(--text-dim);
+  margin-top: 3px;
+}
+
+/* Séance déjà couverte (pack ou Fondateur) — pas d'encaissement */
+.checkin-covered {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px 16px;
+  background: rgba(200,169,81,.06);
+  border: 1px solid rgba(200,169,81,.25);
+  border-left: 3px solid var(--gold-dim);
+  border-radius: 12px;
+}
+.checkin-covered i {
+  color: var(--gold);
+  font-size: 22px;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.checkin-covered strong {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 800;
+  color: var(--white);
+  font-size: 15px;
+  letter-spacing: .3px;
+  text-transform: uppercase;
+}
+.checkin-covered-sub {
+  font-size: 13px;
+  color: var(--text-soft);
+  margin-top: 2px;
+}
+
+/* Cas limite : intent=stripe non payé, on propose quand même sur place */
+.checkin-stripe-pending {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 14px;
+  margin-bottom: 12px;
+  background: rgba(255, 180, 80, .08);
+  border: 1px dashed rgba(255, 180, 80, .35);
+  border-radius: 10px;
+  font-size: 13px;
+  color: var(--text-soft);
+}
+.checkin-stripe-pending i {
+  color: #ffb450;
+  font-size: 20px;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.checkin-stripe-pending strong {
+  color: var(--white);
+  font-weight: 700;
+}
+
+/* Montant à encaisser — bien visible avant les 2 boutons */
+.checkin-amount {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 14px 16px;
+  margin-bottom: 12px;
+  background: rgba(0,0,0,.25);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  font-size: 14px;
+  color: var(--text-dim);
+}
+.checkin-amount strong {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 24px;
+  font-weight: 900;
+  color: var(--gold);
+}
+
+/* Boutons d'encaissement — full width, empilables, gros sur mobile */
+.checkin-pay-form,
+.checkin-arrival-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 0;
+}
+.checkin-btn {
+  width: 100%;
+  padding: 15px 18px;
+  border: none;
+  border-radius: 100px;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: transform .15s ease, box-shadow .15s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.checkin-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px rgba(0,0,0,.35);
+}
+.checkin-btn--primary {
+  background: linear-gradient(135deg, var(--gold), var(--gold-dim));
+  color: #000;
+}
+.checkin-btn--cash {
+  background: linear-gradient(135deg, var(--green), rgba(46,204,113,.85));
+  color: #000;
+}
+.checkin-btn--card {
+  background: rgba(255,255,255,.06);
+  color: var(--white);
+  border: 1px solid var(--border);
+}
+.checkin-btn--card:hover {
+  border-color: var(--gold);
+  background: rgba(200,169,81,.08);
+  color: var(--gold);
+}
