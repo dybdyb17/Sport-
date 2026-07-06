@@ -475,9 +475,12 @@
 
   // Important mobile : la modale doit être en racine du body.
   // Sinon un parent de page peut limiter le position:fixed et laisser le header passer devant.
-  if (modal && modal.parentElement !== document.body) {
-    document.body.appendChild(modal);
+  function ensureModalRoot() {
+    if (modal && modal.parentElement !== document.body) {
+      document.body.appendChild(modal);
+    }
   }
+  ensureModalRoot();
 
   function animateNumber(el, target, duration) {
     var start    = 0;
@@ -522,8 +525,10 @@
         modalFeat.appendChild(li);
       });
 
+      ensureModalRoot();
       modal.classList.add('is-open');
       modal.setAttribute('aria-hidden', 'false');
+      document.body.classList.add('formule-modal-open');
       document.body.style.overflow = 'hidden';
 
       // Anime le prix avec délai pour que ça apparaisse après l'entrée
@@ -535,6 +540,7 @@
   window.closeFormuleModal = function() {
     modal.classList.remove('is-open');
     modal.setAttribute('aria-hidden', 'true');
+    document.body.classList.remove('formule-modal-open');
     document.body.style.overflow = '';
     setTimeout(function() { modalImg.src = ''; }, 300);
   };
