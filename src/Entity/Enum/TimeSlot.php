@@ -8,15 +8,6 @@ enum TimeSlot: string
     case NIGHT     = 'night';     // 20h-minuit
     case ASTREINTE = 'astreinte'; // minuit-6h
 
-    public function multiplier(): float
-    {
-        return match ($this) {
-            self::DAY       => 1.0,
-            self::NIGHT     => 1.40,
-            self::ASTREINTE => 1.80,
-        };
-    }
-
     public function label(): string
     {
         return match ($this) {
