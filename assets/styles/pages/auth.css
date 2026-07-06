@@ -2,19 +2,25 @@
 .auth-layout {
   display: grid;
   grid-template-columns: 1fr 1fr;
+  width: 100%;
+  max-width: 100%;
   min-height: 100vh;
+  overflow-x: hidden;
 }
 
 .auth-panel {
   display: flex;
   align-items: center;
   justify-content: center;
+  width: 100%;
+  min-width: 0;
   padding: 60px 40px;
 }
 
 .auth-form-box {
   width: 100%;
   max-width: 440px;
+  min-width: 0;
 }
 
 .auth-visual {
@@ -157,6 +163,11 @@
   margin-bottom: 32px;
 }
 
+.auth-sub strong {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
 .auth-link {
   margin-top: 24px;
   text-align: center;
@@ -171,4 +182,47 @@
 
 .auth-link a:hover {
   text-decoration: underline;
+}
+
+
+@media (max-width: 640px) {
+  .auth-layout {
+    grid-template-columns: minmax(0, 1fr);
+    min-height: calc(100dvh - 78px);
+  }
+
+  .auth-panel {
+    align-items: flex-start;
+    padding: clamp(44px, 12vw, 72px) 20px 56px;
+  }
+
+  .auth-form-box {
+    max-width: none;
+  }
+
+  .auth-title {
+    font-size: clamp(36px, 13vw, 58px);
+    line-height: .96;
+    overflow-wrap: anywhere;
+  }
+
+  .auth-sub {
+    font-size: 15px;
+    line-height: 1.55;
+    margin-bottom: 28px;
+  }
+
+  .auth-form-box .btn-full {
+    white-space: normal;
+    min-height: 56px;
+    line-height: 1.25;
+    text-align: center;
+  }
+}
+
+@media (max-width: 380px) {
+  .auth-panel {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
 }

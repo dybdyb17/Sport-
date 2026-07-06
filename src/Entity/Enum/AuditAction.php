@@ -46,6 +46,40 @@ enum AuditAction: string
         };
     }
 
+
+    public function icon(): string
+    {
+        return match ($this) {
+            self::BOOKING_CREATED         => 'ti-calendar-plus',
+            self::BOOKING_CONFIRMED       => 'ti-calendar-check',
+            self::BOOKING_REFUSED         => 'ti-calendar-x',
+            self::BOOKING_CANCELLED       => 'ti-calendar-off',
+            self::PAYMENT_DECLARED        => 'ti-cash-banknote',
+            self::PAYMENT_CONFIRMED       => 'ti-circle-check',
+            self::PAYMENT_DISPUTED        => 'ti-alert-octagon',
+            self::NO_SHOW_MARKED          => 'ti-user-x',
+            self::ROLE_GRANTED            => 'ti-shield-plus',
+            self::ROLE_REVOKED            => 'ti-shield-minus',
+            self::USER_DELETED            => 'ti-user-x',
+            self::ADMIN_PRICE_OVERRIDE    => 'ti-pencil-dollar',
+            self::FOUNDING_BILAN_DONE     => 'ti-clipboard-check',
+            self::ADMIN_IMPERSONATE       => 'ti-user-scan',
+            self::ADMIN_LEAVE_IMPERSONATE => 'ti-logout',
+        };
+    }
+
+    public function color(): string
+    {
+        return match ($this) {
+            self::PAYMENT_CONFIRMED, self::PAYMENT_DECLARED, self::BOOKING_CONFIRMED, self::FOUNDING_BILAN_DONE => '#2ecc71',
+            self::PAYMENT_DISPUTED, self::NO_SHOW_MARKED, self::BOOKING_REFUSED, self::BOOKING_CANCELLED, self::USER_DELETED => '#ff6b6b',
+            self::ADMIN_IMPERSONATE => '#a78bfa',
+            self::ADMIN_LEAVE_IMPERSONATE => '#60a5fa',
+            self::ROLE_GRANTED, self::ROLE_REVOKED, self::ADMIN_PRICE_OVERRIDE => '#ffd166',
+            default => '#d7d7df',
+        };
+    }
+
     /** Niveau de criticité affiché dans l'UI admin. */
     public function severity(): string
     {
