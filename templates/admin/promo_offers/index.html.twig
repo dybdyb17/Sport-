@@ -37,11 +37,19 @@
             <td>
               <span class="status-badge {{ offer.status == 'active' ? 'confirmed' : (offer.status == 'draft' ? 'pending' : 'cancelled') }}">{{ offer.status }}</span>
             </td>
-            <td style="color:var(--text-dim);">{{ offer.paidPurchasesCount }}{% if offer.maxQuantity %} / {{ offer.maxQuantity }}{% endif %}</td>
+            <td>
+              <div style="color:var(--text-soft);font-weight:800;">{{ offer.paidPurchasesCount }}{% if offer.maxQuantity %} / {{ offer.maxQuantity }}{% endif %} vente{{ offer.paidPurchasesCount > 1 ? 's' : '' }}</div>
+              <div style="font-size:12px;color:var(--text-dim);margin-top:4px;">{{ offer.checkedInPurchasesCount }} check-in{{ offer.checkedInPurchasesCount > 1 ? 's' : '' }}</div>
+            </td>
             <td>
               <input value="{{ publicUrl }}" readonly onclick="this.select();navigator.clipboard && navigator.clipboard.writeText(this.value);" style="width:100%;max-width:420px;background:var(--bg-2);border:1px solid var(--border);color:var(--text-soft);border-radius:8px;padding:8px;font-size:12px;">
             </td>
-            <td><a href="{{ path('app_admin_promo_offer_edit', {id: offer.id}) }}" class="btn btn-secondary btn-sm"><i class="ti ti-edit"></i> Modifier</a></td>
+            <td>
+              <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;">
+                <a href="{{ path('app_admin_promo_offer_edit', {id: offer.id}) }}#achats-checkins" class="btn btn-primary btn-sm"><i class="ti ti-list-check"></i> Achats</a>
+                <a href="{{ path('app_admin_promo_offer_edit', {id: offer.id}) }}" class="btn btn-secondary btn-sm"><i class="ti ti-edit"></i> Modifier</a>
+              </div>
+            </td>
           </tr>
         {% endfor %}
       </tbody>

@@ -102,6 +102,11 @@ class PromoOffer
         return $this->purchases->filter(static fn (PromoPurchase $purchase): bool => $purchase->isPaid())->count();
     }
 
+    public function checkedInPurchasesCount(): int
+    {
+        return $this->purchases->filter(static fn (PromoPurchase $purchase): bool => $purchase->isCheckedIn())->count();
+    }
+
     public function hasPlacesLeft(): bool
     {
         return $this->maxQuantity === null || $this->paidPurchasesCount() < $this->maxQuantity;
