@@ -1,0 +1,42 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Réservation {{ purchase.reference }} — SPORT+{% endblock %}
+
+{% block body %}
+<section class="section">
+  <div class="container" style="max-width:640px;">
+    <div class="form-card" style="padding:28px;text-align:center;">
+      <div class="hero-badge">Paiement validé</div>
+      <h1 class="section-title" style="font-size:44px;margin-bottom:10px;">Ton QR est prêt</h1>
+      <p class="section-sub" style="font-size:16px;">{{ purchase.offer.title }} · {{ purchase.amountFormatted }}</p>
+
+      {% if purchase.qrUnlocked %}
+        <div id="promo-qr" data-ticket-url="{{ url('app_promo_offer_ticket', {reference: purchase.reference}) }}?token={{ purchase.qrToken }}" style="display:flex;justify-content:center;margin:28px 0;"></div>
+        <p style="color:var(--text-soft);line-height:1.7;">Présente ce QR à l'accueil SPORT+. Il prouve que le paiement Stripe est validé.</p>
+      {% else %}
+        <div class="alert alert-warning">Paiement en cours de vérification. Recharge cette page dans quelques secondes.</div>
+      {% endif %}
+
+      <div style="margin-top:24px;text-align:left;border-top:1px solid var(--border);padding-top:18px;color:var(--text-dim);font-size:14px;line-height:1.8;">
+        <div><strong style="color:var(--white);">Référence :</strong> {{ purchase.reference }}</div>
+        <div><strong style="color:var(--white);">Nom :</strong> {{ purchase.buyerName }}</div>
+        <div><strong style="color:var(--white);">Email :</strong> {{ purchase.buyerEmail }}</div>
+        <div><strong style="color:var(--white);">Payé le :</strong> {{ purchase.paidAt ? purchase.paidAt|date('d/m/Y à H\\hi') : '—' }}</div>
+      </div>
+    </div>
+  </div>
+</section>
+{% if purchase.qrUnlocked %}
+  <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
+  <script>
+    (function() {
+      var wrap = document.getElementById('promo-qr');
+      if (!wrap || typeof qrcode === 'undefined') return;
+      var qr = qrcode(0, 'M');
+      qr.addData(wrap.dataset.ticketUrl);
+      qr.make();
+      wrap.innerHTML = qr.createImgTag(6, 8);
+    })();
+  </script>
+{% endif %}
+{% endblock %}

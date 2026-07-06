@@ -262,10 +262,10 @@ class ClientController extends AbstractController
             $actualSlot   = TimeSlot::fromDateTime($startAt);
             if ($actualSlot !== $expectedSlot) {
                 $this->addFlash('error', sprintf(
-                    'L\'heure choisie tombe sur le créneau %s, alors que ton pack est %s. Choisis une heure dans la plage %s.',
-                    strtolower($actualSlot->label()),
-                    strtolower($expectedSlot->label()),
-                    $expectedSlot->label(),
+                    'Ton pack %s permet de réserver uniquement entre %s et %s.',
+                    $expectedSlot->shortLabel(),
+                    $expectedSlot->bookingWindowStartLabel(),
+                    $expectedSlot->bookingWindowEndLabel(),
                 ));
                 return $this->redirectToRoute('app_pack_booking_new', ['id' => $id]);
             }
