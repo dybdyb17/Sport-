@@ -211,10 +211,16 @@
 .bk-grid-4 { grid-template-columns: repeat(4, 1fr); }
 
 @media (max-width: 800px) {
-  .bk-choice-grid,
-  .bk-grid-4 { grid-template-columns: repeat(2, 1fr); }
+  /* Tablette portrait : les étapes à 3 choix restent sur une ligne.
+     Avant, le breakpoint passait en 2 colonnes à 768px et la 3e carte
+     tombait seule à gauche, ce qui déséquilibrait la page réservation. */
+  .bk-choice-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .bk-grid-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
-@media (max-width: 480px) {
+@media (max-width: 700px) {
+  .bk-choice-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 520px) {
   .bk-choice-grid,
   .bk-grid-4 { grid-template-columns: 1fr; }
 }

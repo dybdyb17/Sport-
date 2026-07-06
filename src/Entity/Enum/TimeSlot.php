@@ -26,6 +26,33 @@ enum TimeSlot: string
         };
     }
 
+    public function shortLabel(): string
+    {
+        return match ($this) {
+            self::DAY       => 'Journée',
+            self::NIGHT     => 'Night Coach',
+            self::ASTREINTE => 'Astreinte',
+        };
+    }
+
+    public function bookingWindowStartLabel(): string
+    {
+        return match ($this) {
+            self::DAY       => '06h00',
+            self::NIGHT     => '20h00',
+            self::ASTREINTE => '00h00',
+        };
+    }
+
+    public function bookingWindowEndLabel(): string
+    {
+        return match ($this) {
+            self::DAY       => '19h59',
+            self::NIGHT     => '23h59',
+            self::ASTREINTE => '05h59',
+        };
+    }
+
     /**
      * Détermine le créneau d'après l'heure d'un DateTimeImmutable.
      * 0h ≤ h < 6h  → ASTREINTE

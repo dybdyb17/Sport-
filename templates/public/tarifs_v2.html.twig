@@ -6,6 +6,65 @@
 {% block body %}
 {% set bookingPath = app.user ? path('app_booking_new') : path('app_register') %}
 
+{% set tarifsUrl = app.request.schemeAndHttpHost ~ path('app_tarifs') %}
+{% set homeUrl = app.request.schemeAndHttpHost ~ path('app_home') %}
+{% set pilatesImageUrl = app.request.schemeAndHttpHost ~ asset('img/formules/PilateReformeur.jpeg') %}
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Service",
+  "@id": "{{ tarifsUrl }}#pilates-reformer-service",
+  "name": "Pilates Reformer SPORT+ Marseille",
+  "serviceType": "Coaching privé Pilates Reformer",
+  "description": "Coaching privé Pilates Reformer à Marseille chez SPORT+ : accompagnement personnalisé, offre de lancement dès 35€ la séance et paiement sur place.",
+  "image": "{{ pilatesImageUrl }}",
+  "url": "{{ tarifsUrl }}#abonnements",
+  "provider": {
+    "@type": "SportsActivityLocation",
+    "name": "SPORT+ Marseille",
+    "url": "{{ homeUrl }}",
+    "telephone": "+33491422207",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "164 Chemin de Saint-Jean du Désert",
+      "postalCode": "13005",
+      "addressLocality": "Marseille",
+      "addressCountry": "FR"
+    }
+  },
+  "areaServed": {
+    "@type": "City",
+    "name": "Marseille"
+  },
+  "offers": [
+    {
+      "@type": "Offer",
+      "name": "Pilates Reformer — Vague 1",
+      "price": "35",
+      "priceCurrency": "EUR",
+      "availability": "https://schema.org/LimitedAvailability",
+      "url": "{{ tarifsUrl }}#abonnements"
+    },
+    {
+      "@type": "Offer",
+      "name": "Pilates Reformer — Vague 2",
+      "price": "45",
+      "priceCurrency": "EUR",
+      "availability": "https://schema.org/LimitedAvailability",
+      "url": "{{ tarifsUrl }}#abonnements"
+    },
+    {
+      "@type": "Offer",
+      "name": "Pilates Reformer — Tarif après lancement",
+      "price": "60",
+      "priceCurrency": "EUR",
+      "url": "{{ tarifsUrl }}#abonnements"
+    }
+  ]
+}
+</script>
+
 {# ── Hero : priorité au coaching #}
 <section class="pub-hero-split pricing-hero">
   <div class="pricing-hero-orb pricing-hero-orb-gold" aria-hidden="true"></div>
@@ -262,9 +321,12 @@
       Formules <span class="pricing-accent">abonnement</span>
     </h2>
     <p class="pricing-section-intro">
-      Inscription &amp; paiement <strong style="color:var(--green);">Paylib</strong> directement sur
-      <strong style="color:var(--white);">Deciplus</strong> — le système officiel de gestion du club.
-      Pas de double compte, pas de double saisie.
+      Pour les formules abonnement et Pilates Reformer, contacte directement la salle :
+      paiement et inscription se font <strong style="color:var(--green);">sur place</strong>,
+      avec l'équipe SPORT+.<br>
+      <a href="tel:0491422207" class="pricing-contact-link"><i class="ti ti-phone"></i> 04 91 42 22 07</a>
+      <span class="pricing-contact-separator">·</span>
+      <a href="mailto:ls.sportplus13@gmail.com" class="pricing-contact-link"><i class="ti ti-mail"></i> ls.sportplus13@gmail.com</a>
     </p>
 
     <div class="formules-grid" data-stagger data-animate="fade-up">
@@ -375,9 +437,36 @@
         </button>
       </article>
 
+      {# Pilates Reformer #}
+      <article class="formule-card formule-card-pilates"
+               data-img="{{ asset('img/formules/PilateReformeur.jpeg') }}"
+               data-name="Pilates Reformer"
+               data-price="35"
+               data-period="/ séance · offre de lancement"
+               data-tag="Pilates"
+               data-fees="Paiement sur place — places limitées"
+               data-features='[]'>
+        <div class="formule-badge-top formule-badge-sage">Nouveau</div>
+        <div class="formule-tag">Pilates</div>
+        <div class="formule-name">Pilates <span style="color:#A8B58F;">Reformer</span></div>
+        <div class="formule-price">35 <span>€</span></div>
+        <div class="formule-period">/ séance · lancement</div>
+        <ul class="formule-features">
+          <li><i class="ti ti-check"></i> Coaching privé Pilates Reformer</li>
+          <li><i class="ti ti-check"></i> Accompagnement 100% personnalisé</li>
+          <li><i class="ti ti-check"></i> Vague 1 : 35€/séance</li>
+          <li><i class="ti ti-check"></i> Vague 2 : 45€/séance</li>
+          <li><i class="ti ti-check"></i> Après lancement : 60€/séance</li>
+        </ul>
+        <div class="formule-fees">Paiement sur place — places limitées</div>
+        <button type="button" class="btn btn-outline formule-btn">
+          <i class="ti ti-photo"></i> Voir la formule
+        </button>
+      </article>
+
     </div>
 
-    <p class="pricing-formule-note">Toutes les formules incluent l'accès libre 24h/24 à la salle.</p>
+    <p class="pricing-formule-note">Les formules salle incluent l'accès libre 24h/24. Le Pilates Reformer se réserve directement auprès de la salle.</p>
 
     {# Encart explicatif : 2 systèmes complémentaires #}
     <div class="dual-system-info">
@@ -386,11 +475,11 @@
           <i class="ti ti-credit-card"></i>
         </div>
         <div>
-          <div class="dual-system-title">Abonnements mensuels</div>
+          <div class="dual-system-title">Formules salle &amp; Pilates</div>
           <div class="dual-system-text">
-            Student, Premium+, Duo+, Ultra — inscription &amp; paiement
-            <strong style="color:var(--green);">Paylib</strong> sur Deciplus.
-            Tu retrouves ton compte sur l'app <strong>Xplor Active</strong> + QR code Decipass pour entrer dans la salle.
+            Student, Premium+, Duo+, Ultra et Pilates Reformer — inscription et paiement
+            <strong style="color:var(--green);">directement à la salle</strong>.
+            Appelle SPORT+ ou envoie un email pour réserver ta formule.
           </div>
         </div>
       </div>
@@ -445,15 +534,19 @@
 
         <div class="formule-modal-fees" id="formule-modal-fees"></div>
 
-        <a href="https://member-app.deciplus.pro/{{ deciplusSlug }}/tunnel"
-           target="_blank" rel="noopener noreferrer"
-           class="btn btn-primary btn-lg formule-modal-cta">
-          <i class="ti ti-credit-card"></i> Je m'abonne via Deciplus
-        </a>
+        <div class="formule-modal-contact-actions">
+          <a href="tel:0491422207" class="btn btn-primary btn-lg formule-modal-cta">
+            <i class="ti ti-phone"></i> Appeler la salle
+          </a>
+          <a href="mailto:ls.sportplus13@gmail.com?subject=Demande%20formule%20SPORT%2B"
+             class="btn btn-outline btn-lg formule-modal-cta">
+            <i class="ti ti-mail"></i> Envoyer un email
+          </a>
+        </div>
 
         <div class="formule-modal-hint">
-          <i class="ti ti-shield-check"></i>
-          Inscription &amp; paiement sécurisés <strong>Paylib</strong> sur Deciplus, le système officiel SPORT+.
+          <i class="ti ti-map-pin"></i>
+          Paiement et inscription directement <strong>sur place</strong> — SPORT+, 164 Chemin de Saint-Jean du Désert, Marseille.
         </div>
       </div>
 
@@ -471,6 +564,12 @@
   var modalPeriod = document.getElementById('formule-modal-period');
   var modalFees   = document.getElementById('formule-modal-fees');
   var modalFeat   = document.getElementById('formule-modal-features');
+
+  // Important mobile : la modale doit être en racine du body.
+  // Sinon un parent de page peut limiter le position:fixed et laisser le header passer devant.
+  if (modal && modal.parentElement !== document.body) {
+    document.body.appendChild(modal);
+  }
 
   function animateNumber(el, target, duration) {
     var start    = 0;
@@ -499,7 +598,6 @@
       var fees     = card.getAttribute('data-fees') || '';
       var features = [];
       try { features = JSON.parse(card.getAttribute('data-features') || '[]'); } catch (e) {}
-
       modalImg.src    = img;
       modalImg.alt    = 'Formule ' + name + ' — SPORT+ Marseille';
       modalTag.textContent    = tag;

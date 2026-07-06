@@ -6,11 +6,13 @@ use App\Entity\Booking;
 use App\Entity\FoundingClaim;
 use App\Entity\FoundingOffer;
 use App\Entity\PendingPackRequest;
+use App\Entity\PromoPurchase;
 use App\Entity\Subscription;
 use App\Entity\User;
 use App\Repository\BookingRepository;
 use App\Repository\FoundingOfferRepository;
 use App\Repository\PendingPackRequestRepository;
+use App\Repository\PromoPurchaseRepository;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
@@ -37,6 +39,7 @@ final class StripeCheckoutService
         private readonly PricingCalculator $pricing,
         private readonly BookingManager $bookingManager,
         private readonly PendingPackRequestRepository $pendingPackRepository,
+        private readonly PromoPurchaseRepository $promoPurchaseRepository,
         ?LoggerInterface $logger = null,
     ) {
         $this->logger = $logger ?? new NullLogger();
@@ -409,6 +412,104 @@ final class StripeCheckoutService
         return $subscription;
     }
 
+
+    // ─────────────────────────────────────────────────────────────────────────
+    //  PROMO OFFER checkout — liens Instagram / Ads / bio
+    // ─────────────────────────────────────────────────────────────────────────
+
+    public function createPromoOfferCheckout(PromoPurchase $purchase): Session
+    {
+        $offer = $purchase->getOffer();
+        if (!$offer->isCurrentlyAvailable()) {
+            throw new \LogicException('Cette offre n’est plus disponible.');
+        }
+        if ($purchase->isPaid()) {
+            throw new \LogicException('Cette réservation est déjà payée.');
+        }
+        if (!$purchase->getBuyerEmail()) {
+            throw new \LogicException('Une adresse email est obligatoire pour envoyer la confirmation.');
+        }
+
+        $session = $this->client()->checkout->sessions->create([
+            'mode' => 'payment',
+            'locale' => 'fr',
+            'customer_email' => $purchase->getBuyerEmail(),
+            'client_reference_id' => 'promo-' . $purchase->getId(),
+            'line_items' => [[
+                'quantity' => 1,
+                'price_data' => [
+                    'currency' => $purchase->getCurrency(),
+                    'unit_amount' => $this->promoPurchasePriceInCents($purchase),
+                    'product_data' => [
+                        'name' => 'SPORT+ — ' . $offer->getTitle(),
+                        'description' => mb_substr((string) ($offer->getDescription() ?: 'Offre SPORT+ à réserver en ligne.'), 0, 500),
+                    ],
+                ],
+            ]],
+            'metadata' => $this->promoPurchaseMetadata($purchase),
+            'payment_intent_data' => [
+                'metadata' => $this->promoPurchaseMetadata($purchase),
+            ],
+            'success_url' => $this->absoluteUrl('/offres/paiement/succes?session_id={CHECKOUT_SESSION_ID}'),
+            'cancel_url' => $this->absoluteUrl(sprintf('/offres/paiement/annule?purchase=%s', $purchase->getReference())),
+        ], [
+            'idempotency_key' => sprintf('promo-offer-checkout-%d', $purchase->getId()),
+        ]);
+
+        if (!$session->url) {
+            throw new \RuntimeException('Stripe n’a pas retourné de page de paiement.');
+        }
+
+        $purchase->setStripeCheckoutSessionId($session->id);
+        $this->em->flush();
+
+        return $session;
+    }
+
+    public function fulfillPromoOfferCheckout(Session $session): PromoPurchase
+    {
+        if ($session->mode !== 'payment' || $session->payment_status !== 'paid') {
+            throw new \LogicException('Le paiement Stripe n’est pas encore confirmé.');
+        }
+
+        $metadata = $session->metadata;
+        if (($metadata['purchase_type'] ?? null) !== 'promo_offer') {
+            throw new \LogicException('Ce paiement ne correspond pas à une offre promotionnelle SPORT+.');
+        }
+
+        $purchaseId = filter_var($metadata['promo_purchase_id'] ?? null, FILTER_VALIDATE_INT);
+        if (!$purchaseId) {
+            throw new \LogicException('Les informations du paiement Stripe sont incomplètes.');
+        }
+
+        $purchase = $this->promoPurchaseRepository->find($purchaseId);
+        if (!$purchase instanceof PromoPurchase) {
+            throw new \LogicException('La réservation associée à ce paiement est introuvable.');
+        }
+        if (strtolower((string) $session->currency) !== $purchase->getCurrency()
+            || (int) $session->amount_total !== $this->promoPurchasePriceInCents($purchase)) {
+            throw new \LogicException('Le montant du paiement Stripe ne correspond pas à l’offre.');
+        }
+
+        if ($purchase->isPaid()) {
+            return $purchase;
+        }
+
+        $paymentIntentId = is_string($session->payment_intent)
+            ? $session->payment_intent
+            : ($session->payment_intent->id ?? null);
+
+        $purchase
+            ->setStatus(PromoPurchase::STATUS_PAID)
+            ->setPaidAt(new \DateTimeImmutable())
+            ->setStripeCheckoutSessionId($session->id)
+            ->setStripePaymentIntentId($paymentIntentId);
+
+        $this->em->flush();
+
+        return $purchase;
+    }
+
     public function constructWebhookEvent(string $payload, string $signature): Event
     {
         if ($this->stripeWebhookSecret === '') {
@@ -485,6 +586,24 @@ final class StripeCheckoutService
             $ppr->isFullAccess(),
         );
         return (int) round((float) $unit * 100);
+    }
+
+
+    /** @return array<string, string> */
+    private function promoPurchaseMetadata(PromoPurchase $purchase): array
+    {
+        return [
+            'purchase_type'      => 'promo_offer',
+            'promo_purchase_id'  => (string) $purchase->getId(),
+            'promo_offer_id'     => (string) $purchase->getOffer()->getId(),
+            'promo_offer_slug'   => $purchase->getOffer()->getSlug(),
+            'promo_reference'    => $purchase->getReference(),
+        ];
+    }
+
+    private function promoPurchasePriceInCents(PromoPurchase $purchase): int
+    {
+        return (int) round((float) $purchase->getAmount() * 100);
     }
 
     private function absoluteUrl(string $path): string

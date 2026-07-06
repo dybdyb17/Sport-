@@ -473,6 +473,12 @@
   var modalFees   = document.getElementById('formule-modal-fees');
   var modalFeat   = document.getElementById('formule-modal-features');
 
+  // Important mobile : la modale doit être en racine du body.
+  // Sinon un parent de page peut limiter le position:fixed et laisser le header passer devant.
+  if (modal && modal.parentElement !== document.body) {
+    document.body.appendChild(modal);
+  }
+
   function animateNumber(el, target, duration) {
     var start    = 0;
     var startTs  = null;
