@@ -76,24 +76,15 @@
         </thead>
         <tbody>
           {% for log in logs %}
-            {% set sev = log.action.severity %}
-            <tr style="
-              {% if sev == 'critical' %}background:rgba(255,80,80,.04);{% endif %}
-              {% if sev == 'warning' %}background:rgba(212,175,55,.04);{% endif %}
-            ">
+            {% set actionColor = log.action.color %}
+            <tr style="border-left:3px solid {{ actionColor }};background:linear-gradient(90deg, color-mix(in srgb, {{ actionColor }} 7%, transparent), transparent 48%);">
               <td style="white-space:nowrap;color:var(--text-dim);font-size:13px;">
                 <div>{{ log.createdAt|date('d/m/Y') }}</div>
                 <div style="font-family:ui-monospace,'SF Mono',Menlo,monospace;font-size:11px;">{{ log.createdAt|date('H:i:s') }}</div>
               </td>
               <td>
-                <span style="display:inline-flex;align-items:center;gap:6px;font-weight:600;
-                  {% if sev == 'critical' %}color:#ff6b6b;{% endif %}
-                  {% if sev == 'warning' %}color:var(--gold);{% endif %}
-                  {% if sev == 'info' %}color:var(--text);{% endif %}
-                ">
-                  {% if sev == 'critical' %}<i class="ti ti-alert-octagon"></i>
-                  {% elseif sev == 'warning' %}<i class="ti ti-alert-triangle"></i>
-                  {% else %}<i class="ti ti-info-circle"></i>{% endif %}
+                <span style="display:inline-flex;align-items:center;gap:8px;font-weight:700;color:{{ actionColor }};">
+                  <i class="ti {{ log.action.icon }}" style="font-size:18px;"></i>
                   {{ log.action.label }}
                 </span>
               </td>
