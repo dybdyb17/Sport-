@@ -25,6 +25,7 @@
 @import url('./components/tables.css');
 @import url('./components/animations.css');
 @import url('./components/accents.css');
+@import url('./components/ui-dropdown.css');
 
 /* ── PAGES SPÉCIFIQUES ── */
 @import url('./pages/home.css');
@@ -44,6 +45,7 @@
 @import url('./pages/mes-packs.css');
 @import url('./pages/pack-reserver.css');
 @import url('./pages/admin-peek.css');
+@import url('./pages/admin-payments.css');
 @import url('./pages/mon-rdv.css');
 
 /* ── UTILITAIRES (en dernier — surchargent tout) ── */
