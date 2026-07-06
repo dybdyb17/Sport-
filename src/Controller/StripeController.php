@@ -302,6 +302,8 @@ final class StripeController extends AbstractController
                         $stripeCheckout->fulfillBookingCheckout($session);
                     } elseif ($purchaseType === 'pack_purchase') {
                         $stripeCheckout->fulfillPackCheckout($session);
+                    } elseif ($purchaseType === 'promo_offer') {
+                        $stripeCheckout->fulfillPromoOfferCheckout($session);
                     } else {
                         // Default = founding_offer (compat historique)
                         $stripeCheckout->fulfillFoundingCheckout($session);

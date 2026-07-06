@@ -72,6 +72,9 @@
       <a href="{{ path('app_admin_payments') }}" class="admin-nav-item {{ r == 'app_admin_payments' ? 'active' : '' }}">
         <i class="ti ti-cash"></i> Paiements
       </a>
+      <a href="{{ path('app_admin_promo_offers') }}" class="admin-nav-item {{ r starts with 'app_admin_promo_offer' ? 'active' : '' }}">
+        <i class="ti ti-brand-instagram"></i> Offres Instagram
+      </a>
       <a href="{{ path('app_admin_audit') }}" class="admin-nav-item {{ r starts with 'app_admin_audit' ? 'active' : '' }}">
         <i class="ti ti-shield-lock"></i> Journal d'audit
       </a>
