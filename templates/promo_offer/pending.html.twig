@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Paiement en vérification — SPORT+{% endblock %}
+
+{% block body %}
+<section class="section">
+  <div class="container" style="max-width:640px;">
+    <div class="form-card" style="padding:32px;text-align:center;">
+      <div class="hero-badge">Paiement en vérification</div>
+      <h1 class="section-title" style="font-size:42px;">On vérifie ton paiement</h1>
+      <p class="section-sub" style="font-size:16px;">Stripe nous confirme le paiement automatiquement. Si le QR n'apparaît pas tout de suite, attends quelques secondes puis recharge la page depuis ton email de confirmation.</p>
+      <a href="{{ path('app_home') }}" class="btn btn-primary"><i class="ti ti-home"></i> Retour à l'accueil</a>
+    </div>
+  </div>
+</section>
+{% endblock %}

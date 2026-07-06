@@ -1,0 +1,113 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block admin_body %}
+<div class="page-header">
+  <div>
+    <h1><span style="color:var(--gold)">{{ title }}</span></h1>
+    <p class="page-subtitle">Le lien généré peut être collé en story, publicité ou bio Instagram.</p>
+  </div>
+  <a href="{{ path('app_admin_promo_offers') }}" class="btn btn-secondary"><i class="ti ti-arrow-left"></i> Retour</a>
+</div>
+
+<form method="post" class="form-card" style="max-width:820px;display:grid;gap:18px;">
+  <div class="form-group">
+    <label>Titre</label>
+    <input name="title" value="{{ offer.title }}" required maxlength="140" class="form-control" placeholder="Ex : Pilates Reformer — Vague 1">
+  </div>
+  <div class="form-group">
+    <label>Slug URL</label>
+    <input name="slug" value="{{ offer.slug }}" maxlength="160" class="form-control" placeholder="laisse vide pour générer automatiquement">
+  </div>
+  <div class="form-group">
+    <label>Description</label>
+    <textarea name="description" rows="5" class="form-control" placeholder="Texte affiché sur la page publique et dans Stripe Checkout">{{ offer.description }}</textarea>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;">
+    <div class="form-group">
+      <label>Type</label>
+      <select name="type" class="form-control">
+        {% for value,label in {'session':'Séance','event':'Événement','pilates':'Pilates','hyrox':'Hyrox','crossfit':'CrossFit','subscription':'Abonnement'} %}
+          <option value="{{ value }}" {{ offer.type == value ? 'selected' : '' }}>{{ label }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Prix (€)</label>
+      <input name="price" value="{{ offer.price }}" required inputmode="decimal" class="form-control">
+    </div>
+    <div class="form-group">
+      <label>Places max</label>
+      <input name="max_quantity" value="{{ offer.maxQuantity }}" type="number" min="1" class="form-control" placeholder="illimité">
+    </div>
+    <div class="form-group">
+      <label>Statut</label>
+      <select name="status" class="form-control">
+        <option value="draft" {{ offer.status == 'draft' ? 'selected' : '' }}>Brouillon</option>
+        <option value="active" {{ offer.status == 'active' ? 'selected' : '' }}>Actif</option>
+        <option value="archived" {{ offer.status == 'archived' ? 'selected' : '' }}>Archivé</option>
+      </select>
+    </div>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;">
+    <div class="form-group">
+      <label>Début visibilité</label>
+      <input name="starts_at" value="{{ offer.startsAt ? offer.startsAt|date('Y-m-d\\TH:i') : '' }}" type="datetime-local" class="form-control">
+    </div>
+    <div class="form-group">
+      <label>Fin visibilité</label>
+      <input name="ends_at" value="{{ offer.endsAt ? offer.endsAt|date('Y-m-d\\TH:i') : '' }}" type="datetime-local" class="form-control">
+    </div>
+  </div>
+  <button class="btn btn-primary btn-lg" type="submit"><i class="ti ti-device-floppy"></i> Enregistrer l’offre</button>
+</form>
+
+{% if offer.id %}
+  <div class="data-table-card" style="margin-top:28px;max-width:1100px;">
+    <div class="data-table-header">
+      <h3>Achats & check-ins</h3>
+      <p class="page-subtitle" style="margin:0;">Cette liste se met à jour après le scan du QR par le coach.</p>
+    </div>
+
+    {% if offer.purchases is empty %}
+      <div class="empty-placeholder" style="padding:36px;text-align:center;">Aucun achat pour cette offre.</div>
+    {% else %}
+      <table>
+        <thead>
+          <tr>
+            <th>Référence</th>
+            <th>Client</th>
+            <th>Paiement</th>
+            <th>Check-in</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for purchase in offer.purchases %}
+            <tr>
+              <td style="font-family:'Barlow Condensed',sans-serif;font-weight:800;letter-spacing:1px;">{{ purchase.reference }}</td>
+              <td>
+                <strong style="color:var(--white);">{{ purchase.buyerName }}</strong>
+                <div style="font-size:12px;color:var(--text-dim);overflow-wrap:anywhere;">{{ purchase.buyerEmail }}</div>
+              </td>
+              <td>
+                <span class="status-badge {{ purchase.paid ? 'confirmed' : 'pending' }}">{{ purchase.paid ? 'Payé' : 'En attente' }}</span>
+                <div style="font-size:12px;color:var(--text-dim);margin-top:4px;">{{ purchase.paidAt ? purchase.paidAt|date('d/m/Y H:i') : '—' }}</div>
+              </td>
+              <td>
+                {% if purchase.checkedIn %}
+                  <span class="status-badge confirmed">Validé</span>
+                  <div style="font-size:12px;color:var(--text-dim);margin-top:4px;">
+                    {{ purchase.checkinAt|date('d/m/Y H:i') }}{% if purchase.checkinBy %} · {{ purchase.checkinBy.nomComplet }}{% endif %}
+                  </div>
+                {% else %}
+                  <span class="status-badge pending">Pas encore scanné</span>
+                {% endif %}
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% endif %}
+  </div>
+{% endif %}
+
+{% endblock %}
