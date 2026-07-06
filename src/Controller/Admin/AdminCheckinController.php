@@ -3,6 +3,7 @@
 namespace App\Controller\Admin;
 
 use App\Repository\BookingRepository;
+use App\Repository\PromoPurchaseRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -76,5 +77,66 @@ class AdminCheckinController extends AbstractController
         }
 
         return $this->render('admin/checkin/validate.html.twig', ['booking' => $booking]);
+    }
+
+    /**
+     * Validation d'une offre promotionnelle payée via lien Instagram.
+     * URL encodée dans le QR promo : /admin/checkin/offre/OFR-XXXXXXXX?token=...
+     */
+    #[Route('/offre/{reference}', name: 'app_admin_promo_checkin_validate', methods: ['GET', 'POST'], requirements: ['reference' => 'OFR-[A-F0-9]{8}'])]
+    #[IsGranted('ROLE_COACH')]
+    public function validatePromoOffer(
+        string $reference,
+        Request $request,
+        PromoPurchaseRepository $purchases,
+        EntityManagerInterface $em,
+    ): Response {
+        $purchase = $purchases->findOneBy(['reference' => $reference]);
+        if (!$purchase) {
+            throw $this->createNotFoundException('Réservation promotionnelle introuvable.');
+        }
+
+        $token = (string) $request->query->get('token');
+        if (!hash_equals($purchase->getQrToken(), $token)) {
+            return $this->render('admin/checkin/promo_validate.html.twig', [
+                'purchase' => $purchase,
+                'tokenValid' => false,
+            ], new Response('', Response::HTTP_FORBIDDEN));
+        }
+
+        if ($request->isMethod('POST')) {
+            if (!$this->isCsrfTokenValid('promo_checkin_' . $purchase->getReference(), (string) $request->request->get('_token'))) {
+                $this->addFlash('danger', 'Jeton CSRF invalide.');
+                return $this->redirectToRoute('app_admin_promo_checkin_validate', [
+                    'reference' => $reference,
+                    'token' => $token,
+                ]);
+            }
+
+            if (!$purchase->isPaid()) {
+                $this->addFlash('danger', 'Impossible de valider : le paiement Stripe n’est pas confirmé.');
+                return $this->redirectToRoute('app_admin_promo_checkin_validate', [
+                    'reference' => $reference,
+                    'token' => $token,
+                ]);
+            }
+
+            if (!$purchase->isCheckedIn()) {
+                $purchase->setCheckinAt(new \DateTimeImmutable());
+                $purchase->setCheckinBy($this->getUser());
+                $em->flush();
+                $this->addFlash('success', 'Check-in promo validé pour ' . $purchase->getBuyerName());
+            }
+
+            return $this->redirectToRoute('app_admin_promo_checkin_validate', [
+                'reference' => $reference,
+                'token' => $token,
+            ]);
+        }
+
+        return $this->render('admin/checkin/promo_validate.html.twig', [
+            'purchase' => $purchase,
+            'tokenValid' => true,
+        ]);
     }
 }

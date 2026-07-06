@@ -1,0 +1,94 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Validation offre promo — {{ purchase.reference }} — SPORT+{% endblock %}
+
+{% block body %}
+<div class="container" style="padding-top:32px;padding-bottom:80px;max-width:620px;">
+  {% if is_granted('ROLE_ADMIN') %}
+    <a href="{{ path('app_admin_promo_offers') }}" class="btn btn-ghost btn-sm" style="margin-bottom:20px;">
+      <i class="ti ti-arrow-left"></i> Offres Instagram
+    </a>
+  {% else %}
+    <a href="{{ path('app_coach_dashboard') }}" class="btn btn-ghost btn-sm" style="margin-bottom:20px;">
+      <i class="ti ti-arrow-left"></i> Mon dashboard
+    </a>
+  {% endif %}
+
+  <div class="page-header" style="margin-bottom:24px;">
+    <div>
+      <h1><i class="ti ti-qrcode" style="color:var(--gold);"></i> Check-in offre promo</h1>
+      <p class="page-subtitle">Vérifie le paiement Stripe avant de laisser entrer le client.</p>
+    </div>
+  </div>
+
+  <div class="form-card">
+    {% if not tokenValid %}
+      <div class="alert alert-error">
+        <i class="ti ti-alert-triangle"></i>
+        QR invalide : le token de sécurité ne correspond pas à cette réservation.
+      </div>
+    {% else %}
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;gap:12px;">
+        <span class="status-badge {{ purchase.paid ? 'confirmed' : 'pending' }}">
+          {{ purchase.paid ? 'Payé Stripe' : 'Paiement non confirmé' }}
+        </span>
+        <span style="font-family:'Barlow Condensed',sans-serif;font-size:13px;letter-spacing:2px;color:var(--text-dim);">{{ purchase.reference }}</span>
+      </div>
+
+      <div style="font-family:'Barlow Condensed',sans-serif;font-size:24px;font-weight:800;color:var(--white);margin-bottom:6px;">
+        {{ purchase.offer.title }}
+      </div>
+      <div style="font-size:13px;color:var(--text-dim);margin-bottom:20px;">Offre Instagram / promo SPORT+</div>
+
+      <div style="background:rgba(0,0,0,.25);border:1px solid var(--border);border-radius:var(--radius);padding:4px 16px;margin-bottom:20px;">
+        <div style="display:flex;justify-content:space-between;gap:16px;padding:12px 0;border-bottom:1px solid var(--border);">
+          <span style="color:var(--text-dim);font-size:13px;">Client</span>
+          <span style="color:var(--white);font-weight:600;text-align:right;">{{ purchase.buyerName }}</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;gap:16px;padding:12px 0;border-bottom:1px solid var(--border);">
+          <span style="color:var(--text-dim);font-size:13px;">Email</span>
+          <span style="color:var(--white);font-weight:600;text-align:right;overflow-wrap:anywhere;">{{ purchase.buyerEmail }}</span>
+        </div>
+        {% if purchase.buyerPhone %}
+          <div style="display:flex;justify-content:space-between;gap:16px;padding:12px 0;border-bottom:1px solid var(--border);">
+            <span style="color:var(--text-dim);font-size:13px;">Téléphone</span>
+            <a href="tel:{{ purchase.buyerPhone|replace({' ': '', '.': '', '-': ''}) }}" style="color:var(--green);font-weight:700;text-align:right;">{{ purchase.buyerPhone }}</a>
+          </div>
+        {% endif %}
+        <div style="display:flex;justify-content:space-between;gap:16px;padding:12px 0;border-bottom:1px solid var(--border);">
+          <span style="color:var(--text-dim);font-size:13px;">Montant</span>
+          <span style="color:var(--gold);font-weight:900;font-family:'Barlow Condensed',sans-serif;font-size:22px;">{{ purchase.amountFormatted }}</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;gap:16px;padding:12px 0;">
+          <span style="color:var(--text-dim);font-size:13px;">Payé le</span>
+          <span style="color:var(--white);font-weight:600;text-align:right;">{{ purchase.paidAt ? purchase.paidAt|date('d/m/Y à H\\hi') : '—' }}</span>
+        </div>
+      </div>
+
+      {% if not purchase.paid %}
+        <div class="alert alert-error">
+          <i class="ti ti-lock"></i>
+          Paiement Stripe non confirmé : ne valide pas l'entrée.
+        </div>
+      {% elseif purchase.checkedIn %}
+        <div style="background:rgba(46,204,113,.1);border:1px solid rgba(46,204,113,.3);border-radius:var(--radius);padding:16px;text-align:center;">
+          <i class="ti ti-check" style="color:var(--green);font-size:24px;"></i>
+          <div style="font-weight:700;color:var(--green);margin-top:6px;">
+            Déjà validé le {{ purchase.checkinAt|date('d/m/Y à H\\hi') }}
+          </div>
+          {% if purchase.checkinBy %}
+            <div style="font-size:13px;color:var(--text-dim);margin-top:4px;">par {{ purchase.checkinBy.nomComplet }}</div>
+          {% endif %}
+        </div>
+      {% else %}
+        <form method="post">
+          <input type="hidden" name="_token" value="{{ csrf_token('promo_checkin_' ~ purchase.reference) }}">
+          <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;font-size:16px;padding:16px;">
+            <i class="ti ti-check"></i> Valider l'arrivée du client
+          </button>
+        </form>
+      {% endif %}
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

@@ -116,6 +116,24 @@
   background: linear-gradient(180deg, var(--bg-card) 0%, rgba(46,204,113,.04) 100%);
 }
 
+.formule-card-pilates {
+  border-color: rgba(168,181,143,.42);
+  background:
+    radial-gradient(circle at 82% 12%, rgba(168,181,143,.12), transparent 34%),
+    linear-gradient(180deg, var(--bg-card) 0%, rgba(168,181,143,.045) 100%);
+}
+
+.formule-card-pilates::before {
+  background: linear-gradient(90deg, transparent, #A8B58F, transparent);
+  opacity: 1;
+  height: 4px;
+}
+
+.formule-card-pilates:hover {
+  border-color: rgba(168,181,143,.68);
+  box-shadow: 0 16px 40px rgba(168,181,143,.10);
+}
+
 .formule-card-featured::before {
   background: linear-gradient(90deg, transparent, var(--green), transparent);
   opacity: 1;
@@ -135,6 +153,10 @@
   text-transform: uppercase;
   padding: 4px 10px;
   border-radius: 100px;
+}
+
+.formule-badge-sage {
+  background: #A8B58F;
 }
 
 .formule-tag {
@@ -527,6 +549,26 @@
   font-size: 15px;
   line-height: 1.7;
   text-align: center;
+}
+
+.pricing-contact-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 10px;
+  color: var(--gold);
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.pricing-contact-link:hover {
+  color: var(--green);
+}
+
+.pricing-contact-separator {
+  display: inline-block;
+  margin: 0 10px;
+  color: var(--border);
 }
 
 .pricing-formule-note {
