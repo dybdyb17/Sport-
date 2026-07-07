@@ -200,3 +200,70 @@
   }
   .historique-card-chevron { display: none; }
 }
+
+/* ── Mobile confort : historique client ─────────────────────────────── */
+.client-page-back { margin-bottom: 20px; }
+
+@media (max-width: 640px) {
+  .historique-page {
+    padding-inline: 16px;
+    padding-bottom: 56px;
+  }
+  .client-page-back {
+    width: 100%;
+    justify-content: center;
+    min-height: 46px;
+    margin-bottom: 18px;
+  }
+  .historique-head {
+    margin-bottom: 22px;
+    text-align: left;
+  }
+  .historique-title {
+    font-size: clamp(34px, 11vw, 46px);
+    line-height: .92;
+    letter-spacing: -1px;
+  }
+  .historique-sub {
+    font-size: 14px;
+    line-height: 1.55;
+  }
+  .historique-list { gap: 14px; }
+  .historique-card {
+    grid-template-columns: auto 1fr;
+    gap: 14px;
+    padding: 16px 14px;
+    border-radius: 20px;
+  }
+  .historique-card-date {
+    width: 62px;
+    border-radius: 14px;
+  }
+  .historique-card-title {
+    font-size: 20px;
+    line-height: 1.05;
+  }
+  .historique-card-meta {
+    display: grid;
+    gap: 8px;
+    font-size: 13.5px;
+  }
+  .historique-card-status {
+    grid-column: 1 / -1;
+    justify-self: stretch;
+  }
+  .historique-pill {
+    width: 100%;
+    justify-content: center;
+    min-height: 38px;
+  }
+  .historique-card-chevron { display: none; }
+  .historique-page .empty-state {
+    padding: 28px 18px;
+    border-radius: 22px;
+  }
+  .historique-page .empty-state .btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
