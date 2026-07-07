@@ -157,6 +157,32 @@
     </div>
   </div>
 
+  {# Raccourcis tactiles — visibles surtout sur mobile, sans remplacer la structure existante. #}
+  <nav class="client-quick-actions" aria-label="Raccourcis de mon espace" data-animate="fade-up">
+    <a href="{{ path('app_booking_new') }}" class="client-quick-action">
+      <i class="ti ti-calendar-plus"></i>
+      <span>Réserver</span>
+    </a>
+    {% if prochaine %}
+      <a href="{{ path('app_espace_client_rdv', {reference: prochaine.reference}) }}" class="client-quick-action">
+        <i class="ti ti-ticket"></i>
+        <span>Mon RDV</span>
+      </a>
+    {% endif %}
+    <a href="{{ path('app_espace_client_packs') }}" class="client-quick-action">
+      <i class="ti ti-barbell"></i>
+      <span>Mes packs</span>
+    </a>
+    <a href="{{ path('app_espace_client_history') }}" class="client-quick-action">
+      <i class="ti ti-history"></i>
+      <span>Historique</span>
+    </a>
+    <a href="{{ path('app_espace_client_profil') }}" class="client-quick-action">
+      <i class="ti ti-user-cog"></i>
+      <span>Profil</span>
+    </a>
+  </nav>
+
   {# ══════════════════════════════════════════════════════════════════════
      TICKET PROCHAINE SÉANCE — 3 états : en attente / à régler / prête
      ══════════════════════════════════════════════════════════════════════ #}

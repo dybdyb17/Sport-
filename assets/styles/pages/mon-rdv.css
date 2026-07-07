@@ -326,3 +326,59 @@
 }
 
 /* Modal Xplor supprimée le 29/06 — Stripe Checkout redirige hors-site. */
+
+/* ── Mon RDV mobile : lecture en cartes, cibles tactiles confortables ── */
+@media (max-width: 640px) {
+  .rdv-card {
+    padding: 22px 16px;
+    border-radius: 22px;
+  }
+  .rdv-head {
+    align-items: flex-start;
+    gap: 12px;
+    flex-direction: column;
+    margin-bottom: 20px;
+  }
+  .rdv-title {
+    font-size: clamp(28px, 10vw, 38px);
+    line-height: .95;
+  }
+  .rdv-sub { font-size: 13.5px; margin-bottom: 20px; }
+  .rdv-qr-wrap {
+    max-width: min(260px, 82vw);
+    padding: 14px;
+    border-radius: 18px;
+  }
+  .rdv-details {
+    padding: 8px 12px;
+    border-radius: 18px;
+  }
+  .rdv-detail {
+    align-items: flex-start;
+    gap: 8px;
+    flex-direction: column;
+    padding: 13px 0;
+  }
+  .rdv-detail-value { text-align: left; width: 100%; }
+  .rdv-pay { padding: 16px 14px; border-radius: 20px; }
+  .rdv-pay-head { align-items: flex-start; }
+  .rdv-pay-chip {
+    align-items: flex-start;
+    padding: 13px;
+    border-radius: 16px;
+  }
+  .rdv-pay-chip i { font-size: 24px; }
+  .rdv-pay-link,
+  .rdv-qr-blocked-cta,
+  .rdv-qr-declare-btn,
+  .rdv-refusal-cta {
+    width: 100%;
+    justify-content: center;
+    min-height: 48px;
+  }
+  .rdv-qr-blocked {
+    margin: 18px auto;
+    padding: 22px 16px;
+    border-radius: 20px;
+  }
+}
