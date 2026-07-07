@@ -327,58 +327,58 @@
 
 /* Modal Xplor supprimée le 29/06 — Stripe Checkout redirige hors-site. */
 
-/* ── Arrivée validée (post scan QR) — remplace le QR sur mon-rdv ── */
-.rdv-checked-in {
-  padding: 24px 20px;
-  text-align: center;
-  background:
-    radial-gradient(ellipse at center, rgba(46,204,113,.08) 0%, transparent 65%),
-    var(--bg-card);
-  border: 1px solid rgba(46,204,113,.35);
-  border-radius: var(--radius);
-  margin-bottom: 16px;
-}
-.rdv-checked-in-icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 68px; height: 68px;
-  border-radius: 50%;
-  background: rgba(46,204,113,.12);
-  border: 2px solid rgba(46,204,113,.40);
-  color: var(--green);
-  font-size: 34px;
-  margin-bottom: 12px;
-}
-.rdv-checked-in-title {
-  font-family: 'Barlow Condensed', sans-serif;
-  font-size: 22px;
-  font-weight: 900;
-  color: var(--green);
-  margin-bottom: 4px;
-}
-.rdv-checked-in-sub {
-  font-size: 13px;
-  color: var(--text-dim);
-  margin-bottom: 14px;
-}
-.rdv-checked-in-payment {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 6px 14px;
-  border-radius: 100px;
-  font-size: 12.5px;
-  font-weight: 700;
-  letter-spacing: .5px;
-}
-.rdv-checked-in-payment--ok {
-  background: rgba(46,204,113,.10);
-  border: 1px solid rgba(46,204,113,.30);
-  color: var(--green);
-}
-.rdv-checked-in-payment--wait {
-  background: rgba(200,169,81,.10);
-  border: 1px solid rgba(200,169,81,.35);
-  color: var(--gold);
+/* ── Mon RDV mobile : lecture en cartes, cibles tactiles confortables ── */
+@media (max-width: 640px) {
+  .rdv-card {
+    padding: 22px 16px;
+    border-radius: 22px;
+  }
+  .rdv-head {
+    align-items: flex-start;
+    gap: 12px;
+    flex-direction: column;
+    margin-bottom: 20px;
+  }
+  .rdv-title {
+    font-size: clamp(28px, 10vw, 38px);
+    line-height: .95;
+  }
+  .rdv-sub { font-size: 13.5px; margin-bottom: 20px; }
+  .rdv-qr-wrap {
+    max-width: min(260px, 82vw);
+    padding: 14px;
+    border-radius: 18px;
+  }
+  .rdv-details {
+    padding: 8px 12px;
+    border-radius: 18px;
+  }
+  .rdv-detail {
+    align-items: flex-start;
+    gap: 8px;
+    flex-direction: column;
+    padding: 13px 0;
+  }
+  .rdv-detail-value { text-align: left; width: 100%; }
+  .rdv-pay { padding: 16px 14px; border-radius: 20px; }
+  .rdv-pay-head { align-items: flex-start; }
+  .rdv-pay-chip {
+    align-items: flex-start;
+    padding: 13px;
+    border-radius: 16px;
+  }
+  .rdv-pay-chip i { font-size: 24px; }
+  .rdv-pay-link,
+  .rdv-qr-blocked-cta,
+  .rdv-qr-declare-btn,
+  .rdv-refusal-cta {
+    width: 100%;
+    justify-content: center;
+    min-height: 48px;
+  }
+  .rdv-qr-blocked {
+    margin: 18px auto;
+    padding: 22px 16px;
+    border-radius: 20px;
+  }
 }
