@@ -6,6 +6,8 @@
   <title>{% block title %}SPORT+ — Coaching Premium Marseille{% endblock %}</title>
   {% block meta_description %}<meta name="description" content="SPORT+ — Coaching premium à Marseille. Coaching privé, duo ou groupe. Night Coach disponible dès 20h. 164 Chemin de Saint-Jean du Désert, 13005 Marseille.">{% endblock %}
   <meta name="robots" content="index, follow">
+  <meta name="theme-color" content="#060606">
+  <meta name="application-name" content="SPORT+ Marseille">
   <link rel="canonical" href="{{ app.request.schemeAndHttpHost ~ app.request.pathInfo }}">
 
   {# Open Graph #}
@@ -23,10 +25,49 @@
   <meta name="twitter:image"      content="{{ app.request.schemeAndHttpHost ~ asset('img/club-photos/coaching-halteres.jpg') }}">
   {% endblock %}
 
-  {# Favicons : Google indexe le PNG, les browsers modernes utilisent le SVG, iOS l'apple-touch-icon. #}
-  <link rel="icon" type="image/png" sizes="192x192" href="{{ asset('favicon.png') }}">
+  {# Favicon Google : SVG texte uniquement pour éviter les diffs binaires et garder une URL crawlable/stable. #}
   <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}">
   <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('apple-touch-icon.png') }}">
+  <link rel="manifest" href="{{ asset('site.webmanifest') }}">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebSite",
+        "@id": "{{ app.request.schemeAndHttpHost }}/#website",
+        "url": "{{ app.request.schemeAndHttpHost }}/",
+        "name": "SPORT+ Marseille",
+        "alternateName": ["SPORT+", "Sport Plus Marseille", "SPORT+ 13"],
+        "inLanguage": "fr-FR"
+      },
+      {
+        "@type": ["Organization", "LocalBusiness", "SportsActivityLocation"],
+        "@id": "{{ app.request.schemeAndHttpHost }}/#organization",
+        "name": "SPORT+ Marseille",
+        "url": "{{ app.request.schemeAndHttpHost }}/",
+        "logo": "{{ app.request.schemeAndHttpHost ~ asset('favicon.png') }}",
+        "image": "{{ app.request.schemeAndHttpHost ~ asset('img/club-photos/coaching-halteres.jpg') }}",
+        "telephone": "+33491422207",
+        "priceRange": "40€ - 575€",
+        "address": {
+          "@type": "PostalAddress",
+          "streetAddress": "164 Chemin de Saint-Jean du Désert",
+          "addressLocality": "Marseille",
+          "postalCode": "13005",
+          "addressCountry": "FR"
+        },
+        "sameAs": [
+          "https://www.facebook.com/sportplus13005/?locale=fr_FR",
+          "https://www.instagram.com/sportplus13005",
+          "https://www.linkedin.com/company/sport-13/",
+          "https://www.tiktok.com/@sizlo_personal_trainer"
+        ]
+      }
+    ]
+  }
+  </script>
   {% block preload_assets %}{% endblock %}
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
