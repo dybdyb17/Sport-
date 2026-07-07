@@ -1,0 +1,170 @@
+/* ═══════════════════════════════════════════════════════════════════════
+   ui-dropdown — composant dropdown custom réutilisable
+   ═══════════════════════════════════════════════════════════════════════
+   Zéro dépendance métier. Utilisable partout où on veut remplacer un
+   <select> natif par un menu maison charter Night Performance.
+
+   Structure attendue :
+     .ui-dropdown[data-dropdown]
+       .ui-dropdown-trigger
+         .ui-dropdown-eyebrow  (label gris fin, optionnel)
+         .ui-dropdown-current  (valeur active en clair)
+         i.ui-dropdown-caret   (chevron)
+       .ui-dropdown-panel
+         a.ui-dropdown-option (+ .is-active pour l'option sélectionnée)
+           i.ui-dropdown-option-icon
+           .ui-dropdown-option-label
+           i.ui-dropdown-option-check
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.ui-dropdown {
+  position: relative;
+  display: inline-block;
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+.ui-dropdown-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 42px;
+  padding: 8px 14px;
+  background: var(--bg-card, #18181F);
+  border: 1px solid var(--border, rgba(255,255,255,.08));
+  border-radius: 12px;
+  color: var(--white, #fff);
+  cursor: pointer;
+  transition: border-color .15s ease, background .15s ease;
+  white-space: nowrap;
+  font: inherit;
+  text-align: left;
+}
+.ui-dropdown-trigger:hover {
+  border-color: rgba(var(--gold-rgb, 200 169 81), .45);
+}
+.ui-dropdown.is-open > .ui-dropdown-trigger,
+.ui-dropdown-trigger:focus-visible {
+  border-color: var(--gold, #C8A951);
+  outline: none;
+}
+
+.ui-dropdown-eyebrow {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--text-dim, rgba(255,255,255,.5));
+  white-space: nowrap;
+}
+
+.ui-dropdown-current {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--white, #fff);
+  white-space: nowrap;
+}
+
+.ui-dropdown-caret {
+  font-size: 16px;
+  color: var(--gold, #C8A951);
+  transition: transform .18s ease;
+  margin-left: 4px;
+}
+.ui-dropdown.is-open .ui-dropdown-caret {
+  transform: rotate(180deg);
+}
+
+.ui-dropdown-panel {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  min-width: 100%;
+  z-index: 200;
+  background: var(--bg-card, #18181F);
+  border: 1px solid rgba(var(--gold-rgb, 200 169 81), .30);
+  border-radius: 12px;
+  padding: 6px;
+  box-shadow: 0 20px 48px rgba(0,0,0,.55);
+  display: none;
+  max-height: 380px;
+  overflow-y: auto;
+  min-width: 220px;
+}
+.ui-dropdown.is-open .ui-dropdown-panel {
+  display: block;
+  animation: ui-dropdown-in .14s ease-out;
+}
+.ui-dropdown[data-dropdown-align="right"] > .ui-dropdown-panel {
+  left: auto;
+  right: 0;
+}
+
+@keyframes ui-dropdown-in {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+html.performance-lite .ui-dropdown.is-open .ui-dropdown-panel { animation: none; }
+@media (prefers-reduced-motion: reduce) {
+  .ui-dropdown.is-open .ui-dropdown-panel { animation: none; }
+  .ui-dropdown-caret { transition: none; }
+}
+
+.ui-dropdown-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  color: var(--white, #fff);
+  text-decoration: none;
+  font-size: 14px;
+  transition: background .12s ease, color .12s ease;
+  white-space: nowrap;
+}
+.ui-dropdown-option:hover,
+.ui-dropdown-option:focus-visible {
+  background: rgba(255, 255, 255, .05);
+  outline: none;
+}
+.ui-dropdown-option.is-active {
+  background: rgba(var(--gold-rgb, 200 169 81), .12);
+  color: #F0D98A;
+}
+.ui-dropdown-option-icon {
+  font-size: 17px;
+  color: var(--text-dim, rgba(255,255,255,.55));
+  flex-shrink: 0;
+  width: 20px;
+  text-align: center;
+}
+.ui-dropdown-option.is-active .ui-dropdown-option-icon { color: var(--gold, #C8A951); }
+.ui-dropdown-option-label {
+  flex: 1;
+  min-width: 0;
+}
+.ui-dropdown-option-check {
+  font-size: 15px;
+  color: var(--gold, #C8A951);
+  opacity: 0;
+  flex-shrink: 0;
+}
+.ui-dropdown-option.is-active .ui-dropdown-option-check { opacity: 1; }
+
+/* Version "large" (options plus lisibles sur mobile) */
+.ui-dropdown[data-dropdown-size="large"] .ui-dropdown-option {
+  min-height: 48px;
+  font-size: 15px;
+}
+
+/* Mobile : le trigger devient full-width dans son conteneur */
+@media (max-width: 640px) {
+  .ui-dropdown.is-fluid-mobile {
+    display: block;
+    width: 100%;
+  }
+  .ui-dropdown.is-fluid-mobile > .ui-dropdown-trigger {
+    width: 100%;
+    justify-content: space-between;
+  }
+}

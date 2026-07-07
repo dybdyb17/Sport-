@@ -115,6 +115,46 @@ class AdminExportService
         return $this->toCsv($rows);
     }
 
+    /**
+     * Export CSV du journal des paiements (utilise les événements produits par
+     * PaymentJournalBuilder). Mêmes filtres appliqués = mêmes lignes exportées.
+     *
+     * @param array<int, array<string, mixed>> $events
+     */
+    public function exportPayments(array $events): string
+    {
+        $rows = [['Date', 'Type', 'Client', 'Coach', 'Détail', 'Méthode', 'Statut', 'Canal', 'Montant']];
+
+        $typeLabels = [
+            'seance'    => 'Séance',
+            'pack'      => 'Pack',
+            'fondateur' => 'Fondateur',
+        ];
+        $methodLabels = [
+            'stripe' => 'Stripe',
+            'cash'   => 'Espèces',
+            'card'   => 'CB',
+        ];
+
+        foreach ($events as $e) {
+            /** @var \DateTimeInterface $paidAt */
+            $paidAt = $e['paidAt'];
+            $rows[] = [
+                $paidAt->format('d/m/Y H:i'),
+                $typeLabels[$e['type']] ?? $e['type'],
+                (string) ($e['clientName'] ?? ''),
+                (string) ($e['coachName'] ?? ''),
+                (string) ($e['detail'] ?? ''),
+                $methodLabels[$e['method']] ?? (string) ($e['method'] ?? ''),
+                $e['pending'] ? (string) ($e['pendingLabel'] ?? 'À encaisser') : 'Réglé',
+                (string) ($e['canal'] ?? ''),
+                number_format((float) $e['amount'], 2, ',', '') . ' €',
+            ];
+        }
+
+        return $this->toCsv($rows);
+    }
+
     /** Génère une string CSV (UTF-8 BOM, séparateur ;) prête pour Excel français. */
     private function toCsv(array $rows): string
     {

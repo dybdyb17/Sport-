@@ -8,21 +8,39 @@ enum TimeSlot: string
     case NIGHT     = 'night';     // 20h-minuit
     case ASTREINTE = 'astreinte'; // minuit-6h
 
-    public function multiplier(): float
-    {
-        return match ($this) {
-            self::DAY       => 1.0,
-            self::NIGHT     => 1.40,
-            self::ASTREINTE => 1.80,
-        };
-    }
-
     public function label(): string
     {
         return match ($this) {
             self::DAY       => 'Journée 6h-20h',
             self::NIGHT     => 'Night Coach 20h-minuit',
             self::ASTREINTE => 'Astreinte minuit-6h',
+        };
+    }
+
+    public function shortLabel(): string
+    {
+        return match ($this) {
+            self::DAY       => 'Journée',
+            self::NIGHT     => 'Night Coach',
+            self::ASTREINTE => 'Astreinte',
+        };
+    }
+
+    public function bookingWindowStartLabel(): string
+    {
+        return match ($this) {
+            self::DAY       => '06h00',
+            self::NIGHT     => '20h00',
+            self::ASTREINTE => '00h00',
+        };
+    }
+
+    public function bookingWindowEndLabel(): string
+    {
+        return match ($this) {
+            self::DAY       => '19h59',
+            self::NIGHT     => '23h59',
+            self::ASTREINTE => '05h59',
         };
     }
 
