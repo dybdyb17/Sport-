@@ -2,6 +2,7 @@ Sitemap: https://sportplus-13.com/sitemap.xml
 
 User-agent: *
 Allow: /
+Allow: /favicon.png
 Allow: /favicon.svg
 Allow: /apple-touch-icon.png
 Allow: /site.webmanifest
