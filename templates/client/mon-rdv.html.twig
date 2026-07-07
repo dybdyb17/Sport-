@@ -22,7 +22,39 @@
     {# Logique d'affichage du QR centralisée dans Booking::isQrUnlocked() #}
     {% set qrUnlocked = booking.isQrUnlocked %}
 
-    {% if booking.status == 'pending' %}
+    {% if booking.checkinAt %}
+      {# État terminal : le coach a scanné à l'accueil. Le QR n'a plus d'utilité,
+         on affiche un retour clair "Arrivée validée" — c'est ce que le client
+         a besoin de voir quand il rouvre la page après son check-in. #}
+      <p class="rdv-sub">Ton arrivée a été enregistrée par l'équipe.</p>
+      <div class="rdv-checked-in">
+        <i class="ti ti-user-check rdv-checked-in-icon"></i>
+        <div class="rdv-checked-in-title">
+          Arrivée validée à {{ booking.checkinAt|date('H\\hi') }}
+        </div>
+        <div class="rdv-checked-in-sub">
+          Le {{ booking.checkinAt|date('d/m/Y') }}
+          {%- if booking.checkinBy %} · par {{ booking.checkinBy.nomComplet }}{% endif -%}
+        </div>
+        {% if booking.paymentMethod %}
+          {% set methodLabels = {'cash': 'espèces', 'card': 'carte bancaire', 'stripe': 'en ligne'} %}
+          <div class="rdv-checked-in-payment rdv-checked-in-payment--ok">
+            <i class="ti ti-check"></i>
+            Réglé — {{ methodLabels[booking.paymentMethod] ?? booking.paymentMethod }}
+          </div>
+        {% elseif booking.coveredBy in ['founding', 'subscription'] %}
+          <div class="rdv-checked-in-payment rdv-checked-in-payment--ok">
+            <i class="ti ti-check"></i>
+            {{ booking.coveredBy == 'founding' ? 'Séance Fondateur — rien à régler' : 'Couverte par ton pack' }}
+          </div>
+        {% else %}
+          <div class="rdv-checked-in-payment rdv-checked-in-payment--wait">
+            <i class="ti ti-clock"></i>
+            Paiement à finaliser avec le coach
+          </div>
+        {% endif %}
+      </div>
+    {% elseif booking.status == 'pending' %}
       <p class="rdv-sub">En attente de validation par le coach. Tu recevras une notification dès qu'il aura confirmé.</p>
       <div class="rdv-qr-blocked">
         <i class="ti ti-hourglass" style="font-size:48px;color:var(--gold);"></i>
@@ -183,6 +215,8 @@
           <span class="rdv-pay-status rdv-pay-status-ok"><i class="ti ti-check"></i> {{ paidLabel }}</span>
         {% elseif isRefused %}
           <span class="rdv-pay-status rdv-pay-status-wait"><i class="ti ti-x"></i> Séance annulée</span>
+        {% elseif booking.coveredBy in ['subscription', 'founding'] %}
+          <span class="rdv-pay-status rdv-pay-status-ok"><i class="ti ti-check"></i> Incluse — rien à régler</span>
         {% elseif isPending %}
           <span class="rdv-pay-status rdv-pay-status-todo"><i class="ti ti-hourglass"></i> Bloqué — en attente du coach</span>
         {% elseif booking.startAt < date() %}
@@ -219,6 +253,29 @@
             Ton QR de check-in est débloqué — présente-le à l'accueil le jour J.
           </p>
         {% endif %}
+
+      {% elseif booking.coveredBy in ['subscription', 'founding'] %}
+        {# Séance couverte (pack ou Fondateur) — pas de paiement à prévoir, quel que soit
+           le statut (pending / confirmed / passée / checked-in). Fallback robuste si
+           subscription null pour une raison bancale : on affiche « ton pack » sans label. #}
+        {% set packLabel = booking.coveredBy == 'founding'
+          ? 'ton offre Fondateur'
+          : (booking.subscription and booking.subscription.packType
+              ? 'ton pack ' ~ booking.subscription.packType.label
+              : 'ton pack') %}
+        <div class="rdv-pay-chip rdv-pay-chip-green">
+          <i class="ti ti-check"></i>
+          <div>
+            <div class="rdv-pay-chip-name">
+              Incluse — {{ booking.coveredBy == 'founding' ? 'Offre Fondateur' : 'Pack en cours' }}
+            </div>
+            <div class="rdv-pay-chip-sub">Aucun paiement à prévoir le jour J.</div>
+          </div>
+        </div>
+        <p class="rdv-pay-help" style="color:var(--green);">
+          <i class="ti ti-info-circle" style="color:var(--green);"></i>
+          Cette séance est <strong style="color:var(--white);">déjà couverte</strong> par {{ packLabel }}.
+        </p>
 
       {% elseif intent %}
         {% set lbl = methodLabels[intent] %}
@@ -266,13 +323,6 @@
             </button>
           </form>
           <p class="rdv-pay-help">Paiement sécurisé Stripe. Tu peux aussi régler au coach sur place si tu préfères (espèces ou CB).</p>
-        {% elseif booking.coveredBy in ['subscription', 'founding'] %}
-          {# Séance couverte (pack ou Fondateur) — pas de paiement à prévoir #}
-          <p class="rdv-pay-help" style="color:var(--green);">
-            <i class="ti ti-check" style="color:var(--green);"></i>
-            Cette séance est <strong style="color:var(--white);">déjà couverte</strong> par
-            {{ booking.coveredBy == 'founding' ? 'ton offre Fondateur' : 'ton pack ' ~ booking.subscription.packType.label }} — aucun paiement à prévoir le jour J.
-          </p>
         {% else %}
           {# Confirmed + cash/card → instructions sur place #}
           <p class="rdv-pay-help">

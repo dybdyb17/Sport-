@@ -2,7 +2,7 @@
 .formule-modal {
   position: fixed;
   inset: 0;
-  z-index: 1000;
+  z-index: 5000;
   display: none;
   align-items: center;
   justify-content: center;
@@ -36,9 +36,14 @@
   max-height: 92vh;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
   scrollbar-width: thin;
   scrollbar-color: var(--gold-dim) transparent;
   animation: modalSlideUp .4s cubic-bezier(.2, .8, .2, 1);
+}
+
+.formule-modal.is-pilates .formule-modal-content {
+  max-width: 920px;
 }
 
 @keyframes modalSlideUp {
@@ -55,6 +60,10 @@
   border-radius: var(--radius-lg);
   overflow: hidden;
   box-shadow: 0 40px 100px rgba(0,0,0,.8), 0 0 80px rgba(46,204,113,.12);
+}
+
+.formule-modal.is-pilates .formule-modal-split {
+  grid-template-columns: .9fr 1fr;
 }
 
 /* Visuel à gauche */
@@ -94,6 +103,17 @@
   animation: imgScaleIn .5s cubic-bezier(.2, .8, .2, 1) .1s both;
 }
 
+.formule-modal.is-pilates .formule-modal-visual {
+  min-height: 400px;
+  padding: 22px;
+}
+
+.formule-modal.is-pilates .formule-modal-visual img {
+  width: min(100%, 420px);
+  max-height: 46vh;
+  object-fit: contain;
+}
+
 @keyframes imgScaleIn {
   from { opacity: 0; transform: scale(.92); }
   to   { opacity: 1; transform: scale(1); }
@@ -107,6 +127,11 @@
   gap: 16px;
   background: linear-gradient(180deg, var(--bg-card) 0%, var(--bg-3) 100%);
   position: relative;
+}
+
+.formule-modal.is-pilates .formule-modal-info {
+  padding: 34px 30px;
+  gap: 12px;
 }
 
 .formule-modal-tag {
@@ -137,6 +162,11 @@
   animation: infoSlideIn .4s ease .2s both;
 }
 
+.formule-modal.is-pilates .formule-modal-name {
+  font-size: clamp(32px, 4vw, 42px);
+  line-height: .98;
+}
+
 .formule-modal-price-block {
   padding: 18px 0;
   border-top: 1px solid var(--border);
@@ -156,6 +186,10 @@
   line-height: 1;
   letter-spacing: -2px;
   text-shadow: 0 0 24px rgba(255,255,255,.15);
+}
+
+.formule-modal.is-pilates .formule-modal-price {
+  font-size: clamp(50px, 6vw, 66px);
 }
 
 .formule-modal-price .euro {
@@ -182,6 +216,10 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
+}
+
+.formule-modal.is-pilates .formule-modal-features {
+  gap: 8px;
 }
 
 .formule-modal-features li {
@@ -216,6 +254,11 @@
   color: var(--text-dim);
   font-style: italic;
   padding-top: 6px;
+}
+
+.formule-modal-contact-actions {
+  display: grid;
+  gap: 10px;
 }
 
 .formule-modal-cta {
@@ -289,9 +332,58 @@
   .formule-name { font-size: 26px; }
   .formule-price { font-size: 48px; }
   .formule-price span { font-size: 22px; }
-  .formule-modal { padding: 12px; }
-  .formule-modal-info { padding: 22px 18px; }
-  .formule-modal-price-block { gap: 8px; }
+  .formule-modal {
+    align-items: flex-start;
+    padding: max(8px, env(safe-area-inset-top)) 8px max(8px, env(safe-area-inset-bottom));
+  }
+  .formule-modal-content {
+    max-height: calc(100dvh - max(16px, env(safe-area-inset-top)) - max(16px, env(safe-area-inset-bottom)));
+    border-radius: 18px;
+  }
+  .formule-modal-split {
+    border-radius: 18px;
+  }
+  .formule-modal-visual {
+    min-height: 0;
+    padding: 12px;
+  }
+  .formule-modal-visual img {
+    width: 100%;
+    max-height: min(40dvh, 390px);
+    object-fit: contain;
+    border-radius: 14px;
+  }
+  .formule-modal-close {
+    position: fixed;
+    top: max(12px, calc(env(safe-area-inset-top) + 10px));
+    right: max(12px, calc(env(safe-area-inset-right) + 10px));
+    z-index: 5002;
+    width: 44px;
+    height: 44px;
+    background: rgba(6,6,6,.88);
+    border-color: rgba(255,255,255,.22);
+    box-shadow: 0 10px 26px rgba(0,0,0,.52);
+  }
+  .formule-modal-info {
+    padding: 20px 18px 22px;
+    gap: 12px;
+  }
+  .formule-modal-name { font-size: clamp(34px, 12vw, 44px); }
+  .formule-modal-price-block { gap: 8px; padding: 14px 0; }
+  .formule-modal-price { font-size: clamp(52px, 18vw, 66px); }
+  .formule-modal-contact-actions { gap: 8px; }
+  .formule-modal-cta { min-height: 54px; margin-top: 4px; }
+}
+
+@media (max-width: 420px) {
+  .formule-modal-visual img {
+    max-height: min(36dvh, 330px);
+  }
+  .formule-modal-info {
+    padding: 18px 16px 20px;
+  }
+  .formule-modal-features { gap: 8px; }
+  .formule-modal-features li { font-size: 14px; }
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
@@ -525,5 +617,3 @@
   margin-right: 6px;
 }
 .start-modal-footer strong { color: var(--gold); }
-
-

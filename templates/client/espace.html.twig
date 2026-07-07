@@ -193,9 +193,13 @@
     {% set coachPrenom = prochaine.coach.nomComplet|split(' ')|first %}
     {% set isPending = prochaine.status == 'pending' %}
     {% set isAwaitingPayment = prochaine.isAwaitingOnlinePayment %}
-    {% set isReady = prochaine.isQrUnlocked %}
+    {% set isCheckedIn = prochaine.checkinAt is not null %}
+    {# isReady = QR à afficher UNIQUEMENT si pas encore scanné à l'accueil.
+       Une fois le check-in fait, l'état "checked-in" prime : le QR n'a plus
+       d'utilité, on montre à la place "Arrivée validée ✓". #}
+    {% set isReady = prochaine.isQrUnlocked and not isCheckedIn %}
 
-    <div class="session-ticket {{ isPending ? 'state-pending' : (isAwaitingPayment ? 'state-payment' : 'state-ready') }}"
+    <div class="session-ticket {{ isPending ? 'state-pending' : (isAwaitingPayment ? 'state-payment' : (isCheckedIn ? 'state-checked-in' : 'state-ready')) }}"
          data-animate="fade-up" data-start="{{ prochaine.startAt|date('c') }}">
       <div class="session-ticket-glow" aria-hidden="true"></div>
 
@@ -280,6 +284,37 @@
           <p class="state-block-locked">
             <i class="ti ti-lock"></i> Ton QR est prêt, il attend juste le paiement
           </p>
+        </div>
+
+      {% elseif isCheckedIn %}
+        {# État terminal : arrivée validée par le coach (via scan QR).
+           Prime sur isReady : plus la peine de montrer le QR. #}
+        <div class="session-ticket-state-block state-checked-in-block">
+          <div class="state-block-check-wrap">
+            <i class="ti ti-user-check"></i>
+          </div>
+          <div class="state-block-check-title">Arrivée validée à {{ prochaine.checkinAt|date('H\\hi') }}</div>
+          <div class="state-block-check-sub">
+            {{ prochaine.checkinAt|date('d/m/Y') }}
+            {%- if prochaine.checkinBy %} · par {{ prochaine.checkinBy.nomComplet }}{% endif -%}
+          </div>
+          {% if prochaine.paymentMethod %}
+            {% set methodLabels = {'cash': 'espèces', 'card': 'carte bancaire', 'stripe': 'en ligne'} %}
+            <div class="state-block-check-payment state-block-check-payment--ok">
+              <i class="ti ti-check"></i>
+              Réglé — {{ methodLabels[prochaine.paymentMethod] ?? prochaine.paymentMethod }}
+            </div>
+          {% elseif prochaine.coveredBy in ['founding', 'subscription'] %}
+            <div class="state-block-check-payment state-block-check-payment--ok">
+              <i class="ti ti-check"></i>
+              {{ prochaine.coveredBy == 'founding' ? 'Séance Fondateur' : 'Couverte par ton pack' }}
+            </div>
+          {% else %}
+            <div class="state-block-check-payment state-block-check-payment--wait">
+              <i class="ti ti-clock"></i>
+              À régler avec le coach
+            </div>
+          {% endif %}
         </div>
 
       {% elseif isReady %}
