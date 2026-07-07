@@ -2,8 +2,8 @@
 
 {% block title %}SPORT+ Marseille — Coaching privé, salle 24h/24 & Pilates Reformer{% endblock %}
 {% block meta_description %}<meta name="description" content="Coaching privé à Marseille — Day Pass dès 40€, Night Coach dès 20h, salle 24h/24 & Pilates Reformer. 164 Chemin Saint-Jean du Désert, 13005.">{% endblock %}
-{% block og_title %}SPORT+ — Coaching Premium Marseille{% endblock %}
-{% block og_description %}Day Pass dès 40€ · Night Coach 60€ · Astreinte 80€. Accès salle 24h/24 à Marseille. Sans engagement.{% endblock %}
+{% block og_title %}SPORT+ Marseille — Coaching privé, salle 24h/24 & Pilates Reformer{% endblock %}
+{% block og_description %}Coaching privé à Marseille, Night Coach dès 20h, accès salle 24h/24 et Pilates Reformer. Sans engagement.{% endblock %}
 {% block preload_assets %}<link rel="preload" as="image" href="{{ asset('img/club-photos/cours-collectif-1.jpg') }}" fetchpriority="high">{% endblock %}
 
 {% block body %}
@@ -24,6 +24,12 @@
     "postalCode": "13005",
     "addressCountry": "FR"
   },
+  "areaServed": ["Marseille", "Marseille 13005", "Saint-Jean du Désert", "La Timone"],
+  "makesOffer": [
+    {"@type":"Offer","name":"Coaching privé SPORT+ Marseille","priceCurrency":"EUR","price":"40"},
+    {"@type":"Offer","name":"Night Coach SPORT+ Marseille","priceCurrency":"EUR","price":"60"},
+    {"@type":"Offer","name":"Pilates Reformer SPORT+ Marseille","priceCurrency":"EUR","price":"35"}
+  ],
   "sameAs": [
     "https://www.facebook.com/sportplus13005/?locale=fr_FR",
     "https://www.instagram.com/sportplus13005",

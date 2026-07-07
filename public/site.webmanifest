@@ -1,0 +1,13 @@
+{
+  "name": "SPORT+ Marseille",
+  "short_name": "SPORT+",
+  "description": "Coaching privé, salle 24h/24, Night Coach et Pilates Reformer à Marseille.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#060606",
+  "theme_color": "#060606",
+  "icons": [
+    { "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml" }
+  ]
+}
