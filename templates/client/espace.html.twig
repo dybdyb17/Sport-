@@ -168,10 +168,12 @@
         <i class="ti ti-calendar-plus"></i>
         <span>Réserver</span>
       </a>
-      <a href="{{ path('app_espace_client_packs') }}" class="client-quick-action">
-        <i class="ti ti-barbell"></i>
-        <span>Mes packs</span>
-      </a>
+      {% if packsStrip.count == 0 and packsStrip.pendingCount == 0 %}
+        <a href="{{ path('app_espace_client_packs') }}" class="client-quick-action">
+          <i class="ti ti-barbell"></i>
+          <span>Mes packs</span>
+        </a>
+      {% endif %}
       <a href="{{ path('app_espace_client_history') }}" class="client-quick-action">
         <i class="ti ti-history"></i>
         <span>Historique</span>
