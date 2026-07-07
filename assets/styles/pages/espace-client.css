@@ -1053,20 +1053,24 @@ html.performance-lite .status-dot { animation: none; }
   .espace-hero-actions .btn { width: 100%; justify-content: center; }
 
   .client-quick-actions {
-    position: sticky;
-    top: calc(var(--header-h, 72px) + env(safe-area-inset-top, 0px) + 8px);
-    z-index: 20;
-    padding: 8px;
-    margin: 0 -8px 18px;
-    background: rgba(6,6,6,.72);
-    border: 1px solid rgba(255,255,255,.08);
-    border-radius: 20px;
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    box-shadow: 0 14px 34px rgba(0,0,0,.25);
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    overscroll-behavior-inline: contain;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding: 2px 0 10px;
+    margin: -4px 0 16px;
   }
-  .client-quick-action { min-height: 62px; border-radius: 14px; }
-  .client-quick-action i { width: 28px; height: 28px; font-size: 17px; }
+  .client-quick-actions::-webkit-scrollbar { display: none; }
+  .client-quick-action {
+    min-width: 112px;
+    min-height: 46px;
+    display: inline-flex;
+    border-radius: 999px;
+    padding: 9px 12px;
+  }
+  .client-quick-action i { width: 26px; height: 26px; font-size: 16px; }
   .client-quick-action span { font-size: 10.5px; letter-spacing: .9px; }
 
   .session-ticket {
@@ -1103,8 +1107,4 @@ html.performance-lite .status-dot { animation: none; }
   .deciplus-strip-body { min-width: 0; }
   .deciplus-strip .btn { width: 100%; justify-content: center; }
   .history-link-wrap { margin-bottom: 18px; }
-}
-
-@media (max-width: 380px) {
-  .client-quick-actions { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
