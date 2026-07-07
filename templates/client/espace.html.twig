@@ -157,6 +157,34 @@
     </div>
   </div>
 
+  {# Raccourcis tactiles : seulement quand une séance existe, pour éviter de surcharger l'état vide. #}
+  {% if prochaine %}
+    <nav class="client-quick-actions" aria-label="Raccourcis de mon espace" data-animate="fade-up">
+      <a href="{{ path('app_espace_client_rdv', {reference: prochaine.reference}) }}" class="client-quick-action">
+        <i class="ti ti-ticket"></i>
+        <span>Mon RDV</span>
+      </a>
+      <a href="{{ path('app_booking_new') }}" class="client-quick-action">
+        <i class="ti ti-calendar-plus"></i>
+        <span>Réserver</span>
+      </a>
+      {% if packsStrip.count == 0 and packsStrip.pendingCount == 0 %}
+        <a href="{{ path('app_espace_client_packs') }}" class="client-quick-action">
+          <i class="ti ti-barbell"></i>
+          <span>Mes packs</span>
+        </a>
+      {% endif %}
+      <a href="{{ path('app_espace_client_history') }}" class="client-quick-action">
+        <i class="ti ti-history"></i>
+        <span>Historique</span>
+      </a>
+      <a href="{{ path('app_espace_client_profil') }}" class="client-quick-action">
+        <i class="ti ti-user-cog"></i>
+        <span>Profil</span>
+      </a>
+    </nav>
+  {% endif %}
+
   {# ══════════════════════════════════════════════════════════════════════
      TICKET PROCHAINE SÉANCE — 3 états : en attente / à régler / prête
      ══════════════════════════════════════════════════════════════════════ #}

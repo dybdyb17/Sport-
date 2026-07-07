@@ -1,7 +1,10 @@
-Sitemap: https://VOTRE_DOMAINE/sitemap.xml
+Sitemap: https://sportplus-13.com/sitemap.xml
 
 User-agent: *
 Allow: /
+Allow: /favicon.svg
+Allow: /apple-touch-icon.png
+Allow: /site.webmanifest
 
 Disallow: /admin/
 Disallow: /reservation/api/

@@ -348,3 +348,111 @@ html.performance-lite .pack-card-progress-bar { transition: none; }
     margin-top: 4px;
   }
 }
+
+/* ── Mobile confort : mes packs ─────────────────────────────────────── */
+@media (max-width: 640px) {
+  .mes-packs-page {
+    padding-inline: 16px;
+    padding-bottom: 56px;
+  }
+  .mes-packs-head { margin-bottom: 22px; }
+  .mes-packs-title {
+    font-size: clamp(36px, 12vw, 50px);
+    line-height: .9;
+    letter-spacing: -1px;
+  }
+  .mes-packs-sub {
+    font-size: 14px;
+    line-height: 1.55;
+  }
+  .pack-list { gap: 16px; }
+  .pack-list-eyebrow {
+    width: 100%;
+    justify-content: center;
+    min-height: 38px;
+    padding: 8px 12px;
+    border: 1px solid rgba(var(--gold-rgb), .25);
+    border-radius: 999px;
+    background: rgba(var(--gold-rgb), .06);
+  }
+  .pack-card {
+    padding: 18px 16px;
+    border-radius: 22px;
+  }
+  .pack-card-header {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  .pack-card-emblem {
+    width: 46px;
+    height: 46px;
+    border-radius: 14px;
+  }
+  .pack-card-title {
+    font-size: 23px;
+    line-height: 1;
+  }
+  .pack-card-badge {
+    grid-column: 1 / -1;
+    width: 100%;
+    justify-content: center;
+    min-height: 36px;
+    margin-top: 0;
+  }
+  .pack-card-counter {
+    flex-wrap: wrap;
+    gap: 4px 7px;
+    margin-bottom: 14px;
+  }
+  .pack-card-counter-num { font-size: 44px; }
+  .pack-card-counter-label {
+    width: 100%;
+    margin-left: 0;
+  }
+  .pack-card-meta {
+    display: grid;
+    gap: 9px;
+    margin-bottom: 16px;
+  }
+  .pack-card-ref { overflow-wrap: anywhere; }
+  .pack-card-pending-msg {
+    padding: 13px;
+    border-radius: 16px;
+    font-size: 13.5px;
+  }
+  .pack-card-actions,
+  .pack-card-actions .btn {
+    width: 100%;
+  }
+  .pack-card-actions .btn {
+    justify-content: center;
+    min-height: 48px;
+  }
+  .pack-card-upcoming {
+    padding: 13px;
+    border-radius: 16px;
+  }
+  .pack-card-upcoming-item {
+    display: grid;
+    gap: 5px;
+    padding: 10px 0;
+  }
+  .pack-card-upcoming-badge {
+    width: fit-content;
+    min-height: 28px;
+  }
+  .mes-packs-note {
+    border-radius: 18px;
+    font-size: 13px;
+  }
+  .mes-packs-page .empty-state {
+    padding: 28px 18px;
+    border-radius: 22px;
+  }
+  .mes-packs-page .empty-state .btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
