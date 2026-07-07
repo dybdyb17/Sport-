@@ -1325,3 +1325,29 @@ body {
   .home-founding-offer-media img { transition: none; }
   .home-founding-offer:hover .home-founding-offer-media img { transform: none; }
 }
+
+/* ── Home mobile : boutons et cartes plus confortables au doigt ─────── */
+@media (max-width: 640px) {
+  .hero-actions {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+    width: 100%;
+  }
+  .hero-actions .btn {
+    width: 100%;
+    justify-content: center;
+    min-height: 50px;
+  }
+  .home-service-card .btn,
+  .home-final-cta .btn {
+    width: 100%;
+    justify-content: center;
+  }
+  .home-final-trust {
+    display: grid;
+    gap: 10px;
+    text-align: left;
+    justify-content: stretch;
+  }
+}
