@@ -39,9 +39,13 @@ d'abonnement + accès salle), sans le remplacer.
 
 ## 💶 Tarification (logique critique)
 
-- Day Pass : **format** (Solo/Duo 40€ base, Group 25€/pers) **× multiplicateur créneau** :
-  Journée (6h-20h) ×1.0, Night (20h-minuit) ×1.5 = 60€, Astreinte (minuit-6h) ×2.0 = 80€.
-  Enums : `TimeSlot` (DAY/NIGHT/ASTREINTE), `BookingFormat` (SOLO/DUO/GROUP), `PackType`.
+- Day Pass : **grille hardcodée** dans `PricingCalculator::SINGLE_SESSION_PRICES` (pas de
+  multiplicateur — le tableau format×créneau est la source unique de vérité) :
+  - Solo/Duo : Journée 40€, Night 60€, Astreinte 80€
+  - Group (par personne) : Journée 22€, Night 31€, Astreinte 40€
+  Enums : `TimeSlot` (DAY/NIGHT/ASTREINTE — 6h-20h / 20h-minuit / minuit-6h),
+  `BookingFormat` (SOLO/DUO/GROUP), `PackType`.
+  Les packs mensuels ont leur propre grille dans `MONTHLY_PACK_PRICES` (format×pack×créneau).
 - **`booking.price` = TOUJOURS le prix unitaire** (prix séance × nb personnes).
   **`booking.coveredBy`** = `'subscription'` / `'founding'` / `null`.
   - Affichage **client** : « Incluse — Pack X » / « Incluse — Fondateur » (jamais le prix nu si
@@ -169,6 +173,19 @@ ResetFoundingClaims, SeedFoundingOffer, SeedPricingShowcase, **SendDayBeforeRemi
   invalider les QR déjà générés. `checkinBy` enregistre QUI a validé (coach ou admin).
   Template `validate.html.twig` migré sur `base.html.twig` (plus de sidebar admin
   orpheline pour un coach).
+- **Scan QR tout-en-un (4 juillet)** : la page `/admin/checkin/{ref}` (scannée par le coach
+  depuis son tel) regroupe désormais **arrivée + encaissement au même endroit**. Nouvelle
+  route POST `/admin/checkin/{ref}/encaisser` (`app_admin_checkin_declare_payment`, CSRF
+  `checkin_pay_{ref}`, mêmes gardes `ROLE_COACH` + coach assigné que la validation
+  d'arrivée) qui appelle `BookingManager::declareOnSitePayment($booking, $method, $note,
+  $declaredBy, 'checkin_scan')` — méthode factorisée depuis `CoachController::declarePayment`
+  (`'coach_dashboard'` côté dashboard, `'checkin_scan'` côté scan). Idempotence garantie
+  (`LogicException` si déjà payé) + audit `PAYMENT_DECLARED` avec la source. Seules valeurs
+  autorisées : `'cash'` / `'card'` — jamais `'stripe'` en manuel (webhook only). Template
+  affiche 3 états : Réglé, Rien à encaisser (pack/founding), boutons cash/card. Côté client,
+  l'espace + Mon RDV affichent désormais un état **« Arrivée validée à HH:MM ✓ »** (vert,
+  `Booking.checkinAt`) qui prime sur le QR (inutile après scan) + pastille paiement
+  (réglé / à régler au club).
 - **No-show** : `Booking.noShow`/`noShowMarkedAt`/`noShowFee`, route `/coach/booking/{id}/no-show`,
   fee **30%** (décision Loïc), bouton coach + badge rouge admin.
 - **Confirmation J-1** : `Booking.clientConfirmedAt`, route signée HMAC
@@ -197,8 +214,28 @@ ResetFoundingClaims, SeedFoundingOffer, SeedPricingShowcase, **SendDayBeforeRemi
   AdminConversationController (lecture toutes conv), fiche coach `/admin/coachs/{id}` (perf
   mois + carrière), modal PEEK universelle, modal confirmation universelle, TVA 20%
   (HT/TVA/TTC), exports CSV.
-- **Tarifs** : `/tarifs` rend `tarifs_v2.html.twig` (l'ancien `tarifs.html.twig` est conservé
-  mais NON utilisé — ne jamais y revenir). Modal Group « Vous êtes combien ? ».
+- **Tarifs** : `/tarifs` rend `tarifs_v2.html.twig`. **Le legacy `templates/public/tarifs.html.twig`
+  a été SUPPRIMÉ** (sessions Codex juillet 2026) — ne pas le recréer. Modal Group « Vous êtes
+  combien ? ». **Formules abonnement & Pilates = contact salle / paiement sur place** (décision
+  Loïc juillet 2026) : plus de CTA Deciplus dans les modales tarifs
+  (`.formule-modal-contact-actions`). Deciplus reste pour les membres existants (encart espace
+  client + page dédiée + legal).
+- **Pilates Reformer (juillet 2026, Codex)** : offre visible sur `/tarifs` (tarifs_v2, carte
+  `formule-card-pilates`, image `public/img/formules/PilateReformeur.jpeg` — **casse exacte
+  obligatoire**). **Prix lancement** : Vague 1 **35€** / Vague 2 **45€** / après lancement
+  **60€** la séance. ⚠️ **Ces prix sont écrits EN DUR à 3 endroits** — carte tarifs, JSON-LD
+  Service dans tarifs_v2, réponses FAQ Pilates. **Toujours changer les 3 ensemble.** FAQ :
+  section visible `#pilates-reformer` en fin de page + questions Pilates dans le JSON-LD
+  FAQPage + lien dans la nav interne. Schema.org : `Service` Pilates sur tarifs_v2 +
+  `SportsActivityLocation` sur la home (priceRange `« 35€ - 575€ »`, description avec Pilates).
+  🚫 **Interdits actés par Loïc** : PAS de page dédiée Pilates, PAS d'entrée dropdown navbar,
+  PAS de bloc Pilates visible sur la home. (Page dédiée = option SEO à rediscuter, ne pas
+  décider seul.)
+- **Panneau FAQ mobile `faq-fab` : SUPPRIMÉ** (HTML + CSS, sessions Codex). Ne pas le
+  réintroduire — la nav interne FAQ suffit sur mobile.
+- **Helpers `TimeSlot` étendus (Codex)** : `shortLabel()` / `bookingWindowStartLabel()` /
+  `bookingWindowEndLabel()` utilisés pour les messages d'erreur créneau lors des tentatives
+  de réservation pack hors fenêtre. Test frontières : `php tests/TimeSlotBoundariesTest.php`.
 - **Photos coach** : base64 en DB (`photo_data` + `photo_mime_type`), `getPhotoSrc()`, fallback
   fichier local.
 - **Pages légales** : 4 pages avec contenu réel.

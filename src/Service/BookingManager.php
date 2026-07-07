@@ -36,6 +36,7 @@ class BookingManager
         private readonly FoundingOfferService   $foundingService,
         private readonly MailerService          $mailer,
         private readonly ConversationRepository $conversationRepo,
+        private readonly \App\Service\AuditLogger $auditLogger,
         #[Autowire('%kernel.secret%')]
         private readonly string                 $appSecret,
     ) {}
@@ -201,6 +202,52 @@ class BookingManager
     /**
      * Refuse une réservation (action du coach).
      */
+    /**
+     * Le coach déclare un encaissement SUR PLACE (espèces ou carte).
+     *
+     * Point d'entrée UNIQUE pour les 2 flows :
+     *  - dashboard coach (CoachController::declarePayment) → source 'coach_dashboard'
+     *  - page de scan QR (AdminCheckinController::declarePaymentOnScan) → source 'checkin_scan'
+     *
+     * ⚠️ 'stripe' interdit — c'est le webhook Stripe qui pose ce mode-là, jamais
+     * un humain. Idempotent : si paymentMethod déjà posé, jette LogicException.
+     *
+     * @throws \InvalidArgumentException si $method n'est pas cash/card
+     * @throws \LogicException           si le booking est déjà encaissé
+     */
+    public function declareOnSitePayment(
+        Booking $booking,
+        string  $method,
+        ?string $note,
+        User    $declaredBy,
+        string  $auditSource = 'coach_dashboard',
+    ): Booking {
+        if (!in_array($method, ['cash', 'card'], true)) {
+            throw new \InvalidArgumentException('Mode de paiement invalide (attendu : cash ou card).');
+        }
+        if ($booking->getPaymentMethod() !== null) {
+            throw new \LogicException('Ce paiement est déjà déclaré.');
+        }
+
+        $booking
+            ->setPaymentMethod($method)
+            ->setPaymentDeclaredAt(new \DateTimeImmutable())
+            ->setPaymentDeclaredBy($declaredBy)
+            ->setPaymentNote($note);
+        $this->em->flush();
+
+        $this->auditLogger->log(\App\Entity\Enum\AuditAction::PAYMENT_DECLARED, $booking, [
+            'source'  => $auditSource,
+            'method'  => $method,
+            'amount'  => $booking->getPrice(),
+            'note'    => $note ?: null,
+            'client'  => $booking->getClient()?->getNomComplet(),
+            'startAt' => $booking->getStartAt()?->format('c'),
+        ]);
+
+        return $booking;
+    }
+
     public function refuse(Booking $booking, User $coachUser, ?string $reason = null): Booking
     {
         if ($booking->getCoach()?->getUser() !== $coachUser) {

@@ -242,8 +242,7 @@ class CoachController extends AbstractController
         int $id,
         Request $request,
         BookingRepository $bookings,
-        EntityManagerInterface $em,
-        \App\Service\AuditLogger $auditLogger,
+        BookingManager $bookingManager,
     ): Response {
         /** @var \App\Entity\User $user */
         $user = $this->getUser();
@@ -256,29 +255,22 @@ class CoachController extends AbstractController
             $this->addFlash('danger', 'Jeton CSRF invalide.');
             return $this->redirectToRoute('app_coach_dashboard');
         }
-        $method = $request->request->get('method');
-        // Le coach ne déclare QUE les encaissements sur place (cash/card).
-        // Les paiements 'stripe' sont posés par le webhook, jamais via cette route.
-        if (!in_array($method, ['cash', 'card'], true)) {
+
+        try {
+            $bookingManager->declareOnSitePayment(
+                $booking,
+                (string) $request->request->get('method'),
+                (string) $request->request->get('note') ?: null,
+                $user,
+                'coach_dashboard',
+            );
+            $this->addFlash('success', 'Paiement déclaré.');
+        } catch (\InvalidArgumentException $e) {
             $this->addFlash('danger', 'Mode de paiement invalide.');
-            return $this->redirectToRoute('app_coach_dashboard');
+        } catch (\LogicException $e) {
+            $this->addFlash('info', $e->getMessage());
         }
-        $note = (string) $request->request->get('note');
-        $booking->setPaymentMethod($method);
-        $booking->setPaymentDeclaredAt(new \DateTimeImmutable());
-        $booking->setPaymentDeclaredBy($user);
-        $booking->setPaymentNote($note);
-        $em->flush();
 
-        $auditLogger->log(\App\Entity\Enum\AuditAction::PAYMENT_DECLARED, $booking, [
-            'method'        => $method,
-            'amount'        => $booking->getPrice(),
-            'note'          => $note ?: null,
-            'client'        => $booking->getClient()?->getNomComplet(),
-            'startAt'       => $booking->getStartAt()?->format('c'),
-        ]);
-
-        $this->addFlash('success', 'Paiement déclaré.');
         return $this->redirectToRoute('app_coach_dashboard');
     }
 
