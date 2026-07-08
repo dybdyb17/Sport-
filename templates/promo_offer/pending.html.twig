@@ -1,16 +1,51 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Paiement en vérification — SPORT+{% endblock %}
+{% block title %}
+  {% if purchase.awaitingOnSitePayment %}Réservation enregistrée{% else %}Paiement en vérification{% endif %} — SPORT+
+{% endblock %}
 
 {% block body %}
 <section class="section">
   <div class="container" style="max-width:640px;">
-    <div class="form-card" style="padding:32px;text-align:center;">
-      <div class="hero-badge">Paiement en vérification</div>
-      <h1 class="section-title" style="font-size:42px;">On vérifie ton paiement</h1>
-      <p class="section-sub" style="font-size:16px;">Stripe nous confirme le paiement automatiquement. Si le QR n'apparaît pas tout de suite, attends quelques secondes puis recharge la page depuis ton email de confirmation.</p>
-      <a href="{{ path('app_home') }}" class="btn btn-primary"><i class="ti ti-home"></i> Retour à l'accueil</a>
-    </div>
+    {% if purchase.awaitingOnSitePayment %}
+      {# ── Réservation avec paiement au club ── #}
+      <div class="form-card" style="padding:32px;text-align:center;">
+        <div style="width:80px;height:80px;margin:0 auto 20px;border-radius:50%;background:radial-gradient(ellipse at center,rgba(46,204,113,.20) 0%,transparent 65%);border:2px solid rgba(46,204,113,.45);display:flex;align-items:center;justify-content:center;color:var(--green);font-size:38px;">
+          <i class="ti ti-check"></i>
+        </div>
+        <div class="hero-badge" style="background:rgba(46,204,113,.15);color:var(--green);border-color:rgba(46,204,113,.4);">Réservation enregistrée</div>
+        <h1 class="section-title" style="font-size:38px;margin-top:14px;">On t'attend au club</h1>
+        <p class="section-sub" style="font-size:16px;max-width:520px;margin:0 auto 24px;line-height:1.6;">
+          Ta réservation pour <strong style="color:var(--gold);">{{ purchase.offer.title }}</strong> est bien enregistrée.
+          Passe au club pour régler <strong style="color:var(--white);">{{ purchase.amountFormatted }}</strong> en espèces ou en carte,
+          on te remettra ton QR après paiement.
+        </p>
+
+        <div style="margin:24px auto;max-width:420px;padding:20px;background:rgba(0,0,0,.25);border:1px solid var(--border);border-radius:12px;text-align:left;color:var(--text-dim);font-size:14px;line-height:1.8;">
+          <div><strong style="color:var(--white);">Référence :</strong> {{ purchase.reference }}</div>
+          <div><strong style="color:var(--white);">Nom :</strong> {{ purchase.buyerName }}</div>
+          <div><strong style="color:var(--white);">Email :</strong> {{ purchase.buyerEmail }}</div>
+          <div><strong style="color:var(--white);">Montant :</strong> {{ purchase.amountFormatted }}</div>
+        </div>
+
+        <p style="color:var(--text-soft);font-size:14px;line-height:1.6;margin:0 0 20px;">
+          <i class="ti ti-map-pin" style="color:var(--gold);"></i>
+          SPORT+ Marseille · 164 Chemin de Saint-Jean du Désert, 13005 Marseille
+        </p>
+        <p style="color:var(--text-dim);font-size:13px;line-height:1.55;margin:0 0 24px;">
+          Un email de confirmation vient de partir. Il te suffit de la mentionner à l'accueil (nom ou référence <strong>{{ purchase.reference }}</strong>), Loïc ou un coach validera ton paiement et tu recevras ton QR par email dans la foulée.
+        </p>
+        <a href="{{ path('app_home') }}" class="btn btn-primary"><i class="ti ti-home"></i> Retour à l'accueil</a>
+      </div>
+    {% else %}
+      {# ── Paiement Stripe en cours de vérification (rare) ── #}
+      <div class="form-card" style="padding:32px;text-align:center;">
+        <div class="hero-badge">Paiement en vérification</div>
+        <h1 class="section-title" style="font-size:42px;">On vérifie ton paiement</h1>
+        <p class="section-sub" style="font-size:16px;">Stripe nous confirme le paiement automatiquement. Si le QR n'apparaît pas tout de suite, attends quelques secondes puis recharge la page depuis ton email de confirmation.</p>
+        <a href="{{ path('app_home') }}" class="btn btn-primary"><i class="ti ti-home"></i> Retour à l'accueil</a>
+      </div>
+    {% endif %}
   </div>
 </section>
 {% endblock %}

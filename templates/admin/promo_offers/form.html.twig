@@ -79,6 +79,26 @@
     </label>
   </div>
 
+  {# Autoriser paiement au club en plus de Stripe. Si coché, la page publique
+     offre affiche un 2ᵉ CTA "Réserver, je paye au club" qui crée un
+     PromoPurchase pending. L'admin/coach valide ensuite au comptoir → email
+     avec QR envoyé au client. Utile pour économiser les frais Stripe (2.9%)
+     sur les grosses offres type BlackCard 400€. #}
+  <div class="form-group" style="margin-top:8px;padding:14px 16px;background:rgba(46,204,113,.06);border:1px solid rgba(46,204,113,.35);border-radius:12px;">
+    <label style="display:flex;align-items:center;gap:10px;cursor:pointer;margin-bottom:0;">
+      <input type="checkbox" name="allows_onsite_payment" value="1" {{ offer.allowsOnSitePayment ? 'checked' : '' }}
+             style="width:20px;height:20px;accent-color:var(--green);flex-shrink:0;">
+      <div>
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--green);">
+          <i class="ti ti-cash"></i> Autoriser paiement au club (espèces / CB)
+        </div>
+        <div style="font-size:12.5px;color:var(--text-dim);margin-top:3px;line-height:1.4;">
+          Ajoute un 2ᵉ bouton "Réserver, je paye au club" à côté du paiement Stripe. Le client réserve, tu valides à sa venue, il reçoit son QR par email. Économise les frais Stripe (2.9%) sur les grosses offres.
+        </div>
+      </div>
+    </label>
+  </div>
+
   <button class="btn btn-primary btn-lg" type="submit"><i class="ti ti-device-floppy"></i> Enregistrer l’offre</button>
 </form>
 

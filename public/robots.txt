@@ -12,3 +12,4 @@ Disallow: /reservation/api/
 Disallow: /mon-espace
 Disallow: /coach/
 Disallow: /messages
+Disallow: /offres/

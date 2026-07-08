@@ -51,6 +51,33 @@ class PromoPurchase
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $stripePaymentIntentId = null;
 
+    /**
+     * Mode de paiement DÉCLARÉ par le client à la réservation (cash|card|stripe).
+     * Sert à distinguer une purchase en attente de paiement Stripe (le client
+     * a lancé le checkout mais n'a pas fini) d'une purchase en attente de
+     * paiement au club (cash/card). Aligné sur Booking.intendedPaymentMethod.
+     */
+    #[ORM\Column(length: 10, nullable: true)]
+    private ?string $intendedPaymentMethod = null;
+
+    /**
+     * Mode de paiement RÉELLEMENT effectué (posé après confirmation) :
+     *   - 'stripe' : posé par le webhook checkout.session.completed
+     *   - 'cash' | 'card' : posé par la validation admin/coach au club
+     * Reste NULL tant que le paiement n'est pas confirmé.
+     * Contrat identique à Booking : ∈ {stripe, cash, card, NULL}.
+     */
+    #[ORM\Column(length: 10, nullable: true)]
+    private ?string $paymentMethod = null;
+
+    /** Trace de qui a validé le paiement au club (admin/coach). */
+    #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
+    private ?\DateTimeImmutable $paymentValidatedAt = null;
+
+    #[ORM\ManyToOne]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
+    private ?User $paymentValidatedBy = null;
+
     #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
     private ?\DateTimeImmutable $paidAt = null;
 
@@ -94,6 +121,27 @@ class PromoPurchase
     public function setStripeCheckoutSessionId(?string $id): static { $this->stripeCheckoutSessionId = $id; return $this; }
     public function getStripePaymentIntentId(): ?string { return $this->stripePaymentIntentId; }
     public function setStripePaymentIntentId(?string $id): static { $this->stripePaymentIntentId = $id; return $this; }
+    public function getIntendedPaymentMethod(): ?string { return $this->intendedPaymentMethod; }
+    public function setIntendedPaymentMethod(?string $method): static
+    {
+        $this->intendedPaymentMethod = in_array($method, ['stripe', 'cash', 'card'], true) ? $method : null;
+        return $this;
+    }
+    public function getPaymentMethod(): ?string { return $this->paymentMethod; }
+    public function setPaymentMethod(?string $method): static
+    {
+        $this->paymentMethod = in_array($method, ['stripe', 'cash', 'card'], true) ? $method : null;
+        return $this;
+    }
+    public function getPaymentValidatedAt(): ?\DateTimeImmutable { return $this->paymentValidatedAt; }
+    public function setPaymentValidatedAt(?\DateTimeImmutable $dt): static { $this->paymentValidatedAt = $dt; return $this; }
+    public function getPaymentValidatedBy(): ?User { return $this->paymentValidatedBy; }
+    public function setPaymentValidatedBy(?User $u): static { $this->paymentValidatedBy = $u; return $this; }
+    public function isAwaitingOnSitePayment(): bool
+    {
+        return $this->status === self::STATUS_PENDING
+            && in_array($this->intendedPaymentMethod, ['cash', 'card'], true);
+    }
     public function getPaidAt(): ?\DateTimeImmutable { return $this->paidAt; }
     public function setPaidAt(?\DateTimeImmutable $paidAt): static { $this->paidAt = $paidAt; return $this; }
     public function getCheckinAt(): ?\DateTimeImmutable { return $this->checkinAt; }

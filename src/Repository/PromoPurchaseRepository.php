@@ -42,4 +42,24 @@ class PromoPurchaseRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+
+    /**
+     * Purchases en attente de paiement au club : status=pending +
+     * intendedPaymentMethod IN (cash, card). Triées par ancienneté (les
+     * plus vieilles d'abord — le client attend son QR).
+     *
+     * @return PromoPurchase[]
+     */
+    public function findPendingOnsite(): array
+    {
+        return $this->createQueryBuilder('p')
+            ->leftJoin('p.offer', 'o')->addSelect('o')
+            ->where('p.status = :pending')
+            ->andWhere('p.intendedPaymentMethod IN (:onsite)')
+            ->setParameter('pending', PromoPurchase::STATUS_PENDING)
+            ->setParameter('onsite', ['cash', 'card'])
+            ->orderBy('p.createdAt', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
 }

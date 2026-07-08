@@ -1,0 +1,57 @@
+{% extends 'emails/base.html.twig' %}
+{% import 'emails/_macros.html.twig' as m %}
+
+{% block subject %}🎟️ Réservation enregistrée — {{ offer.title }}{% endblock %}
+
+{% block content %}
+<p style="margin:0 0 20px;font-size:16px;color:#ECECEC;font-family:Arial,Helvetica,sans-serif;">
+  Salut <strong style="color:#F4EFE6;">{{ purchase.buyerName|split(' ')|first }}</strong>,
+</p>
+
+<p style="margin:0 0 24px;font-size:15px;color:#ECECEC;font-family:Arial,Helvetica,sans-serif;line-height:1.65;">
+  On a bien enregistré ta réservation pour <strong style="color:#C8A951;">{{ offer.title }}</strong>. Il te reste juste à passer au club régler {{ purchase.amountFormatted }} — on te remettra ton QR de confirmation dans la foulée.
+</p>
+
+{# Bloc récap réservation #}
+<table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color:#161620;border:1px solid #2ECC71;border-radius:10px;margin:0 0 24px;">
+  <tr>
+    <td style="padding:22px 24px;">
+      <div style="font-weight:700;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#2ECC71;margin-bottom:14px;font-family:Arial,Helvetica,sans-serif;">Réservation enregistrée</div>
+      <div style="font-family:Arial,Helvetica,sans-serif;font-size:14px;color:#ECECEC;line-height:2;">
+        <span style="color:#9A8F7A;">Référence :</span> <strong style="color:#C8A951;letter-spacing:1px;">{{ purchase.reference }}</strong><br>
+        <span style="color:#9A8F7A;">Offre :</span> <strong style="color:#F4EFE6;">{{ offer.title }}</strong><br>
+        <span style="color:#9A8F7A;">Montant :</span> <strong style="color:#F4EFE6;">{{ purchase.amountFormatted }}</strong><br>
+        <span style="color:#9A8F7A;">Nom :</span> <strong style="color:#F4EFE6;">{{ purchase.buyerName }}</strong>
+      </div>
+    </td>
+  </tr>
+</table>
+
+{# Instructions club #}
+<table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background:linear-gradient(135deg,#161620,#1A1A10);border-left:3px solid #C8A951;border-radius:6px;margin:0 0 24px;">
+  <tr>
+    <td style="padding:18px 20px;">
+      <div style="font-weight:700;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#C8A951;margin-bottom:10px;font-family:Arial,Helvetica,sans-serif;">Comment finaliser</div>
+      <div style="font-family:Arial,Helvetica,sans-serif;font-size:14px;color:#ECECEC;line-height:1.75;">
+        <strong style="color:#C8A951;">1.</strong> Passe au club aux horaires d'ouverture<br>
+        <strong style="color:#C8A951;">2.</strong> Mentionne ta référence <strong style="color:#F4EFE6;">{{ purchase.reference }}</strong> (ou ton nom)<br>
+        <strong style="color:#C8A951;">3.</strong> Règle {{ purchase.amountFormatted }} en espèces ou par carte<br>
+        <strong style="color:#C8A951;">4.</strong> Tu reçois immédiatement un email avec ton QR
+      </div>
+    </td>
+  </tr>
+</table>
+
+<p style="margin:0 0 20px;font-size:14px;color:#ECECEC;font-family:Arial,Helvetica,sans-serif;line-height:1.65;">
+  <strong style="color:#C8A951;">📍 SPORT+ Marseille</strong><br>
+  164 Chemin de Saint-Jean du Désert, 13005 Marseille
+</p>
+
+{{ m.button(pendingUrl, 'Voir ma réservation') }}
+
+{{ m.divider() }}
+
+<p style="margin:0;font-size:13px;color:#9A8F7A;font-family:Arial,Helvetica,sans-serif;text-align:center;">
+  À bientôt au club — on t'attend.
+</p>
+{% endblock %}

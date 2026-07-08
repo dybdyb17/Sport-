@@ -46,7 +46,18 @@
           <div class="alert alert-warning">Cette offre n'est plus disponible.</div>
         {% else %}
           <h3 style="font-family:'Barlow Condensed',sans-serif;font-size:26px;text-transform:uppercase;margin-bottom:8px;">Réserver maintenant</h3>
-          <p style="color:var(--text-dim);font-size:14px;line-height:1.6;margin-bottom:18px;">Renseigne tes infos, puis tu seras redirigé vers Stripe. Le QR est généré après paiement validé.</p>
+          <p style="color:var(--text-dim);font-size:14px;line-height:1.6;margin-bottom:18px;">
+            {% if offer.allowsOnSitePayment %}
+              Renseigne tes infos, puis choisis ton mode de paiement.
+            {% else %}
+              Renseigne tes infos, puis tu seras redirigé vers Stripe. Le QR est généré après paiement validé.
+            {% endif %}
+          </p>
+
+          {# Formulaire unique — 2 boutons submit avec formaction si l'offre
+             autorise le paiement au club. Sinon 1 seul bouton Stripe.
+             L'action par défaut du form pointe vers le checkout Stripe pour
+             conserver la compat (submit clavier / enter). #}
           <form method="post" action="{{ path('app_promo_offer_checkout', {slug: offer.slug}) }}" style="display:grid;gap:14px;">
             <input type="hidden" name="_token" value="{{ csrf_token('promo-offer-' ~ offer.id) }}">
             <div class="form-group">
@@ -61,10 +72,35 @@
               <label>Téléphone <span style="color:var(--text-dim);font-weight:400;">optionnel</span></label>
               <input name="buyer_phone" maxlength="30" class="form-control" autocomplete="tel">
             </div>
+
             <button class="btn btn-primary btn-lg" type="submit" style="width:100%;">
-              <i class="ti ti-brand-stripe"></i> Payer {{ offer.priceFormatted }}
+              <i class="ti ti-brand-stripe"></i> Payer {{ offer.priceFormatted }} en ligne
             </button>
-            <p style="margin:0;color:var(--text-dim);font-size:12px;text-align:center;"><i class="ti ti-lock"></i> Paiement carte sécurisé Stripe · Aucun QR sans paiement confirmé.</p>
+            <p style="margin:0;color:var(--text-dim);font-size:12px;text-align:center;">
+              <i class="ti ti-lock"></i> Paiement carte sécurisé Stripe · QR immédiat après validation.
+            </p>
+
+            {% if offer.allowsOnSitePayment %}
+              {# 2ᵉ bouton : soumet le même formulaire vers la route
+                 reserve-au-club. Le token CSRF de cette route est différent
+                 (cf. contrôleur) donc on met à jour le _token via un input
+                 séparé qui remplace l'autre au submit onclick. #}
+              <div style="display:flex;align-items:center;gap:8px;margin:6px 0;color:var(--text-dim);font-size:11px;letter-spacing:1.5px;text-transform:uppercase;font-family:'Barlow Condensed',sans-serif;font-weight:800;">
+                <span style="flex:1;height:1px;background:var(--border);"></span>
+                <span>OU</span>
+                <span style="flex:1;height:1px;background:var(--border);"></span>
+              </div>
+              <button class="btn btn-secondary btn-lg" type="submit"
+                      formaction="{{ path('app_promo_offer_reserve_onsite', {slug: offer.slug}) }}"
+                      formmethod="post"
+                      style="width:100%;background:rgba(46,204,113,.10);border:1px solid rgba(46,204,113,.40);color:var(--green);"
+                      onclick="document.querySelector('input[name=_token]').value='{{ csrf_token('promo-offer-onsite-' ~ offer.id) }}';">
+                <i class="ti ti-cash"></i> Réserver, je paye au club
+              </button>
+              <p style="margin:0;color:var(--text-dim);font-size:12px;text-align:center;">
+                <i class="ti ti-info-circle"></i> Réservation enregistrée · Tu payes espèces ou CB au club · QR reçu par email après paiement.
+              </p>
+            {% endif %}
           </form>
         {% endif %}
       </aside>

@@ -1,0 +1,92 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Paiements au club — Offres Instagram — SPORT+{% endblock %}
+
+{% block admin_body %}
+<div class="page-header">
+  <div>
+    <h1><i class="ti ti-cash" style="color:var(--green);"></i> Paiements au club <span style="color:var(--text-dim);font-weight:400;">— Offres Instagram</span></h1>
+    <p class="page-subtitle">Réservations en attente de paiement espèces / CB au comptoir.</p>
+  </div>
+  <a href="{{ path('app_admin_promo_offers') }}" class="btn btn-secondary">
+    <i class="ti ti-arrow-left"></i> Retour aux offres
+  </a>
+</div>
+
+{% if purchases is empty %}
+  <div class="empty-placeholder" style="padding:60px;text-align:center;">
+    <i class="ti ti-inbox" style="font-size:40px;color:var(--text-dim);"></i>
+    <div style="margin-top:12px;color:var(--text-dim);">Aucune réservation en attente de paiement au club.</div>
+  </div>
+{% else %}
+  <div style="display:grid;gap:14px;">
+    {% for p in purchases %}
+      <div style="padding:20px 22px;background:linear-gradient(180deg,rgba(46,204,113,.06) 0%,var(--bg-card) 100%);border:1px solid var(--border);border-left:3px solid var(--green);border-radius:14px;">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:14px;flex-wrap:wrap;margin-bottom:12px;">
+          <div>
+            <div style="font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:2px;color:var(--text-dim);text-transform:uppercase;">
+              {{ p.reference }}
+              {% if p.offer.isUnlimitedAccess %}
+                <span style="display:inline-flex;align-items:center;gap:3px;margin-left:6px;padding:1px 8px;border-radius:100px;background:rgba(200,169,81,.15);border:1px solid rgba(200,169,81,.4);color:var(--gold);font-size:10px;font-weight:800;">
+                  <i class="ti ti-infinity" style="font-size:11px;"></i> À vie
+                </span>
+              {% endif %}
+            </div>
+            <div style="font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:900;color:var(--white);margin-top:2px;">
+              {{ p.buyerName }}
+            </div>
+            <div style="color:var(--text-dim);font-size:13.5px;margin-top:4px;">
+              <i class="ti ti-tag"></i> {{ p.offer.title }}
+            </div>
+          </div>
+          <div style="text-align:right;">
+            <div style="font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:900;color:var(--gold);line-height:1;">
+              {{ p.amountFormatted }}
+            </div>
+            <div style="font-size:12px;color:var(--text-dim);margin-top:4px;">
+              Réservé le {{ p.createdAt|date('d/m/Y à H\\hi') }}
+            </div>
+          </div>
+        </div>
+
+        <div style="display:flex;gap:16px;flex-wrap:wrap;font-size:13.5px;color:var(--text-soft);margin-bottom:14px;">
+          <span><i class="ti ti-mail" style="color:var(--gold);"></i>
+            <a href="mailto:{{ p.buyerEmail }}" style="color:inherit;text-decoration:none;">{{ p.buyerEmail }}</a>
+          </span>
+          {% if p.buyerPhone %}
+            <span><i class="ti ti-phone" style="color:var(--gold);"></i>
+              <a href="tel:{{ p.buyerPhone|replace({' ': '', '.': '', '-': ''}) }}" style="color:inherit;text-decoration:none;">{{ p.buyerPhone }}</a>
+            </span>
+          {% endif %}
+        </div>
+
+        {% if p.offer.isUnlimitedAccess %}
+          <div style="margin-bottom:14px;padding:12px 14px;background:rgba(255,107,107,.06);border:1px solid rgba(255,107,107,.30);border-left:3px solid #ff6b6b;border-radius:8px;font-size:13px;color:var(--text-soft);line-height:1.55;">
+            <i class="ti ti-alert-triangle" style="color:#ff8a8a;"></i>
+            <strong style="color:#ff8a8a;">Accès à vie</strong> — vérifie l'identité (pièce d'identité) avant de valider. Après validation, le client recevra son QR et pourra activer son accès permanent.
+          </div>
+        {% endif %}
+
+        <form method="post" action="{{ path('app_admin_promo_validate_onsite', {id: p.id}) }}"
+              style="display:flex;gap:10px;flex-wrap:wrap;"
+              data-confirm-title="Valider le paiement de cette réservation ?"
+              data-confirm-button="Oui, j'ai encaissé">
+          <input type="hidden" name="_token" value="{{ csrf_token('promo_onsite_validate_' ~ p.id) }}">
+          <button type="submit" name="method" value="cash"
+                  class="btn btn-primary"
+                  style="flex:1;min-width:180px;justify-content:center;"
+                  data-confirm="Confirme que tu as encaissé {{ p.amountFormatted }} en espèces auprès de {{ p.buyerName }} ?">
+            <i class="ti ti-cash"></i> Encaissé en espèces
+          </button>
+          <button type="submit" name="method" value="card"
+                  class="btn btn-secondary"
+                  style="flex:1;min-width:180px;justify-content:center;"
+                  data-confirm="Confirme que tu as encaissé {{ p.amountFormatted }} par carte auprès de {{ p.buyerName }} ?">
+            <i class="ti ti-credit-card"></i> Encaissé par carte
+          </button>
+        </form>
+      </div>
+    {% endfor %}
+  </div>
+{% endif %}
+{% endblock %}

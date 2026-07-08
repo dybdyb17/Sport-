@@ -55,6 +55,16 @@ class PromoOffer
     #[ORM\Column(options: ['default' => false])]
     private bool $isUnlimitedAccess = false;
 
+    /**
+     * Autorise le paiement au club (espèces / CB) en plus du paiement Stripe.
+     * Si true, la page publique offre affiche un 2ᵉ CTA "Réserver, je paye au
+     * club" qui crée un PromoPurchase status=pending + intendedPaymentMethod
+     * cash|card sans passer par Stripe. L'admin/coach valide ensuite au club
+     * (route dédiée) → status=paid, envoi email QR au client.
+     */
+    #[ORM\Column(options: ['default' => false])]
+    private bool $allowsOnSitePayment = false;
+
     #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
     private ?\DateTimeImmutable $startsAt = null;
 
@@ -98,6 +108,8 @@ class PromoOffer
     public function setMaxQuantity(?int $maxQuantity): static { $this->maxQuantity = $maxQuantity !== null && $maxQuantity > 0 ? $maxQuantity : null; $this->touch(); return $this; }
     public function isUnlimitedAccess(): bool { return $this->isUnlimitedAccess; }
     public function setUnlimitedAccess(bool $unlimited): static { $this->isUnlimitedAccess = $unlimited; $this->touch(); return $this; }
+    public function allowsOnSitePayment(): bool { return $this->allowsOnSitePayment; }
+    public function setAllowsOnSitePayment(bool $allows): static { $this->allowsOnSitePayment = $allows; $this->touch(); return $this; }
     public function getStartsAt(): ?\DateTimeImmutable { return $this->startsAt; }
     public function setStartsAt(?\DateTimeImmutable $startsAt): static { $this->startsAt = $startsAt; $this->touch(); return $this; }
     public function getEndsAt(): ?\DateTimeImmutable { return $this->endsAt; }

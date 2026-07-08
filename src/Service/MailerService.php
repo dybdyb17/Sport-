@@ -4,6 +4,7 @@ namespace App\Service;
 
 use App\Entity\Booking;
 use App\Entity\FoundingClaim;
+use App\Entity\PromoPurchase;
 use App\Entity\User;
 use Psr\Log\LoggerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
@@ -216,6 +217,74 @@ class MailerService
             $this->logger->error('Échec envoi email founding_alert_admin: ' . $e->getMessage(), [
                 'claim' => $claim->getId(),
                 'file'  => $e->getFile() . ':' . $e->getLine(),
+            ]);
+        }
+    }
+
+    /**
+     * Email de confirmation quand un client réserve une offre promo à payer
+     * au club. Contient le récap de sa réservation + les instructions "viens
+     * au club, on te remet ton QR après paiement".
+     */
+    public function sendPromoReservationOnsite(PromoPurchase $purchase): void
+    {
+        try {
+            if (!$purchase->getBuyerEmail()) {
+                return;
+            }
+            $email = (new TemplatedEmail())
+                ->from($this->from());
+            if ($this->replyTo()) {
+                $email->replyTo($this->replyTo());
+            }
+            $email
+                ->to($purchase->getBuyerEmail())
+                ->subject(sprintf('🎟️ Réservation enregistrée — %s', $purchase->getOffer()->getTitle()))
+                ->htmlTemplate('emails/promo_reservation_onsite.html.twig')
+                ->context([
+                    'purchase'   => $purchase,
+                    'offer'      => $purchase->getOffer(),
+                    'pendingUrl' => $this->abs('app_promo_offer_pending', ['reference' => $purchase->getReference()]),
+                ]);
+            $this->mailer->send($email);
+        } catch (\Throwable $e) {
+            $this->logger->error('Échec envoi email promo_reservation_onsite: ' . $e->getMessage(), [
+                'purchase' => $purchase->getId(),
+                'file'     => $e->getFile() . ':' . $e->getLine(),
+            ]);
+        }
+    }
+
+    /**
+     * Email envoyé au client APRÈS que l'admin/coach ait validé le paiement
+     * au club. Contient le lien vers le ticket QR (ou l'annonce d'accès à
+     * vie activé si offre unlimited).
+     */
+    public function sendPromoTicketActivated(PromoPurchase $purchase): void
+    {
+        try {
+            if (!$purchase->getBuyerEmail()) {
+                return;
+            }
+            $email = (new TemplatedEmail())
+                ->from($this->from());
+            if ($this->replyTo()) {
+                $email->replyTo($this->replyTo());
+            }
+            $email
+                ->to($purchase->getBuyerEmail())
+                ->subject(sprintf('✅ Paiement confirmé — %s', $purchase->getOffer()->getTitle()))
+                ->htmlTemplate('emails/promo_ticket_activated.html.twig')
+                ->context([
+                    'purchase'  => $purchase,
+                    'offer'     => $purchase->getOffer(),
+                    'ticketUrl' => $this->abs('app_promo_offer_ticket', ['reference' => $purchase->getReference()]),
+                ]);
+            $this->mailer->send($email);
+        } catch (\Throwable $e) {
+            $this->logger->error('Échec envoi email promo_ticket_activated: ' . $e->getMessage(), [
+                'purchase' => $purchase->getId(),
+                'file'     => $e->getFile() . ':' . $e->getLine(),
             ]);
         }
     }

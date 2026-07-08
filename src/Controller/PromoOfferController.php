@@ -110,7 +110,8 @@ final class PromoOfferController extends AbstractController
             ->setBuyerEmail($email)
             ->setBuyerPhone($phone)
             ->setAmount($offer->getPrice())
-            ->setCurrency($offer->getCurrency());
+            ->setCurrency($offer->getCurrency())
+            ->setIntendedPaymentMethod('stripe');
 
         $em->persist($purchase);
         $em->flush();
@@ -127,5 +128,97 @@ final class PromoOfferController extends AbstractController
             $this->addFlash('error', 'Impossible d’ouvrir le paiement Stripe pour le moment. Réessaie dans un instant.');
             return $this->redirectToRoute('app_promo_offer_show', ['slug' => $slug]);
         }
+    }
+
+    /**
+     * Réserver une offre pour paiement au club (espèces / CB).
+     *
+     * Crée un PromoPurchase status=pending + intendedPaymentMethod=cash sans
+     * passer par Stripe. L'admin/coach valide ensuite à la venue du client
+     * (route dédiée). Un email de confirmation est envoyé au client avec
+     * les instructions ("viens au club, on te remettra ton QR").
+     *
+     * N'est autorisé que si l'offre a allowsOnSitePayment=true. Sinon 404.
+     */
+    #[Route('/offres/{slug}/reserver-au-club', name: 'app_promo_offer_reserve_onsite', methods: ['POST'], requirements: ['slug' => '[a-z0-9-]+'])]
+    public function reserveOnsite(
+        string $slug,
+        Request $request,
+        PromoOfferRepository $offers,
+        EntityManagerInterface $em,
+        \App\Service\MailerService $mailer,
+        LoggerInterface $logger,
+    ): RedirectResponse {
+        $offer = $offers->findOneBy(['slug' => $slug]);
+        if (!$offer instanceof PromoOffer) {
+            throw $this->createNotFoundException();
+        }
+        if (!$offer->isCurrentlyAvailable()) {
+            $this->addFlash('error', 'Cette offre n’est plus disponible.');
+            return $this->redirectToRoute('app_promo_offer_show', ['slug' => $slug]);
+        }
+        if (!$offer->allowsOnSitePayment()) {
+            // Paiement au club non activé pour cette offre → 404 (empêche
+            // un client de forcer la route en tapant l'URL directement).
+            throw $this->createNotFoundException();
+        }
+        if (!$this->isCsrfTokenValid('promo-offer-onsite-' . $offer->getId(), (string) $request->request->get('_token'))) {
+            $this->addFlash('error', 'Token de sécurité invalide. Réessaie depuis la page de l’offre.');
+            return $this->redirectToRoute('app_promo_offer_show', ['slug' => $slug]);
+        }
+
+        $name  = trim((string) $request->request->get('buyer_name'));
+        $email = mb_strtolower(trim((string) $request->request->get('buyer_email')));
+        $phone = trim((string) $request->request->get('buyer_phone')) ?: null;
+
+        if ($name === '' || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $this->addFlash('error', 'Indique ton nom et une adresse email valide pour réserver.');
+            return $this->redirectToRoute('app_promo_offer_show', ['slug' => $slug]);
+        }
+
+        $purchase = (new PromoPurchase())
+            ->setOffer($offer)
+            ->setBuyerName($name)
+            ->setBuyerEmail($email)
+            ->setBuyerPhone($phone)
+            ->setAmount($offer->getPrice())
+            ->setCurrency($offer->getCurrency())
+            ->setIntendedPaymentMethod('cash');
+        // status reste PENDING (défaut). paymentMethod / paidAt restent NULL
+        // tant que l'admin/coach n'a pas validé au comptoir.
+
+        $em->persist($purchase);
+        $em->flush();
+
+        // Email confirmation "réservation enregistrée, viens au club"
+        try {
+            $mailer->sendPromoReservationOnsite($purchase);
+        } catch (\Throwable $e) {
+            // On ne bloque pas le flow si l'email plante — la réservation
+            // est en base, l'admin la voit et peut la traiter.
+            $logger->error('Failed to send promo onsite reservation email.', [
+                'purchase_id' => $purchase->getId(),
+                'exception'   => $e,
+            ]);
+        }
+
+        return $this->redirectToRoute('app_promo_offer_pending', ['reference' => $purchase->getReference()]);
+    }
+
+    /**
+     * Page de confirmation "réservation enregistrée, en attente de paiement
+     * au club". Accessible sans compte via la référence (unique + non
+     * devinable puisque OFR-[A-F0-9]{8}).
+     */
+    #[Route('/offres/reservation/{reference}', name: 'app_promo_offer_pending', methods: ['GET'], requirements: ['reference' => 'OFR-[A-F0-9]{8}'])]
+    public function reservationPending(
+        string $reference,
+        PromoPurchaseRepository $purchases,
+    ): Response {
+        $purchase = $purchases->findOneBy(['reference' => $reference]);
+        if (!$purchase instanceof PromoPurchase) {
+            throw $this->createNotFoundException();
+        }
+        return $this->render('promo_offer/pending.html.twig', ['purchase' => $purchase]);
     }
 }
