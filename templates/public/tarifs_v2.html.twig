@@ -565,6 +565,15 @@
   var modalFees   = document.getElementById('formule-modal-fees');
   var modalFeat   = document.getElementById('formule-modal-features');
 
+  // Déplace la modale en enfant direct de <body> pour la sortir de tout
+  // stacking context d'un parent (transform / will-change / backdrop-filter
+  // sur .tarifs-page ou .container). Sans ce move, le z-index: 5000 de la
+  // modale reste local à son parent et le header sticky repasse au-dessus
+  // sur mobile — bug visible sur iPhone.
+  if (modal && modal.parentNode !== document.body) {
+    document.body.appendChild(modal);
+  }
+
   function animateNumber(el, target, duration) {
     var start    = 0;
     var startTs  = null;
@@ -609,7 +618,11 @@
 
       modal.classList.add('is-open');
       modal.setAttribute('aria-hidden', 'false');
-      document.body.style.overflow = 'hidden';
+      // Lock scroll global sur html + body (CSS overflow: hidden via la
+      // classe) et masque le .site-header sticky qui repassait au-dessus
+      // sur mobile à cause du stacking context.
+      document.documentElement.classList.add('formule-modal-open');
+      document.body.classList.add('formule-modal-open');
 
       // Anime le prix avec délai pour que ça apparaisse après l'entrée
       modalPrice.textContent = '0';
@@ -621,7 +634,8 @@
     modal.classList.remove('is-open');
     modal.classList.remove('is-pilates');
     modal.setAttribute('aria-hidden', 'true');
-    document.body.style.overflow = '';
+    document.documentElement.classList.remove('formule-modal-open');
+    document.body.classList.remove('formule-modal-open');
     setTimeout(function() { modalImg.src = ''; }, 300);
   };
 

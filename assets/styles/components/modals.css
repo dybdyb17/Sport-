@@ -9,6 +9,20 @@
   padding: 20px;
 }
 
+/* Verrouillage global quand une modale formule est ouverte :
+   - html + body en overflow hidden (iOS/mobile : sans ça, la page derrière
+     scrolle sous la modale et laisse voir les autres cartes formule)
+   - .site-header caché car si la modale est prisonnière d'un stacking
+     context d'un parent (transform / will-change / backdrop-filter), son
+     z-index: 5000 ne suffit pas et le header sticky repasse au-dessus. */
+html.formule-modal-open,
+body.formule-modal-open {
+  overflow: hidden;
+}
+body.formule-modal-open .site-header {
+  display: none;
+}
+
 .formule-modal.is-open {
   display: flex;
   animation: modalFadeIn .25s ease;
