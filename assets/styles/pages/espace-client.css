@@ -836,6 +836,128 @@ html.performance-lite .status-dot { animation: none; }
 }
 .packs-strip--warn .packs-strip-chevron { color: var(--gold); }
 
+/* ── MES OFFRES INSTAGRAM ───────────────────────────────────────────────
+   Rattachement par email — la section entière est masquée si vide.
+   Style aligné sur .packs-strip pour la cohérence visuelle mais en
+   accordéon (une ligne par promo) : le client peut avoir plusieurs
+   offres actives. Item cliquable = lien vers le ticket public.
+   ═════════════════════════════════════════════════════════════════════ */
+.promo-wrap {
+  margin-bottom: 22px;
+  padding: 18px 20px 14px;
+  background: linear-gradient(180deg, rgba(200,169,81,.06) 0%, rgba(255,255,255,.02) 100%);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--gold);
+  border-radius: 14px;
+}
+.promo-wrap-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+.promo-wrap-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--white);
+}
+.promo-wrap-title i {
+  color: var(--gold);
+  font-size: 20px;
+}
+.promo-wrap-title h3 {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--white);
+  margin: 0;
+}
+.promo-wrap-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 24px;
+  height: 24px;
+  padding: 0 8px;
+  border-radius: 100px;
+  background: rgba(200,169,81,.18);
+  border: 1px solid rgba(200,169,81,.35);
+  color: var(--gold);
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 1px;
+}
+.promo-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.promo-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 14px;
+  background: rgba(255,255,255,.02);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  color: inherit;
+  text-decoration: none;
+  transition: background .15s ease, border-color .15s ease, transform .15s ease;
+}
+.promo-item:hover {
+  background: rgba(200,169,81,.06);
+  border-color: rgba(200,169,81,.35);
+  transform: translateX(2px);
+}
+.promo-item-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: rgba(200,169,81,.14);
+  color: var(--gold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+.promo-item--used .promo-item-icon {
+  background: rgba(46,204,113,.12);
+  color: var(--green);
+}
+.promo-item-body {
+  flex: 1;
+  min-width: 0;
+}
+.promo-item-title {
+  font-size: 14.5px;
+  font-weight: 600;
+  color: var(--white);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.promo-item-sub {
+  font-size: 12.5px;
+  color: var(--text-dim);
+  margin-top: 2px;
+}
+.promo-item--used .promo-item-sub {
+  color: var(--green);
+}
+.promo-item-chevron {
+  color: var(--gold);
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
 /* ── FOUNDING THANKS CARD (gardée) ──────────────────────────────────── */
 .founding-thanks-card {
   display: flex;

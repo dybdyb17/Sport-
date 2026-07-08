@@ -13,6 +13,7 @@ use App\Form\PreferencesFormType;
 use App\Form\ProfilFormType;
 use App\Repository\BookingRepository;
 use App\Repository\PendingPackRequestRepository;
+use App\Repository\PromoPurchaseRepository;
 use App\Repository\SubscriptionRepository;
 use App\Service\BookingManager;
 use Doctrine\ORM\EntityManagerInterface;
@@ -39,11 +40,20 @@ class ClientController extends AbstractController
         BookingRepository $bookingRepository,
         SubscriptionRepository $subscriptionRepository,
         PendingPackRequestRepository $pprRepository,
+        PromoPurchaseRepository $promoPurchaseRepository,
     ): Response {
         /** @var \App\Entity\User $user */
         $user = $this->getUser();
         $all  = $bookingRepository->findForClient($user);
         $now  = new \DateTimeImmutable();
+
+        // Rattachement souple des offres promo Instagram à l'espace : une
+        // PromoPurchase apparaît ici si son buyerEmail == user.email (casse
+        // insensible côté SQL). Aucun lien User rigide n'est créé sur
+        // PromoPurchase — un achat sans compte reste accessible via son
+        // ticket par référence. C'est de la LECTURE, on ne s'en sert que
+        // pour l'affichage dans l'espace du compte connecté.
+        $promosClient = $promoPurchaseRepository->findPaidForEmail($user->getEmail());
 
         // Packs actifs du client — filtrés par le repo (status=active
         // + sessions_remaining > 0). Un pack peut avoir toutes ses séances utilisées
@@ -132,6 +142,7 @@ class ClientController extends AbstractController
             'autresSeances'  => $autresSeances,
             'actionAttente'  => $actionAttente,
             'packsStrip'     => $packsStrip,
+            'promosClient'   => $promosClient,
             'greeting'       => $greeting,
             'heroMessage'    => $heroMessage,
             'heroIcon'       => $heroIcon,

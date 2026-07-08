@@ -486,6 +486,48 @@
   {% endif %}
 
   {# ══════════════════════════════════════════════════════════════════════
+     Mes offres Instagram — rattachement souple par email.
+     N'apparaît QUE si le client a au moins une PromoPurchase payée dont
+     buyerEmail correspond à son email. Chaque ligne renvoie au ticket
+     public existant (app_promo_offer_ticket, régex OFR-[A-F0-9]{8}) —
+     aucune duplication de la logique QR/ticket ici.
+     ══════════════════════════════════════════════════════════════════════ #}
+  {% if promosClient|length > 0 %}
+    <section class="promo-wrap" data-animate="fade-up" aria-label="Mes offres Instagram">
+      <header class="promo-wrap-head">
+        <div class="promo-wrap-title">
+          <i class="ti ti-ticket"></i>
+          <h3>Mes offres Instagram</h3>
+        </div>
+        <span class="promo-wrap-count">{{ promosClient|length }}</span>
+      </header>
+      <ul class="promo-list">
+        {% for promo in promosClient %}
+          <li>
+            <a href="{{ path('app_promo_offer_ticket', {reference: promo.reference}) }}"
+               class="promo-item {{ promo.isCheckedIn ? 'promo-item--used' : '' }}">
+              <div class="promo-item-icon">
+                <i class="ti {{ promo.isCheckedIn ? 'ti-check' : 'ti-ticket' }}"></i>
+              </div>
+              <div class="promo-item-body">
+                <div class="promo-item-title">{{ promo.offer.title }}</div>
+                <div class="promo-item-sub">
+                  {% if promo.isCheckedIn %}
+                    Utilisée le {{ promo.checkinAt|date('d/m/Y') }}
+                  {% else %}
+                    Payée le {{ promo.paidAt|date('d/m/Y') }} · À utiliser au club
+                  {% endif %}
+                </div>
+              </div>
+              <i class="ti ti-chevron-right promo-item-chevron"></i>
+            </a>
+          </li>
+        {% endfor %}
+      </ul>
+    </section>
+  {% endif %}
+
+  {# ══════════════════════════════════════════════════════════════════════
      Founding thanks card — gardée telle quelle
      ══════════════════════════════════════════════════════════════════════ #}
   {% if app.user.foundingClaim %}
