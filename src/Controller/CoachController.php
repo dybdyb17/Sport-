@@ -301,27 +301,51 @@ class CoachController extends AbstractController
             $this->addFlash('danger', 'Impossible de marquer no-show avant la séance.');
             return $this->redirectToRoute('app_coach_dashboard');
         }
-        // Fee = 30% du prix unitaire
-        $price = (float) ($booking->getPrice() ?? 0);
-        $fee   = number_format($price * 0.30, 2, '.', '');
+
+        // Contrat : payment_method ∈ {stripe,cash,card,NULL} — le no-show ne
+        // s'exprime PAS via payment_method mais via noShow + noShowFee.
+        //
+        // 3 cas selon l'état de la séance :
+        //   - Séance déjà payée (paymentMethod non null) OU couverte par un pack /
+        //     offre Fondateur (coveredBy non null) → l'argent a déjà été comptabilisé.
+        //     No-show purement INFORMATIF : fee = null, on n'écrase RIEN.
+        //   - Séance non payée non couverte → fee = 30% du prix unitaire, à encaisser
+        //     par le coach quand le client passera. payment_method reste NULL tant
+        //     que les frais ne sont pas réellement encaissés (le coach déclarera
+        //     cash/card via declareOnSitePayment normalement).
+        $alreadySettled = $booking->getPaymentMethod() !== null || $booking->getCoveredBy() !== null;
+
+        $fee = null;
+        if (!$alreadySettled) {
+            $price = (float) ($booking->getPrice() ?? 0);
+            $fee   = number_format($price * 0.30, 2, '.', '');
+        }
 
         $booking->setNoShow(true);
         $booking->setNoShowMarkedAt(new \DateTimeImmutable());
         $booking->setNoShowFee($fee);
-        $booking->setPaymentMethod('no_show');
-        $booking->setPaymentDeclaredAt(new \DateTimeImmutable());
-        $booking->setPaymentDeclaredBy($user);
-        $booking->setPaymentNote(sprintf('No-show — frais de 30%% facturés : %s €', $fee));
+        // ⚠️ NE PAS toucher paymentMethod / paymentDeclaredAt / paymentDeclaredBy /
+        // paymentNote — le no-show n'est PAS un paiement.
         $em->flush();
 
         $auditLogger->log(\App\Entity\Enum\AuditAction::NO_SHOW_MARKED, $booking, [
-            'fee'     => $fee,
-            'price'   => $booking->getPrice(),
-            'client'  => $booking->getClient()?->getNomComplet(),
-            'startAt' => $booking->getStartAt()?->format('c'),
+            'fee'            => $fee,
+            'price'          => $booking->getPrice(),
+            'already_settled'=> $alreadySettled,
+            'covered_by'     => $booking->getCoveredBy(),
+            'payment_method' => $booking->getPaymentMethod(),
+            'client'         => $booking->getClient()?->getNomComplet(),
+            'startAt'        => $booking->getStartAt()?->format('c'),
         ]);
 
-        $this->addFlash('success', sprintf('Marqué « non venu » — %s € à facturer au client.', $fee));
+        if ($fee !== null) {
+            $this->addFlash('success', sprintf('Marqué « non venu » — %s € à facturer au client.', $fee));
+        } else {
+            $flashMsg = $booking->getCoveredBy() !== null
+                ? 'Marqué « non venu » — séance décomptée du pack / offre, rien à facturer.'
+                : 'Marqué « non venu » — la séance était déjà payée, rien à facturer.';
+            $this->addFlash('success', $flashMsg);
+        }
         return $this->redirectToRoute('app_coach_dashboard');
     }
 }

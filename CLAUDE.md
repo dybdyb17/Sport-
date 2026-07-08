@@ -80,6 +80,38 @@ d'abonnement + accès salle), sans le remplacer.
   `XplorExtension` + `DeciplusPaymentUrlResolver` + route `payer-xplor` retirés).
 - Check-in QR conditionnel selon statut + paiement (cf `Booking::isQrUnlocked()`
   et `isAwaitingOnlinePayment()`).
+- **⚠️ CONTRAT ABSOLU `payment_method` (à graver)** :
+  `booking.payment_method ∈ {stripe, cash, card}` **ou** `NULL`. **AUCUNE** autre
+  valeur, jamais. Les fossiles `'no_show'`, `'xplor'`, `''` sont interdits.
+  - `PaymentJournalBuilder` applique une whitelist stricte : toute valeur hors
+    contrat est **ignorée** + loggée en `warning` (le journal ne crash JAMAIS
+    sur une donnée hors contrat).
+  - Le **no-show ne se modélise PAS via `payment_method`** — il se modélise via
+    `Booking.noShow` (bool) + `Booking.noShowFee` (30 % du prix). `markNoShow`
+    ne touche plus `payment_method` (fix 5 juillet 2026) — les frais sont
+    encaissés ensuite via `declareOnSitePayment` normalement (cash/card).
+- **Frais no-show (30 %) — fonctionnement** :
+  1. Coach clique « Client absent » sur une séance passée non payée non couverte
+     → `noShow = true`, `noShowFee = price × 0.30`, `payment_method` reste `NULL`.
+  2. La séance apparaît dans « Paiements à déclarer » du dashboard coach avec le
+     montant du **fee** (pas le prix plein) et libellé « Encaisser les frais
+     d'absence ». Idem sur la page scan `/admin/checkin/{ref}` si ouverte.
+  3. Coach déclare cash/card → `declareOnSitePayment` pose la méthode normale
+     (idempotence : ne bloque pas car `paymentMethod` était `NULL`). La ligne
+     devient « payée » dans le journal admin.
+  4. Séance déjà payée / couverte au moment du marquage no-show : `noShowFee`
+     reste `NULL`, no-show purement informatif (l'argent est déjà en caisse ou
+     la séance déjà décomptée du pack). Aucune écrasement.
+  5. Côté client `mon-rdv` : badge rouge « Absence — frais 30 % » avec montant
+     dû + carte détaillée. Séance payée/couverte + absence = mention discrète
+     dans le bloc paiement existant (pas de faux « à régler »).
+- **Journal paiements admin** (`/admin/paiements`, `PaymentJournalBuilder`) :
+  fusionne Bookings encaissés + Subscriptions payés + FoundingClaims payés,
+  exclut TOUJOURS les séances couvertes (`coveredBy != null`) pour ne pas
+  doubler l'argent (compté 1× à l'achat du pack). Compteurs Total / Stripe /
+  Sur place / À encaisser. « À encaisser » = séances confirmées impayées
+  non couvertes + packs on-site pending + **frais no-show impayés (au montant
+  du fee, pas du prix plein)**.
 
 ---
 

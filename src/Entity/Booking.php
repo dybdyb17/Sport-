@@ -294,6 +294,31 @@ class Booking
     public function getNoShowFee(): ?string { return $this->noShowFee; }
     public function setNoShowFee(?string $noShowFee): static { $this->noShowFee = $noShowFee; return $this; }
 
+    /**
+     * Frais no-show formatés fr (ex: "12,00 €") ou "—" si null / 0.
+     * Réutilisé partout où on affiche le montant dû pour une absence.
+     */
+    public function getNoShowFeeFormatted(): string
+    {
+        return $this->noShowFee !== null && (float) $this->noShowFee > 0
+            ? number_format((float) $this->noShowFee, 2, ',', "\u{202F}") . ' €'
+            : '—';
+    }
+
+    /**
+     * True si des frais no-show sont dus (séance no-show, fee > 0, non payée,
+     * non couverte). Sert au dashboard coach + page scan pour afficher le
+     * montant du fee au lieu du prix plein.
+     */
+    public function hasPendingNoShowFee(): bool
+    {
+        return $this->noShow
+            && $this->noShowFee !== null
+            && (float) $this->noShowFee > 0
+            && $this->paymentMethod === null
+            && $this->coveredBy === null;
+    }
+
     /** @return array<string, mixed>|null */
     public function getStripeData(): ?array { return $this->stripeData; }
     /** @param array<string, mixed>|null $stripeData */

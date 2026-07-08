@@ -143,8 +143,22 @@
         </div>
       </div>
     {% else %}
-      {# ── État 3 : à encaisser ── #}
-      {% if booking.intendedPaymentMethod == 'stripe' %}
+      {# ── État 3 : à encaisser. Si no-show : montant dû = fee, pas prix plein ── #}
+      {% set isNoShowPending = booking.hasPendingNoShowFee %}
+      {% set dueAmount = isNoShowPending ? booking.noShowFeeFormatted : booking.prixFormatted %}
+
+      {% if isNoShowPending %}
+        <div class="checkin-stripe-pending" style="border-color:rgba(255,107,107,.35);background:rgba(255,107,107,.05);">
+          <i class="ti ti-user-x" style="color:#ff8a8a;"></i>
+          <div>
+            <strong>Absence enregistrée</strong>
+            <div class="checkin-covered-sub">
+              Frais de 30 % à encaisser : <strong>{{ booking.noShowFeeFormatted }}</strong>
+              (prix séance : {{ booking.prixFormatted }}).
+            </div>
+          </div>
+        </div>
+      {% elseif booking.intendedPaymentMethod == 'stripe' %}
         <div class="checkin-stripe-pending">
           <i class="ti ti-clock"></i>
           <div>
@@ -158,7 +172,7 @@
 
       <div class="checkin-amount">
         À encaisser :
-        <strong>{{ booking.prixFormatted }}</strong>
+        <strong>{{ dueAmount }}</strong>
       </div>
 
       <form method="post" action="{{ path('app_admin_checkin_declare_payment', {reference: booking.reference}) }}" class="checkin-pay-form"
@@ -166,11 +180,11 @@
             data-confirm-button="Oui, j'ai encaissé">
         <input type="hidden" name="_token" value="{{ csrf_token('checkin_pay_' ~ booking.reference) }}">
         <button type="submit" name="method" value="cash" class="checkin-btn checkin-btn--cash"
-                data-confirm="Confirme que tu as bien encaissé {{ booking.prixFormatted }} en espèces auprès de {{ booking.client.nomComplet }} ?">
+                data-confirm="Confirme que tu as bien encaissé {{ dueAmount }} en espèces auprès de {{ booking.client.nomComplet }} ?">
           <i class="ti ti-cash"></i> Encaissé en espèces
         </button>
         <button type="submit" name="method" value="card" class="checkin-btn checkin-btn--card"
-                data-confirm="Confirme que tu as bien encaissé {{ booking.prixFormatted }} par carte auprès de {{ booking.client.nomComplet }} ?">
+                data-confirm="Confirme que tu as bien encaissé {{ dueAmount }} par carte auprès de {{ booking.client.nomComplet }} ?">
           <i class="ti ti-credit-card"></i> Encaissé par carte
         </button>
       </form>

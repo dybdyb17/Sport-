@@ -150,17 +150,32 @@
       {% for b in sessionsAValider %}
         {% set intent = b.intendedPaymentMethod %}
         {% set intentLabels = {'cash': 'Espèces', 'card': 'Carte bancaire', 'stripe': 'En ligne (Stripe)'} %}
-        <div class="pay-decl-card">
+        {# Si séance no-show avec frais dus : montant = fee (30%), pas prix plein.
+           Le declareOnSitePayment posera cash/card sur le booking, l'idempotence
+           est préservée car paymentMethod est resté NULL après markNoShow. #}
+        {% set isNoShowPending = b.hasPendingNoShowFee %}
+        {% set amountLabel = isNoShowPending ? b.noShowFeeFormatted : b.displayAmountFormatted %}
+        <div class="pay-decl-card{{ isNoShowPending ? ' pay-decl-card--no-show' : '' }}">
           <div class="pay-decl-head">
             <div class="pay-decl-client">
               <i class="ti ti-user"></i> {{ b.client.nomComplet }}
+              {% if isNoShowPending %}
+                <span style="display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:100px;background:rgba(255,107,107,.12);border:1px solid rgba(255,107,107,.35);color:#ff8a8a;font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;margin-left:6px;">
+                  <i class="ti ti-user-x" style="font-size:12px;"></i> Absence
+                </span>
+              {% endif %}
             </div>
-            <div class="pay-decl-amount">{{ b.displayAmountFormatted }}</div>
+            <div class="pay-decl-amount">{{ amountLabel }}</div>
           </div>
           <div class="pay-decl-meta">
             <span><i class="ti ti-calendar"></i> {{ b.startAt|date('d/m/Y \\à H\\hi') }}</span>
             <span><i class="ti ti-tag"></i> {{ b.offerLabel }}</span>
-            {% if intent %}
+            {% if isNoShowPending %}
+              <span style="color:#ff8a8a;">
+                <i class="ti ti-alert-triangle"></i>
+                Frais d'absence (30%) — prix séance : {{ b.prixFormatted }}
+              </span>
+            {% elseif intent %}
               <span class="pay-decl-intent"><i class="ti ti-flag"></i> Annoncé : <strong>{{ intentLabels[intent] }}</strong></span>
             {% endif %}
           </div>
@@ -183,21 +198,25 @@
                  sessionsAValider une fois Stripe confirmé. #}
             </div>
             <button type="submit" class="pay-decl-submit">
-              <i class="ti ti-check"></i> Confirmer l'encaissement
+              <i class="ti ti-check"></i>
+              {{ isNoShowPending ? 'Encaisser les frais d\'absence' : 'Confirmer l\'encaissement' }}
             </button>
           </form>
 
-          {# ── Bouton "Pas venu" — séparé pour éviter clic accidentel ── #}
-          <form method="post" action="{{ path('app_coach_mark_no_show', {id: b.id}) }}" class="no-show-form"
-                data-confirm-title="Marquer le client absent ?"
-                data-confirm="Le client {{ b.client.nomComplet }} n'est pas venu. Des frais de 30 % (soit {{ ((b.price ?? 0) * 0.30)|number_format(2, ',', ' ') }} €) seront notés à facturer."
-                data-confirm-button="Oui, marquer absent"
-                data-confirm-danger="true">
-            <input type="hidden" name="_token" value="{{ csrf_token('no_show_' ~ b.id) }}">
-            <button type="submit" class="no-show-btn">
-              <i class="ti ti-user-x"></i> Client absent — facturer l'absence
-            </button>
-          </form>
+          {# ── Bouton "Pas venu" — séparé pour éviter clic accidentel.
+                Caché si l'absence est déjà marquée (évite double marquage). ── #}
+          {% if not b.isNoShow %}
+            <form method="post" action="{{ path('app_coach_mark_no_show', {id: b.id}) }}" class="no-show-form"
+                  data-confirm-title="Marquer le client absent ?"
+                  data-confirm="Le client {{ b.client.nomComplet }} n'est pas venu. Des frais de 30 % (soit {{ ((b.price ?? 0) * 0.30)|number_format(2, ',', ' ') }} €) seront notés à facturer."
+                  data-confirm-button="Oui, marquer absent"
+                  data-confirm-danger="true">
+              <input type="hidden" name="_token" value="{{ csrf_token('no_show_' ~ b.id) }}">
+              <button type="submit" class="no-show-btn">
+                <i class="ti ti-user-x"></i> Client absent — facturer l'absence
+              </button>
+            </form>
+          {% endif %}
         </div>
       {% endfor %}
     </div>
