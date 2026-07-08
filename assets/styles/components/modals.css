@@ -346,20 +346,30 @@ body.formule-modal-open .site-header {
   .formule-name { font-size: 26px; }
   .formule-price { font-size: 48px; }
   .formule-price span { font-size: 22px; }
+  /* Sur mobile la modale devient une VRAIE page pleine — pas une carte
+     flottante. Padding zéro + align stretch pour que le content prenne
+     toute la hauteur. Sinon on voyait la carte de la page derrière
+     transparaître à travers le backdrop en bas de l'écran. */
   .formule-modal {
-    align-items: flex-start;
-    padding: max(8px, env(safe-area-inset-top)) 8px max(8px, env(safe-area-inset-bottom));
+    align-items: stretch;
+    padding: 0;
   }
   .formule-modal-content {
-    max-height: calc(100dvh - max(16px, env(safe-area-inset-top)) - max(16px, env(safe-area-inset-bottom)));
-    border-radius: 18px;
+    width: 100%;
+    max-width: none;
+    min-height: 100dvh;
+    max-height: 100dvh;
+    border-radius: 0;
   }
   .formule-modal-split {
-    border-radius: 18px;
+    min-height: 100dvh;
+    border-radius: 0;
   }
   .formule-modal-visual {
     min-height: 0;
-    padding: 12px;
+    /* padding-top respecte la safe-area iOS pour ne pas glisser l'image
+       sous la notch, maintenant que la modale n'a plus de padding externe. */
+    padding: max(12px, calc(env(safe-area-inset-top) + 12px)) 12px 12px;
   }
   .formule-modal-visual img {
     width: 100%;
@@ -379,7 +389,8 @@ body.formule-modal-open .site-header {
     box-shadow: 0 10px 26px rgba(0,0,0,.52);
   }
   .formule-modal-info {
-    padding: 20px 18px 22px;
+    /* padding-bottom respecte la safe-area iOS (barre home iPhone). */
+    padding: 20px 18px max(22px, calc(env(safe-area-inset-bottom) + 22px));
     gap: 12px;
   }
   .formule-modal-name { font-size: clamp(34px, 12vw, 44px); }
