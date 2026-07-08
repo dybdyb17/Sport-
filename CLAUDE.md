@@ -143,14 +143,16 @@ prévoir `html.performance-lite` + `@media (prefers-reduced-motion)` qui coupent
 ## 🗂️ Architecture du code
 
 **Entités** : User, Coach, Booking, Subscription, FoundingOffer, FoundingClaim, Conversation,
-Message, AuditLog. **Enums** : AuditAction, BookingFormat, PackType, TimeSlot, UserRole.
+Message, AuditLog, PendingPackRequest, **PromoOffer**, **PromoPurchase**.
+**Enums** : AuditAction, BookingFormat, PackRequestStatus, PackType, TimeSlot, UserRole.
 
-**Controllers** : Booking, Client, Coach, Conversation, Home, Legal, Public, Registration,
-Security, Sitemap, Stripe + `Admin/` (Audit, Booking, Calendar, Checkin, Coach, Conversation,
-Dashboard, Export, Founding, Payment, Subscription, User).
+**Controllers** : Booking, Client, Coach, Conversation, Home, Legal, Public, **PromoOffer**,
+Registration, Security, Sitemap, Stripe + `Admin/` (Audit, Booking, Calendar, Checkin, Coach,
+Conversation, Dashboard, Export, Founding, Payment, **PromoOffer**, Subscription, User).
 
 **Services** : AdminExportService, AuditLogger, BookingManager, FoundingOfferService,
-MailerService, NotificationService, PricingCalculator, StripeCheckoutService.
+MailerService, NotificationService, **PaymentJournalBuilder**, PricingCalculator,
+StripeCheckoutService.
 
 **Commands** : CreateAdmin, CreateCoach, GrantAdmin, PromoteAdmin, PromoteCoach,
 ResetFoundingClaims, SeedFoundingOffer, SeedPricingShowcase, **SendDayBeforeReminders**
@@ -518,6 +520,60 @@ ResetFoundingClaims, SeedFoundingOffer, SeedPricingShowcase, **SendDayBeforeRemi
   templates `security/forgot_password.html.twig` et `security/reset_password.html.twig`
   (DA Night Performance, layout `auth-layout`). Template email
   `emails/password_reset.html.twig`. Routes en PUBLIC_ACCESS dans `security.yaml`.
+- **Offres Instagram / Promo Stripe (mergé juillet 2026, sessions Codex)** : système
+  d'offres promotionnelles publiables sur story / pub / bio Instagram, avec paiement
+  Stripe Checkout et QR de check-in coach à l'arrivée.
+  - **Entités** : `PromoOffer` (title, slug, description, `type` in
+    session/event/pilates/hyrox/crossfit/subscription, price, currency, `status` in
+    draft/active/archived, maxQuantity, startsAt, endsAt, relation OneToMany purchases)
+    et `PromoPurchase` (offer, `reference` format `OFR-[A-F0-9]{8}`, buyerName,
+    buyerEmail, buyerPhone, `status` in pending/paid/cancelled, amount, stripeCheckout
+    SessionId, stripePaymentIntentId, paidAt, qrToken, checkinAt, checkinBy).
+  - **Migrations** : `Version20260706120000` (tables) + `Version20260706143000`
+    (checkin_at + checkin_by_id sur promo_purchase + FK vers user ON DELETE SET NULL).
+    ⚠️ **Ces 2 migrations sont dans `migrations/`** — sur ce projet on utilise
+    `doctrine:schema:update --force` normalement, mais ces migrations doivent être
+    exécutées via `doctrine:migrations:migrate` pour que les colonnes soient créées.
+    Si tu vois `Unknown column 't0.checkin_at' in 'field list'` → run migrations.
+  - **Routes admin** (`AdminPromoOfferController`, `ROLE_ADMIN`) :
+    `/admin/offres-instagram` (index, `app_admin_promo_offers`), `/nouvelle`
+    (création), `/{id}/modifier` (édition). Bouton copier-lien direct pour partage
+    Instagram, colonne « X ventes / Y check-ins ». Templates
+    `admin/promo_offers/index.html.twig` + `form.html.twig`.
+  - **Routes publiques** (`PromoOfferController`) : `/offres/{slug}` (page pub),
+    `/offres/{slug}/payer` (POST, crée `PromoPurchase` + session Stripe),
+    `/offres/paiement/succes` (webhook retour), `/offres/paiement/annule`,
+    `/offres/ticket/{reference}` (ticket QR client, regex `OFR-[A-F0-9]{8}`).
+    Templates `promo_offer/show.html.twig` + `pending.html.twig` + `ticket.html.twig`.
+    Le ticket **n'affiche le QR que si `purchase.isQrUnlocked()`** (= paiement Stripe
+    confirmé) — sécurité anti-triche.
+  - **Stripe** : `StripeCheckoutService::createPromoOfferCheckout(PromoPurchase)`
+    + `fulfillPromoOfferCheckout(Session)`. Metadata Stripe :
+    `purchase_type='promo_offer'`, `purchase_reference='OFR-XXXXXXXX'`. Le webhook
+    unique `/stripe/webhook` aiguille via `metadata.purchase_type` (3 valeurs
+    possibles : `founding_offer`, `booking_session`, **`promo_offer`**).
+  - **Check-in coach/admin** : route `/admin/checkin/offre/{reference}` (dans
+    `AdminCheckinController`), regex `OFR-[A-F0-9]{8}`, **exige `?token=...`** qui
+    doit matcher `purchase.qrToken` via `hash_equals`. Sans token ou token
+    invalide → page 403 lisible. Si paiement non confirmé → check-in bloqué avec
+    message. Sinon : infos client + bouton « Valider l'arrivée » qui pose
+    `checkinAt = now` + `checkinBy = user connecté`. Template
+    `admin/checkin/promo_validate.html.twig`.
+  - **Récup du QR token en local** pour tester :
+    `USE sportplus; SELECT reference, qr_token FROM promo_purchase WHERE reference = 'OFR-XXX';`
+- **Audit UI enrichi (mergé juillet 2026, Codex)** : le journal `/admin/audit` affichait
+  les `details` en JSON brut → visuellement pas admin premium.
+  - `AuditAction::icon()` + `AuditAction::color()` ajoutées à l'enum : chaque action a
+    son icône Tabler dédiée (`ti-cash-banknote` pour PAYMENT_DECLARED, `ti-user-x`
+    pour NO_SHOW_MARKED, `ti-user-scan` pour ADMIN_IMPERSONATE, etc.) et sa couleur
+    (vert paiements OK, rouge contestations/refus, violet impersonate, doré rôles,
+    gris fallback).
+  - Template `admin/audit/index.html.twig` utilise `log.action.icon` et
+    `log.action.color` avec bordure gauche colorée par ligne. Détails JSON transformés
+    en grille clé/valeur avec labels humains (note, amount, client, method, source,
+    startAt, reason, oldRole, newRole, previous, new) et formatage (méthode
+    cash/card/stripe → labels FR, montant `40.00` → `40,00 €`, dates `d/m/Y à H\hi`,
+    null → « Non renseigné »).
 
 ---
 
@@ -581,7 +637,25 @@ En local `.env` reste `MAILER_DSN=null://null` ; `.env.local` utilise Mailtrap (
 
 - **Côté Loïc/infra** : clé API Resend + variables Railway + cron J-1 ; SIREN/SIRET de LS SPORT
   SAS pour finaliser le légal ; activer « VAD = Oui » sur les prestations Deciplus iframe ;
-  uploader les vraies photos coachs (système prêt) ; valider email ICANN.
+  uploader les vraies photos coachs (système prêt) ; valider email ICANN ; **taux frais no-show
+  30 % à ajouter aux CGV écrites** (le code applique déjà, il manque la mention légale).
+- **⚠️ Bug connu — modale mobile formules `/tarifs` (chantier Codex non résolu)** : sur
+  téléphone réel, quand un utilisateur clique « Voir la formule », la modale semble cassée —
+  le header reste visible au-dessus, la page derrière transparaît, la croix peut être cachée,
+  l'image prend trop de place. Le JS actuel dans `templates/public/tarifs_v2.html.twig`
+  (`window.openFormuleModal`) fait déjà `modal.classList.add('is-open')` +
+  `document.body.style.overflow = 'hidden'`, et le CSS a bien `position: fixed` + `z-index:
+  5000` + `100dvh` en mobile. **Pistes non appliquées** à essayer dans une PR ciblée
+  (`modals.css` + `tarifs_v2.html.twig` uniquement, ne pas toucher au reste) :
+  1. Déplacer `#formule-modal` en enfant direct de `document.body` au chargement (au cas où
+     un parent avec `transform`/`filter` casse `position: fixed`).
+  2. Ajouter une classe `body.formule-modal-open` en plus de `body.style.overflow = hidden`,
+     et cibler en CSS `.formule-modal-open .site-header, .formule-modal-open .mobile-menu
+     { display: none }`.
+  3. Ajouter aussi `document.documentElement.style.overflow = 'hidden'` (iOS spécifique).
+  4. Sur `@media (max-width: 640px)` : `.formule-modal-content` en `100dvh`, image
+     `max-height: 30-34dvh`, croix en `position: fixed` avec `env(safe-area-inset-top)`.
+  Tester **impérativement sur téléphone réel** (DevTools ne reproduit pas toujours le bug).
 - **Code à faire** : aligner les pages légales sur `sportplus-13.com` (au lieu de `.fr`).
 - **Idées non implémentées** : app mobile (à faire APRÈS les mails — finir un chantier avant
   d'en ouvrir un autre) ; Lighthouse 95+ (Caddy/Nginx, configs prêtes) ; détection d'anomalies
