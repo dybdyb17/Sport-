@@ -47,18 +47,18 @@
         {% else %}
           <h3 style="font-family:'Barlow Condensed',sans-serif;font-size:26px;text-transform:uppercase;margin-bottom:8px;">Réserver maintenant</h3>
           <p style="color:var(--text-dim);font-size:14px;line-height:1.6;margin-bottom:18px;">
-            {% if offer.allowsOnSitePayment %}
-              Renseigne tes infos, puis choisis ton mode de paiement.
-            {% else %}
-              Renseigne tes infos, puis tu seras redirigé vers Stripe. Le QR est généré après paiement validé.
-            {% endif %}
+            Renseigne tes infos ci-dessous{{ offer.allowsOnSitePayment ? ' et choisis ton mode de paiement.' : ', tu seras redirigé vers Stripe. Le QR est généré après paiement validé.' }}
           </p>
 
-          {# Formulaire unique — 2 boutons submit avec formaction si l'offre
-             autorise le paiement au club. Sinon 1 seul bouton Stripe.
-             L'action par défaut du form pointe vers le checkout Stripe pour
-             conserver la compat (submit clavier / enter). #}
-          <form method="post" action="{{ path('app_promo_offer_checkout', {slug: offer.slug}) }}" style="display:grid;gap:14px;">
+          {# Formulaire unique. Le token _token change dynamiquement selon le
+             mode choisi (Stripe / onsite) via JS. L'action du form aussi. #}
+          <form method="post"
+                action="{{ path('app_promo_offer_checkout', {slug: offer.slug}) }}"
+                style="display:grid;gap:14px;"
+                data-action-stripe="{{ path('app_promo_offer_checkout', {slug: offer.slug}) }}"
+                data-action-onsite="{{ offer.allowsOnSitePayment ? path('app_promo_offer_reserve_onsite', {slug: offer.slug}) : '' }}"
+                data-token-stripe="{{ csrf_token('promo-offer-' ~ offer.id) }}"
+                data-token-onsite="{{ offer.allowsOnSitePayment ? csrf_token('promo-offer-onsite-' ~ offer.id) : '' }}">
             <input type="hidden" name="_token" value="{{ csrf_token('promo-offer-' ~ offer.id) }}">
             <div class="form-group">
               <label>Nom complet</label>
@@ -73,44 +73,182 @@
               <input name="buyer_phone" maxlength="30" class="form-control" autocomplete="tel">
             </div>
 
-            <button class="btn btn-primary btn-lg" type="submit" style="width:100%;">
-              <i class="ti ti-brand-stripe"></i> Payer {{ offer.priceFormatted }} en ligne
-            </button>
-            <p style="margin:0;color:var(--text-dim);font-size:12px;text-align:center;">
-              <i class="ti ti-lock"></i> Paiement carte sécurisé Stripe · QR immédiat après validation.
-            </p>
-
             {% if offer.allowsOnSitePayment %}
-              {# 2ᵉ bouton : soumet le même formulaire vers la route
-                 reserve-au-club. Le token CSRF de cette route est différent
-                 (cf. contrôleur) donc on met à jour le _token via un input
-                 séparé qui remplace l'autre au submit onclick. #}
-              <div style="display:flex;align-items:center;gap:8px;margin:6px 0;color:var(--text-dim);font-size:11px;letter-spacing:1.5px;text-transform:uppercase;font-family:'Barlow Condensed',sans-serif;font-weight:800;">
-                <span style="flex:1;height:1px;background:var(--border);"></span>
-                <span>OU</span>
-                <span style="flex:1;height:1px;background:var(--border);"></span>
+              {# Chips radios pour choisir le mode de paiement (Stripe / au club).
+                 Style aligné sur les chips du tunnel booking : cases cliquables
+                 pleine largeur, l'active a bordure or + fond translucide.
+                 Le radio est visuellement caché mais reste focusable/accessible. #}
+              <div style="display:grid;gap:10px;margin-top:4px;">
+                <div style="font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);">
+                  Mode de paiement
+                </div>
+                <label class="promo-pay-chip is-active">
+                  <input type="radio" name="pay_mode" value="stripe" checked>
+                  <span class="promo-pay-chip-icon"><i class="ti ti-brand-stripe"></i></span>
+                  <span class="promo-pay-chip-body">
+                    <span class="promo-pay-chip-name">En ligne (Stripe)</span>
+                    <span class="promo-pay-chip-sub">Paiement carte sécurisé · QR immédiat après validation</span>
+                  </span>
+                  <span class="promo-pay-chip-check"><i class="ti ti-check"></i></span>
+                </label>
+                <label class="promo-pay-chip">
+                  <input type="radio" name="pay_mode" value="onsite">
+                  <span class="promo-pay-chip-icon"><i class="ti ti-cash"></i></span>
+                  <span class="promo-pay-chip-body">
+                    <span class="promo-pay-chip-name">Au club (espèces ou CB)</span>
+                    <span class="promo-pay-chip-sub">Tu réserves ici, tu payes à l'accueil · QR envoyé par email après paiement</span>
+                  </span>
+                  <span class="promo-pay-chip-check"><i class="ti ti-check"></i></span>
+                </label>
               </div>
-              <button class="btn btn-secondary btn-lg" type="submit"
-                      formaction="{{ path('app_promo_offer_reserve_onsite', {slug: offer.slug}) }}"
-                      formmethod="post"
-                      style="width:100%;background:rgba(46,204,113,.10);border:1px solid rgba(46,204,113,.40);color:var(--green);"
-                      onclick="document.querySelector('input[name=_token]').value='{{ csrf_token('promo-offer-onsite-' ~ offer.id) }}';">
-                <i class="ti ti-cash"></i> Réserver, je paye au club
-              </button>
-              <p style="margin:0;color:var(--text-dim);font-size:12px;text-align:center;">
-                <i class="ti ti-info-circle"></i> Réservation enregistrée · Tu payes espèces ou CB au club · QR reçu par email après paiement.
-              </p>
             {% endif %}
+
+            <button class="btn btn-primary btn-lg" type="submit" style="width:100%;" data-submit-btn>
+              <i class="ti ti-lock" data-submit-icon></i> <span data-submit-label>Payer {{ offer.priceFormatted }} en ligne</span>
+            </button>
+            <p style="margin:0;color:var(--text-dim);font-size:12px;text-align:center;" data-submit-hint>
+              <i class="ti ti-info-circle"></i> Paiement Stripe sécurisé · Aucun QR sans paiement confirmé.
+            </p>
           </form>
         {% endif %}
       </aside>
     </div>
   </div>
 </section>
+
 <style>
-@media (max-width: 820px) {
-  .promo-offer-grid { grid-template-columns: 1fr !important; }
-  .promo-offer-grid aside { position: static !important; }
-}
+  /* ── Chips radios "Mode de paiement" ─────────────────────────────
+     Case cliquable pleine largeur, style aligné sur le tunnel booking
+     (chips Espèces / CB / Stripe). L'input radio est visuellement
+     absorbé par la card, mais reste focusable clavier + accessible. */
+  .promo-pay-chip {
+    display: grid;
+    grid-template-columns: 42px 1fr 22px;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 16px;
+    background: rgba(255,255,255,.02);
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: border-color .15s ease, background .15s ease, transform .12s ease;
+    margin: 0;
+  }
+  .promo-pay-chip:hover {
+    background: rgba(200,169,81,.06);
+    border-color: rgba(200,169,81,.35);
+  }
+  .promo-pay-chip.is-active {
+    border-color: var(--gold);
+    background: rgba(200,169,81,.10);
+    box-shadow: 0 0 0 3px rgba(200,169,81,.10);
+  }
+  .promo-pay-chip input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+  .promo-pay-chip-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+    background: var(--bg-2, #101018);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-dim);
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+  .promo-pay-chip.is-active .promo-pay-chip-icon {
+    background: rgba(200,169,81,.15);
+    color: var(--gold);
+  }
+  .promo-pay-chip-body { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+  .promo-pay-chip-name {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 15px;
+    font-weight: 800;
+    letter-spacing: .5px;
+    text-transform: uppercase;
+    color: var(--white);
+  }
+  .promo-pay-chip-sub {
+    font-size: 12.5px;
+    color: var(--text-dim);
+    line-height: 1.35;
+  }
+  .promo-pay-chip-check {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    border: 1.5px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: transparent;
+    font-size: 14px;
+    flex-shrink: 0;
+    transition: all .15s ease;
+  }
+  .promo-pay-chip.is-active .promo-pay-chip-check {
+    border-color: var(--gold);
+    background: var(--gold);
+    color: var(--black);
+  }
+  /* Focus visible pour l'accessibilité clavier. */
+  .promo-pay-chip:focus-within {
+    outline: none;
+    border-color: var(--gold);
+  }
+
+  @media (max-width: 820px) {
+    .promo-offer-grid { grid-template-columns: 1fr !important; }
+    .promo-offer-grid aside { position: static !important; }
+  }
 </style>
+
+<script>
+  // Synchronise l'action + le token _token + le label du bouton selon
+  // le mode de paiement choisi via les chips radios. Zéro back-end à changer.
+  (function() {
+    var form = document.querySelector('form[data-action-stripe]');
+    if (!form) return;
+    var radios      = form.querySelectorAll('input[name="pay_mode"]');
+    if (!radios.length) return; // Pas de chips (offre stripe-only), rien à faire
+    var tokenInput  = form.querySelector('input[name="_token"]');
+    var submitBtn   = form.querySelector('[data-submit-btn]');
+    var submitLabel = form.querySelector('[data-submit-label]');
+    var submitIcon  = form.querySelector('[data-submit-icon]');
+    var submitHint  = form.querySelector('[data-submit-hint]');
+    var priceStr    = {{ offer.priceFormatted|json_encode|raw }};
+
+    function apply() {
+      var chosen = form.querySelector('input[name="pay_mode"]:checked');
+      var mode   = chosen ? chosen.value : 'stripe';
+
+      form.querySelectorAll('.promo-pay-chip').forEach(function(chip) {
+        var input = chip.querySelector('input[name="pay_mode"]');
+        chip.classList.toggle('is-active', !!(input && input.checked));
+      });
+
+      if (mode === 'onsite') {
+        form.action = form.dataset.actionOnsite || form.action;
+        if (tokenInput) tokenInput.value = form.dataset.tokenOnsite || tokenInput.value;
+        if (submitLabel) submitLabel.textContent = 'Réserver — je paye au club';
+        if (submitIcon)  submitIcon.className = 'ti ti-cash';
+        if (submitHint)  submitHint.innerHTML = '<i class="ti ti-info-circle"></i> Réservation enregistrée · Paiement espèces / CB au club · QR reçu par email après paiement.';
+      } else {
+        form.action = form.dataset.actionStripe || form.action;
+        if (tokenInput) tokenInput.value = form.dataset.tokenStripe || tokenInput.value;
+        if (submitLabel) submitLabel.textContent = 'Payer ' + priceStr + ' en ligne';
+        if (submitIcon)  submitIcon.className = 'ti ti-lock';
+        if (submitHint)  submitHint.innerHTML = '<i class="ti ti-info-circle"></i> Paiement Stripe sécurisé · Aucun QR sans paiement confirmé.';
+      }
+    }
+
+    radios.forEach(function(r) { r.addEventListener('change', apply); });
+    apply();
+  })();
+</script>
 {% endblock %}
