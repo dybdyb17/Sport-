@@ -217,6 +217,10 @@
           <span class="rdv-pay-status rdv-pay-status-wait"><i class="ti ti-x"></i> Séance annulée</span>
         {% elseif booking.coveredBy in ['subscription', 'founding'] %}
           <span class="rdv-pay-status rdv-pay-status-ok"><i class="ti ti-check"></i> Incluse — rien à régler</span>
+        {% elseif booking.hasPendingNoShowFee %}
+          <span class="rdv-pay-status rdv-pay-status-wait" style="background:rgba(255,107,107,.12);color:#ff8a8a;border-color:rgba(255,107,107,.35);">
+            <i class="ti ti-user-x"></i> Absence — frais 30 %
+          </span>
         {% elseif isPending %}
           <span class="rdv-pay-status rdv-pay-status-todo"><i class="ti ti-hourglass"></i> Bloqué — en attente du coach</span>
         {% elseif booking.startAt < date() %}
@@ -253,6 +257,13 @@
             Ton QR de check-in est débloqué — présente-le à l'accueil le jour J.
           </p>
         {% endif %}
+        {# Séance payée AVANT une absence : mention discrète (l'argent est déjà en caisse). #}
+        {% if booking.isNoShow %}
+          <p class="rdv-pay-help" style="color:var(--text-dim);font-size:12.5px;margin-top:8px;">
+            <i class="ti ti-info-circle"></i>
+            Absence enregistrée le {{ booking.noShowMarkedAt|date('d/m/Y') }} — la séance était déjà réglée, aucun frais supplémentaire.
+          </p>
+        {% endif %}
 
       {% elseif booking.coveredBy in ['subscription', 'founding'] %}
         {# Séance couverte (pack ou Fondateur) — pas de paiement à prévoir, quel que soit
@@ -275,6 +286,31 @@
         <p class="rdv-pay-help" style="color:var(--green);">
           <i class="ti ti-info-circle" style="color:var(--green);"></i>
           Cette séance est <strong style="color:var(--white);">déjà couverte</strong> par {{ packLabel }}.
+        </p>
+        {# Séance couverte + absence : la séance est décomptée du pack, rien à régler. #}
+        {% if booking.isNoShow %}
+          <p class="rdv-pay-help" style="color:var(--text-dim);font-size:12.5px;margin-top:8px;">
+            <i class="ti ti-info-circle"></i>
+            Absence enregistrée le {{ booking.noShowMarkedAt|date('d/m/Y') }} — séance décomptée de ton pack, aucun frais à régler.
+          </p>
+        {% endif %}
+
+      {% elseif booking.hasPendingNoShowFee %}
+        {# Séance no-show non payée non couverte : frais de 30 % dus au club. #}
+        <div class="rdv-pay-chip" style="background:rgba(255,107,107,.06);border-color:rgba(255,107,107,.35);">
+          <i class="ti ti-user-x" style="color:#ff8a8a;"></i>
+          <div>
+            <div class="rdv-pay-chip-name" style="color:#ff8a8a;">
+              Absence — frais {{ booking.noShowFeeFormatted }}
+            </div>
+            <div class="rdv-pay-chip-sub">
+              Enregistrée le {{ booking.noShowMarkedAt|date('d/m/Y') }} · prix séance {{ booking.prixFormatted }}
+            </div>
+          </div>
+        </div>
+        <p class="rdv-pay-help">
+          <i class="ti ti-alert-triangle" style="color:#ffb450;"></i>
+          Des <strong>frais d'absence de 30 %</strong> soit <strong>{{ booking.noShowFeeFormatted }}</strong> sont à régler au club — le coach t'encaissera à ta prochaine venue.
         </p>
 
       {% elseif intent %}
