@@ -561,6 +561,25 @@ ResetFoundingClaims, SeedFoundingOffer, SeedPricingShowcase, **SendDayBeforeRemi
     `admin/checkin/promo_validate.html.twig`.
   - **Récup du QR token en local** pour tester :
     `USE sportplus; SELECT reference, qr_token FROM promo_purchase WHERE reference = 'OFR-XXX';`
+  - **Rattachement souple à l'espace client (8 juillet 2026)** : une
+    `PromoPurchase` payée apparaît dans `/mon-espace` du client connecté si son
+    `buyerEmail == user.email` (comparaison `LOWER()` côté SQL). **Aucun lien
+    User rigide, aucune migration, aucun changement du flow d'achat** : un
+    achat sans compte reste accessible via son ticket par référence
+    (`app_promo_offer_ticket`) — le rattachement est purement en LECTURE et
+    additionnel. `PromoPurchaseRepository::findPaidForEmail(string $email)`
+    (status=paid + paidAt non null + join eager sur offer). Section « Mes
+    offres Instagram » dans `espace.html.twig` entre la barre packs et le
+    founding thanks card, masquée si vide. Chaque ligne lie vers le ticket
+    public existant — aucune duplication de la logique QR/check-in. Sécurité :
+    `$this->getUser()->getEmail()` du compte connecté, aucun param URL, pas de
+    route de « réclamation » ni de modification. Item vert « Utilisée le JJ/MM »
+    si `checkinAt` non null, sinon or « Payée le JJ/MM · À utiliser au club ».
+  - ⚠️ **Références PromoPurchase : regex stricte `OFR-[A-F0-9]{8}`** (8 hex
+    upper). Pour insérer une purchase de test en SQL, utilise des vrais hex
+    (ex : `OFR-A1B2C3D4`, `OFR-DEADBEEF`, `OFR-C0FFEE12`) — pas de lettres
+    non-hex sinon toute route consommant la référence rejette avec 404 et le
+    Twig `path('app_promo_offer_ticket')` lève une exception au rendering.
 - **Audit UI enrichi (mergé juillet 2026, Codex)** : le journal `/admin/audit` affichait
   les `details` en JSON brut → visuellement pas admin premium.
   - `AuditAction::icon()` + `AuditAction::color()` ajoutées à l'enum : chaque action a
