@@ -102,6 +102,10 @@
               {% endif %}
             </div>
           </div>
+          {# Marque avatar + removeAvatar comme rendus pour que form_end() ne
+             les ré-affiche pas en double à la fin du form. #}
+          {% do profilForm.avatar.setRendered %}
+          {% do profilForm.removeAvatar.setRendered %}
         </div>
 
         <div class="form-field">

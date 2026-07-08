@@ -292,13 +292,21 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     /**
-     * Première lettre du nomComplet (ou email en fallback) pour l'avatar
-     * initiales quand pas de photo. Toujours uppercase.
+     * Initiales pour l'avatar quand pas de photo — 2 lettres si le nom complet
+     * a 2 mots (ex: "Dybril Boudiaf" → "DB"), sinon 1 lettre. Cohérent avec le
+     * hero du profil et le fallback historique du header. Toujours uppercase.
      */
     public function getInitial(): string
     {
-        $source = $this->nomComplet ?: $this->email ?: '?';
-        return mb_strtoupper(mb_substr($source, 0, 1));
+        $source = trim((string) $this->nomComplet);
+        if ($source === '') {
+            $email = (string) ($this->email ?? '');
+            return mb_strtoupper(mb_substr($email !== '' ? $email : '?', 0, 1));
+        }
+        $words  = preg_split('/\s+/', $source) ?: [];
+        $first  = mb_substr($words[0] ?? '', 0, 1);
+        $second = isset($words[1]) ? mb_substr($words[1], 0, 1) : '';
+        return mb_strtoupper($first . $second);
     }
 
     public function getPreferredTimeSlot(): ?TimeSlot { return $this->preferredTimeSlot; }
