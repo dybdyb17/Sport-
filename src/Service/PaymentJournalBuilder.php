@@ -16,6 +16,7 @@ use App\Repository\BookingRepository;
 use App\Repository\FoundingClaimRepository;
 use App\Repository\PendingPackRequestRepository;
 use App\Repository\SubscriptionRepository;
+use Psr\Log\LoggerInterface;
 
 /**
  * Construit le journal unifié des paiements admin.
@@ -35,6 +36,13 @@ use App\Repository\SubscriptionRepository;
  */
 class PaymentJournalBuilder
 {
+    /**
+     * Contrat absolu : payment_method ∈ {stripe, cash, card} ou NULL.
+     * Toute autre valeur (fossile 'no_show', 'xplor', '') est ignorée + loggée
+     * en warning — le journal ne doit JAMAIS crasher sur une donnée hors contrat.
+     */
+    private const ALLOWED_METHODS = ['stripe', 'cash', 'card'];
+
     public function __construct(
         private readonly BookingRepository $bookings,
         private readonly SubscriptionRepository $subscriptions,
@@ -42,6 +50,7 @@ class PaymentJournalBuilder
         private readonly PendingPackRequestRepository $pendingPacks,
         private readonly AuditLogRepository $auditLogs,
         private readonly PricingCalculator $pricing,
+        private readonly LoggerInterface $logger,
     ) {}
 
     /**
@@ -85,7 +94,18 @@ class PaymentJournalBuilder
         $bookingSources = $this->fetchAuditSourcesForBookings($bookingIds);
 
         foreach ($paidBookings as $b) {
-            $method   = $b->getPaymentMethod();
+            $method = $b->getPaymentMethod();
+
+            // ── WHITELIST : ignore + logge toute valeur hors contrat ─────
+            if (!in_array($method, self::ALLOWED_METHODS, true)) {
+                $this->logger->warning('PaymentJournal: booking payment_method hors contrat, ignoré.', [
+                    'booking_id'    => $b->getId(),
+                    'reference'     => $b->getReference(),
+                    'payment_method'=> $method,
+                ]);
+                continue;
+            }
+
             $source   = $bookingSources[$b->getId()] ?? null;
             $declared = $b->getPaymentDeclaredBy();
 
@@ -106,13 +126,20 @@ class PaymentJournalBuilder
                 }
             }
 
+            $detail = sprintf('%s · %s', $b->getReference(), $b->getCoach()?->getNomComplet() ?? '—');
+            // Séance payée AVANT une absence : on garde la ligne payée au prix
+            // plein (l'argent a été reçu) et on tag « (no-show) » dans le détail.
+            if ($b->isNoShow()) {
+                $detail .= ' · (no-show)';
+            }
+
             $events[] = [
                 'paidAt'      => $b->getPaymentDeclaredAt(),
                 'type'        => 'seance',
                 'clientName'  => $b->getClient()?->getNomComplet() ?? '—',
                 'coachId'     => $b->getCoach()?->getId(),
                 'coachName'   => $b->getCoach()?->getNomComplet(),
-                'detail'      => sprintf('%s · %s', $b->getReference(), $b->getCoach()?->getNomComplet() ?? '—'),
+                'detail'      => $detail,
                 'method'      => $method,
                 'validatedBy' => $declared?->getNomComplet(),
                 'canal'       => $canal,
@@ -141,6 +168,16 @@ class PaymentJournalBuilder
 
         foreach ($paidSubs as $s) {
             $method = $s->getPaymentMethod();
+
+            if (!in_array($method, self::ALLOWED_METHODS, true)) {
+                $this->logger->warning('PaymentJournal: subscription payment_method hors contrat, ignoré.', [
+                    'subscription_id' => $s->getId(),
+                    'reference'       => $s->getReference(),
+                    'payment_method'  => $method,
+                ]);
+                continue;
+            }
+
             $auditDetails = $subAudits[$s->getId()] ?? [];
 
             $validatedBy = null;
@@ -246,6 +283,44 @@ class PaymentJournalBuilder
                 'stripeUrl'   => null,
                 'pending'     => true,
                 'pendingLabel' => 'À encaisser',
+            ];
+        }
+
+        // ── 4bis. Frais no-show à encaisser (30% du prix) ────────────────
+        //     Séance no-show, non couverte, non payée, avec fee > 0. Montant
+        //     dû = fee (pas le prix plein).
+        $pendingNoShows = $this->bookings->createQueryBuilder('b')
+            ->leftJoin('b.client', 'cl')->addSelect('cl')
+            ->leftJoin('b.coach', 'co')->addSelect('co')
+            ->leftJoin('co.user', 'cou')->addSelect('cou')
+            ->where('b.noShow = true')
+            ->andWhere('b.paymentMethod IS NULL')
+            ->andWhere('b.coveredBy IS NULL')
+            ->andWhere('b.noShowFee IS NOT NULL')
+            ->andWhere('b.noShowMarkedAt BETWEEN :from AND :to')
+            ->setParameter('from', $from)
+            ->setParameter('to', $to)
+            ->orderBy('b.noShowMarkedAt', 'DESC')
+            ->getQuery()->getResult();
+
+        foreach ($pendingNoShows as $b) {
+            $fee = (float) $b->getNoShowFee();
+            if ($fee <= 0) continue;
+
+            $events[] = [
+                'paidAt'      => $b->getNoShowMarkedAt() ?? $b->getStartAt(),
+                'type'        => 'seance',
+                'clientName'  => $b->getClient()?->getNomComplet() ?? '—',
+                'coachId'     => $b->getCoach()?->getId(),
+                'coachName'   => $b->getCoach()?->getNomComplet(),
+                'detail'      => sprintf('%s · %s · absence', $b->getReference(), $b->getCoach()?->getNomComplet() ?? '—'),
+                'method'      => $b->getIntendedPaymentMethod(),
+                'validatedBy' => null,
+                'canal'       => null,
+                'amount'      => $fee,
+                'stripeUrl'   => null,
+                'pending'     => true,
+                'pendingLabel' => 'Frais no-show (30%)',
             ];
         }
 
