@@ -25,10 +25,17 @@
   <meta name="twitter:image"      content="{{ app.request.schemeAndHttpHost ~ asset('img/club-photos/coaching-halteres.jpg') }}">
   {% endblock %}
 
-  {# Favicon Google : SVG texte uniquement pour éviter les diffs binaires et garder une URL crawlable/stable. #}
-  <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}?v=20260707">
-  <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('apple-touch-icon.png') }}">
-  <link rel="manifest" href="{{ asset('site.webmanifest') }}">
+  {# Favicons — ordre voulu :
+     1. PNG 192×192 : c'est celui que Google indexe pour le favicon SERP et que
+        la majorité des navigateurs mobiles préfèrent. Sans lui, on retombe
+        sur le globe blanc générique côté Google.
+     2. SVG : pour les browsers vectoriels modernes (rendu net à toute taille).
+     3. apple-touch-icon : iOS "Ajouter à l'écran d'accueil".
+     Le cache busting ?v=... force les navigateurs à re-fetch après un update. #}
+  <link rel="icon" type="image/png" sizes="192x192" href="{{ asset('favicon.png') }}?v=20260708">
+  <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}?v=20260708">
+  <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('apple-touch-icon.png') }}?v=20260708">
+  <link rel="manifest" href="{{ asset('site.webmanifest') }}?v=20260708">
 
   <script type="application/ld+json">
   {
@@ -47,7 +54,7 @@
         "@id": "{{ app.request.schemeAndHttpHost }}/#organization",
         "name": "SPORT+ Marseille",
         "url": "{{ app.request.schemeAndHttpHost }}/",
-        "logo": "{{ app.request.schemeAndHttpHost ~ asset('favicon.svg') }}",
+        "logo": "{{ app.request.schemeAndHttpHost ~ asset('favicon.png') }}",
         "image": "{{ app.request.schemeAndHttpHost ~ asset('img/club-photos/coaching-halteres.jpg') }}",
         "telephone": "+33491422207",
         "priceRange": "40€ - 575€",
