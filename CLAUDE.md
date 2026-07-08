@@ -684,6 +684,26 @@ ResetFoundingClaims, SeedFoundingOffer, SeedPricingShowcase, **SendDayBeforeRemi
     gradient or/vert avec initiale. Non branchée partout dans PR 3 (le
     header et le profil restent inline pour minimiser le diff) — dispo
     pour les prochains sujets.
+  - **⚠️ Dockerfile prod : GD ajouté (8 juillet)**. L'image
+    `php:8.4-cli-alpine` n'a **pas GD par défaut** — sans lui, l'upload
+    plantait en prod avec « Extension GD requise ». Libs Alpine ajoutées :
+    `libpng-dev`, `libjpeg-turbo-dev`, `libwebp-dev`, `freetype-dev`.
+    Puis `docker-php-ext-configure gd --with-jpeg --with-webp --with-freetype`
+    et `gd` dans `docker-php-ext-install`. Ne pas retirer.
+  - **⚠️ Rendering manuel du form avatar dans `profil.html.twig`** : les
+    inputs `avatar` (FileType) et `removeAvatar` (CheckboxType) sont rendus
+    à la main (input + label custom) pour bypass le style form-theme
+    (Barlow uppercase or) qui rendait « Retirer ma photo actuelle »
+    disgracieux. **OBLIGATOIRE** : appeler
+    `{% do profilForm.avatar.setRendered %}` +
+    `{% do profilForm.removeAvatar.setRendered %}` juste après le bloc
+    custom, sinon `form_end()` re-affiche les 2 champs raw à la fin du
+    form → duplicate visible + le 2ᵉ input file écrase le 1er au submit
+    et l'upload ne prend rien (bug vécu 8 juillet).
+  - **Initiales `getInitial()` = 2 lettres max** : si `nomComplet` a 2
+    mots (« Dybril Boudiaf ») → « DB », sinon 1 lettre. Cohérent avec le
+    hero du profil et le fallback header historique. Ne pas régresser
+    à 1 lettre uniquement.
 - **Audit UI enrichi (mergé juillet 2026, Codex)** : le journal `/admin/audit` affichait
   les `details` en JSON brut → visuellement pas admin premium.
   - `AuditAction::icon()` + `AuditAction::color()` ajoutées à l'enum : chaque action a
