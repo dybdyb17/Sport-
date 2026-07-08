@@ -45,6 +45,16 @@ class PromoOffer
     #[ORM\Column(nullable: true)]
     private ?int $maxQuantity = null;
 
+    /**
+     * Accès à vie type "BlackCard" : 1 seul scan à l'accueil pour activer,
+     * puis le client entre librement au club sans re-scanner. Le check-in
+     * unique reste la règle — c'est juste que le badge UI change (public,
+     * ticket, check-in coach, espace client) pour informer client + coach
+     * que c'est un accès permanent. Aucun changement de logique métier.
+     */
+    #[ORM\Column(options: ['default' => false])]
+    private bool $isUnlimitedAccess = false;
+
     #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
     private ?\DateTimeImmutable $startsAt = null;
 
@@ -86,6 +96,8 @@ class PromoOffer
     public function setStatus(string $status): static { $this->status = in_array($status, [self::STATUS_DRAFT, self::STATUS_ACTIVE, self::STATUS_ARCHIVED], true) ? $status : self::STATUS_DRAFT; $this->touch(); return $this; }
     public function getMaxQuantity(): ?int { return $this->maxQuantity; }
     public function setMaxQuantity(?int $maxQuantity): static { $this->maxQuantity = $maxQuantity !== null && $maxQuantity > 0 ? $maxQuantity : null; $this->touch(); return $this; }
+    public function isUnlimitedAccess(): bool { return $this->isUnlimitedAccess; }
+    public function setUnlimitedAccess(bool $unlimited): static { $this->isUnlimitedAccess = $unlimited; $this->touch(); return $this; }
     public function getStartsAt(): ?\DateTimeImmutable { return $this->startsAt; }
     public function setStartsAt(?\DateTimeImmutable $startsAt): static { $this->startsAt = $startsAt; $this->touch(); return $this; }
     public function getEndsAt(): ?\DateTimeImmutable { return $this->endsAt; }

@@ -952,6 +952,16 @@ html.performance-lite .status-dot { animation: none; }
 .promo-item--used .promo-item-sub {
   color: var(--green);
 }
+/* Variante "accès illimité activé" : or au lieu de vert pour signifier
+   que ce n'est pas une utilisation consommée mais un statut permanent. */
+.promo-item--unlimited .promo-item-icon {
+  background: linear-gradient(135deg, rgba(200,169,81,.18) 0%, rgba(46,204,113,.14) 100%);
+  color: var(--gold);
+  border: 1px solid rgba(200,169,81,.35);
+}
+.promo-item--unlimited .promo-item-sub {
+  color: var(--gold);
+}
 .promo-item-chevron {
   color: var(--gold);
   font-size: 20px;

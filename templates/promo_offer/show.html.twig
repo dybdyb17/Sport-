@@ -17,8 +17,20 @@
     <div style="display:grid;grid-template-columns:minmax(0,1.1fr) minmax(320px,.9fr);gap:28px;align-items:start;" class="promo-offer-grid">
       <article class="form-card" style="padding:28px;">
         <div class="section-label" style="margin-top:0;">{{ offer.type|capitalize }}</div>
+        {% if offer.isUnlimitedAccess %}
+          <div style="display:inline-flex;align-items:center;gap:8px;padding:8px 16px;margin-bottom:14px;background:linear-gradient(135deg,rgba(200,169,81,.18) 0%,rgba(46,204,113,.15) 100%);border:1px solid rgba(200,169,81,.55);border-radius:100px;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--gold);">
+            <i class="ti ti-infinity" style="font-size:18px;"></i> Accès à vie
+          </div>
+        {% endif %}
         <h2 style="font-family:'Barlow Condensed',sans-serif;font-size:42px;text-transform:uppercase;margin:8px 0 14px;">{{ offer.title }}</h2>
         <div style="font-family:'Barlow Condensed',sans-serif;font-size:64px;font-weight:900;color:var(--gold);line-height:1;margin-bottom:18px;">{{ offer.priceFormatted }}</div>
+        {% if offer.isUnlimitedAccess %}
+          <p style="margin:0 0 16px;padding:12px 14px;background:rgba(46,204,113,.06);border-left:3px solid var(--green);border-radius:8px;color:var(--text-soft);font-size:14px;line-height:1.55;">
+            <i class="ti ti-info-circle" style="color:var(--green);"></i>
+            <strong style="color:var(--white);">1 seul scan à l'accueil pour activer.</strong>
+            Une fois activé, tu entres librement au club à vie — pas besoin de re-scanner ton QR à chaque visite.
+          </p>
+        {% endif %}
         {% if offer.description %}
           <p style="color:var(--text-soft);font-size:16px;line-height:1.8;white-space:pre-line;">{{ offer.description }}</p>
         {% else %}

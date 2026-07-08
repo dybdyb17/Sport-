@@ -503,19 +503,35 @@
       </header>
       <ul class="promo-list">
         {% for promo in promosClient %}
+          {% set isUnlimited  = promo.offer.isUnlimitedAccess %}
+          {% set isActivated  = promo.isCheckedIn %}
+          {# Une offre illimitée activée n'est pas "utilisée" (consommée) —
+             elle est ACTIVE à vie. On la présente en vert avec l'infini. #}
+          {% set variantClass = isUnlimited and isActivated
+              ? 'promo-item--unlimited'
+              : (isActivated ? 'promo-item--used' : '') %}
           <li>
             <a href="{{ path('app_promo_offer_ticket', {reference: promo.reference}) }}"
-               class="promo-item {{ promo.isCheckedIn ? 'promo-item--used' : '' }}">
+               class="promo-item {{ variantClass }}">
               <div class="promo-item-icon">
-                <i class="ti {{ promo.isCheckedIn ? 'ti-check' : 'ti-ticket' }}"></i>
+                <i class="ti {{ isUnlimited and isActivated ? 'ti-infinity' : (isActivated ? 'ti-check' : 'ti-ticket') }}"></i>
               </div>
               <div class="promo-item-body">
-                <div class="promo-item-title">{{ promo.offer.title }}</div>
+                <div class="promo-item-title">
+                  {{ promo.offer.title }}
+                  {% if isUnlimited %}
+                    <span style="display:inline-flex;align-items:center;gap:3px;margin-left:6px;padding:1px 8px;border-radius:100px;background:rgba(200,169,81,.15);border:1px solid rgba(200,169,81,.4);color:var(--gold);font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;">
+                      <i class="ti ti-infinity" style="font-size:11px;"></i> À vie
+                    </span>
+                  {% endif %}
+                </div>
                 <div class="promo-item-sub">
-                  {% if promo.isCheckedIn %}
+                  {% if isUnlimited and isActivated %}
+                    Accès illimité actif depuis le {{ promo.checkinAt|date('d/m/Y') }}
+                  {% elseif isActivated %}
                     Utilisée le {{ promo.checkinAt|date('d/m/Y') }}
                   {% else %}
-                    Payée le {{ promo.paidAt|date('d/m/Y') }} · À utiliser au club
+                    Payée le {{ promo.paidAt|date('d/m/Y') }} · {{ isUnlimited ? 'Faire activer à l\'accueil' : 'À utiliser au club' }}
                   {% endif %}
                 </div>
               </div>

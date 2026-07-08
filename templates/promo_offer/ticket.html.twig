@@ -6,13 +6,45 @@
 <section class="section">
   <div class="container" style="max-width:640px;">
     <div class="form-card" style="padding:28px;text-align:center;">
+      {% set isUnlimited = purchase.offer.isUnlimitedAccess %}
+      {% set isActivated = purchase.isCheckedIn %}
+
       <div class="hero-badge">Paiement validé</div>
-      <h1 class="section-title" style="font-size:44px;margin-bottom:10px;">Ton QR est prêt</h1>
+      {% if isUnlimited %}
+        <div style="display:inline-flex;align-items:center;gap:8px;padding:8px 16px;margin:14px auto 0;background:linear-gradient(135deg,rgba(200,169,81,.20) 0%,rgba(46,204,113,.15) 100%);border:1px solid rgba(200,169,81,.55);border-radius:100px;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--gold);">
+          <i class="ti ti-infinity" style="font-size:16px;"></i>
+          {{ isActivated ? 'Accès illimité actif' : 'Accès à vie — 1 scan pour activer' }}
+        </div>
+      {% endif %}
+      <h1 class="section-title" style="font-size:44px;margin:14px 0 10px;">
+        {{ isUnlimited and isActivated ? 'Ton accès est activé' : 'Ton QR est prêt' }}
+      </h1>
       <p class="section-sub" style="font-size:16px;">{{ purchase.offer.title }} · {{ purchase.amountFormatted }}</p>
 
       {% if purchase.qrUnlocked %}
-        <div id="promo-qr" data-ticket-url="{{ url('app_admin_promo_checkin_validate', {reference: purchase.reference}) }}?token={{ purchase.qrToken }}" style="display:flex;justify-content:center;margin:28px 0;"></div>
-        <p style="color:var(--text-soft);line-height:1.7;">Présente ce QR à l'accueil SPORT+. Il prouve que le paiement Stripe est validé.</p>
+        {% if isUnlimited and isActivated %}
+          {# Accès illimité déjà activé : plus besoin du QR, on rassure le client. #}
+          <div style="margin:28px auto;max-width:420px;padding:26px 22px;background:radial-gradient(ellipse at center,rgba(46,204,113,.10) 0%,transparent 65%),var(--bg-card);border:1px solid rgba(46,204,113,.35);border-radius:16px;">
+            <div style="width:64px;height:64px;margin:0 auto 12px;border-radius:50%;background:rgba(46,204,113,.15);border:2px solid rgba(46,204,113,.45);display:flex;align-items:center;justify-content:center;color:var(--green);font-size:32px;">
+              <i class="ti ti-infinity"></i>
+            </div>
+            <div style="font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:900;color:var(--green);margin-bottom:6px;">Accès à vie activé</div>
+            <div style="font-size:13.5px;color:var(--text-dim);line-height:1.55;">
+              Activé le <strong style="color:var(--white);">{{ purchase.checkinAt|date('d/m/Y \\à H\\hi') }}</strong>.
+              Tu entres librement à SPORT+ maintenant — plus besoin de re-scanner ce QR.
+            </div>
+          </div>
+        {% else %}
+          <div id="promo-qr" data-ticket-url="{{ url('app_admin_promo_checkin_validate', {reference: purchase.reference}) }}?token={{ purchase.qrToken }}" style="display:flex;justify-content:center;margin:28px 0;"></div>
+          <p style="color:var(--text-soft);line-height:1.7;">
+            {% if isUnlimited %}
+              Présente ce QR à l'accueil SPORT+ pour <strong style="color:var(--gold);">activer ton accès à vie</strong>.
+              Après ce scan unique, tu entres librement au club — le QR ne sera plus nécessaire.
+            {% else %}
+              Présente ce QR à l'accueil SPORT+. Il prouve que le paiement Stripe est validé.
+            {% endif %}
+          </p>
+        {% endif %}
       {% else %}
         <div class="alert alert-warning">Paiement en cours de vérification. Recharge cette page dans quelques secondes.</div>
       {% endif %}
@@ -26,7 +58,7 @@
     </div>
   </div>
 </section>
-{% if purchase.qrUnlocked %}
+{% if purchase.qrUnlocked and not (purchase.offer.isUnlimitedAccess and purchase.isCheckedIn) %}
   <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
   <script>
     (function() {

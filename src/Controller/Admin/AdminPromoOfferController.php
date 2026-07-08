@@ -79,6 +79,7 @@ final class AdminPromoOfferController extends AbstractController
             ->setPrice((string) $request->request->get('price', '0'))
             ->setStatus((string) $request->request->get('status', PromoOffer::STATUS_DRAFT))
             ->setMaxQuantity(($q = (int) $request->request->get('max_quantity')) > 0 ? $q : null)
+            ->setUnlimitedAccess($request->request->has('is_unlimited_access'))
             ->setStartsAt($startsAt)
             ->setEndsAt($endsAt);
     }

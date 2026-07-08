@@ -81,10 +81,27 @@
           {% endif %}
         </div>
       {% else %}
+        {# Bandeau d'avertissement pour les offres accès illimité :
+           après ce scan, le client entre à vie sans jamais re-scanner.
+           Le coach doit vérifier l'identité (pièce d'identité) avant de valider. #}
+        {% if purchase.offer.isUnlimitedAccess %}
+          <div style="margin-bottom:18px;padding:16px 18px;background:linear-gradient(135deg,rgba(255,107,107,.10) 0%,rgba(255,180,80,.08) 100%);border:1px solid rgba(255,107,107,.40);border-left:4px solid #ff6b6b;border-radius:12px;">
+            <div style="display:flex;align-items:center;gap:10px;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:#ff8a8a;margin-bottom:8px;">
+              <i class="ti ti-alert-triangle" style="font-size:20px;"></i>
+              Accès à vie — action irréversible
+            </div>
+            <div style="font-size:13.5px;color:var(--text-soft);line-height:1.55;">
+              Après ce scan, le client aura <strong style="color:var(--white);">accès illimité à SPORT+ à vie</strong>
+              — plus besoin de scanner à nouveau. <strong style="color:#ff8a8a;">Vérifie l'identité (pièce d'identité)</strong>
+              du client avant de valider.
+            </div>
+          </div>
+        {% endif %}
         <form method="post">
           <input type="hidden" name="_token" value="{{ csrf_token('promo_checkin_' ~ purchase.reference) }}">
           <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;font-size:16px;padding:16px;">
-            <i class="ti ti-check"></i> Valider l'arrivée du client
+            <i class="ti ti-check"></i>
+            {{ purchase.offer.isUnlimitedAccess ? "Activer l'accès à vie" : "Valider l'arrivée du client" }}
           </button>
         </form>
       {% endif %}
