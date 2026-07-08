@@ -35,7 +35,9 @@
         <a href="{{ path('app_conversation_show', {id: conv.id}) }}"
            class="conv-list-item {{ item.isUnread ? 'is-unread' : '' }}">
           <div class="conv-avatar-sm">
-            {% if inter %}
+            {% if inter and inter.photoSrc %}
+              <img src="{{ inter.photoSrc }}" alt="{{ inter.nomComplet }}" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;display:block;">
+            {% elseif inter %}
               {%- set words = inter.nomComplet|split(' ') -%}
               {{- words[0]|first|upper -}}{%- if words|length > 1 -%}{{- words[1]|first|upper -}}{%- endif -%}
             {% else %}?{% endif %}

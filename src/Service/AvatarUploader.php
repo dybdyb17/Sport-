@@ -104,8 +104,14 @@ final class AvatarUploader
 
         imagecopyresampled($dst, $source, 0, 0, 0, 0, $dstW, $dstH, $srcW, $srcH);
 
+        // Priorité WebP : compression ~30% meilleure que JPG à qualité équivalente,
+        // supporte la transparence, universellement supporté depuis 2020. Fallback
+        // JPG/PNG si GD n'a pas été compilé avec WebP (rare mais possible).
         ob_start();
-        if ($keepsAlpha) {
+        if (function_exists('imagewebp')) {
+            imagewebp($dst, null, 82);
+            $outputMime = 'image/webp';
+        } elseif ($keepsAlpha) {
             imagepng($dst, null, 6);
             $outputMime = 'image/png';
         } else {

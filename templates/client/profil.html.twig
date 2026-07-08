@@ -114,20 +114,123 @@
         </button>
       {{ form_end(profilForm) }}
 
-      {# Preview live du fichier choisi (avant submit). #}
-      <script>
+      {# Modale de recadrage — s'ouvre au changement du champ file, permet
+         de choisir la zone visible et de zoomer. Sortie forcée en carré
+         400x400 pour matcher le resize serveur. #}
+      <div id="avatar-crop-modal" class="avatar-crop-modal" hidden aria-hidden="true">
+        <div class="avatar-crop-backdrop" data-crop-close></div>
+        <div class="avatar-crop-card" role="dialog" aria-modal="true" aria-labelledby="avatar-crop-title">
+          <div class="avatar-crop-head">
+            <h3 id="avatar-crop-title">Recadre ta photo</h3>
+            <button type="button" class="avatar-crop-close" data-crop-close aria-label="Fermer">
+              <i class="ti ti-x"></i>
+            </button>
+          </div>
+          <div class="avatar-crop-body">
+            <div class="avatar-crop-stage">
+              <img id="avatar-crop-target" alt="">
+            </div>
+            <p class="avatar-crop-hint">
+              <i class="ti ti-info-circle"></i>
+              Déplace l'image, pinche ou utilise la molette pour zoomer. La zone dorée sera ta photo finale.
+            </p>
+          </div>
+          <div class="avatar-crop-actions">
+            <button type="button" class="btn btn-secondary" data-crop-close>Annuler</button>
+            <button type="button" class="btn btn-primary" data-crop-apply>
+              <i class="ti ti-check"></i> Valider le recadrage
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {# Cropper.js chargé UNIQUEMENT si on est sur la page profil (pas dans
+         la base) — évite de polluer les autres pages avec 30 KB de JS. #}
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cropperjs@1.6.2/dist/cropper.min.css">
+      <script src="https://cdn.jsdelivr.net/npm/cropperjs@1.6.2/dist/cropper.min.js" defer></script>
+      <script defer>
         (function() {
-          var input = document.querySelector('[data-avatar-input]');
+          var input   = document.querySelector('[data-avatar-input]');
           var preview = document.querySelector('[data-avatar-preview]');
-          if (!input || !preview) return;
+          var modal   = document.getElementById('avatar-crop-modal');
+          var target  = document.getElementById('avatar-crop-target');
+          if (!input || !preview || !modal || !target) return;
+
+          var cropper = null;
+          var pendingFileName = 'avatar.webp';
+
+          function openModal() {
+            modal.hidden = false;
+            modal.setAttribute('aria-hidden', 'false');
+            document.body.style.overflow = 'hidden';
+          }
+          function closeModal() {
+            modal.hidden = true;
+            modal.setAttribute('aria-hidden', 'true');
+            document.body.style.overflow = '';
+            if (cropper) { cropper.destroy(); cropper = null; }
+          }
+
           input.addEventListener('change', function(e) {
             var file = e.target.files && e.target.files[0];
             if (!file) return;
+            pendingFileName = file.name || 'avatar';
             var reader = new FileReader();
             reader.onload = function(ev) {
-              preview.innerHTML = '<img src="' + ev.target.result + '" alt="Aperçu">';
+              target.src = ev.target.result;
+              openModal();
+              // Attendre que Cropper soit chargé (defer)
+              var initCropper = function() {
+                if (typeof Cropper === 'undefined') { setTimeout(initCropper, 50); return; }
+                if (cropper) cropper.destroy();
+                cropper = new Cropper(target, {
+                  aspectRatio: 1,
+                  viewMode: 1,
+                  autoCropArea: 0.9,
+                  responsive: true,
+                  background: false,
+                  guides: false,
+                  dragMode: 'move',
+                  cropBoxResizable: false,
+                  cropBoxMovable: false,
+                });
+              };
+              initCropper();
             };
             reader.readAsDataURL(file);
+          });
+
+          modal.addEventListener('click', function(e) {
+            if (e.target.closest('[data-crop-close]')) {
+              closeModal();
+              input.value = ''; // reset au cas où l'utilisateur annule
+            }
+            if (e.target.closest('[data-crop-apply]')) {
+              if (!cropper) return;
+              cropper.getCroppedCanvas({
+                width: 400,
+                height: 400,
+                imageSmoothingQuality: 'high',
+              }).toBlob(function(blob) {
+                if (!blob) { closeModal(); return; }
+                var croppedName = pendingFileName.replace(/\.[^.]+$/, '') + '.webp';
+                var file = new File([blob], croppedName, { type: 'image/webp' });
+                var dt = new DataTransfer();
+                dt.items.add(file);
+                input.files = dt.files;
+                // Update preview visible dans le form
+                var url = URL.createObjectURL(blob);
+                preview.innerHTML = '<img src="' + url + '" alt="Aperçu">';
+                closeModal();
+              }, 'image/webp', 0.9);
+            }
+          });
+
+          document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && !modal.hidden) {
+              closeModal();
+              input.value = '';
+            }
           });
         })();
       </script>

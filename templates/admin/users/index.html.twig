@@ -33,10 +33,15 @@
           <tr>
             <td>
               <div style="display:flex;align-items:center;gap:10px;">
-                <div style="width:32px;height:32px;border-radius:50%;background:var(--bg-3);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;color:var(--gold-dim);flex-shrink:0;">
-                  {%- set words = user.nomComplet|split(' ') -%}
-                  {{- words[0]|first|upper -}}{%- if words|length > 1 -%}{{- words[1]|first|upper -}}{%- endif -%}
-                </div>
+                {% if user.photoSrc %}
+                  <img src="{{ user.photoSrc }}" alt="{{ user.nomComplet }}"
+                       style="width:32px;height:32px;border-radius:50%;object-fit:cover;flex-shrink:0;box-shadow:0 0 0 1px rgba(200,169,81,.45);">
+                {% else %}
+                  <div style="width:32px;height:32px;border-radius:50%;background:var(--bg-3);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;color:var(--gold-dim);flex-shrink:0;">
+                    {%- set words = user.nomComplet|split(' ') -%}
+                    {{- words[0]|first|upper -}}{%- if words|length > 1 -%}{{- words[1]|first|upper -}}{%- endif -%}
+                  </div>
+                {% endif %}
                 <span style="font-family:'Barlow Condensed',sans-serif;font-weight:700;">{{ user.nomComplet }}</span>
               </div>
             </td>
