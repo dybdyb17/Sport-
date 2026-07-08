@@ -63,6 +63,21 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $coachNotes = null;
 
     /**
+     * Avatar personnel du user (uploadé par lui-même via son profil).
+     * Stocké en base64 dans la colonne, resize à 400x400 max côté serveur
+     * pour éviter les images géantes.
+     *
+     * Indépendant de Coach.photoData qui reste la photo pro utilisée sur
+     * la carte publique du coach (uploadée par Loïc). Un même user peut
+     * avoir user.photoData (avatar perso) ET coach.photoData (photo pro).
+     */
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $photoData = null;
+
+    #[ORM\Column(length: 32, nullable: true)]
+    private ?string $photoMimeType = null;
+
+    /**
      * ⚠️ PAS de valeur par défaut sur la propriété (volontaire).
      *
      * Avec PHP 8.4 + Doctrine ORM 3.x, les entités sont chargées via des
@@ -258,6 +273,33 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function getLastSeenAt(): ?\DateTimeImmutable { return $this->lastSeenAt; }
     public function setLastSeenAt(?\DateTimeImmutable $lastSeenAt): static { $this->lastSeenAt = $lastSeenAt; return $this; }
+
+    public function getPhotoData(): ?string { return $this->photoData; }
+    public function setPhotoData(?string $photoData): static { $this->photoData = $photoData; return $this; }
+    public function getPhotoMimeType(): ?string { return $this->photoMimeType; }
+    public function setPhotoMimeType(?string $photoMimeType): static { $this->photoMimeType = $photoMimeType; return $this; }
+
+    /**
+     * Data URI de l'avatar (utilisable direct en src="…"), null si pas d'avatar.
+     * Pattern identique à Coach.getPhotoSrc() pour cohérence.
+     */
+    public function getPhotoSrc(): ?string
+    {
+        if ($this->photoData && $this->photoMimeType) {
+            return sprintf('data:%s;base64,%s', $this->photoMimeType, $this->photoData);
+        }
+        return null;
+    }
+
+    /**
+     * Première lettre du nomComplet (ou email en fallback) pour l'avatar
+     * initiales quand pas de photo. Toujours uppercase.
+     */
+    public function getInitial(): string
+    {
+        $source = $this->nomComplet ?: $this->email ?: '?';
+        return mb_strtoupper(mb_substr($source, 0, 1));
+    }
 
     public function getPreferredTimeSlot(): ?TimeSlot { return $this->preferredTimeSlot; }
     public function setPreferredTimeSlot(?TimeSlot $preferredTimeSlot): static { $this->preferredTimeSlot = $preferredTimeSlot; return $this; }

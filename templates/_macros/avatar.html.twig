@@ -1,0 +1,34 @@
+{#
+  Macro avatar utilisateur — 1 seul point d'entrée pour l'affichage :
+  - Si le user a un photoSrc → <img>
+  - Sinon → cercle avec initiale + fond dégradé or→vert (charte SPORT+)
+
+  Utilisation :
+    {% import '_macros/avatar.html.twig' as av %}
+    {{ av.user(app.user, 40) }}                          {# 40px, défaut #}
+    {{ av.user(app.user, 64, 'ring') }}                  {# 64px avec anneau or #}
+
+  Paramètres :
+    - u : User (ou null → placeholder ?)
+    - size : int px (défaut 40)
+    - variant : 'flat' (défaut) | 'ring' (bordure or)
+#}
+{% macro user(u, size = 40, variant = 'flat') %}
+  {% set src = u ? u.photoSrc : null %}
+  {% set initial = u ? u.initial : '?' %}
+  {% set ring = variant == 'ring' ? 'box-shadow:0 0 0 2px rgba(200,169,81,.55);' : '' %}
+  {% set fontSize = (size * 0.42)|round %}
+
+  {% if src %}
+    <img src="{{ src }}"
+         alt="{{ u.nomComplet ?? u.email ?? 'Utilisateur' }}"
+         class="ui-avatar"
+         style="width:{{ size }}px;height:{{ size }}px;border-radius:50%;object-fit:cover;display:inline-block;flex-shrink:0;{{ ring }}">
+  {% else %}
+    <span class="ui-avatar ui-avatar--initial"
+          aria-label="{{ u.nomComplet ?? u.email ?? 'Utilisateur' }}"
+          style="width:{{ size }}px;height:{{ size }}px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;font-family:'Barlow Condensed',sans-serif;font-size:{{ fontSize }}px;font-weight:900;color:#0F0F13;background:linear-gradient(135deg,#C8A951 0%,#2ECC71 100%);letter-spacing:.5px;{{ ring }}">
+      {{ initial }}
+    </span>
+  {% endif %}
+{% endmacro %}

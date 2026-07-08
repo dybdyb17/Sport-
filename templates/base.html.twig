@@ -171,8 +171,12 @@
             {%- set words = app.user.nomComplet|split(' ') -%}
             {{- words[0]|first|upper -}}{%- if words|length > 1 -%}{{- words[1]|first|upper -}}{%- endif -%}
           {% endset %}
-          <button class="user-avatar" aria-haspopup="true" aria-expanded="false" title="{{ app.user.nomComplet }}">
-            {{- initials -}}
+          <button class="user-avatar {{ app.user.photoSrc ? 'user-avatar--photo' : '' }}" aria-haspopup="true" aria-expanded="false" title="{{ app.user.nomComplet }}">
+            {% if app.user.photoSrc %}
+              <img src="{{ app.user.photoSrc }}" alt="" class="user-avatar-img">
+            {% else %}
+              {{- initials -}}
+            {% endif %}
             {% set unread = unread_messages_count() %}
             {% if unread > 0 %}
               <span class="user-avatar-badge" aria-label="{{ unread }} message(s) non lu(s)">{{ unread > 9 ? '9+' : unread }}</span>

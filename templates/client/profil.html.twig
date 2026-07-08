@@ -8,8 +8,13 @@
   {# ── HERO PROFIL ── #}
   <div class="profile-hero" data-animate="fade-up">
     <div class="profile-hero-avatar">
-      {%- set words = app.user.nomComplet|split(' ') -%}
-      {{- words[0]|first|upper -}}{%- if words|length > 1 -%}{{- words[1]|first|upper -}}{%- endif -%}
+      {% if app.user.photoSrc %}
+        <img src="{{ app.user.photoSrc }}" alt="{{ app.user.nomComplet }}"
+             style="width:100%;height:100%;object-fit:cover;border-radius:inherit;display:block;">
+      {% else %}
+        {%- set words = app.user.nomComplet|split(' ') -%}
+        {{- words[0]|first|upper -}}{%- if words|length > 1 -%}{{- words[1]|first|upper -}}{%- endif -%}
+      {% endif %}
     </div>
     <div class="profile-hero-info">
       <div class="profile-hero-name">{{ app.user.nomComplet }}</div>
@@ -62,7 +67,33 @@
         </div>
       </div>
 
-      {{ form_start(profilForm) }}
+      {{ form_start(profilForm, {'attr': {'enctype': 'multipart/form-data'}}) }}
+
+        {# Bloc avatar : preview actuel + input file + case "retirer" #}
+        <div class="form-field profile-avatar-block">
+          <label class="form-label">Photo de profil</label>
+          <div class="profile-avatar-editor">
+            <div class="profile-avatar-preview" data-avatar-preview>
+              {% if app.user.photoSrc %}
+                <img src="{{ app.user.photoSrc }}" alt="Photo actuelle">
+              {% else %}
+                <span class="profile-avatar-initial">{{ app.user.initial }}</span>
+              {% endif %}
+            </div>
+            <div class="profile-avatar-controls">
+              {{ form_widget(profilForm.avatar, {'attr': {'data-avatar-input': ''}}) }}
+              {{ form_help(profilForm.avatar) }}
+              {{ form_errors(profilForm.avatar) }}
+              {% if app.user.photoSrc %}
+                <label class="profile-avatar-remove">
+                  {{ form_widget(profilForm.removeAvatar) }}
+                  <span>{{ form_label(profilForm.removeAvatar) }}</span>
+                </label>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+
         <div class="form-field">
           {{ form_label(profilForm.nomComplet) }}
           {{ form_widget(profilForm.nomComplet) }}
@@ -82,6 +113,24 @@
           <i class="ti ti-device-floppy"></i> Enregistrer mes infos
         </button>
       {{ form_end(profilForm) }}
+
+      {# Preview live du fichier choisi (avant submit). #}
+      <script>
+        (function() {
+          var input = document.querySelector('[data-avatar-input]');
+          var preview = document.querySelector('[data-avatar-preview]');
+          if (!input || !preview) return;
+          input.addEventListener('change', function(e) {
+            var file = e.target.files && e.target.files[0];
+            if (!file) return;
+            var reader = new FileReader();
+            reader.onload = function(ev) {
+              preview.innerHTML = '<img src="' + ev.target.result + '" alt="Aperçu">';
+            };
+            reader.readAsDataURL(file);
+          });
+        })();
+      </script>
     </div>
   </section>
 

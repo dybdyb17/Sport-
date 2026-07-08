@@ -364,6 +364,7 @@ class ClientController extends AbstractController
         Request $request,
         EntityManagerInterface $em,
         UserPasswordHasherInterface $hasher,
+        \App\Service\AvatarUploader $avatarUploader,
     ): Response {
         /** @var User $user */
         $user = $this->getUser();
@@ -377,6 +378,22 @@ class ClientController extends AbstractController
             if ($existing && $existing->getId() !== $user->getId()) {
                 $this->addFlash('danger', sprintf('L\'adresse "%s" est déjà utilisée par un autre compte.', $newEmail));
                 return $this->redirectToRoute('app_espace_client_profil');
+            }
+
+            // Avatar : suppression (case "retirer") prime sur upload. Sinon
+            // on applique le fichier uploadé s'il y en a un.
+            $removeAvatar = (bool) $profilForm->get('removeAvatar')->getData();
+            $uploadedFile = $profilForm->get('avatar')->getData();
+
+            if ($removeAvatar) {
+                $avatarUploader->remove($user);
+            } elseif ($uploadedFile) {
+                try {
+                    $avatarUploader->apply($user, $uploadedFile);
+                } catch (\RuntimeException $e) {
+                    $this->addFlash('danger', $e->getMessage());
+                    return $this->redirectToRoute('app_espace_client_profil');
+                }
             }
 
             $em->flush();

@@ -211,11 +211,28 @@
   border: none;
   position: relative;
   flex-shrink: 0;
+  overflow: hidden;
+}
+/* Variante quand une vraie photo est chargée : bordure or 2px pour séparer
+   l'image du header, fond neutre au cas où l'img rate. */
+.user-avatar--photo {
+  background: var(--bg-2, #101018);
+  box-shadow: 0 0 0 2px rgba(var(--gold-rgb),.55);
+}
+.user-avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: inherit;
+  display: block;
 }
 
 .user-avatar:hover {
   transform: scale(1.06);
   box-shadow: 0 0 0 3px rgba(var(--gold-rgb),.25);
+}
+.user-avatar--photo:hover {
+  box-shadow: 0 0 0 3px rgba(var(--gold-rgb),.55);
 }
 
 /* Badge messagerie sur l'avatar */
