@@ -10,13 +10,20 @@
 }
 
 /* Verrouillage global quand une modale formule est ouverte :
-   - html + body en overflow hidden (iOS/mobile : sans ça, la page derrière
-     scrolle sous la modale et laisse voir les autres cartes formule)
-   - .site-header caché car si la modale est prisonnière d'un stacking
-     context d'un parent (transform / will-change / backdrop-filter), son
-     z-index: 5000 ne suffit pas et le header sticky repasse au-dessus. */
-html.formule-modal-open,
+
+   1. body en position: fixed + top: -scrollY (posé en JS). C'est la SEULE
+      technique fiable sur iOS Safari — overflow: hidden sur html/body est
+      ignoré par Safari mobile qui laisse toujours le body scrollable. En
+      figeant le body en fixed, il n'y a plus de scroll natif possible.
+      Au close, le JS restaure window.scrollTo(0, scrollY).
+   2. .site-header caché car si la modale est prisonnière d'un stacking
+      context d'un parent (transform / will-change / backdrop-filter), son
+      z-index: 5000 ne suffit pas et le header sticky repasse au-dessus. */
 body.formule-modal-open {
+  position: fixed;
+  left: 0;
+  right: 0;
+  width: 100%;
   overflow: hidden;
 }
 body.formule-modal-open .site-header {
