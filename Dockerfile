@@ -1,6 +1,9 @@
 FROM php:8.4-cli-alpine
 
-# Dépendances système + extensions PHP nécessaires
+# Dépendances système + extensions PHP nécessaires.
+# GD (avec support JPEG + WebP) est indispensable pour AvatarUploader qui
+# resize + recompresse les photos de profil user. WebP réduit ~30% le poids
+# vs JPG à qualité équivalente et supporte la transparence.
 RUN apk add --no-cache \
     bash \
     git \
@@ -9,7 +12,13 @@ RUN apk add --no-cache \
     libzip-dev \
     postgresql-dev \
     oniguruma-dev \
+    libpng-dev \
+    libjpeg-turbo-dev \
+    libwebp-dev \
+    freetype-dev \
+    && docker-php-ext-configure gd --with-jpeg --with-webp --with-freetype \
     && docker-php-ext-install \
+        gd \
         pdo \
         pdo_pgsql \
         pdo_mysql \

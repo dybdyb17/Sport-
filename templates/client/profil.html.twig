@@ -69,9 +69,12 @@
 
       {{ form_start(profilForm, {'attr': {'enctype': 'multipart/form-data'}}) }}
 
-        {# Bloc avatar : preview actuel + input file + case "retirer" #}
+        {# Bloc avatar — rendering manuel des inputs pour bypass le style
+           form-theme (labels Barlow gold uppercase) qui rendait la case
+           "retirer" moche et mal placée. On garde les noms générés par
+           Symfony via vars.full_name pour que la validation reste OK. #}
         <div class="form-field profile-avatar-block">
-          <label class="form-label">Photo de profil</label>
+          <label class="form-label" for="{{ profilForm.avatar.vars.id }}">Photo de profil</label>
           <div class="profile-avatar-editor">
             <div class="profile-avatar-preview" data-avatar-preview>
               {% if app.user.photoSrc %}
@@ -81,13 +84,20 @@
               {% endif %}
             </div>
             <div class="profile-avatar-controls">
-              {{ form_widget(profilForm.avatar, {'attr': {'data-avatar-input': ''}}) }}
-              {{ form_help(profilForm.avatar) }}
+              <input type="file"
+                     id="{{ profilForm.avatar.vars.id }}"
+                     name="{{ profilForm.avatar.vars.full_name }}"
+                     accept="image/jpeg,image/png,image/webp"
+                     data-avatar-input>
+              <p class="profile-avatar-help">JPG, PNG ou WebP · 5 Mo max · redimensionnée à 400×400.</p>
               {{ form_errors(profilForm.avatar) }}
               {% if app.user.photoSrc %}
-                <label class="profile-avatar-remove">
-                  {{ form_widget(profilForm.removeAvatar) }}
-                  <span>{{ form_label(profilForm.removeAvatar) }}</span>
+                <label class="profile-avatar-remove" for="{{ profilForm.removeAvatar.vars.id }}">
+                  <input type="checkbox"
+                         id="{{ profilForm.removeAvatar.vars.id }}"
+                         name="{{ profilForm.removeAvatar.vars.full_name }}"
+                         value="1">
+                  <span>Retirer ma photo actuelle</span>
                 </label>
               {% endif %}
             </div>
