@@ -580,6 +580,110 @@ ResetFoundingClaims, SeedFoundingOffer, SeedPricingShowcase, **SendDayBeforeRemi
     (ex : `OFR-A1B2C3D4`, `OFR-DEADBEEF`, `OFR-C0FFEE12`) — pas de lettres
     non-hex sinon toute route consommant la référence rejette avec 404 et le
     Twig `path('app_promo_offer_ticket')` lève une exception au rendering.
+  - **Flag `isUnlimitedAccess` sur PromoOffer (8 juillet — PR 1)** : offres
+    type BlackCard (« 400€ accès à vie MIB »). Le comportement métier check-in
+    reste identique (1 scan unique), ce sont les badges UI qui changent :
+    pill or « Accès à vie » sur page publique + encart green rassurant, pill
+    or dans le ticket (bloc « Accès à vie activé » vert quand `checkinAt`
+    non null + suppression du QR devenu inutile), **bandeau rouge « ACTION
+    IRRÉVERSIBLE — vérifier l'identité »** sur `admin/checkin/promo_validate`
+    avant validation, item or dans l'espace client avec « Accès illimité
+    actif depuis JJ/MM » au lieu de « Utilisée ». Getter
+    `PromoOffer::isUnlimitedAccess()`, setter `setUnlimitedAccess()`.
+  - **Flag `allowsOnSitePayment` sur PromoOffer + workflow paiement au club
+    (8 juillet — PR 2)** : autorise un 2ᵉ CTA « Réserver, je paye au club »
+    à côté du Stripe. Utile pour économiser les frais Stripe (2.9%) sur
+    les grosses offres (BlackCard 400€ = 11,60€ économisés/vente).
+    - **UI page publique** : **chips radios** (pas 2 boutons empilés) pour
+      choisir le mode. Un seul bouton « Réserver » qui s'adapte au choix
+      (label + icône + hint). JS synchronise `form.action` + `_token` CSRF
+      selon le radio via `data-action-stripe/onsite` et `data-token-
+      stripe/onsite`. Cohérent avec les chips du tunnel booking.
+    - **Nouvelles routes publiques** : `POST /offres/{slug}/reserver-au-club`
+      (`app_promo_offer_reserve_onsite`, retourne 404 si
+      `allowsOnSitePayment=false`) + `GET /offres/reservation/{ref}`
+      (`app_promo_offer_pending`, page confirmation « On t'attend au club »).
+      Token CSRF distinct `promo-offer-onsite-{id}` (vs `promo-offer-{id}`
+      pour Stripe).
+    - **PromoPurchase enrichi** : `intendedPaymentMethod` (nullable in
+      `stripe|cash|card`, aligné sur `Booking.intendedPaymentMethod`),
+      `paymentMethod` (nullable in `stripe|cash|card|NULL` — **contrat
+      identique à Booking**), `paymentValidatedAt` + `paymentValidatedBy`
+      (User FK, `SET NULL` on delete). Helper
+      `PromoPurchase::isAwaitingOnSitePayment()`.
+    - **Admin** : encart vert cliquable sur `/admin/offres-instagram` s'il
+      y a des purchases pending (avec compteur), lien vers
+      `GET /admin/offres-instagram/paiements-au-club`
+      (`app_admin_promo_pending_onsite`) qui liste les purchases triées
+      `createdAt ASC`. Chaque card = bandeau rouge « vérifier identité »
+      si `isUnlimitedAccess` + 2 boutons **Espèces / CB** avec confirmation.
+    - **Route validation** : `POST /admin/offres-instagram/purchase/{id}/valider-onsite`
+      (`app_admin_promo_validate_onsite`), CSRF `promo_onsite_validate_{id}`,
+      ROLE_ADMIN, idempotence (refuse si déjà payée), `method IN (cash,
+      card)` strict. Pose `paymentMethod` + `paidAt` + `paymentValidatedBy`
+      + `paymentValidatedAt`. Audit `PAYMENT_DECLARED` avec
+      `source='promo_onsite_validation'`. Envoie
+      `MailerService::sendPromoTicketActivated` au client.
+    - **Emails** : `sendPromoReservationOnsite` (confirmation immédiate au
+      client dès la réservation, instructions "passe au club, mentionne ta
+      référence") template `emails/promo_reservation_onsite.html.twig`.
+      `sendPromoTicketActivated` (après validation admin, lien vers ticket
+      QR, wording adapté si `isUnlimitedAccess`) template
+      `emails/promo_ticket_activated.html.twig`.
+    - **Sécurité** : la route publique `reserveOnsite` retourne 404 si
+      `allowsOnSitePayment=false` (empêche URL forçée). Token CSRF distinct.
+      Le flow Stripe existant est intact pour les offres non-onsite.
+  - **Form admin promo — layout 2 colonnes (8 juillet)** : sur ≥ 1100px,
+    grid 2 colonnes (gauche = titre/slug/description, droite = paramètres +
+    flags), sur ≤ 1100px retour single-column. `max-width` passe de 820px
+    à 1400px. Utilisation max de l'espace admin dispo.
+  - **Robots.txt** : `Disallow: /offres/` ajouté pour renforcer l'unlisted
+    des offres promo (accessibles uniquement via lien Insta direct, jamais
+    indexées Google même si un follower partage un lien).
+- **Avatar utilisateur (8 juillet — PR 3)** : chaque user (client, coach, admin)
+  peut uploader sa propre photo de profil via `/mon-espace/profil`. Remplace la
+  lettre initiale par la vraie photo partout où elle s'affichait (header
+  top-right, hero profil, messagerie inbox + show, `/admin/users`).
+  - **Champs `User.photoData` (TEXT nullable, base64) + `photoMimeType`
+    (32 chars)**. Pattern identique à `Coach.photoData` déjà en place.
+    ⚠️ **Ne pas confondre** : `Coach.photoData` = photo pro carte publique
+    (uploadée par Loïc), `User.photoData` = avatar perso (uploadé par le
+    user lui-même). Un user peut avoir les deux distincts.
+  - **Helpers** : `User::getPhotoSrc()` (data URI ou null),
+    `User::getInitial()` (1re lettre nomComplet ou email, fallback avatar).
+  - **`AvatarUploader` service** : `apply(User, UploadedFile)` valide
+    (jpg/png/webp, 5 Mo max), resize à **400x400 max via GD** en gardant
+    le ratio, préserve la transparence PNG/WebP, **sortie forcée WebP
+    qualité 82** si `imagewebp()` dispo (fallback PNG/JPG), encode base64.
+    Un avatar 400x400 pèse ~10-15 Ko en base64 (vs 30-40 Ko en JPG).
+    Throw `RuntimeException` avec message user-friendly si problème.
+    `remove(User)` reset les 2 champs.
+  - **`ProfilFormType`** : nouveau champ `avatar` (FileType, unmapped,
+    contrainte File 5M jpg/png/webp) + `removeAvatar` (CheckboxType,
+    unmapped). Contrôleur `ClientController::profil` : suppression prime
+    sur upload, try/catch autour de `apply()` pour flash `danger` friendly
+    (pas de crash 500).
+  - **Cropper.js dans la page profil** : recadrage image avant upload.
+    Sélection fichier → modale full-screen avec Cropper.js (CDN 30 Ko
+    chargé UNIQUEMENT sur cette page via `<link>`/`<script>` defer inline),
+    zone de crop **carrée forcée** (`aspectRatio: 1`, `cropBoxResizable:
+    false`, `dragMode: 'move'`), user déplace/zoome. « Valider » → `getCroppedCanvas({400x400}).toBlob(webp)` → wrap en `File` → remplace
+    `input.files` via `DataTransfer`. Annuler/Escape/backdrop → reset
+    `input.value`. Charter Night Performance (backdrop radial noir + blur,
+    card bordure or, view-box du crop en cercle).
+  - **Propagation UI** : header (base.html.twig, variante
+    `.user-avatar--photo` avec bordure or 2px si photo, sinon initiales
+    gradient existantes), hero profil, messagerie
+    (`conversation/inbox.html.twig` + `show.html.twig` × 2 : sidebar liste +
+    header du chat), `admin/users/index.html.twig` (ligne de table).
+    Fallback initiales conservé partout — zéro régression pour les users
+    sans photo. Non touché : listes coachs public + admin qui utilisent
+    déjà `Coach.photoSrc`.
+  - **Macro Twig réutilisable** `templates/_macros/avatar.html.twig` :
+    `{{ av.user(user, size, variant) }}` rend une `<img>` ou un cercle
+    gradient or/vert avec initiale. Non branchée partout dans PR 3 (le
+    header et le profil restent inline pour minimiser le diff) — dispo
+    pour les prochains sujets.
 - **Audit UI enrichi (mergé juillet 2026, Codex)** : le journal `/admin/audit` affichait
   les `details` en JSON brut → visuellement pas admin premium.
   - `AuditAction::icon()` + `AuditAction::color()` ajoutées à l'enum : chaque action a
@@ -658,23 +762,26 @@ En local `.env` reste `MAILER_DSN=null://null` ; `.env.local` utilise Mailtrap (
   SAS pour finaliser le légal ; activer « VAD = Oui » sur les prestations Deciplus iframe ;
   uploader les vraies photos coachs (système prêt) ; valider email ICANN ; **taux frais no-show
   30 % à ajouter aux CGV écrites** (le code applique déjà, il manque la mention légale).
-- **⚠️ Bug connu — modale mobile formules `/tarifs` (chantier Codex non résolu)** : sur
-  téléphone réel, quand un utilisateur clique « Voir la formule », la modale semble cassée —
-  le header reste visible au-dessus, la page derrière transparaît, la croix peut être cachée,
-  l'image prend trop de place. Le JS actuel dans `templates/public/tarifs_v2.html.twig`
-  (`window.openFormuleModal`) fait déjà `modal.classList.add('is-open')` +
-  `document.body.style.overflow = 'hidden'`, et le CSS a bien `position: fixed` + `z-index:
-  5000` + `100dvh` en mobile. **Pistes non appliquées** à essayer dans une PR ciblée
-  (`modals.css` + `tarifs_v2.html.twig` uniquement, ne pas toucher au reste) :
-  1. Déplacer `#formule-modal` en enfant direct de `document.body` au chargement (au cas où
-     un parent avec `transform`/`filter` casse `position: fixed`).
-  2. Ajouter une classe `body.formule-modal-open` en plus de `body.style.overflow = hidden`,
-     et cibler en CSS `.formule-modal-open .site-header, .formule-modal-open .mobile-menu
-     { display: none }`.
-  3. Ajouter aussi `document.documentElement.style.overflow = 'hidden'` (iOS spécifique).
-  4. Sur `@media (max-width: 640px)` : `.formule-modal-content` en `100dvh`, image
-     `max-height: 30-34dvh`, croix en `position: fixed` avec `env(safe-area-inset-top)`.
-  Tester **impérativement sur téléphone réel** (DevTools ne reproduit pas toujours le bug).
+- **✅ Modale mobile formules `/tarifs` — résolue (8 juillet)** : bug historique où le
+  header restait visible au-dessus de la modale sur téléphone réel, la page derrière
+  scrollait sous, la croix était cachée. Cause identifiée = la modale était prisonnière
+  d'un stacking context d'un parent (transform/will-change/backdrop-filter), son
+  `z-index: 5000` restait local. Fix en 3 pistes cumulées :
+  1. **JS** : au chargement, `#formule-modal` est déplacée en enfant direct de
+     `document.body` via `document.body.appendChild(modal)` → sortie de tout stacking
+     context parent, son `position: fixed` devient relatif au viewport réel.
+  2. **JS + CSS** : classe `formule-modal-open` posée sur `<body>` à l'ouverture
+     + `body.formule-modal-open .site-header { display: none }` masque le header
+     sticky quel que soit le stacking.
+  3. **Scroll lock iOS-compatible** : `body { position: fixed; top: -scrollY }` inline
+     (technique fiable Safari mobile — `overflow: hidden` sur html/body est ignoré
+     par iOS). `savedScrollY` sauvegarde `window.scrollY` à l'ouverture,
+     `window.scrollTo(0, savedScrollY)` restaure la position exacte à la fermeture
+     (évite le "jump to top").
+  4. **CSS mobile** : `.formule-modal-content` + `.formule-modal-split` en
+     `min/max-height: 100dvh`, `border-radius: 0`, `align-items: stretch` sur
+     `.formule-modal` pour vraie page pleine. Safe-area préservée en interne
+     (`padding-top` visual + `padding-bottom` info).
 - **Code à faire** : aligner les pages légales sur `sportplus-13.com` (au lieu de `.fr`).
 - **Idées non implémentées** : app mobile (à faire APRÈS les mails — finir un chantier avant
   d'en ouvrir un autre) ; Lighthouse 95+ (Caddy/Nginx, configs prêtes) ; détection d'anomalies
