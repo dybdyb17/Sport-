@@ -1,0 +1,56 @@
+{#
+  Macro dropdown filtre admin — RÉUTILISABLE partout où on a des filtres
+  navigables par query params (bookings, users, subscriptions, founding,
+  audit, paiements, promo…). Génère le markup ui-dropdown avec les hrefs
+  qui préservent les autres query params.
+
+  Params :
+  - route    : nom de route Symfony (ex: 'app_admin_bookings')
+  - param    : nom du query param à modifier (ex: 'status')
+  - eyebrow  : label gris fin au-dessus de la valeur (ex: "Statut")
+  - current  : valeur actuelle du filtre (ex: 'confirmed' ou null)
+  - options  : tableau [{value, label, icon}] — value=null équivaut à "tous"
+  - align    : 'left' (défaut) ou 'right' (aligne le panneau à droite du trigger)
+
+  Utilisation :
+    {% import '_macros/admin_dropdown.html.twig' as adm %}
+    {{ adm.filterDropdown('app_admin_bookings', 'status', 'Statut', activeStatus, [
+      {value: null,        label: 'Tous les statuts', icon: 'ti-list'},
+      {value: 'pending',   label: 'En attente',       icon: 'ti-clock'},
+      {value: 'confirmed', label: 'Confirmées',       icon: 'ti-check'},
+    ]) }}
+#}
+{% macro filterDropdown(route, param, eyebrow, current, options, align = 'left') %}
+  {% set currentLabel = options|first.label %}
+  {% for o in options %}
+    {% if o.value == current %}{% set currentLabel = o.label %}{% endif %}
+  {% endfor %}
+  <div class="ui-dropdown"
+       data-dropdown
+       {% if align == 'right' %}data-dropdown-align="right"{% endif %}>
+    <button type="button" class="ui-dropdown-trigger"
+            aria-haspopup="listbox" aria-expanded="false">
+      <span class="ui-dropdown-eyebrow">{{ eyebrow }}</span>
+      <span class="ui-dropdown-current">{{ currentLabel }}</span>
+      <i class="ti ti-chevron-down ui-dropdown-caret" aria-hidden="true"></i>
+    </button>
+    <div class="ui-dropdown-panel" role="listbox">
+      {% for o in options %}
+        {# On ne laisse pas de valeur null dans l'URL (retire complètement le
+           param si l'option "tous" est choisie). Sinon Symfony peut afficher
+           ?status= vide dans la barre d'adresse ce qui n'est pas propre. #}
+        {% set qs = app.request.query.all|merge({(param): o.value}) %}
+        {% if o.value is null %}{% set qs = qs|filter((v, k) => k != param) %}{% endif %}
+        <a href="{{ path(route, qs) }}"
+           class="ui-dropdown-option{{ o.value == current ? ' is-active' : '' }}"
+           data-value="{{ o.value ?? '' }}"
+           role="option"
+           aria-selected="{{ o.value == current ? 'true' : 'false' }}">
+          <i class="ti {{ o.icon|default('ti-point') }} ui-dropdown-option-icon" aria-hidden="true"></i>
+          <span class="ui-dropdown-option-label">{{ o.label }}</span>
+          <i class="ti ti-check ui-dropdown-option-check" aria-hidden="true"></i>
+        </a>
+      {% endfor %}
+    </div>
+  </div>
+{% endmacro %}

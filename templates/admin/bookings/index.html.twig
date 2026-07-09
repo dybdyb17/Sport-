@@ -1,79 +1,92 @@
 {% extends 'admin/base.html.twig' %}
+{% import '_macros/admin_dropdown.html.twig' as adm %}
 
 {% block title %}Réservations — Admin SPORT+{% endblock %}
 
 {% block admin_body %}
+<div class="admin-page">
 
-<div class="page-header">
-  <div>
-    <h1><span style="color:var(--gold)">Réservations</span></h1>
-    <p class="page-subtitle">{{ bookings|length }} réservation{% if bookings|length > 1 %}s{% endif %}{% if activeStatus %} — filtre : {{ activeStatus }}{% endif %}</p>
+  <div class="admin-page-header">
+    <div class="admin-page-header-body">
+      <h1 class="admin-title">
+        <i class="ti ti-calendar-check"></i>
+        <span>Réservations</span>
+      </h1>
+      <p class="admin-subtitle">
+        {{ bookings|length }} réservation{{ bookings|length > 1 ? 's' : '' }}
+        {%- if activeStatus %} · filtre : {{ activeStatus }}{% endif %}
+      </p>
+    </div>
   </div>
-</div>
 
-<div class="filter-bar">
-  <a href="{{ path('app_admin_bookings') }}"
-     class="btn btn-sm {{ activeStatus is null ? 'btn-primary' : 'btn-secondary' }}">
-    Toutes
-  </a>
-  <a href="{{ path('app_admin_bookings', {status: 'pending'}) }}"
-     class="btn btn-sm {{ activeStatus == 'pending' ? 'btn-primary' : 'btn-secondary' }}">
-    En attente
-  </a>
-  <a href="{{ path('app_admin_bookings', {status: 'confirmed'}) }}"
-     class="btn btn-sm {{ activeStatus == 'confirmed' ? 'btn-primary' : 'btn-secondary' }}">
-    Confirmées
-  </a>
-  <a href="{{ path('app_admin_bookings', {status: 'refused'}) }}"
-     class="btn btn-sm {{ activeStatus == 'refused' ? 'btn-primary' : 'btn-secondary' }}">
-    Refusées
-  </a>
-  <a href="{{ path('app_admin_bookings', {status: 'cancelled'}) }}"
-     class="btn btn-sm {{ activeStatus == 'cancelled' ? 'btn-primary' : 'btn-secondary' }}">
-    Annulées
-  </a>
-</div>
-
-<div class="data-table-card">
-  <div class="data-table-header">
-    <h3>Liste des réservations</h3>
+  <div class="admin-filterbar">
+    <div class="admin-filterbar-filters">
+      {{ adm.filterDropdown('app_admin_bookings', 'status', 'Statut', activeStatus, [
+        {value: null,        label: 'Tous les statuts', icon: 'ti-list'},
+        {value: 'pending',   label: 'En attente',       icon: 'ti-clock'},
+        {value: 'confirmed', label: 'Confirmées',       icon: 'ti-check'},
+        {value: 'refused',   label: 'Refusées',         icon: 'ti-x'},
+        {value: 'cancelled', label: 'Annulées',         icon: 'ti-ban'},
+      ]) }}
+    </div>
   </div>
+
   {% if bookings is empty %}
-    <div class="empty-placeholder" style="padding:60px;">
-      Aucune réservation{% if activeStatus %} avec ce statut{% endif %}.
+    <div class="admin-empty">
+      <i class="ti ti-inbox"></i>
+      <div class="admin-empty-title">Aucune réservation{% if activeStatus %} avec ce statut{% endif %}</div>
+      <div class="admin-empty-sub">Change de filtre pour voir d'autres réservations.</div>
     </div>
   {% else %}
-    <table>
-      <thead>
-        <tr>
-          <th>Réf.</th>
-          <th>Date</th>
-          <th>Prestation</th>
-          <th>Client</th>
-          <th>Coach</th>
-          <th>Statut</th>
-          <th>Prix</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for booking in bookings %}
-          <tr data-peek-ref="{{ booking.reference }}" class="row-peek">
-            <td style="font-family:'Barlow Condensed',sans-serif;font-size:13px;letter-spacing:2px;color:var(--gold);font-weight:700;">{{ booking.reference }}</td>
-            <td style="color:var(--text-dim);">{{ booking.startAt|date('d/m/Y à H:i') }}</td>
-            <td style="font-family:'Barlow Condensed',sans-serif;font-weight:700;">{{ booking.offerLabel }}</td>
-            <td style="color:var(--text-dim);">{{ booking.client.nomComplet }}</td>
-            <td style="color:var(--text-dim);">{{ booking.coach.nomComplet }}</td>
-            <td class="cell-wrap" style="min-width:140px;"><span class="status-badge {{ booking.status }}"><i class="ti {{ booking.statutIcon }}"></i>{{ booking.statutLabel }}</span></td>
-            <td style="color:var(--gold);font-family:'Barlow Condensed',sans-serif;font-weight:700;">
-              {{ booking.displayAmountFormatted }}
-              {% if booking.coveredBy == 'founding' %}<br><span style="font-size:10px;color:var(--gold);font-weight:600;letter-spacing:1px;">FONDATEUR</span>{% endif %}
-              {% if booking.coveredBy == 'subscription' and booking.subscription %}<br><span style="font-size:10px;color:var(--green);font-weight:600;letter-spacing:1px;">VIA {{ booking.subscription.packType.label|upper }}</span>{% endif %}
-            </td>
+    <div class="admin-table-card">
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>Réf.</th>
+            <th>Date</th>
+            <th>Prestation</th>
+            <th>Client</th>
+            <th>Coach</th>
+            <th>Statut</th>
+            <th class="admin-align-right">Prix</th>
           </tr>
-        {% endfor %}
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          {% for booking in bookings %}
+            <tr data-peek-ref="{{ booking.reference }}">
+              <td data-label="Réf." class="admin-cell-ref">{{ booking.reference }}</td>
+              <td data-label="Date" class="admin-cell-date">{{ booking.startAt|date('d/m/Y à H:i') }}</td>
+              <td data-label="Prestation">
+                <span class="admin-cell-primary" style="font-family:'Barlow Condensed',sans-serif;font-weight:700;">{{ booking.offerLabel }}</span>
+              </td>
+              <td data-label="Client">{{ booking.client.nomComplet }}</td>
+              <td data-label="Coach">{{ booking.coach.nomComplet }}</td>
+              <td data-label="Statut">
+                {% set badge = {
+                  'confirmed': 'admin-badge--ok',
+                  'pending':   'admin-badge--gold',
+                  'refused':   'admin-badge--danger',
+                  'cancelled': 'admin-badge--neutral',
+                } %}
+                <span class="admin-badge {{ badge[booking.status] ?? 'admin-badge--neutral' }}">
+                  <i class="ti {{ booking.statutIcon }}"></i>{{ booking.statutLabel }}
+                </span>
+              </td>
+              <td data-label="Prix" class="admin-cell-num admin-cell-num--gold">
+                {{ booking.displayAmountFormatted }}
+                {% if booking.coveredBy == 'founding' %}
+                  <div><span class="admin-mini-tag admin-mini-tag--gold">Fondateur</span></div>
+                {% endif %}
+                {% if booking.coveredBy == 'subscription' and booking.subscription %}
+                  <div><span class="admin-mini-tag admin-mini-tag--green">Via {{ booking.subscription.packType.label }}</span></div>
+                {% endif %}
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
   {% endif %}
-</div>
 
+</div>
 {% endblock %}

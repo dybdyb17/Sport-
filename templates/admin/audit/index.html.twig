@@ -1,69 +1,86 @@
 {% extends 'admin/base.html.twig' %}
+{% import '_macros/admin_dropdown.html.twig' as adm %}
 
 {% block title %}Journal d'audit — SPORT+ Admin{% endblock %}
 
 {% block admin_body %}
+<div class="admin-page">
 
-  <div class="section-label">Traçabilité</div>
-  <h1 class="page-title" style="margin-bottom:8px;">Journal d'<span style="color:var(--gold);">audit</span></h1>
-  <p style="color:var(--text-dim);max-width:680px;margin-bottom:24px;font-size:14px;line-height:1.6;">
-    Historique infalsifiable de toutes les actions sensibles : déclarations de paiement, absences clients, modifications admin, confirmations clients.
-    Les 200 entrées les plus récentes selon les filtres.
-  </p>
+  <div class="admin-page-header">
+    <div class="admin-page-header-body">
+      <h1 class="admin-title">
+        <i class="ti ti-shield-lock"></i>
+        <span>Journal d'<span class="admin-title-accent">audit</span></span>
+      </h1>
+      <p class="admin-subtitle">
+        Historique infalsifiable des actions sensibles (paiements, absences, modifs admin, confirmations client).
+        Les 200 entrées les plus récentes selon les filtres.
+      </p>
+    </div>
+  </div>
 
-  {# ── Filtres ─────────────────────────────────────────────────── #}
-  <form method="get" action="{{ path('app_admin_audit') }}"
-        style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;
-               padding:18px;margin-bottom:24px;background:var(--bg-card);
-               border:1px solid var(--border);border-radius:12px;">
-    <div>
-      <label style="display:block;font-size:12px;color:var(--text-dim);margin-bottom:4px;">Action</label>
-      <select name="action" class="form-control">
-        <option value="">— Toutes —</option>
-        {% for a in actions %}
-          <option value="{{ a.value }}" {{ actionFilter == a ? 'selected' : '' }}>{{ a.label }}</option>
-        {% endfor %}
-      </select>
-    </div>
-    <div>
-      <label style="display:block;font-size:12px;color:var(--text-dim);margin-bottom:4px;">Rôle acteur</label>
-      <select name="role" class="form-control">
-        <option value="">— Tous —</option>
-        <option value="admin"  {{ roleFilter == 'admin'  ? 'selected' : '' }}>Admin</option>
-        <option value="coach"  {{ roleFilter == 'coach'  ? 'selected' : '' }}>Coach</option>
-        <option value="client" {{ roleFilter == 'client' ? 'selected' : '' }}>Client</option>
-        <option value="system" {{ roleFilter == 'system' ? 'selected' : '' }}>Système</option>
-      </select>
-    </div>
-    <div>
-      <label style="display:block;font-size:12px;color:var(--text-dim);margin-bottom:4px;">Du</label>
-      <input type="date" name="from" value="{{ fromFilter }}" class="form-control">
-    </div>
-    <div>
-      <label style="display:block;font-size:12px;color:var(--text-dim);margin-bottom:4px;">Au</label>
-      <input type="date" name="to" value="{{ toFilter }}" class="form-control">
-    </div>
-    <div style="display:flex;align-items:flex-end;gap:8px;">
-      <button type="submit" class="btn btn-primary btn-sm" style="flex:1;">
-        <i class="ti ti-filter"></i> Filtrer
-      </button>
-      <a href="{{ path('app_admin_audit') }}" class="btn btn-secondary btn-sm" title="Réinitialiser">
-        <i class="ti ti-x"></i>
-      </a>
-    </div>
-  </form>
+  {# ── Filtres ────────────────────────────────────────────────────
+     2 dropdowns (Action + Rôle) qui naviguent par URL, + 1 mini-form
+     GET pour les dates qui conserve les params action/role via hidden.
+     Séparés parce que ui-dropdown navigue en <a href>, pas en submit. #}
+  <div class="admin-filterbar">
+    <div class="admin-filterbar-filters">
+      {# Action : {value, label} pour chaque AuditAction case. Le "null" =
+         "Toutes les actions" retire complètement le param. #}
+      {% set actionOptions = [{value: null, label: 'Toutes les actions', icon: 'ti-list'}] %}
+      {% for a in actions %}
+        {% set actionOptions = actionOptions|merge([{
+          value: a.value,
+          label: a.label,
+          icon:  a.icon,
+        }]) %}
+      {% endfor %}
+      {{ adm.filterDropdown('app_admin_audit', 'action', 'Action', actionFilter ? actionFilter.value : null, actionOptions) }}
 
-  {# ── Tableau ─────────────────────────────────────────────────── #}
-  <div class="data-table-card">
-    <div class="data-table-header">
-      <h3>{{ logs|length }} entrée{{ logs|length > 1 ? 's' : '' }}</h3>
+      {{ adm.filterDropdown('app_admin_audit', 'role', 'Rôle acteur', roleFilter, [
+        {value: null,     label: 'Tous les rôles', icon: 'ti-users'},
+        {value: 'admin',  label: 'Admin',          icon: 'ti-shield'},
+        {value: 'coach',  label: 'Coach',          icon: 'ti-whistle'},
+        {value: 'client', label: 'Client',         icon: 'ti-user'},
+        {value: 'system', label: 'Système',        icon: 'ti-terminal-2'},
+      ]) }}
+
+      {# Mini-form dates : préserve action + role en hidden pour ne pas les
+         perdre au submit du calendrier. #}
+      <form method="get" action="{{ path('app_admin_audit') }}"
+            style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+        {% if actionFilter %}<input type="hidden" name="action" value="{{ actionFilter.value }}">{% endif %}
+        {% if roleFilter %}<input type="hidden" name="role" value="{{ roleFilter }}">{% endif %}
+        <label style="display:flex;flex-direction:column;gap:3px;font-size:11px;font-family:'Barlow Condensed',sans-serif;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-dim);">
+          Du
+          <input type="date" name="from" value="{{ fromFilter }}"
+                 style="background:var(--bg-card);border:1px solid var(--border);border-radius:10px;padding:8px 10px;color:var(--white);font-size:13px;min-height:42px;">
+        </label>
+        <label style="display:flex;flex-direction:column;gap:3px;font-size:11px;font-family:'Barlow Condensed',sans-serif;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-dim);">
+          Au
+          <input type="date" name="to" value="{{ toFilter }}"
+                 style="background:var(--bg-card);border:1px solid var(--border);border-radius:10px;padding:8px 10px;color:var(--white);font-size:13px;min-height:42px;">
+        </label>
+        <button type="submit" class="admin-btn-pill" style="align-self:flex-end;">
+          <i class="ti ti-filter"></i> Filtrer dates
+        </button>
+      </form>
     </div>
-    {% if logs is empty %}
-      <div class="empty-placeholder" style="padding:48px;">
-        Aucune action n'a encore été journalisée avec ces filtres.
-      </div>
-    {% else %}
-      <table>
+    <a href="{{ path('app_admin_audit') }}" class="admin-btn-pill admin-btn-pill--danger" title="Réinitialiser tous les filtres">
+      <i class="ti ti-refresh"></i> Reset
+    </a>
+  </div>
+
+  {# ── Table ────────────────────────────────────────────────────── #}
+  {% if logs is empty %}
+    <div class="admin-empty">
+      <i class="ti ti-database-off"></i>
+      <div class="admin-empty-title">Aucune action journalisée avec ces filtres</div>
+      <div class="admin-empty-sub">Change de filtre ou reset pour voir plus d'entrées.</div>
+    </div>
+  {% else %}
+    <div class="admin-table-card">
+      <table class="admin-table">
         <thead>
           <tr>
             <th>Quand</th>
@@ -78,29 +95,29 @@
           {% for log in logs %}
             {% set actionColor = log.action.color %}
             <tr style="border-left:3px solid {{ actionColor }};background:linear-gradient(90deg, color-mix(in srgb, {{ actionColor }} 7%, transparent), transparent 48%);">
-              <td style="white-space:nowrap;color:var(--text-dim);font-size:13px;">
+              <td data-label="Quand" style="white-space:nowrap;color:var(--text-dim);font-size:13px;">
                 <div>{{ log.createdAt|date('d/m/Y') }}</div>
                 <div style="font-family:ui-monospace,'SF Mono',Menlo,monospace;font-size:11px;">{{ log.createdAt|date('H:i:s') }}</div>
               </td>
-              <td>
+              <td data-label="Action">
                 <span style="display:inline-flex;align-items:center;gap:8px;font-weight:700;color:{{ actionColor }};">
                   <i class="ti {{ log.action.icon }}" style="font-size:18px;"></i>
                   {{ log.action.label }}
                 </span>
               </td>
-              <td>
-                <div style="font-weight:600;">{{ log.actorLabel ?? '—' }}</div>
-                <div style="font-size:11px;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px;">{{ log.actorRole }}</div>
+              <td data-label="Acteur">
+                <div class="admin-cell-primary">{{ log.actorLabel ?? '—' }}</div>
+                <div class="admin-cell-sub" style="text-transform:uppercase;letter-spacing:1px;">{{ log.actorRole }}</div>
               </td>
-              <td>
+              <td data-label="Cible">
                 {% if log.targetType %}
-                  <div style="font-size:13px;color:var(--text-dim);">{{ log.targetType }}</div>
+                  <div class="admin-cell-sub">{{ log.targetType }}</div>
                   <div style="font-family:ui-monospace,'SF Mono',Menlo,monospace;font-size:12px;color:var(--gold);">{{ log.targetLabel ?? ('#' ~ log.targetId) }}</div>
                 {% else %}
                   <span style="color:var(--text-dim);">—</span>
                 {% endif %}
               </td>
-              <td style="min-width:260px;">
+              <td data-label="Détails" style="min-width:260px;">
                 {% if log.details is not empty %}
                   {% set detailLabels = {
                     'note': 'Note',
@@ -118,7 +135,7 @@
                   {% set methodLabels = {'cash': 'Espèces', 'card': 'Carte bancaire', 'stripe': 'Stripe', 'transfer': 'Virement'} %}
                   {% set sourceLabels = {'checkin_scan': 'Scan QR coach', 'client_confirmation': 'Confirmation client', 'admin': 'Admin', 'system': 'Système'} %}
                   <details>
-                    <summary style="cursor:pointer;color:var(--gold);font-size:12px;font-weight:700;display:inline-flex;align-items:center;gap:6px;">
+                    <summary style="cursor:pointer;color:var(--gold);font-size:12px;font-weight:800;font-family:'Barlow Condensed',sans-serif;letter-spacing:1.2px;text-transform:uppercase;display:inline-flex;align-items:center;gap:6px;">
                       <i class="ti ti-list-details"></i> Voir détails
                     </summary>
                     <div style="margin-top:10px;display:grid;gap:8px;min-width:260px;max-width:420px;">
@@ -150,14 +167,15 @@
                   <span style="color:var(--text-dim);">—</span>
                 {% endif %}
               </td>
-              <td style="font-family:ui-monospace,'SF Mono',Menlo,monospace;font-size:11px;color:var(--text-dim);">
+              <td data-label="IP" style="font-family:ui-monospace,'SF Mono',Menlo,monospace;font-size:11px;color:var(--text-dim);">
                 {{ log.ipAddress ?? '—' }}
               </td>
             </tr>
           {% endfor %}
         </tbody>
       </table>
-    {% endif %}
-  </div>
+    </div>
+  {% endif %}
 
+</div>
 {% endblock %}

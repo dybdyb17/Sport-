@@ -3,127 +3,130 @@
 {% block title %}Membres fondateurs — Admin SPORT+{% endblock %}
 
 {% block admin_body %}
+<div class="admin-page">
 
-<div class="page-header">
-  <div>
-    <h1>Membres <span style="color:var(--gold)">Fondateurs</span></h1>
-    <p class="page-subtitle">Gestion de l'offre Founding Member</p>
-  </div>
-  <div class="admin-toolbar">
-    {% if offer %}
-      <form method="post" action="{{ path('app_admin_founding_toggle') }}" style="display:inline;">
-        <input type="hidden" name="_token" value="{{ csrf_token('toggle_offer') }}">
-        <button type="submit" class="btn btn-sm {{ offer.isActive ? 'btn-danger' : 'btn-secondary' }}">
-          <i class="ti {{ offer.isActive ? 'ti-toggle-right' : 'ti-toggle-left' }}"></i>
-          {{ offer.isActive ? 'Désactiver l\'offre' : 'Activer l\'offre' }}
-        </button>
-      </form>
-    {% endif %}
-    <a href="{{ path('app_admin_export_founding') }}" class="btn btn-secondary btn-sm">
-      <i class="ti ti-download"></i> Export CSV
-    </a>
-  </div>
-</div>
-
-{# Stats globales #}
-{% if offer and stats %}
-  <div class="section-label">Vue d'ensemble</div>
-  <div class="stats-grid" style="grid-template-columns:repeat(auto-fit,minmax(180px,1fr));margin-bottom:32px;">
-    <div class="stat-card" style="border-top:2px solid var(--gold);">
-      <span class="stat-label">Places prises</span>
-      <span class="stat-value" style="color:var(--gold);">{{ offer.placesTaken }} / {{ offer.totalPlaces }}</span>
+  <div class="admin-page-header">
+    <div class="admin-page-header-body">
+      <h1 class="admin-title">
+        <i class="ti ti-crown"></i>
+        <span>Membres <span class="admin-title-accent">fondateurs</span></span>
+      </h1>
+      <p class="admin-subtitle">Gestion de l'offre Founding Member — {{ claims|length }} membre{{ claims|length > 1 ? 's' : '' }}.</p>
     </div>
-    <div class="stat-card" style="border-top:2px solid #7AB85A;">
-      <span class="stat-label">Places restantes</span>
-      <span class="stat-value" style="color:#7AB85A;">{{ offer.placesRemaining }}</span>
-    </div>
-    <div class="stat-card" style="border-top:2px solid var(--border);">
-      <span class="stat-label">Bilans effectués</span>
-      <span class="stat-value">{{ stats.bilanDone }} / {{ stats.total }}</span>
-    </div>
-    <div class="stat-card" style="border-top:2px solid var(--border);">
-      <span class="stat-label">Séances utilisées</span>
-      <span class="stat-value">{{ stats.sessionsConsumed }} / {{ stats.sessionsTotal }}</span>
+    <div class="admin-page-header-tools">
+      {% if offer %}
+        <form method="post" action="{{ path('app_admin_founding_toggle') }}" style="display:inline;">
+          <input type="hidden" name="_token" value="{{ csrf_token('toggle_offer') }}">
+          <button type="submit" class="admin-btn-pill {{ offer.isActive ? 'admin-btn-pill--danger' : 'admin-btn-pill--green' }}">
+            <i class="ti {{ offer.isActive ? 'ti-toggle-right' : 'ti-toggle-left' }}"></i>
+            {{ offer.isActive ? 'Désactiver l\'offre' : 'Activer l\'offre' }}
+          </button>
+        </form>
+      {% endif %}
+      <a href="{{ path('app_admin_export_founding') }}" class="admin-btn-export">
+        <i class="ti ti-file-download"></i> Export CSV
+      </a>
     </div>
   </div>
 
-  <div style="margin-bottom:24px;display:flex;align-items:center;gap:16px;">
-    <span style="font-size:13px;color:var(--text-dim);">Statut de l'offre :</span>
-    {% if offer.isActive %}
-      <span class="status-badge confirmed" style="font-size:13px;">Active</span>
-    {% else %}
-      <span class="status-badge cancelled" style="font-size:13px;">Inactive</span>
-    {% endif %}
-    <span style="font-size:13px;color:var(--text-dim);">— {{ offer.title }}</span>
-  </div>
-{% endif %}
+  {# ── Stats globales ──────────────────────────────────────────────── #}
+  {% if offer and stats %}
+    <div class="admin-stats-grid">
+      <div class="admin-stat admin-stat--gold">
+        <div class="admin-stat-eyebrow">Places prises</div>
+        <div class="admin-stat-value">{{ offer.placesTaken }} / {{ offer.totalPlaces }}</div>
+      </div>
+      <div class="admin-stat admin-stat--green">
+        <div class="admin-stat-eyebrow">Places restantes</div>
+        <div class="admin-stat-value">{{ offer.placesRemaining }}</div>
+      </div>
+      <div class="admin-stat">
+        <div class="admin-stat-eyebrow">Bilans effectués</div>
+        <div class="admin-stat-value">{{ stats.bilanDone }} / {{ stats.total }}</div>
+      </div>
+      <div class="admin-stat">
+        <div class="admin-stat-eyebrow">Séances utilisées</div>
+        <div class="admin-stat-value">{{ stats.sessionsConsumed }} / {{ stats.sessionsTotal }}</div>
+      </div>
+    </div>
 
-{# Table des fondateurs #}
-<div class="data-table-card">
-  <div class="data-table-header">
-    <h3>Liste des fondateurs ({{ claims|length }})</h3>
-  </div>
+    <div style="margin-bottom:22px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+      <span style="font-size:13px;color:var(--text-dim);">Statut de l'offre :</span>
+      {% if offer.isActive %}
+        <span class="admin-badge admin-badge--ok"><i class="ti ti-check"></i> Active</span>
+      {% else %}
+        <span class="admin-badge admin-badge--danger"><i class="ti ti-x"></i> Inactive</span>
+      {% endif %}
+      <span style="font-size:13px;color:var(--text-dim);">— {{ offer.title }}</span>
+    </div>
+  {% endif %}
 
+  {# ── Table des fondateurs ────────────────────────────────────────── #}
   {% if claims is empty %}
-    <div class="empty-placeholder" style="padding:48px;text-align:center;">
-      <i class="ti ti-medal" style="font-size:40px;color:var(--text-dim);display:block;margin-bottom:12px;"></i>
-      Aucun membre fondateur pour le moment.
+    <div class="admin-empty">
+      <i class="ti ti-medal"></i>
+      <div class="admin-empty-title">Aucun membre fondateur pour le moment</div>
+      <div class="admin-empty-sub">Les premiers claims apparaîtront ici.</div>
     </div>
   {% else %}
-    <table>
-      <thead>
-        <tr>
-          <th style="width:60px;">N°</th>
-          <th>Nom</th>
-          <th>Email</th>
-          <th>Inscrit le</th>
-          <th style="text-align:center;">Séances</th>
-          <th style="text-align:center;">Bilan</th>
-          <th style="width:160px;"></th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for claim in claims %}
+    <div class="admin-table-card">
+      <table class="admin-table">
+        <thead>
           <tr>
-            <td style="font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;color:var(--gold);">
-              #{{ '%02d'|format(claim.claimNumber) }}
-            </td>
-            <td style="font-weight:600;">{{ claim.user.nomComplet }}</td>
-            <td style="color:var(--text-dim);font-size:13px;">{{ claim.user.email }}</td>
-            <td style="color:var(--text-dim);">{{ claim.claimedAt|date('d/m/Y') }}</td>
-            <td style="text-align:center;">
-              <span style="font-family:'Barlow Condensed',sans-serif;font-size:18px;color:var(--gold);">{{ claim.sessionsUsed }}</span>
-              <span style="color:var(--text-dim);">/{{ claim.offer.sessionsIncluded }}</span>
-            </td>
-            <td style="text-align:center;">
-              {% if claim.isBilanDone %}
-                <span class="status-badge confirmed" title="{{ claim.bilanDoneAt|date('d/m/Y') }}">
-                  <i class="ti ti-check"></i> Effectué
-                </span>
-              {% else %}
-                <span class="status-badge pending">À programmer</span>
-              {% endif %}
-            </td>
-            <td>
-              {% if not claim.isBilanDone %}
-                <form method="post" action="{{ path('app_admin_founding_bilan_done', {id: claim.id}) }}" style="display:inline;"
-                      data-confirm-title="Bilan effectué ?"
-                      data-confirm="Marquer le bilan comme effectué pour {{ claim.user.nomComplet }} ?"
-                      data-confirm-button="Oui, marquer effectué">
-                  <input type="hidden" name="_token" value="{{ csrf_token('bilan_done_' ~ claim.id) }}">
-                  <button type="submit" class="btn btn-sm btn-secondary">
-                    <i class="ti ti-check"></i> Marquer effectué
-                  </button>
-                </form>
-              {% else %}
-                <span style="font-size:14px;color:var(--text-soft);">{{ claim.bilanDoneAt|date('d/m/Y') }}</span>
-              {% endif %}
-            </td>
+            <th style="width:60px;">N°</th>
+            <th>Nom</th>
+            <th>Email</th>
+            <th>Inscrit le</th>
+            <th class="admin-align-center">Séances</th>
+            <th class="admin-align-center">Bilan</th>
+            <th style="width:200px;">Action</th>
           </tr>
-        {% endfor %}
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          {% for claim in claims %}
+            <tr>
+              <td data-label="N°" style="font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:800;color:var(--gold);letter-spacing:1px;">
+                #{{ '%02d'|format(claim.claimNumber) }}
+              </td>
+              <td data-label="Nom" class="admin-cell-primary">{{ claim.user.nomComplet }}</td>
+              <td data-label="Email" class="admin-cell-date" style="overflow-wrap:anywhere;">{{ claim.user.email }}</td>
+              <td data-label="Inscrit le" class="admin-cell-date">{{ claim.claimedAt|date('d/m/Y') }}</td>
+              <td data-label="Séances" class="admin-align-center">
+                <span style="font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:800;color:var(--gold);">{{ claim.sessionsUsed }}</span>
+                <span style="color:var(--text-dim);">/{{ claim.offer.sessionsIncluded }}</span>
+              </td>
+              <td data-label="Bilan" class="admin-align-center">
+                {% if claim.isBilanDone %}
+                  <span class="admin-badge admin-badge--ok" title="{{ claim.bilanDoneAt|date('d/m/Y') }}">
+                    <i class="ti ti-check"></i> Effectué
+                  </span>
+                {% else %}
+                  <span class="admin-badge admin-badge--gold">
+                    <i class="ti ti-clock"></i> À programmer
+                  </span>
+                {% endif %}
+              </td>
+              <td data-label="Action">
+                {% if not claim.isBilanDone %}
+                  <form method="post" action="{{ path('app_admin_founding_bilan_done', {id: claim.id}) }}" style="display:inline;"
+                        data-confirm-title="Bilan effectué ?"
+                        data-confirm="Marquer le bilan comme effectué pour {{ claim.user.nomComplet }} ?"
+                        data-confirm-button="Oui, marquer effectué">
+                    <input type="hidden" name="_token" value="{{ csrf_token('bilan_done_' ~ claim.id) }}">
+                    <button type="submit" class="admin-row-action">
+                      <i class="ti ti-check"></i> Marquer effectué
+                    </button>
+                  </form>
+                {% else %}
+                  <span style="font-size:13px;color:var(--text-soft);">{{ claim.bilanDoneAt|date('d/m/Y') }}</span>
+                {% endif %}
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
   {% endif %}
-</div>
 
+</div>
 {% endblock %}

@@ -1,0 +1,429 @@
+/* ═══════════════════════════════════════════════════════════════════════
+   ADMIN — Style commun pour les pages-listes
+   ═══════════════════════════════════════════════════════════════════════
+   Extrait de admin-payments.css puis rendu générique. UNE source de vérité
+   pour toutes les pages-listes admin (bookings, users, subscriptions,
+   founding, audit — vague 1).
+   Cohérence visuelle : header en 2 blocs, filter-bar en carte with
+   ui-dropdown, table avec en-têtes Barlow uppercase, badges harmonisés,
+   responsive obligatoire (mobile = cards empilées, pas de scroll horizontal).
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* ── PAGE CONTAINER ──────────────────────────────────────────────────── */
+.admin-page {
+  padding: 8px 4px 40px;
+  color: var(--white);
+}
+
+/* ── HEADER (titre + subtitle + toolbar à droite) ────────────────────── */
+.admin-page-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-bottom: 28px;
+}
+.admin-page-header-body {
+  flex: 1;
+  min-width: 0;
+}
+.admin-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: clamp(28px, 3.4vw, 40px);
+  font-weight: 900;
+  color: var(--white);
+  letter-spacing: -0.5px;
+  margin: 0 0 6px;
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+}
+.admin-title i {
+  color: var(--gold);
+  font-size: 0.9em;
+}
+.admin-title .admin-title-accent { color: var(--gold); }
+.admin-subtitle {
+  margin: 0;
+  color: var(--text-soft);
+  font-size: 14px;
+  max-width: 720px;
+  line-height: 1.5;
+}
+.admin-page-header-tools {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-self: flex-end;
+}
+
+/* ── FILTER BAR (carte contenant les ui-dropdowns + éventuel export) ── */
+.admin-filterbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-bottom: 22px;
+  padding: 14px 16px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+}
+.admin-filterbar-filters {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+/* ── BOUTON EXPORT / ACTION SECONDAIRE (pill or) ─────────────────────── */
+.admin-btn-export,
+.admin-btn-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 42px;
+  padding: 8px 18px;
+  background: rgba(var(--gold-rgb), .10);
+  border: 1px solid rgba(var(--gold-rgb), .40);
+  border-radius: 100px;
+  color: var(--gold);
+  text-decoration: none;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  transition: background .15s, transform .15s;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.admin-btn-export:hover,
+.admin-btn-pill:hover {
+  background: rgba(var(--gold-rgb), .18);
+  transform: translateY(-1px);
+}
+.admin-btn-pill--danger {
+  background: rgba(255, 107, 107, .08);
+  border-color: rgba(255, 107, 107, .38);
+  color: #ff8a8a;
+}
+.admin-btn-pill--danger:hover {
+  background: rgba(255, 107, 107, .16);
+}
+.admin-btn-pill--green {
+  background: rgba(46, 204, 113, .10);
+  border-color: rgba(46, 204, 113, .38);
+  color: var(--green);
+}
+.admin-btn-pill--green:hover {
+  background: rgba(46, 204, 113, .18);
+}
+
+/* ── ÉTAT VIDE ───────────────────────────────────────────────────────── */
+.admin-empty {
+  padding: 80px 20px;
+  text-align: center;
+  background: var(--bg-card);
+  border: 1px dashed var(--border);
+  border-radius: 16px;
+}
+.admin-empty i {
+  font-size: 48px;
+  color: var(--text-dim);
+  margin-bottom: 14px;
+  display: block;
+}
+.admin-empty-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--white);
+  margin-bottom: 6px;
+}
+.admin-empty-sub { color: var(--text-dim); font-size: 14px; }
+
+/* ── TABLE ─────────────────────────────────────────────────────────────
+   Carte englobante en bg-card / border-radius commun. La table interne
+   garde les <thead> <tbody> HTML standard, on style plus lourdement.
+   ─────────────────────────────────────────────────────────────────────── */
+.admin-table-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
+}
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+.admin-table thead th {
+  background: rgba(0, 0, 0, .25);
+  border-bottom: 1px solid var(--border);
+  padding: 14px 20px;
+  text-align: left;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  white-space: nowrap;
+}
+.admin-table tbody td {
+  padding: 14px 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, .04);
+  vertical-align: middle;
+  color: var(--white);
+  font-size: 14px;
+}
+.admin-table tbody tr:last-child td { border-bottom: none; }
+.admin-table tbody tr {
+  transition: background .12s ease;
+}
+.admin-table tbody tr:hover {
+  background: rgba(255, 255, 255, .02);
+}
+.admin-table tbody tr[data-peek-ref] { cursor: pointer; }
+
+/* Cellule référence (Barlow letter-spacing gold) — SPT-XXXX, OFR-XXXX etc. */
+.admin-cell-ref {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 13px;
+  letter-spacing: 2px;
+  color: var(--gold);
+  font-weight: 700;
+  white-space: nowrap;
+}
+/* Cellule date (Barlow dim compacte) */
+.admin-cell-date {
+  color: var(--text-dim);
+  font-size: 13.5px;
+  white-space: nowrap;
+}
+/* Cellule chiffre / montant (Barlow gold droite) */
+.admin-cell-num,
+.admin-align-right { text-align: right; }
+.admin-cell-num {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--white);
+  white-space: nowrap;
+}
+.admin-cell-num--gold { color: var(--gold); }
+.admin-align-center { text-align: center; }
+
+/* Cellule nom principal (Inter 14 semibold blanc + sous-ligne text-dim) */
+.admin-cell-primary {
+  font-weight: 600;
+  color: var(--white);
+}
+.admin-cell-sub {
+  font-size: 12.5px;
+  color: var(--text-dim);
+  margin-top: 2px;
+}
+
+/* ── BADGES DE STATUT — cohérents avec .ap-badge de la page paiements ─ */
+.admin-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px;
+  border-radius: 100px;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.admin-badge i { font-size: 12px; }
+.admin-badge--ok {
+  background: rgba(46, 204, 113, .12);
+  color: #6EE7A6;
+  border: 1px solid rgba(46, 204, 113, .30);
+}
+.admin-badge--gold {
+  background: rgba(var(--gold-rgb), .12);
+  color: #F0D98A;
+  border: 1px solid rgba(var(--gold-rgb), .35);
+}
+.admin-badge--warn {
+  background: rgba(255, 180, 80, .12);
+  color: #ffb450;
+  border: 1px solid rgba(255, 180, 80, .32);
+}
+.admin-badge--danger {
+  background: rgba(255, 107, 107, .12);
+  color: #ff8a8a;
+  border: 1px solid rgba(255, 107, 107, .32);
+}
+.admin-badge--neutral {
+  background: rgba(255, 255, 255, .06);
+  color: var(--text-dim);
+  border: 1px solid var(--border);
+}
+.admin-badge--purple {
+  background: rgba(200, 140, 255, .10);
+  color: #D9B7FF;
+  border: 1px solid rgba(200, 140, 255, .30);
+}
+
+/* Micro-badge inline pour tags secondaires (ex: FONDATEUR, VIA PACK) */
+.admin-mini-tag {
+  display: inline-block;
+  margin-top: 4px;
+  padding: 1px 7px;
+  border-radius: 100px;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+}
+.admin-mini-tag--gold {
+  background: rgba(var(--gold-rgb), .12);
+  color: var(--gold);
+  border: 1px solid rgba(var(--gold-rgb), .30);
+}
+.admin-mini-tag--green {
+  background: rgba(46, 204, 113, .10);
+  color: var(--green);
+  border: 1px solid rgba(46, 204, 113, .30);
+}
+
+/* ── Petit bouton "action ligne" (ex : Entrer sur users) ─────────────── */
+.admin-row-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  background: rgba(var(--gold-rgb), .10);
+  border: 1px solid rgba(var(--gold-rgb), .30);
+  border-radius: 100px;
+  color: var(--gold);
+  text-decoration: none;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background .15s ease;
+  white-space: nowrap;
+}
+.admin-row-action:hover {
+  background: rgba(var(--gold-rgb), .20);
+}
+.admin-row-action--secondary {
+  background: rgba(255, 255, 255, .04);
+  border-color: var(--border);
+  color: var(--text-soft);
+}
+.admin-row-action--secondary:hover {
+  background: rgba(255, 255, 255, .08);
+  color: var(--white);
+}
+
+/* ── STATS GRID (utilisé sur la page fondateurs) ─────────────────────── */
+.admin-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 14px;
+  margin-bottom: 28px;
+}
+.admin-stat {
+  padding: 18px 20px;
+  background: linear-gradient(180deg, var(--bg-card) 0%, var(--bg-2, #0F0F16) 100%);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  position: relative;
+  overflow: hidden;
+}
+.admin-stat::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, .10), transparent);
+}
+.admin-stat--gold::before { background: linear-gradient(90deg, transparent, var(--gold), transparent); }
+.admin-stat--green::before { background: linear-gradient(90deg, transparent, var(--green), transparent); }
+.admin-stat-eyebrow {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-bottom: 8px;
+}
+.admin-stat-value {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: clamp(22px, 2.4vw, 30px);
+  font-weight: 900;
+  color: var(--white);
+  line-height: 1.1;
+}
+.admin-stat--gold .admin-stat-value { color: var(--gold); }
+.admin-stat--green .admin-stat-value { color: var(--green); }
+
+/* ══════════════════════════════════════════════════════════════════════
+   RESPONSIVE — la table devient des cards empilées sous 900px
+   Chaque <td> doit avoir un data-label="…" côté template pour afficher
+   son nom en mobile (pattern déjà utilisé sur admin-payments).
+   ══════════════════════════════════════════════════════════════════════ */
+@media (max-width: 900px) {
+  .admin-table-card { border-radius: 12px; }
+  .admin-table { display: block; }
+  .admin-table thead { display: none; }
+  .admin-table tbody { display: block; }
+  .admin-table tbody tr {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 8px;
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--border);
+  }
+  .admin-table tbody tr:last-child { border-bottom: none; }
+  .admin-table tbody td {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 0;
+    border-bottom: none;
+    text-align: left;
+    font-size: 14px;
+  }
+  .admin-table tbody td::before {
+    content: attr(data-label);
+    display: inline-block;
+    min-width: 90px;
+    flex-shrink: 0;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 10.5px;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    padding-top: 2px;
+  }
+  /* Cellules sans data-label : pas de puce (ex: cellule actions vide) */
+  .admin-table tbody td:not([data-label])::before { display: none; }
+  .admin-cell-num,
+  .admin-align-right { text-align: left; }
+  .admin-align-center { text-align: left; }
+}
+
+@media (max-width: 480px) {
+  .admin-title { font-size: 26px; }
+  .admin-filterbar { padding: 12px; }
+  .admin-filterbar-filters { width: 100%; }
+  .admin-filterbar-filters .ui-dropdown { flex: 1; min-width: 45%; }
+  .admin-btn-export,
+  .admin-btn-pill { width: 100%; justify-content: center; }
+}

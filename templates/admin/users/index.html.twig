@@ -3,81 +3,92 @@
 {% block title %}Utilisateurs — Admin SPORT+{% endblock %}
 
 {% block admin_body %}
+<div class="admin-page">
 
-<div class="page-header">
-  <div>
-    <h1><span style="color:var(--gold)">Utilisateurs</span></h1>
-    <p class="page-subtitle">{{ users|length }} compte{% if users|length > 1 %}s{% endif %} inscrits</p>
+  <div class="admin-page-header">
+    <div class="admin-page-header-body">
+      <h1 class="admin-title">
+        <i class="ti ti-users"></i>
+        <span>Utilisateurs</span>
+      </h1>
+      <p class="admin-subtitle">
+        {{ users|length }} compte{{ users|length > 1 ? 's' : '' }} inscrit{{ users|length > 1 ? 's' : '' }}.
+      </p>
+    </div>
   </div>
-</div>
 
-<div class="data-table-card">
-  <div class="data-table-header">
-    <h3>Liste des utilisateurs</h3>
-  </div>
   {% if users is empty %}
-    <div class="empty-placeholder" style="padding:60px;">Aucun utilisateur inscrit.</div>
+    <div class="admin-empty">
+      <i class="ti ti-user-off"></i>
+      <div class="admin-empty-title">Aucun utilisateur inscrit</div>
+      <div class="admin-empty-sub">Les inscriptions apparaîtront ici.</div>
+    </div>
   {% else %}
-    <table>
-      <thead>
-        <tr>
-          <th>Nom</th>
-          <th>Email</th>
-          <th>Rôle</th>
-          <th>Inscription</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for user in users %}
+    <div class="admin-table-card">
+      <table class="admin-table">
+        <thead>
           <tr>
-            <td>
-              <div style="display:flex;align-items:center;gap:10px;">
-                {% if user.photoSrc %}
-                  <img src="{{ user.photoSrc }}" alt="{{ user.nomComplet }}"
-                       style="width:32px;height:32px;border-radius:50%;object-fit:cover;flex-shrink:0;box-shadow:0 0 0 1px rgba(200,169,81,.45);">
-                {% else %}
-                  <div style="width:32px;height:32px;border-radius:50%;background:var(--bg-3);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;color:var(--gold-dim);flex-shrink:0;">
-                    {%- set words = user.nomComplet|split(' ') -%}
-                    {{- words[0]|first|upper -}}{%- if words|length > 1 -%}{{- words[1]|first|upper -}}{%- endif -%}
-                  </div>
-                {% endif %}
-                <span style="font-family:'Barlow Condensed',sans-serif;font-weight:700;">{{ user.nomComplet }}</span>
-              </div>
-            </td>
-            <td style="color:var(--text-dim);">{{ user.email }}</td>
-            <td>
-              {% set roleVal = user.role.value %}
-              <span class="status-badge {% if roleVal == 'admin' %}confirmed{% elseif roleVal == 'coach' %}pending{% else %}cancelled{% endif %}">
-                {{ user.role.label }}
-              </span>
-            </td>
-            <td style="color:var(--text-dim);">{{ user.createdAt|date('d/m/Y') }}</td>
-            <td>
-              {# Empêche un admin de switcher vers lui-même : pas de bouton si c'est le user courant. #}
-              {% if user.id != app.user.id %}
-                {# Redirection vers l'espace adapté au rôle de la cible. #}
-                {% set target =
-                  user.role.value == 'admin' ? path('app_admin_dashboard', {_switch_user: user.email})
-                  : (user.role.value == 'coach' ? path('app_coach_dashboard', {_switch_user: user.email})
-                  : path('app_espace_client', {_switch_user: user.email}))
-                %}
-                <a href="{{ target }}" class="action-btn"
-                   title="Entrer dans son espace ({{ user.role.value }})"
-                   data-confirm-title="Entrer dans l'espace de {{ user.nomComplet }} ?"
-                   data-confirm="Tu verras le site comme {{ user.nomComplet }} le voit. Tes actions seront tracées dans le journal d'audit. Tu pourras sortir à tout moment via la bannière orange."
-                   data-confirm-button="Oui, entrer dans son espace">
-                  <i class="ti ti-user-bolt"></i> Entrer
-                </a>
-              {% else %}
-                <span style="color:var(--text-dim);font-size:12px;font-style:italic;">— Toi —</span>
-              {% endif %}
-            </td>
+            <th>Nom</th>
+            <th>Email</th>
+            <th>Rôle</th>
+            <th>Inscription</th>
+            <th>Actions</th>
           </tr>
-        {% endfor %}
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          {% for user in users %}
+            <tr>
+              <td data-label="Nom">
+                <div style="display:flex;align-items:center;gap:10px;">
+                  {% if user.photoSrc %}
+                    <img src="{{ user.photoSrc }}" alt="{{ user.nomComplet }}"
+                         style="width:32px;height:32px;border-radius:50%;object-fit:cover;flex-shrink:0;box-shadow:0 0 0 1px rgba(200,169,81,.45);">
+                  {% else %}
+                    <div style="width:32px;height:32px;border-radius:50%;background:var(--bg-3);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;color:var(--gold-dim);flex-shrink:0;">
+                      {{ user.initial }}
+                    </div>
+                  {% endif %}
+                  <span style="font-family:'Barlow Condensed',sans-serif;font-weight:700;letter-spacing:.5px;">{{ user.nomComplet }}</span>
+                </div>
+              </td>
+              <td data-label="Email" class="admin-cell-date" style="overflow-wrap:anywhere;">{{ user.email }}</td>
+              <td data-label="Rôle">
+                {% set roleBadge = {
+                  'admin':  'admin-badge--purple',
+                  'coach':  'admin-badge--gold',
+                  'client': 'admin-badge--neutral',
+                } %}
+                <span class="admin-badge {{ roleBadge[user.role.value] ?? 'admin-badge--neutral' }}">
+                  {{ user.role.label }}
+                </span>
+              </td>
+              <td data-label="Inscription" class="admin-cell-date">{{ user.createdAt|date('d/m/Y') }}</td>
+              <td data-label="Actions">
+                {# Empêche un admin de switcher vers lui-même : pas de bouton si c'est le user courant. #}
+                {% if user.id != app.user.id %}
+                  {# Redirection vers l'espace adapté au rôle de la cible. #}
+                  {% set target =
+                    user.role.value == 'admin' ? path('app_admin_dashboard', {_switch_user: user.email})
+                    : (user.role.value == 'coach' ? path('app_coach_dashboard', {_switch_user: user.email})
+                    : path('app_espace_client', {_switch_user: user.email}))
+                  %}
+                  <a href="{{ target }}" class="admin-row-action"
+                     title="Entrer dans son espace ({{ user.role.value }})"
+                     data-confirm-title="Entrer dans l'espace de {{ user.nomComplet }} ?"
+                     data-confirm="Tu verras le site comme {{ user.nomComplet }} le voit. Tes actions seront tracées dans le journal d'audit. Tu pourras sortir à tout moment via la bannière orange."
+                     data-confirm-button="Oui, entrer dans son espace">
+                    <i class="ti ti-user-bolt"></i> Entrer
+                  </a>
+                {% else %}
+                  <span style="color:var(--text-dim);font-size:12px;font-style:italic;">— Toi —</span>
+                {% endif %}
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
   {% endif %}
-</div>
 
+</div>
 {% endblock %}
