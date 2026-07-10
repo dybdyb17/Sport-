@@ -75,8 +75,11 @@ class BookingManager
             }
         }
 
-        // Prix par personne × nombre de participants
-        $pricePerPerson = $this->pricing->singleSessionPrice($format, $timeSlot);
+        // Prix par personne × nombre de participants.
+        // -5% Membre Fondateur appliqué automatiquement dans singleSessionPrice()
+        // si le client est fondateur — le prix figé sur la Booking reflète le
+        // vrai montant que le client va payer.
+        $pricePerPerson = $this->pricing->singleSessionPrice($format, $timeSlot, $client->isFoundingMember());
         $totalPrice     = number_format((float) $pricePerPerson * $personsCount, 2, '.', '');
 
         $booking = new Booking();
@@ -277,7 +280,15 @@ class BookingManager
         bool          $fullAccess = false,
         ?Coach        $coach      = null,
     ): Subscription {
-        $monthlyPrice = $this->pricing->monthlyPackPrice($format, $pack, $timeSlot, $fullAccess);
+        // -5% Membre Fondateur appliqué automatiquement — le monthlyPrice
+        // stocké dans Subscription est le vrai prix qui sera facturé.
+        $monthlyPrice = $this->pricing->monthlyPackPrice(
+            $format,
+            $pack,
+            $timeSlot,
+            $fullAccess,
+            $client->isFoundingMember(),
+        );
 
         $subscription = new Subscription();
         $subscription

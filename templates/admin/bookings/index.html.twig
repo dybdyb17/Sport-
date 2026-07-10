@@ -59,7 +59,12 @@
               <td data-label="Prestation">
                 <span class="admin-cell-primary" style="font-family:'Barlow Condensed',sans-serif;font-weight:700;">{{ booking.offerLabel }}</span>
               </td>
-              <td data-label="Client">{{ booking.client.nomComplet }}</td>
+              <td data-label="Client">
+                {{ booking.client.nomComplet }}
+                {% if booking.client.isFoundingMember %}
+                  <span class="admin-founding-pill" title="Membre Fondateur — -5% appliqué"><i class="ti ti-crown"></i> Fondateur</span>
+                {% endif %}
+              </td>
               <td data-label="Coach">{{ booking.coach.nomComplet }}</td>
               <td data-label="Statut">
                 {% set badge = {

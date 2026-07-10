@@ -182,11 +182,12 @@ final class StripeCheckoutService
                     'product_data' => [
                         'name' => sprintf('SPORT+ — %s', $booking->getOfferLabel()),
                         'description' => sprintf(
-                            'Séance avec %s · %s à %s · Réf. %s',
+                            'Séance avec %s · %s à %s · Réf. %s%s',
                             (string) $booking->getCoach()?->getNomComplet(),
                             $booking->getStartAt()?->format('d/m/Y') ?? '?',
                             $booking->getTimeRangeFormatted(),
                             $booking->getReference(),
+                            $client->isFoundingMember() ? ' · Membre Fondateur -5% inclus' : '',
                         ),
                     ],
                 ],
@@ -303,10 +304,11 @@ final class StripeCheckoutService
                             $ppr->getTimeSlot()->value,
                         ),
                         'description' => sprintf(
-                            'Pack mensuel · 1ʳᵉ séance : %s à %s · avec %s',
+                            'Pack mensuel · 1ʳᵉ séance : %s à %s · avec %s%s',
                             $ppr->getStartAt()->format('d/m/Y'),
                             $ppr->getStartAt()->format('H\hi'),
                             (string) $ppr->getCoach()->getNomComplet(),
+                            $ppr->getClient()->isFoundingMember() ? ' · Membre Fondateur -5% inclus' : '',
                         ),
                     ],
                 ],
@@ -579,11 +581,17 @@ final class StripeCheckoutService
         // en Solo/Duo l'unité de facturation est le client (1 pack couvre le compte).
         // En Group, chaque personne aurait son propre pack — mais le paiement en
         // ligne Group n'est pas ouvert dans cette Partie 1 (règle métier).
+        //
+        // -5% Membre Fondateur appliqué ici pour que le montant DÉBITÉ Stripe
+        // corresponde exactement au prix vu par le client dans le preview + au
+        // prix figé dans la Subscription au fulfillment. CRITIQUE : c'est le
+        // vrai paiement, l'écart avec le preview serait un bug de confiance.
         $unit = $this->pricing->monthlyPackPrice(
             $ppr->getFormat(),
             $ppr->getPackType(),
             $ppr->getTimeSlot(),
             $ppr->isFullAccess(),
+            $ppr->getClient()->isFoundingMember(),
         );
         return (int) round((float) $unit * 100);
     }

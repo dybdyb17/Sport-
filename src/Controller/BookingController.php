@@ -171,7 +171,13 @@ class BookingController extends AbstractController
             // Borner le nombre de personnes
             $persons = max($format->personsMin(), min($format->personsMax(), $personsRaw));
 
-            $singlePrice = $pricing->singleSessionPrice($format, $slot);
+            // Membre Fondateur : -5% appliqué dans le preview aussi, sinon
+            // le client fondateur voit le prix plein pendant sa réservation
+            // puis est débité de -5% au paiement → incohérence perçue. Le
+            // preview reflète exactement ce qui sera figé + débité.
+            $isFounding = $this->getUser()?->isFoundingMember() ?? false;
+
+            $singlePrice = $pricing->singleSessionPrice($format, $slot, $isFounding);
             $totalSingle = number_format((float) $singlePrice * $persons, 2, '.', '');
 
             $result = [
@@ -180,11 +186,16 @@ class BookingController extends AbstractController
                 'persons'       => $persons,
                 'singlePerPers' => $pricing->formatPrice($singlePrice),
                 'singleTotal'   => $pricing->formatPrice($totalSingle),
+                'foundingDiscount' => $isFounding,
             ];
 
             if ($pack !== PackType::SINGLE) {
-                $monthly  = $pricing->monthlyPackPrice($format, $pack, $slot, $fullAccess);
-                $savings  = $pricing->packSavingsPerPerson($format, $pack, $slot);
+                $monthly  = $pricing->monthlyPackPrice($format, $pack, $slot, $fullAccess, $isFounding);
+                // Économie pack vs séances : calculée avec les prix
+                // COHÉRENTS (fondateur si applicable) pour rester juste.
+                $singleForSavings = (float) $pricing->singleSessionPrice($format, $slot, $isFounding);
+                $sessions         = $pack->sessionsCount();
+                $savings          = max(0.0, $singleForSavings * $sessions - (float) $monthly);
                 $result['pack']               = $pack->label();
                 $result['packSessions']        = $pack->sessionsCount();
                 $result['monthly']            = $pricing->formatPrice($monthly);

@@ -49,6 +49,9 @@
                     </div>
                   {% endif %}
                   <span style="font-family:'Barlow Condensed',sans-serif;font-weight:700;letter-spacing:.5px;">{{ user.nomComplet }}</span>
+                  {% if user.isFoundingMember %}
+                    <span class="admin-founding-pill" title="Membre Fondateur — bénéficie automatiquement du -5%"><i class="ti ti-crown"></i> Fondateur</span>
+                  {% endif %}
                 </div>
               </td>
               <td data-label="Email" class="admin-cell-date" style="overflow-wrap:anywhere;">{{ user.email }}</td>

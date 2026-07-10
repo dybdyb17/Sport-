@@ -78,7 +78,12 @@
             {% set isExpiringSoon = sub.endsAt.timestamp < ('now'|date('U') + 7 * 86400) %}
             <tr {% if isExpiringSoon %}style="background:rgba(255,180,80,.04);"{% endif %}>
               <td data-label="Réf." class="admin-cell-ref">{{ sub.reference }}</td>
-              <td data-label="Client" class="admin-cell-primary">{{ sub.client.nomComplet }}</td>
+              <td data-label="Client" class="admin-cell-primary">
+                {{ sub.client.nomComplet }}
+                {% if sub.client.isFoundingMember %}
+                  <span class="admin-founding-pill" title="Membre Fondateur — -5% appliqué"><i class="ti ti-crown"></i> Fondateur</span>
+                {% endif %}
+              </td>
               <td data-label="Coach" class="admin-cell-date">{{ sub.coach ? sub.coach.nomComplet : '—' }}</td>
               <td data-label="Format">{{ sub.format.label }}</td>
               <td data-label="Créneau" style="font-size:13px;">{{ sub.timeSlot.label }}</td>

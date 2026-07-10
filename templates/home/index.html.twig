@@ -166,6 +166,10 @@
                 <i class="ti {{ foundingClaim.isBilanDone ? 'ti-circle-check' : 'ti-calendar-event' }}"></i>
                 <span><strong>Bilan forme</strong> {{ foundingClaim.isBilanDone ? 'effectué' : 'à programmer' }}</span>
               </div>
+              <div class="home-founding-benefit">
+                <i class="ti ti-discount"></i>
+                <span><strong>-5% à vie</strong> sur séances &amp; packs</span>
+              </div>
               {% if fo.includesPriorityNight %}
                 <div class="home-founding-benefit is-night">
                   <i class="ti ti-moon-stars"></i>
@@ -221,6 +225,7 @@
             <div class="home-founding-offer-benefits" aria-label="Avantages de l'offre Membre Fondateur">
               <span><i class="ti ti-check"></i> Bilan forme offert</span>
               <span><i class="ti ti-check"></i> Coaching personnalisé</span>
+              <span><i class="ti ti-discount"></i> -5% à vie sur séances &amp; packs</span>
               {% if fo.includesPriorityNight %}
                 <span><i class="ti ti-moon-stars"></i> Priorité Night Coach</span>
               {% endif %}

@@ -113,13 +113,20 @@
       <div class="rdv-detail rdv-detail-price">
         {% if booking.coveredBy == 'founding' %}
           <div class="rdv-detail-label"><i class="ti ti-crown"></i> Couverture</div>
-          <div class="rdv-detail-value" style="color:var(--gold);">Incluse — Fondateur</div>
+          <div class="rdv-detail-value" style="color:var(--gold);">Offre Fondateur</div>
         {% elseif booking.coveredBy == 'subscription' and booking.subscription %}
           <div class="rdv-detail-label"><i class="ti ti-check"></i> Couverture</div>
-          <div class="rdv-detail-value" style="color:var(--green);">Incluse — {{ booking.subscription.packType.label }}</div>
+          <div class="rdv-detail-value" style="color:var(--green);">Pack {{ booking.subscription.packType.label }}</div>
         {% else %}
           <div class="rdv-detail-label"><i class="ti ti-cash"></i> À régler</div>
-          <div class="rdv-detail-value">{{ booking.prixFormatted }}</div>
+          <div class="rdv-detail-value">
+            {{ booking.prixFormatted }}
+            {% if booking.client and booking.client.isFoundingMember %}
+              <div style="display:inline-flex;align-items:center;gap:4px;margin-left:6px;padding:2px 8px;border-radius:100px;background:rgba(200,169,81,.15);border:1px solid rgba(200,169,81,.4);color:var(--gold);font-family:'Barlow Condensed',sans-serif;font-size:10.5px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;vertical-align:middle;">
+                <i class="ti ti-discount" style="font-size:11px;"></i> Fondateur -5% appliqué
+              </div>
+            {% endif %}
+          </div>
         {% endif %}
       </div>
     </div>

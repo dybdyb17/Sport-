@@ -275,6 +275,27 @@
   border: 1px solid rgba(200, 140, 255, .30);
 }
 
+/* Pill Fondateur — inline à côté du nom client pour repérage instantané */
+.admin-founding-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: 8px;
+  padding: 2px 8px;
+  border-radius: 100px;
+  background: linear-gradient(135deg, rgba(200,169,81,.18) 0%, rgba(200,169,81,.08) 100%);
+  border: 1px solid rgba(200,169,81,.40);
+  color: var(--gold);
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 10.5px;
+  font-weight: 800;
+  letter-spacing: 1.4px;
+  text-transform: uppercase;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+.admin-founding-pill i { font-size: 11px; }
+
 /* Micro-badge inline pour tags secondaires (ex: FONDATEUR, VIA PACK) */
 .admin-mini-tag {
   display: inline-block;

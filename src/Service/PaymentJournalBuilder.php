@@ -340,11 +340,17 @@ class PaymentJournalBuilder
             ->getQuery()->getResult();
 
         foreach ($pendingPprs as $ppr) {
+            // Un PendingPackRequest n'a pas de prix stocké (contrairement à
+            // Subscription.monthlyPrice, lu tel quel plus haut à la ligne
+            // ~197). Ici on recalcule et on applique -5% si le client est
+            // Fondateur — le montant admin doit refléter ce qui sera
+            // réellement encaissé au comptoir / débité Stripe.
             $unitPrice = (float) $this->pricing->monthlyPackPrice(
                 $ppr->getFormat(),
                 $ppr->getPackType(),
                 $ppr->getTimeSlot(),
                 $ppr->isFullAccess(),
+                $ppr->getClient()->isFoundingMember(),
             );
             $totalAmount = $unitPrice * $ppr->getPersonsCount();
 

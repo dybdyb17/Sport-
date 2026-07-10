@@ -49,16 +49,33 @@ final class PricingCalculator
         'group' => 25.0,
     ];
 
-    /** Prix séance unique pour 1 personne (€). */
-    public function singleSessionPrice(BookingFormat $format, TimeSlot $slot): string
+    /**
+     * Remise Membre Fondateur : -5% appliquée automatiquement sur toute
+     * séance à l'unité et tout pack quand le client est un Fondateur.
+     * Cumul assumé avec l'avantage pack (les 2 s'appliquent). Ne concerne
+     * PAS les offres promo Insta (chantier séparé).
+     * Ne pas modifier sans revalidation Loïc.
+     */
+    private const FOUNDING_DISCOUNT_RATE = 0.05;
+
+    /**
+     * Prix séance unique pour 1 personne (€).
+     * @param bool $foundingMember true => applique -5% Fondateur sur le prix final
+     */
+    public function singleSessionPrice(BookingFormat $format, TimeSlot $slot, bool $foundingMember = false): string
     {
         $price = self::SINGLE_SESSION_PRICES[$format->value][$slot->value];
+        if ($foundingMember) {
+            $price *= (1 - self::FOUNDING_DISCOUNT_RATE);
+        }
         return number_format($price, 2, '.', '');
     }
 
     /**
      * Prix pack mensuel par personne, FullAccess optionnel.
      *
+     * @param bool $foundingMember true => applique -5% Fondateur sur le total
+     *                                     (surcoût FullAccess inclus dans l'assiette)
      * @throws \LogicException si PackType::SINGLE est fourni
      */
     public function monthlyPackPrice(
@@ -66,13 +83,23 @@ final class PricingCalculator
         PackType $pack,
         TimeSlot $slot,
         bool $fullAccess = false,
+        bool $foundingMember = false,
     ): string {
         if ($pack === PackType::SINGLE) {
             throw new \LogicException('Pour une séance unique, utiliser singleSessionPrice().');
         }
 
+        // Ordre volontaire : -5% Fondateur AVANT le surcoût FullAccess.
+        // Le -5% ne s'applique QUE sur la base pack (avantage sur le pack lui-
+        // même). Le surcoût "accès 24h/24" de 30€ / 25€ est facturé plein pour
+        // tout le monde — c'est une option indépendante du pack. Sinon un
+        // Fondateur qui prend +30€ verrait s'ajouter seulement +28,50€ à sa
+        // facture, ce qui contredit l'affichage "+30€" sur la page tarifs.
         $base = self::MONTHLY_PACK_PRICES[$format->value][$pack->value][$slot->value];
 
+        if ($foundingMember) {
+            $base *= (1 - self::FOUNDING_DISCOUNT_RATE);
+        }
         if ($fullAccess) {
             $base += self::FULL_ACCESS_SURCHARGE[$format->value];
         }
@@ -83,6 +110,11 @@ final class PricingCalculator
     /**
      * Économie réalisée avec un pack vs achat à la séance (par personne).
      * Économie = singlePrice × sessions - monthlyPrice
+     *
+     * Volontairement PAS de paramètre foundingMember : cette méthode sert à
+     * l'affichage de l'économie sur la page tarifs publique (visiteur non
+     * connecté) → prix standards des 2 côtés, le -5% Fondateur est un
+     * avantage personnel appliqué à la réservation/au paiement.
      */
     public function packSavingsPerPerson(BookingFormat $format, PackType $pack, TimeSlot $slot): float
     {
