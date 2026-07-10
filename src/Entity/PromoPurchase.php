@@ -42,6 +42,16 @@ class PromoPurchase
     #[ORM\Column(type: Types::DECIMAL, precision: 8, scale: 2)]
     private string $amount = '0.00';
 
+    /**
+     * True si -5% Membre Fondateur a été appliqué au moment de la création
+     * (déterminé par $this->getUser()?->isFoundingMember() côté contrôleur,
+     * JAMAIS par buyer_email pour éviter l'usurpation). Servi tel quel — le
+     * champ `amount` contient déjà le prix effectif (réduit si applicable).
+     * Ce flag sert à la traçabilité admin (affichage journal / badge).
+     */
+    #[ORM\Column(options: ['default' => false])]
+    private bool $foundingDiscountApplied = false;
+
     #[ORM\Column(length: 3, options: ['default' => 'eur'])]
     private string $currency = 'eur';
 
@@ -115,6 +125,8 @@ class PromoPurchase
     public function setStatus(string $status): static { $this->status = in_array($status, [self::STATUS_PENDING, self::STATUS_PAID, self::STATUS_CANCELLED], true) ? $status : self::STATUS_PENDING; return $this; }
     public function getAmount(): string { return $this->amount; }
     public function setAmount(string $amount): static { $this->amount = number_format((float) str_replace(',', '.', $amount), 2, '.', ''); return $this; }
+    public function isFoundingDiscountApplied(): bool { return $this->foundingDiscountApplied; }
+    public function setFoundingDiscountApplied(bool $applied): static { $this->foundingDiscountApplied = $applied; return $this; }
     public function getCurrency(): string { return $this->currency; }
     public function setCurrency(string $currency): static { $this->currency = strtolower($currency ?: 'eur'); return $this; }
     public function getStripeCheckoutSessionId(): ?string { return $this->stripeCheckoutSessionId; }

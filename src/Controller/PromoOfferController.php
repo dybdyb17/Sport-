@@ -104,12 +104,19 @@ final class PromoOfferController extends AbstractController
             return $this->redirectToRoute('app_promo_offer_show', ['slug' => $slug]);
         }
 
+        // -5% Fondateur : basé UNIQUEMENT sur $this->getUser() (compte
+        // authentifié), jamais sur buyer_email saisi. Le prix effectif est
+        // figé ici → lu par promoPurchasePriceInCents à la création ET à la
+        // vérification du montant au retour Stripe. Cohérence garantie.
+        [$effectiveAmount, $isFounding] = $this->resolveEffectivePromoAmount($offer);
+
         $purchase = (new PromoPurchase())
             ->setOffer($offer)
             ->setBuyerName($name)
             ->setBuyerEmail($email)
             ->setBuyerPhone($phone)
-            ->setAmount($offer->getPrice())
+            ->setAmount($effectiveAmount)
+            ->setFoundingDiscountApplied($isFounding)
             ->setCurrency($offer->getCurrency())
             ->setIntendedPaymentMethod('stripe');
 
@@ -176,12 +183,15 @@ final class PromoOfferController extends AbstractController
             return $this->redirectToRoute('app_promo_offer_show', ['slug' => $slug]);
         }
 
+        [$effectiveAmount, $isFounding] = $this->resolveEffectivePromoAmount($offer);
+
         $purchase = (new PromoPurchase())
             ->setOffer($offer)
             ->setBuyerName($name)
             ->setBuyerEmail($email)
             ->setBuyerPhone($phone)
-            ->setAmount($offer->getPrice())
+            ->setAmount($effectiveAmount)
+            ->setFoundingDiscountApplied($isFounding)
             ->setCurrency($offer->getCurrency())
             ->setIntendedPaymentMethod('cash');
         // status reste PENDING (défaut). paymentMethod / paidAt restent NULL
@@ -220,5 +230,28 @@ final class PromoOfferController extends AbstractController
             throw $this->createNotFoundException();
         }
         return $this->render('promo_offer/pending.html.twig', ['purchase' => $purchase]);
+    }
+
+    /**
+     * Calcule le prix effectif d'une offre pour l'utilisateur courant.
+     *
+     * Le -5% Fondateur est appliqué UNIQUEMENT si un user est connecté ET
+     * est fondateur (jamais basé sur buyer_email — usurpation possible).
+     * Le prix retourné est celui qui sera figé dans PromoPurchase.amount,
+     * puis lu par Stripe à la création ET à la vérification du montant.
+     *
+     * @return array{0: string, 1: bool} [prix effectif au format DECIMAL, flag -5% appliqué]
+     */
+    private function resolveEffectivePromoAmount(PromoOffer $offer): array
+    {
+        $user = $this->getUser();
+        $isFounding = $user instanceof \App\Entity\User && $user->isFoundingMember();
+        if (!$isFounding) {
+            return [$offer->getPrice(), false];
+        }
+        // -5% sur le prix de l'offre — arrondi 2 décimales cohérent avec le
+        // setter setAmount() qui refera number_format 2 décimales.
+        $reduced = number_format((float) $offer->getPrice() * 0.95, 2, '.', '');
+        return [$reduced, true];
     }
 }

@@ -444,7 +444,11 @@ final class StripeCheckoutService
                     'unit_amount' => $this->promoPurchasePriceInCents($purchase),
                     'product_data' => [
                         'name' => 'SPORT+ — ' . $offer->getTitle(),
-                        'description' => mb_substr((string) ($offer->getDescription() ?: 'Offre SPORT+ à réserver en ligne.'), 0, 500),
+                        'description' => mb_substr(
+                            (string) ($offer->getDescription() ?: 'Offre SPORT+ à réserver en ligne.')
+                            . ($purchase->isFoundingDiscountApplied() ? ' · Membre Fondateur -5% inclus' : ''),
+                            0, 500
+                        ),
                     ],
                 ],
             ]],

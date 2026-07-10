@@ -58,6 +58,10 @@
   font-size: 15px;
   line-height: 1.7;
 }
+/* Espacement entre paragraphes des réponses longues — améliore la lecture
+   quand une réponse est divisée en 2-3 blocs plutôt qu'un mur de texte. */
+.faq-answer p { margin: 0 0 12px; }
+.faq-answer p:last-child { margin-bottom: 0; }
 
 /* ── FAQ NAV STICKY ───────────────────────────────────────────── */
 .faq-nav {
