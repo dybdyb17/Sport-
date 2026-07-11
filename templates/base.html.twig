@@ -614,5 +614,10 @@ document.addEventListener('keydown', function(e) {
   }
 })();
 </script>
+
+{# Composant ui-dropdown : chargé globalement pour toutes les pages publiques
+   qui utilisent les <select> stylés (tunnel réservation, profil, packs,
+   promo). Le fichier admin (admin/base.html.twig) le charge de son côté. #}
+<script src="{{ asset('js/ui-dropdown.js') }}" defer></script>
 </body>
 </html>

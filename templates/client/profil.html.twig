@@ -262,21 +262,22 @@
         </div>
       </div>
 
+      {% import '_macros/form_dropdown.html.twig' as ui %}
       {{ form_start(preferencesForm) }}
         <div class="profile-pref-grid">
           <div class="form-field">
             {{ form_label(preferencesForm.preferredTimeSlot) }}
-            {{ form_widget(preferencesForm.preferredTimeSlot) }}
+            {{ ui.formSelect(preferencesForm.preferredTimeSlot) }}
             {{ form_errors(preferencesForm.preferredTimeSlot) }}
           </div>
           <div class="form-field">
             {{ form_label(preferencesForm.preferredCoach) }}
-            {{ form_widget(preferencesForm.preferredCoach) }}
+            {{ ui.formSelect(preferencesForm.preferredCoach) }}
             {{ form_errors(preferencesForm.preferredCoach) }}
           </div>
           <div class="form-field">
             {{ form_label(preferencesForm.goal) }}
-            {{ form_widget(preferencesForm.goal) }}
+            {{ ui.formSelect(preferencesForm.goal) }}
             {{ form_errors(preferencesForm.goal) }}
           </div>
         </div>

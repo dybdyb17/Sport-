@@ -1,0 +1,88 @@
+{#
+  Macro form_dropdown — convertit un champ Symfony select en composant
+  ui-dropdown (mode form).
+
+  Le <select> réel est rendu masqué (visually-hidden) via form_widget avec
+  une classe utilitaire, ce qui préserve :
+    - la validation Symfony (name, required, etc.)
+    - les form_errors
+    - le prefill de la valeur (option selected auto)
+    - la dégradation gracieuse si JS échoue (le select natif reste utilisable
+      pour un user qui a JS coupé, même s'il n'est pas visible)
+
+  Le JS ui-dropdown.js lit les <option> du select au init et génère
+  dynamiquement le panneau ui-dropdown. Au clic sur une option, il
+  synchronise select.value + dispatch 'change' bubbling.
+
+  Utilisation :
+    {% import '_macros/form_dropdown.html.twig' as ui %}
+    {{ ui.formSelect(form.coach, 'Coach') }}
+    {{ ui.formSelect(form.personsCount, 'Nombre') }}
+
+  Params :
+    - field   : champ Symfony (form.xxx)
+    - eyebrow : label gris fin au-dessus (ex "Coach"). Optionnel.
+    - align   : 'left' (défaut) ou 'right' pour ancrer le panneau à droite
+#}
+{% macro formSelect(field, eyebrow = '', align = 'left') %}
+  <div class="ui-dropdown ui-dropdown--form"
+       data-dropdown
+       data-dropdown-mode="form"
+       data-dropdown-target="{{ field.vars.id }}"
+       {% if align == 'right' %}data-dropdown-align="right"{% endif %}>
+    {# Select réel masqué — Symfony génère name/options/selected/required. #}
+    {{ form_widget(field, {'attr': {
+      'class': 'ui-dropdown-hidden-select',
+      'tabindex': '-1',
+      'aria-hidden': 'true',
+    }}) }}
+
+    <button type="button" class="ui-dropdown-trigger"
+            aria-haspopup="listbox" aria-expanded="false">
+      {% if eyebrow %}<span class="ui-dropdown-eyebrow">{{ eyebrow }}</span>{% endif %}
+      <span class="ui-dropdown-current">—</span>
+      <i class="ti ti-chevron-down ui-dropdown-caret" aria-hidden="true"></i>
+    </button>
+    <div class="ui-dropdown-panel" role="listbox">
+      {# Rempli automatiquement par ui-dropdown.js au init depuis les
+         <option> du select ci-dessus. Rien à mettre ici côté Twig. #}
+    </div>
+  </div>
+{% endmacro %}
+
+{#
+  Version pour un <select> HTML natif (pas un champ Symfony) — ex les
+  selects `type` et `status` du form promo qui sont écrits en HTML brut
+  parce que le contrôleur lit via $request->request->get() sans FormType.
+
+  Params :
+    - id       : id CSS du <select> à piloter
+    - name     : attribut name du <select> (celui que Symfony/PHP lit)
+    - eyebrow  : label gris fin optionnel
+    - choices  : tableau {value: label} des options
+    - current  : valeur actuellement sélectionnée (pour prefill)
+    - required : true/false
+#}
+{% macro nativeSelect(id, name, eyebrow, choices, current = '', required = false) %}
+  <div class="ui-dropdown ui-dropdown--form"
+       data-dropdown
+       data-dropdown-mode="form"
+       data-dropdown-target="{{ id }}">
+    <select id="{{ id }}" name="{{ name }}"
+            class="ui-dropdown-hidden-select"
+            tabindex="-1" aria-hidden="true"
+            {% if required %}required{% endif %}>
+      {% for value, label in choices %}
+        <option value="{{ value }}" {{ current == value ? 'selected' : '' }}>{{ label }}</option>
+      {% endfor %}
+    </select>
+    <button type="button" class="ui-dropdown-trigger"
+            aria-haspopup="listbox" aria-expanded="false">
+      {% if eyebrow %}<span class="ui-dropdown-eyebrow">{{ eyebrow }}</span>{% endif %}
+      <span class="ui-dropdown-current">—</span>
+      <i class="ti ti-chevron-down ui-dropdown-caret" aria-hidden="true"></i>
+    </button>
+    <div class="ui-dropdown-panel" role="listbox">
+    </div>
+  </div>
+{% endmacro %}

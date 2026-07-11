@@ -168,3 +168,58 @@ html.performance-lite .ui-dropdown.is-open .ui-dropdown-panel { animation: none;
     justify-content: space-between;
   }
 }
+
+/* ═══════════════════════════════════════════════════════════════════════
+   MODE FORMULAIRE (data-dropdown-mode="form")
+   ═══════════════════════════════════════════════════════════════════════
+   Le <select> réel est masqué visuellement mais reste dans le DOM pour la
+   validation Symfony, form_errors, prefill, dégradation gracieuse si JS
+   échoue. Le JS pilote sa valeur via option.value + dispatch 'change'.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* Variante "form" : trigger en pleine largeur dans un form-field */
+.ui-dropdown--form {
+  display: block;
+  width: 100%;
+}
+.ui-dropdown--form > .ui-dropdown-trigger {
+  width: 100%;
+  justify-content: space-between;
+  min-height: 48px;
+  padding: 10px 16px;
+}
+.ui-dropdown--form > .ui-dropdown-panel {
+  width: 100%;
+}
+
+/* Masquage accessible du <select> natif — reste focusable pour a11y
+   fallback, mais invisible et non cliquable côté visuel. */
+.ui-dropdown-hidden-select {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+  pointer-events: none !important;
+  opacity: 0 !important;
+}
+
+/* Les options en mode form sont des <button type="button"> — reset des
+   styles browser par défaut pour rester cohérent avec les <a> du mode nav. */
+.ui-dropdown-option[type="button"] {
+  width: 100%;
+  background: none;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  font-family: inherit;
+  color: inherit;
+}
+.ui-dropdown-option:focus-visible {
+  outline: none;
+  background: rgba(255, 255, 255, .06);
+}
