@@ -48,12 +48,25 @@ d'abonnement + accès salle), sans le remplacer.
   Les packs mensuels ont leur propre grille dans `MONTHLY_PACK_PRICES` (format×pack×créneau).
 - **`booking.price` = TOUJOURS le prix unitaire** (prix séance × nb personnes).
   **`booking.coveredBy`** = `'subscription'` / `'founding'` / `null`.
-  - Affichage **client** : « Incluse — Pack X » / « Incluse — Fondateur » (jamais le prix nu si
-    couvert, sinon le client croit devoir repayer).
+  - Affichage **client** : label « Couverture » + « Offre Fondateur » / « Pack X séances »
+    (jamais le prix nu si couvert, sinon le client croit devoir repayer). Depuis 9 juillet
+    on ne dit plus « Incluse — » (redondant + débordait mobile).
   - Affichage **coach/admin** : prix unitaire conservé (rémunération + CA réel) + mention
     « VIA PACK X » / « FONDATEUR » pour le contexte.
   - **CA admin** = somme des prix unitaires des séances confirmées. Un pack 180€ consommé à 2/4
     séances = 120€ de CA réalisé (l'écart paiement/réalisé est visible exprès).
+- **-5% Membre Fondateur (9 juillet)** appliqué automatiquement sur séances +
+  packs + promos Insta (voir « Réduction -5% » dans État des features pour le
+  détail). `PricingCalculator::FOUNDING_DISCOUNT_RATE = 0.05`. Signatures
+  `singleSessionPrice(format, slot, bool $foundingMember = false)` et
+  `monthlyPackPrice(format, pack, slot, bool $fullAccess = false, bool
+  $foundingMember = false)`. Défaut `false` = rétrocompat totale. **ORDRE
+  volontaire dans monthlyPackPrice** : -5% appliqué AVANT surcoût FullAccess
+  (30€/25€ reste plein pour tout le monde).
+- **Créneau : max 2 réservations sur même heure exacte (10 juillet)**. Voir
+  `Coach::MAX_BOOKINGS_PER_EXACT_SLOT = 2` + `isSlotAcceptingBooking(startAt)`.
+  Chevauchements d'horaires différents (ex 21h00 vs 21h30) autorisés — le
+  coach gère humainement. Message d'erreur avec seuil dynamique.
 
 ---
 
@@ -717,6 +730,133 @@ ResetFoundingClaims, SeedFoundingOffer, SeedPricingShowcase, **SendDayBeforeRemi
     startAt, reason, oldRole, newRole, previous, new) et formatage (méthode
     cash/card/stripe → labels FR, montant `40.00` → `40,00 €`, dates `d/m/Y à H\hi`,
     null → « Non renseigné »).
+- **Restyle admin vague 1 (9 juillet 2026)** : 5 pages-listes (`bookings/index`,
+  `users/index`, `subscriptions/list`, `founding/list`, `audit/index`) unifiées sur
+  le langage visuel de la page Paiements. **UNE source de vérité** CSS commune
+  extraite dans `assets/styles/pages/admin-common.css` :
+  - `.admin-page`, `.admin-page-header`, `.admin-title`, `.admin-subtitle`,
+    `.admin-filterbar`, `.admin-btn-export`, `.admin-btn-pill` (variantes
+    `--danger`/`--green`), `.admin-empty`, `.admin-table-card`, `.admin-table`
+    (thead Barlow uppercase, tbody hover subtil), `.admin-cell-ref/date/num`,
+    `.admin-badge` (6 variantes `--ok/gold/warn/danger/neutral/purple`),
+    `.admin-mini-tag`, `.admin-row-action`, `.admin-stats-grid`, `.admin-stat`.
+  - **Responsive mobile ≤ 900px** : la table devient des cards empilées via
+    `data-label` attribute sur chaque `<td>` + `td::before { content: attr(data-label) }`.
+    Aucun scroll horizontal.
+  - Macro Twig `templates/_macros/admin_dropdown.html.twig` (`filterDropdown(route,
+    param, eyebrow, current, options)`) — génère le ui-dropdown filtre avec
+    préservation des autres query params. Utilisée sur bookings (Statut),
+    subscriptions (État + Pack), audit (Action + Rôle), paiements existant.
+  - `ui-dropdown.js` chargé globalement dans `admin/base.html.twig` (dispo sur
+    toutes les pages admin sans oubli).
+- **Réduction -5% Membre Fondateur (9 juillet — chantiers 2a + 2b)** : un Fondateur
+  (`User::isFoundingMember()` = `foundingClaim != null`) bénéficie de **-5% à vie
+  sur toute séance à l'unité, tout pack, ET toute offre promo Insta**. Cumul assumé
+  avec l'avantage pack.
+  - **Séances/packs (2a)** : `PricingCalculator::FOUNDING_DISCOUNT_RATE = 0.05` +
+    paramètre `bool $foundingMember = false` sur `singleSessionPrice()` et
+    `monthlyPackPrice()`. Défaut `false` → rétrocompat totale (aucun appelant
+    existant ne change de comportement sans être modifié).
+  - **ORDRE VOLONTAIRE dans monthlyPackPrice** : -5% appliqué sur la base pack
+    AVANT ajout du surcoût FullAccess (30€/25€). Le surcoût "accès 24/24" reste
+    plein pour tout le monde — sinon un fondateur qui coche l'option verrait
+    +28,50€ (contradiction avec l'affichage "+30€" sur tarifs). **Ne pas inverser
+    l'ordre.**
+  - **6 points d'appel câblés** : `BookingManager::createBooking` (séance),
+    `BookingManager::createSubscription` (pack), `StripeCheckoutService::
+    packPriceInCents` (Stripe pack), `BookingController::pricingPreview` (aperçu
+    tunnel, `$this->getUser()?->isFoundingMember()`), `PaymentJournalBuilder`
+    (recalcul PPR pending — Subscription lit `monthlyPrice` stocké).
+    `packSavingsPerPerson()` reste SANS paramètre `foundingMember` (page tarifs
+    publique = prix standards des 2 côtés).
+  - **Promos Insta (2b)** : le `-5%` est déterminé UNIQUEMENT par
+    `$this->getUser()?->isFoundingMember()` (compte connecté), JAMAIS par
+    `buyer_email` saisi (usurpation possible). Ajout du flag
+    `PromoPurchase.foundingDiscountApplied` (bool, DB `founding_discount_applied
+    tinyint`) pour traçabilité — le prix effectif est stocké dans le champ
+    `amount` existant.
+  - **Cohérence prix GARANTIE** : `promoPurchasePriceInCents($purchase)` lit
+    `purchase.getAmount()` → utilisé à la CRÉATION session Stripe ET à la
+    VÉRIFICATION du retour (L492). Impossible d'avoir un rejet pour un fondateur.
+    Méthode helper `PromoOfferController::resolveEffectivePromoAmount(offer)`
+    retourne `[prix effectif, flag]`, appelée dans les 2 routes d'achat
+    (`/offres/{slug}/payer` + `/offres/{slug}/reserver-au-club`).
+  - **Affichage** : home (2 blocs founding avec « -5% à vie sur séances &
+    packs »), tarifs_v2 (encart or `.pricing-founding-note` entre day-pass et
+    packs, « Appliqué automatiquement à la réservation et au paiement »),
+    tunnel réservation (bandeau or si `app.user.isFoundingMember`), mon-rdv
+    (pill « FONDATEUR -5% APPLIQUÉ » à côté du prix à régler), Stripe Checkout
+    description enrichie « Membre Fondateur -5% inclus », promo page publique
+    (prix effectif or + prix public barré à côté + pill compact « FONDATEUR
+    -5% »), `/admin/users`/`bookings`/`subscriptions` (composant
+    `.admin-founding-pill` couronne or à côté du nom client).
+  - **Prefill form promo si connecté** : buyer_name/email/phone pré-remplis
+    depuis `app.user` mais restent VISIBLES et MODIFIABLES (le client peut
+    offrir la promo à quelqu'un — le -5% suit son compte, pas l'email saisi).
+  - **Fix libellé « Incluse — Pack X séances »** (mon-rdv) : le label
+    « Couverture » suffit à indiquer que c'est inclus. « Incluse — » retiré
+    (redondant + débordait sur mobile). Résultat : « Couverture · Offre
+    Fondateur » / « Couverture · Pack 4 séances ».
+- **Créneaux max 2 sur même heure exacte (10 juillet — chantier PR3)** : décision
+  Loïc, on passe de « max 1 réservation + tout chevauchement bloqué » à « **max 2
+  réservations sur la même heure de début EXACTE**, chevauchements d'horaires
+  différents autorisés ».
+  - `Coach::isAvailableOnSlot($start, $end)` **SUPPRIMÉE**. Remplacée par
+    `Coach::MAX_BOOKINGS_PER_EXACT_SLOT` (constante publique = 2),
+    `countBookingsOnExactSlot(\DateTimeInterface $start): int` et
+    `isSlotAcceptingBooking(\DateTimeInterface $start): bool`.
+  - Comparaison sur `startAt->format('Y-m-d H:i')` (à la **minute**, robuste
+    aux différences de secondes). Comptés : bookings statut PENDING ou CONFIRMED.
+    Les no-show restent au statut CONFIRMED mais leur `startAt` est
+    nécessairement passé (marqués post-séance) → ne peuvent jamais matcher un
+    nouveau `startAt` futur, aucun filtre spécifique nécessaire.
+  - `BookingManager::create` L64 câble `isSlotAcceptingBooking()` et lance
+    `ConflictHttpException` avec message injecté du seuil : « Ce créneau est
+    complet (2 réservations maximum). Choisis un autre horaire. » — si Loïc
+    passe à 3 un jour, changer la constante suffit.
+  - **Cas pack sur place** : `materializePackFromRequest()` → `create()` throw
+    `ConflictHttpException` → catch → pack activé quand même,
+    `PackFirstBookingFailedException` levée. **Flux inchangé.**
+  - **Fix bug préexistant coach null** : `Booking.coach` avait
+    `JoinColumn(nullable: false)` côté DB mais AUCUNE contrainte Symfony
+    (`Assert\NotNull`). `$form->isValid()` retournait `true` avec coach=null →
+    TypeError. Ajout `#[Assert\NotNull(message: 'Choisis un coach avant de
+    valider ta demande.')]`. Idem `Booking.startAt` : message anglais « This
+    value should not be null. » → « Choisis une date et une heure pour ta
+    séance. »
+- **Composant `ui-dropdown` — 2 modes (10 juillet)** : évolution non-cassante
+  du composant existant (utilisé sur `/admin/paiements` depuis juillet).
+  - **Mode navigation** (existant) : `<a href="?query=...">` dans les options,
+    clic = navigation GET. Inchangé.
+  - **Mode formulaire** (nouveau) : `data-dropdown-mode="form"` +
+    `data-dropdown-target="{id du select}"`. Le `<select>` réel est rendu dans
+    le DOM mais masqué via `.ui-dropdown-hidden-select` (position absolute,
+    clip rect, pointer-events none) — validation Symfony, `form_errors`,
+    prefill via `option selected`, dégradation gracieuse si JS down.
+    Au init, le JS lit les `<option>` du select cible et génère
+    dynamiquement les `<button.ui-dropdown-option>`. Au clic, sync
+    `select.value = data-value` + dispatch `Event('change', {bubbles: true})`
+    ET `input` bubbling → `booking-form.js` et autres listeners captent
+    normalement (prix live, toggle chips paiement).
+  - **Navigation clavier a11y** : ↓↑ ouvrent + naviguent options, Enter/Space
+    sélectionnent, Escape ferme + refocus trigger. Focus visible sur trigger
+    et options.
+  - **Macro Twig** `templates/_macros/form_dropdown.html.twig` :
+    - `{{ ui.formSelect(field, eyebrow) }}` : pour un champ Symfony
+      (EntityType, ChoiceType, EnumType)
+    - `{{ ui.nativeSelect(id, name, eyebrow, choices, current, required) }}` :
+      pour un `<select>` HTML natif sans FormType (ex `promo_offers/form.html.
+      twig` type + status)
+  - **Chargement global** : `<script src="js/ui-dropdown.js" defer>` dans
+    `templates/base.html.twig` (en plus de `admin/base.html.twig` qui le
+    chargeait déjà). Dispo partout.
+  - **Selects convertis** : `booking/new` (coach + personsCount), `client/
+    pack-reserver` (coach), `client/profil` (preferredTimeSlot + preferredCoach
+    + goal), `admin/promo_offers/form` (type + status HTML natifs). **Aucun
+    `<select>` natif visible ne subsiste** — grep confirmé.
+  - **Cas signalé, non converti** : `AdminCoachType::specialties` a
+    `multiple=true, expanded=true` → rendu en groupe de checkboxes, pas un
+    `<select>`. Un ui-dropdown multi-checkbox serait un chantier séparé.
 
 ---
 
