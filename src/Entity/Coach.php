@@ -184,24 +184,52 @@ class Coach
     }
 
     /**
-     * Vérifie si le coach est disponible sur un créneau donné.
-     * Un créneau est considéré occupé par toute réservation confirmée
-     * OU en attente qui chevauche l'intervalle demandé (premier arrivé, premier servi).
+     * Nombre max de réservations autorisées sur un même créneau exact (même
+     * coach, même heure de début). Au-delà, le créneau est considéré plein.
+     * Décision métier Loïc (juillet 2026) : passe de 1 → 2 pour permettre au
+     * coach d'accepter un deuxième client sur la même heure s'il gère bien.
      */
-    public function isAvailableOnSlot(\DateTimeInterface $start, \DateTimeInterface $end): bool
+    public const MAX_BOOKINGS_PER_EXACT_SLOT = 2;
+
+    /**
+     * Compte les réservations du coach qui commencent EXACTEMENT à cet
+     * instant (comparaison au niveau minute — les créneaux sont posés à la
+     * minute via le formulaire, les secondes n'entrent pas dans la clef).
+     *
+     * Comptés : bookings statut PENDING ou CONFIRMED uniquement (les REFUSED
+     * / CANCELLED ne bloquent pas). Les no-show restent au statut CONFIRMED
+     * mais leur startAt est nécessairement passé (marqués après la séance) :
+     * ils ne peuvent donc jamais matcher un nouveau startAt futur — pas
+     * besoin de filtre spécifique.
+     *
+     * IMPORTANT : cette méthode ne bloque PAS les chevauchements d'horaires
+     * différents (ex 21h00 vs 21h30). Seule l'égalité EXACTE du startAt
+     * compte. Loïc préfère laisser le coach gérer les enchaînements
+     * chevauchants humainement plutôt que de bloquer côté système.
+     */
+    public function countBookingsOnExactSlot(\DateTimeInterface $start): int
     {
+        $key = $start->format('Y-m-d H:i');
+        $count = 0;
         foreach ($this->bookings as $booking) {
             if (!in_array($booking->getStatus(), [Booking::STATUS_PENDING, Booking::STATUS_CONFIRMED], true)) {
                 continue;
             }
-
-            // Chevauchement d'intervalles : [start, end) ∩ [bStart, bEnd) ≠ ∅
-            if ($start < $booking->getEndAt() && $end > $booking->getStartAt()) {
-                return false;
+            $bStart = $booking->getStartAt();
+            if ($bStart !== null && $bStart->format('Y-m-d H:i') === $key) {
+                $count++;
             }
         }
+        return $count;
+    }
 
-        return true;
+    /**
+     * True si un nouveau booking peut être posé sur ce créneau exact, false
+     * si le seuil MAX_BOOKINGS_PER_EXACT_SLOT est atteint (créneau plein).
+     */
+    public function isSlotAcceptingBooking(\DateTimeInterface $start): bool
+    {
+        return $this->countBookingsOnExactSlot($start) < self::MAX_BOOKINGS_PER_EXACT_SLOT;
     }
 
     public function getIsAvailableTonight(): bool { return $this->isAvailableTonight; }

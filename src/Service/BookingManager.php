@@ -60,9 +60,16 @@ class BookingManager
     ): Booking {
         $endAt = $startAt->modify(sprintf('+%d minutes', self::SESSION_DURATION_MINUTES));
 
-        // Vérification de disponibilité (premier arrivé, premier servi)
-        if (!$coach->isAvailableOnSlot($startAt, $endAt)) {
-            throw new ConflictHttpException('Ce créneau n\'est plus disponible. Veuillez en choisir un autre.');
+        // Vérification de disponibilité : le coach accepte jusqu'à
+        // MAX_BOOKINGS_PER_EXACT_SLOT (= 2) réservations sur le même créneau
+        // exact (même heure de début). Les chevauchements d'horaires
+        // différents (ex 21h00 vs 21h30) ne sont PAS bloqués — le coach les
+        // gère humainement.
+        if (!$coach->isSlotAcceptingBooking($startAt)) {
+            throw new ConflictHttpException(sprintf(
+                'Ce créneau est complet (%d réservations maximum). Choisis un autre horaire.',
+                Coach::MAX_BOOKINGS_PER_EXACT_SLOT,
+            ));
         }
 
         // Vérification du pack si fourni

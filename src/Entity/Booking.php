@@ -37,6 +37,7 @@ class Booking
 
     #[ORM\ManyToOne(inversedBy: 'bookings')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Assert\NotNull(message: 'Choisis un coach avant de valider ta demande.')]
     private ?Coach $coach = null;
 
     /** Format de séance : SOLO / DUO / TRIO / GROUP */
@@ -67,7 +68,7 @@ class Booking
     private ?Subscription $subscription = null;
 
     #[ORM\Column(type: Types::DATETIME_IMMUTABLE)]
-    #[Assert\NotNull]
+    #[Assert\NotNull(message: 'Choisis une date et une heure pour ta séance.')]
     #[Assert\GreaterThan('now', message: 'La date doit être dans le futur')]
     private ?\DateTimeImmutable $startAt = null;
 
