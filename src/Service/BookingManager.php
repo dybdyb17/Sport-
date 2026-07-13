@@ -360,8 +360,9 @@ class BookingManager
             ->setPaidAt(new \DateTimeImmutable());
 
         // 2) Créer la 1ʳᵉ séance — cas créneau pris n'invalide PAS le pack
+        $firstBooking = null;
         try {
-            $this->create(
+            $firstBooking = $this->create(
                 $ppr->getClient(),
                 $ppr->getCoach(),
                 $ppr->getFormat(),
@@ -383,6 +384,12 @@ class BookingManager
             }
             $this->em->flush();
 
+            // Mails d'activation — pack effectivement créé, 1ère séance manquante.
+            // Ces try/catch internes garantissent qu'un échec Resend ne masque
+            // pas la PackFirstBookingFailedException métier ci-dessous.
+            $this->mailer->sendPackActivatedToClient($subscription, null);
+            $this->mailer->sendPackSoldToAdmin($subscription);
+
             throw new PackFirstBookingFailedException(
                 sprintf('Pack activé (id=%d) mais créneau du %s non dispo : %s',
                     $subscription->getId(),
@@ -400,6 +407,16 @@ class BookingManager
             $ppr->setValidatedBy($validatedBy);
         }
         $this->em->flush();
+
+        // Mails d'activation — point d'appel UNIQUE pour les 2 flows (stripe +
+        // sur place). L'idempotence est garantie par le short-circuit tout en
+        // haut de la méthode : si le PPR est déjà CONFIRMED, on retourne sans
+        // rien créer et les mails ne partent PAS. Un pack = un mail.
+        // Les méthodes du mailer avalent leurs propres exceptions (try/catch +
+        // logger), donc un Resend down ne cassera ni le paiement ni la
+        // validation coach.
+        $this->mailer->sendPackActivatedToClient($subscription, $firstBooking);
+        $this->mailer->sendPackSoldToAdmin($subscription);
 
         return $subscription;
     }

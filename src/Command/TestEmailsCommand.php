@@ -5,9 +5,11 @@ namespace App\Command;
 use App\Entity\Booking;
 use App\Entity\Coach;
 use App\Entity\Enum\BookingFormat;
+use App\Entity\Enum\PackType;
 use App\Entity\Enum\TimeSlot;
 use App\Entity\FoundingClaim;
 use App\Entity\FoundingOffer;
+use App\Entity\Subscription;
 use App\Entity\User;
 use App\Service\MailerService;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -34,7 +36,7 @@ class TestEmailsCommand extends Command
         $this
             ->addArgument('recipient', InputArgument::REQUIRED, 'Email destinataire')
             ->addOption('type', 't', InputOption::VALUE_OPTIONAL,
-                'Type d\'email à tester : booking_pending|booking_confirmed|booking_refused|founding|registration|admin_alert|all',
+                'Type d\'email à tester : booking_pending|booking_confirmed|booking_refused|founding|registration|admin_alert|pack_client|pack_admin|pack_client_no_slot|all',
                 'all'
             );
     }
@@ -48,21 +50,24 @@ class TestEmailsCommand extends Command
         $io->title('SPORT+ — Test des emails');
         $io->text("Destinataire : <info>{$recipient}</info>");
 
-        [$booking, $client, $coach, $user, $claim, $offer] = $this->buildFixtures($recipient);
+        [$booking, $client, $coach, $user, $claim, $offer, $subscription] = $this->buildFixtures($recipient);
 
         $types = $type === 'all'
-            ? ['booking_pending', 'booking_confirmed', 'booking_refused', 'founding', 'registration', 'admin_alert']
+            ? ['booking_pending', 'booking_confirmed', 'booking_refused', 'founding', 'registration', 'admin_alert', 'pack_client', 'pack_admin', 'pack_client_no_slot']
             : [$type];
 
         foreach ($types as $t) {
             match ($t) {
-                'booking_pending'   => $this->mailer->sendBookingPendingToCoach($booking),
-                'booking_confirmed' => $this->mailer->sendBookingConfirmedToClient($booking),
-                'booking_refused'   => $this->mailer->sendBookingRefusedToClient($booking, 'Créneau déjà réservé par un autre client.'),
-                'founding'          => $this->mailer->sendFoundingWelcomeToUser($claim),
-                'registration'      => $this->mailer->sendRegistrationWelcome($user),
-                'admin_alert'       => $this->mailer->sendNewFoundingAlertToAdmin($claim),
-                default             => $io->warning("Type inconnu : {$t}"),
+                'booking_pending'      => $this->mailer->sendBookingPendingToCoach($booking),
+                'booking_confirmed'    => $this->mailer->sendBookingConfirmedToClient($booking),
+                'booking_refused'      => $this->mailer->sendBookingRefusedToClient($booking, 'Créneau déjà réservé par un autre client.'),
+                'founding'             => $this->mailer->sendFoundingWelcomeToUser($claim),
+                'registration'         => $this->mailer->sendRegistrationWelcome($user),
+                'admin_alert'          => $this->mailer->sendNewFoundingAlertToAdmin($claim),
+                'pack_client'          => $this->mailer->sendPackActivatedToClient($subscription, $booking),
+                'pack_client_no_slot'  => $this->mailer->sendPackActivatedToClient($subscription, null),
+                'pack_admin'           => $this->mailer->sendPackSoldToAdmin($subscription),
+                default                => $io->warning("Type inconnu : {$t}"),
             };
             $io->writeln("<fg=green>✓</> Email <info>{$t}</info> envoyé à <info>{$recipient}</info>");
             usleep(1200000); // 1.2s — respecte la limite Mailtrap free (1 email/sec)
@@ -118,6 +123,21 @@ class TestEmailsCommand extends Command
         $claim->setUser($client);
         $claim->setClaimNumber(13);
 
-        return [$booking, $client, $coach, $client, $claim, $offer];
+        // Subscription pack test — pack 8 séances SOLO NIGHT, mode carte sur place
+        $subscription = new Subscription();
+        $subscription->setClient($client);
+        $subscription->setCoach($coach);
+        $subscription->setFormat(BookingFormat::SOLO);
+        $subscription->setTimeSlot(TimeSlot::NIGHT);
+        $subscription->setPackType(PackType::PACK_8);
+        $subscription->setPersonsCount(1);
+        $subscription->setFullAccess(false);
+        $subscription->setMonthlyPrice('336.00');
+        $subscription->setSessionsRemaining(8);
+        $subscription->setStatus(Subscription::STATUS_ACTIVE);
+        $subscription->setPaymentMethod('card');
+        $subscription->setPaidAt(new \DateTimeImmutable());
+
+        return [$booking, $client, $coach, $client, $claim, $offer, $subscription];
     }
 }

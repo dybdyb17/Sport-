@@ -40,7 +40,7 @@ class Booking
     #[Assert\NotNull(message: 'Choisis un coach avant de valider ta demande.')]
     private ?Coach $coach = null;
 
-    /** Format de séance : SOLO / DUO / TRIO / GROUP */
+    /** Format de séance : SOLO / DUO / GROUP */
     #[ORM\Column(enumType: BookingFormat::class)]
     private BookingFormat $format = BookingFormat::SOLO;
 
@@ -50,7 +50,7 @@ class Booking
 
     /**
      * Nombre réel de participants :
-     * - SOLO : 1, DUO : 2, TRIO : 3 (déduits automatiquement du format)
+     * - SOLO : 1, DUO : 2 (déduits automatiquement du format)
      * - GROUP : 4 à 6 (saisi par le client)
      */
     #[ORM\Column]

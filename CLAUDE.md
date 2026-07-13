@@ -169,7 +169,37 @@ StripeCheckoutService.
 
 **Commands** : CreateAdmin, CreateCoach, GrantAdmin, PromoteAdmin, PromoteCoach,
 ResetFoundingClaims, SeedFoundingOffer, SeedPricingShowcase, **SendDayBeforeReminders**
-(cron J-1), **TestEmails** (`app:test-emails <email>` pour tester le rendu).
+(cron J-1), **TestEmails** (`app:test-emails <email>` pour tester le rendu),
+**PurgePendingPacks** (`app:purge-pending-packs` — voir ci-dessous).
+
+### Commande `app:purge-pending-packs` (13 juillet 2026)
+Supprime les `PendingPackRequest` **Stripe abandonnées** (client a ouvert le
+Checkout puis fermé sans payer) pour éviter la pollution en base.
+- Par défaut : **DRY-RUN** (aucune suppression, juste la liste). Ajoute `--force`
+  pour exécuter réellement.
+- Filtre âge : par défaut > 24h. Ajuste avec `--hours=48`.
+- ⚠️ **Ne purge JAMAIS** : les demandes SUR PLACE (paymentMethod = cash/card —
+  un client peut légitimement mettre plusieurs jours à venir payer au comptoir),
+  ni les demandes CONFIRMED/REFUSED, ni celles déjà liées à un `Subscription`.
+- **Pas de cron auto** : lancer manuellement selon besoin depuis Railway shell
+  ou en local. `php bin/console app:purge-pending-packs` → liste, puis `--force`
+  si le résultat est OK.
+
+### Mails d'activation pack (13 juillet 2026)
+À l'activation effective d'un pack (Stripe payé OU coach validate sur place),
+deux mails partent automatiquement :
+- **Client** : `sendPackActivatedToClient` → `emails/pack_activated_client.html.twig`
+  (récap pack, 1ère séance si créée, expiration `endsAt`, badge Fondateur -5% si
+  applicable).
+- **Admin** (Loïc via `APP_EMAIL_ADMIN`) : `sendPackSoldToAdmin` →
+  `emails/pack_sold_admin.html.twig` (client, montant, mode paiement).
+- **Point d'appel UNIQUE** : `BookingManager::materializePackFromRequest` (le
+  passage obligé des 2 flows). Placés APRÈS le `flush()` de confirmation +
+  APRÈS le short-circuit d'idempotence en haut de méthode → 1 pack = 1 mail,
+  aucun doublon même si le webhook Stripe retape 2 fois.
+- **Sécurité paiement** : les 2 méthodes ont leur propre `try/catch` +
+  `logger->error` (pattern identique aux 10 autres méthodes MailerService). Un
+  Resend down ne casse ni le paiement ni la validation coach.
 
 ---
 

@@ -1,0 +1,81 @@
+{% extends 'emails/base.html.twig' %}
+{% import 'emails/_macros.html.twig' as m %}
+
+{% block subject %}Ton pack SPORT+ est actif{% endblock %}
+
+{% block content %}
+{% set sessions = subscription.packType.sessionsCount() %}
+{% set foundingDiscount = client.foundingMember and subscription.paymentMethod in ['stripe', 'cash', 'card'] %}
+{% set paymentLabel = {
+  'stripe': 'Paiement en ligne (Stripe)',
+  'cash':   'Espèces sur place',
+  'card':   'Carte sur place'
+}[subscription.paymentMethod] ?? subscription.paymentMethod %}
+
+<p style="margin:0 0 20px;font-size:16px;color:#ECECEC;font-family:Arial,Helvetica,sans-serif;">
+  Salut <strong style="color:#F4EFE6;">{{ client.nomComplet|split(' ')|first }}</strong>,
+</p>
+
+<p style="margin:0 0 20px;font-size:15px;color:#ECECEC;font-family:Arial,Helvetica,sans-serif;line-height:1.65;">
+  Ton pack est activé — tu peux réserver tes séances dès maintenant.
+</p>
+
+{# Hero pack #}
+<table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background:linear-gradient(135deg,#161620,#1A1A10);border:1px solid #C8A951;border-radius:10px;margin:0 0 24px;">
+  <tr>
+    <td align="center" style="padding:28px 24px;">
+      <div style="font-family:'Helvetica Neue',Arial,sans-serif;font-size:11px;letter-spacing:4px;text-transform:uppercase;color:#7A6228;margin-bottom:8px;">Pack actif</div>
+      <div style="font-family:'Helvetica Neue',Arial,sans-serif;font-size:48px;font-weight:900;color:#C8A951;letter-spacing:-2px;line-height:1;">{{ sessions }}</div>
+      <div style="font-family:'Helvetica Neue',Arial,sans-serif;font-size:13px;letter-spacing:2px;text-transform:uppercase;color:#ECECEC;margin-top:6px;">
+        séance{{ sessions > 1 ? 's' : '' }} incluse{{ sessions > 1 ? 's' : '' }}
+      </div>
+      <div style="font-family:Arial,Helvetica,sans-serif;font-size:12px;color:#9A8F7A;margin-top:10px;">
+        Valable jusqu'au <strong style="color:#C8A951;">{{ subscription.endsAt|date('d/m/Y') }}</strong>
+      </div>
+    </td>
+  </tr>
+</table>
+
+{{ m.infoCard('Format', subscription.format.label ~ ' · ' ~ subscription.timeSlot.label) }}
+{{ m.infoCard('Montant', subscription.monthlyPrice ~ ' €' ~ (foundingDiscount ? ' <span style="color:#C8A951;font-size:12px;">(Fondateur -5% appliqué)</span>' : '')) }}
+{{ m.infoCard('Mode de paiement', paymentLabel) }}
+
+{% if firstBooking %}
+  {# 1ère séance créée dans la foulée #}
+  <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color:#161620;border-left:3px solid #2ECC71;border-radius:6px;margin:16px 0;">
+    <tr>
+      <td style="padding:14px 18px;">
+        <div style="font-weight:700;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#2ECC71;margin-bottom:6px;font-family:Arial,Helvetica,sans-serif;">Ta 1ʳᵉ séance</div>
+        <div style="color:#ECECEC;font-size:15px;font-family:Arial,Helvetica,sans-serif;line-height:1.6;font-weight:700;">
+          {{ firstBooking.startAt|date('l d/m/Y \\à H\\hi') }}
+        </div>
+        <div style="color:#9A8F7A;font-size:13px;font-family:Arial,Helvetica,sans-serif;margin-top:4px;">
+          Avec <strong style="color:#C8A951;">{{ firstBooking.coach.nomComplet }}</strong> — en attente de confirmation du coach
+        </div>
+      </td>
+    </tr>
+  </table>
+{% else %}
+  {# Créneau initial pris — invitation à choisir un autre horaire #}
+  <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color:#161620;border-left:3px solid #E5B85A;border-radius:6px;margin:16px 0;">
+    <tr>
+      <td style="padding:14px 18px;">
+        <div style="font-weight:700;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#E5B85A;margin-bottom:6px;font-family:Arial,Helvetica,sans-serif;">Créneau initial indisponible</div>
+        <div style="color:#ECECEC;font-size:14px;font-family:Arial,Helvetica,sans-serif;line-height:1.6;">
+          Le créneau que tu avais choisi n'était plus libre au moment de la validation.
+          Pas de souci — ton pack est bien actif, il te suffit d'aller réserver un autre horaire depuis ton espace.
+        </div>
+      </td>
+    </tr>
+  </table>
+{% endif %}
+
+{{ m.button(packsUrl, 'Gérer mon pack') }}
+
+{{ m.divider() }}
+
+<p style="margin:0;font-size:12px;color:#9A8F7A;font-family:Arial,Helvetica,sans-serif;line-height:1.6;text-align:center;">
+  Les séances non utilisées expirent le <strong style="color:#C8A951;">{{ subscription.endsAt|date('d/m/Y') }}</strong>.<br>
+  Pense à réserver tes créneaux régulièrement pour tout consommer.
+</p>
+{% endblock %}

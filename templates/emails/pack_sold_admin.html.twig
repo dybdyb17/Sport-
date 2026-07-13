@@ -1,0 +1,42 @@
+{% extends 'emails/base.html.twig' %}
+{% import 'emails/_macros.html.twig' as m %}
+
+{% block subject %}Nouveau pack vendu — {{ subscription.client.nomComplet }}{% endblock %}
+
+{% block content %}
+{% set sessions = subscription.packType.sessionsCount() %}
+{% set paymentLabel = {
+  'stripe': 'Stripe (en ligne)',
+  'cash':   'Espèces sur place',
+  'card':   'Carte sur place'
+}[subscription.paymentMethod] ?? subscription.paymentMethod %}
+
+<p style="margin:0 0 20px;font-size:16px;color:#ECECEC;font-family:Arial,Helvetica,sans-serif;">
+  Un pack vient d'être activé.
+</p>
+
+{{ m.badge('Pack ' ~ sessions ~ ' séances — ' ~ subscription.monthlyPrice ~ ' €') }}
+
+<div style="margin-top:20px;"></div>
+
+{{ m.infoCard('Client', client.nomComplet ~ ' — ' ~ client.email) }}
+{{ m.infoCard('Format', subscription.format.label ~ ' · ' ~ subscription.timeSlot.label) }}
+{{ m.infoCard('Montant encaissé', subscription.monthlyPrice ~ ' €') }}
+{{ m.infoCard('Mode de paiement', paymentLabel) }}
+{{ m.infoCard('Payé le', subscription.paidAt ? subscription.paidAt|date('d/m/Y à H:i') : subscription.startsAt|date('d/m/Y à H:i')) }}
+{{ m.infoCard('Valable jusqu\'au', subscription.endsAt|date('d/m/Y')) }}
+
+{% if client.foundingMember %}
+  <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color:#161620;border-left:3px solid #C8A951;border-radius:6px;margin:16px 0;">
+    <tr>
+      <td style="padding:12px 18px;">
+        <div style="font-family:Arial,Helvetica,sans-serif;font-size:13px;color:#C8A951;">
+          Membre Fondateur — réduction -5% appliquée sur le prix affiché.
+        </div>
+      </td>
+    </tr>
+  </table>
+{% endif %}
+
+{{ m.button(adminSubscriptions, 'Voir dans l\'admin') }}
+{% endblock %}

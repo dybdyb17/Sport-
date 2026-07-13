@@ -5,6 +5,7 @@ namespace App\Service;
 use App\Entity\Booking;
 use App\Entity\FoundingClaim;
 use App\Entity\PromoPurchase;
+use App\Entity\Subscription;
 use App\Entity\User;
 use Psr\Log\LoggerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
@@ -285,6 +286,85 @@ class MailerService
             $this->logger->error('Échec envoi email promo_ticket_activated: ' . $e->getMessage(), [
                 'purchase' => $purchase->getId(),
                 'file'     => $e->getFile() . ':' . $e->getLine(),
+            ]);
+        }
+    }
+
+    /**
+     * Email envoyé au client dès l'activation effective de son pack — que le
+     * paiement ait été fait en ligne (Stripe) ou sur place (validation coach).
+     *
+     * $firstBooking = la 1ère séance créée dans la foulée. NULL si le créneau
+     * n'a pas pu être posé (créneau pris entre la demande et la validation) —
+     * dans ce cas on invite le client à en choisir un autre depuis /mes-packs.
+     */
+    public function sendPackActivatedToClient(Subscription $subscription, ?Booking $firstBooking = null): void
+    {
+        try {
+            $client = $subscription->getClient();
+            if (!$client?->getEmail()) {
+                return;
+            }
+
+            $email = (new TemplatedEmail())
+                ->from($this->from());
+            if ($this->replyTo()) {
+                $email->replyTo($this->replyTo());
+            }
+            $email
+                ->to($client->getEmail())
+                ->subject(sprintf('Ton pack %s est actif', $subscription->getPackType()->sessionsCount() . ' séances'))
+                ->htmlTemplate('emails/pack_activated_client.html.twig')
+                ->context([
+                    'subscription' => $subscription,
+                    'client'       => $client,
+                    'firstBooking' => $firstBooking,
+                    'packsUrl'     => $this->abs('app_espace_client_packs'),
+                    'bookingUrl'   => $this->abs('app_booking_new'),
+                ]);
+
+            $this->mailer->send($email);
+        } catch (\Throwable $e) {
+            $this->logger->error('Échec envoi email pack_activated_client: ' . $e->getMessage(), [
+                'subscription' => $subscription->getId(),
+                'file'         => $e->getFile() . ':' . $e->getLine(),
+            ]);
+        }
+    }
+
+    /**
+     * Notification admin (Loïc) à chaque pack vendu — flux Stripe ou sur place.
+     * Réutilise EXACTEMENT le mécanisme APP_EMAIL_ADMIN + fallback gmail, comme
+     * sendNewFoundingAlertToAdmin et sendDayBeforeReminderSummary.
+     */
+    public function sendPackSoldToAdmin(Subscription $subscription): void
+    {
+        try {
+            $adminEmail = $_ENV['APP_EMAIL_ADMIN'] ?? 'ls.sportplus13@gmail.com';
+
+            $email = (new TemplatedEmail())
+                ->from($this->from());
+            if ($this->replyTo()) {
+                $email->replyTo($this->replyTo());
+            }
+            $email
+                ->to($adminEmail)
+                ->subject(sprintf('Nouveau pack vendu — %s (%s €)',
+                    $subscription->getClient()?->getNomComplet() ?? '—',
+                    (string) $subscription->getMonthlyPrice()
+                ))
+                ->htmlTemplate('emails/pack_sold_admin.html.twig')
+                ->context([
+                    'subscription'       => $subscription,
+                    'client'             => $subscription->getClient(),
+                    'adminSubscriptions' => $this->abs('app_admin_subscriptions'),
+                ]);
+
+            $this->mailer->send($email);
+        } catch (\Throwable $e) {
+            $this->logger->error('Échec envoi email pack_sold_admin: ' . $e->getMessage(), [
+                'subscription' => $subscription->getId(),
+                'file'         => $e->getFile() . ':' . $e->getLine(),
             ]);
         }
     }

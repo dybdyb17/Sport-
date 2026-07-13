@@ -48,7 +48,7 @@ class Subscription
     #[ORM\Column(enumType: PackType::class)]
     private PackType $packType = PackType::PACK_4;
 
-    /** Nombre réel de participants (1 pour SOLO, 2 pour DUO, 3 pour TRIO, 4-6 pour GROUP) */
+    /** Nombre réel de participants (1 pour SOLO, 2 pour DUO, 4-6 pour GROUP) */
     #[ORM\Column]
     private int $personsCount = 1;
 
