@@ -392,6 +392,203 @@
 }
 .admin-stat--gold .admin-stat-value { color: var(--gold); }
 .admin-stat--green .admin-stat-value { color: var(--green); }
+.admin-stat--warn::before { background: linear-gradient(90deg, transparent, #ffb450, transparent); }
+.admin-stat--warn .admin-stat-value { color: #ffb450; }
+.admin-stat--danger::before { background: linear-gradient(90deg, transparent, #ff6b6b, transparent); }
+.admin-stat--danger .admin-stat-value { color: #ff8a8a; }
+
+/* Textes secondaires dans une carte-stat (HT/TVA, ratio, contexte) */
+.admin-stat-hint {
+  font-size: 12px;
+  color: var(--text-dim);
+  line-height: 1.5;
+  margin-top: 8px;
+}
+.admin-stat-hint strong { color: var(--white); font-weight: 600; }
+.admin-stat-note {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 12.5px;
+  color: var(--text-dim);
+  margin-top: 6px;
+  line-height: 1.5;
+}
+/* Barre de progression fine dans une carte-stat (ex: fondateurs 12/50) */
+.admin-stat-progress {
+  height: 4px;
+  background: rgba(255,255,255,.05);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-top: 10px;
+}
+.admin-stat-progress-fill {
+  height: 100%;
+  transition: width .4s ease;
+  background: var(--gold);
+}
+.admin-stat--green .admin-stat-progress-fill { background: var(--green); }
+.admin-stat--warn .admin-stat-progress-fill { background: #ffb450; }
+.admin-stat--danger .admin-stat-progress-fill { background: #ff6b6b; }
+
+/* ── Titre de section compact avec lien optionnel à droite ─────────── */
+.admin-section-title {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin: 32px 0 16px;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+.admin-section-title-sub {
+  color: var(--text-dim);
+  font-weight: 600;
+  letter-spacing: 1.2px;
+  font-size: 11.5px;
+}
+.admin-section-title-link {
+  color: var(--gold);
+  font-size: 12px;
+  letter-spacing: 1.2px;
+  text-decoration: none;
+  font-weight: 700;
+  transition: transform .15s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.admin-section-title-link:hover {
+  transform: translateX(2px);
+}
+
+/* ── Callout inline (alerte contextuelle : expirants, quota, etc.) ── */
+.admin-callout {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding: 12px 18px;
+  margin-top: 16px;
+  border-radius: 12px;
+  font-size: 13.5px;
+  color: var(--text-soft);
+  line-height: 1.5;
+}
+.admin-callout i { flex-shrink: 0; }
+.admin-callout strong { color: var(--white); font-weight: 600; }
+.admin-callout--warn {
+  background: rgba(255,180,80,.08);
+  border: 1px solid rgba(255,180,80,.28);
+  border-left: 3px solid #ffb450;
+}
+.admin-callout--warn i { color: #ffb450; }
+.admin-callout-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 100px;
+  background: #ffb450;
+  color: var(--black);
+  text-decoration: none;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  white-space: nowrap;
+  transition: transform .15s ease;
+}
+.admin-callout-cta:hover { transform: translateY(-1px); }
+
+/* ── Grande carte "double métrique" (chiffre principal + chiffre split
+       + éventuellement chips packs) — utilisée sur le dashboard pour la
+       synthèse abonnements ─────────────────────────────────────────── */
+.admin-double-card {
+  padding: 22px 24px;
+  background: linear-gradient(180deg, var(--bg-card) 0%, var(--bg-2, #0F0F16) 100%);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+}
+.admin-double-metric {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+.admin-double-metric-block:not(:first-child) {
+  border-left: 1px solid var(--border);
+  padding-left: 28px;
+}
+.admin-double-metric-value {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: clamp(28px, 3vw, 40px);
+  font-weight: 900;
+  line-height: 1;
+}
+.admin-double-metric-value--gold { color: var(--gold); }
+.admin-double-metric-value--green { color: var(--green); }
+.admin-double-metric-label {
+  font-size: 13px;
+  color: var(--text-dim);
+  margin-top: 4px;
+}
+.admin-chips-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.admin-chip-pack {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 100px;
+  background: rgba(255,255,255,.04);
+  border: 1px solid var(--border);
+  font-size: 13px;
+}
+.admin-chip-pack strong {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--gold);
+}
+.admin-chip-pack span { color: var(--text-dim); letter-spacing: .5px; }
+
+/* Cellule de rang dans une table de classement (top coachs, top clients) */
+.admin-cell-rank {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 800;
+  font-size: 18px;
+  color: var(--text-dim);
+  letter-spacing: 1px;
+  width: 60px;
+}
+.admin-table th.admin-col-rank { width: 60px; }
+/* Variante Barlow d'une cellule primaire (offer label, pack label, etc.) */
+.admin-cell-primary--barlow {
+  font-family: 'Barlow Condensed', sans-serif;
+  letter-spacing: .3px;
+}
+
+@media (max-width: 700px) {
+  .admin-double-metric { gap: 18px; }
+  .admin-double-metric-block:not(:first-child) {
+    border-left: 0;
+    padding-left: 0;
+    padding-top: 14px;
+    border-top: 1px solid var(--border);
+    width: 100%;
+  }
+}
 
 /* ══════════════════════════════════════════════════════════════════════
    RESPONSIVE — la table devient des cards empilées sous 900px
