@@ -1,7 +1,9 @@
 {% extends 'admin/base.html.twig' %}
 
 {% block admin_body %}
-<a href="{{ path('app_admin_coachs') }}" class="btn btn-ghost btn-sm" style="margin-bottom:16px;">
+<div class="admin-page">
+
+<a href="{{ path('app_admin_coachs') }}" class="admin-back-link">
   <i class="ti ti-arrow-left"></i> Tous les coachs
 </a>
 
@@ -53,8 +55,8 @@
 {% endif %}
 
 {# ── STATS MOIS EN COURS ── #}
-<div class="section-label">
-  Performance — <span style="color:var(--text-dim);font-size:13px;letter-spacing:1px;">MOIS EN COURS</span>
+<div class="admin-section-title">
+  <span>Performance <span class="admin-section-title-sub">— Mois en cours</span></span>
 </div>
 {% if statsMonth %}
   {% set s = statsMonth %}
@@ -104,15 +106,15 @@
     {% endfor %}
   </div>
 {% else %}
-  <div class="empty-placeholder" style="padding:32px;text-align:center;color:var(--text-dim);margin-bottom:32px;">
-    <i class="ti ti-calendar-off" style="font-size:36px;opacity:.4;display:block;margin-bottom:8px;"></i>
-    Aucune séance confirmée ce mois-ci.
+  <div class="admin-empty admin-empty--soft">
+    <i class="ti ti-calendar-off"></i>
+    <div class="admin-empty-sub">Aucune séance confirmée ce mois-ci.</div>
   </div>
 {% endif %}
 
 {# ── STATS DEPUIS TOUJOURS ── #}
-<div class="section-label">
-  Carrière — <span style="color:var(--text-dim);font-size:13px;letter-spacing:1px;">DEPUIS LE DÉBUT</span>
+<div class="admin-section-title">
+  <span>Carrière <span class="admin-section-title-sub">— Depuis le début</span></span>
 </div>
 {% if statsAll %}
   {% set s = statsAll %}
@@ -160,18 +162,23 @@
     {% endfor %}
   </div>
 {% else %}
-  <div class="empty-placeholder" style="padding:32px;text-align:center;color:var(--text-dim);margin-bottom:32px;">
-    Aucune séance confirmée à ce jour.
+  <div class="admin-empty admin-empty--soft">
+    <div class="admin-empty-sub">Aucune séance confirmée à ce jour.</div>
   </div>
 {% endif %}
 
 {# ── DERNIÈRES SÉANCES ── #}
-<div class="section-label">Dernières séances <span style="color:var(--text-dim);font-size:13px;letter-spacing:1px;">— LES 15 PLUS RÉCENTES</span></div>
-<div class="data-table-card">
+<div class="admin-section-title">
+  <span>Dernières séances <span class="admin-section-title-sub">— Les 15 plus récentes</span></span>
+</div>
+<div class="admin-table-card">
   {% if recentBookings is empty %}
-    <div class="empty-placeholder" style="padding:48px;text-align:center;color:var(--text-dim);">Aucune réservation.</div>
+    <div class="admin-empty">
+      <i class="ti ti-calendar-off"></i>
+      <div class="admin-empty-sub">Aucune réservation.</div>
+    </div>
   {% else %}
-    <table>
+    <table class="admin-table">
       <thead>
         <tr>
           <th>Réf.</th>
@@ -185,16 +192,20 @@
       <tbody>
         {% for b in recentBookings %}
           <tr data-peek-ref="{{ b.reference }}" class="row-peek">
-            <td style="font-family:'Barlow Condensed',sans-serif;letter-spacing:1.5px;color:var(--gold);font-weight:700;">{{ b.reference }}</td>
-            <td style="color:var(--text-dim);">{{ b.startAt|date('d/m/Y H\\hi') }}</td>
-            <td style="color:var(--text-dim);">{{ b.client.nomComplet }}</td>
-            <td style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:14px;">{{ b.offerLabel }}</td>
-            <td style="color:var(--gold);font-family:'Barlow Condensed',sans-serif;font-weight:700;">{{ b.displayAmountFormatted }}</td>
-            <td class="cell-wrap" style="min-width:140px;"><span class="status-badge {{ b.status }}"><i class="ti {{ b.statutIcon }}"></i>{{ b.statutLabel }}</span></td>
+            <td data-label="Réf." class="admin-cell-ref">{{ b.reference }}</td>
+            <td data-label="Date" class="admin-cell-date">{{ b.startAt|date('d/m/Y H\\hi') }}</td>
+            <td data-label="Client" class="admin-cell-date">{{ b.client.nomComplet }}</td>
+            <td data-label="Prestation" class="admin-cell-offer">{{ b.offerLabel }}</td>
+            <td data-label="Prix" class="admin-cell-price">{{ b.displayAmountFormatted }}</td>
+            <td data-label="Statut" class="cell-wrap admin-cell-status">
+              <span class="status-badge {{ b.status }}"><i class="ti {{ b.statutIcon }}"></i>{{ b.statutLabel }}</span>
+            </td>
           </tr>
         {% endfor %}
       </tbody>
     </table>
   {% endif %}
+</div>
+
 </div>
 {% endblock %}

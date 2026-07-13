@@ -3,60 +3,56 @@
 {% block title %}Modifier {{ coach.nomComplet }} — Admin SPORT+{% endblock %}
 
 {% block admin_body %}
+<div class="admin-page">
 
-<div class="page-header">
-  <div>
-    <h1>Modifier <span style="color:var(--gold)">{{ coach.nomComplet }}</span></h1>
-    <p class="page-subtitle">Mise à jour des informations du coach</p>
+  <div class="admin-page-header">
+    <div class="admin-page-header-body">
+      <h1 class="admin-title">
+        <i class="ti ti-user-edit"></i>
+        <span>Modifier <span class="admin-title-accent">{{ coach.nomComplet }}</span></span>
+      </h1>
+      <p class="admin-subtitle">Mise à jour des informations du coach.</p>
+    </div>
+    <div class="admin-page-header-tools">
+      <a href="{{ path('app_admin_coachs') }}" class="admin-back-link">
+        <i class="ti ti-arrow-left"></i> Retour à la liste
+      </a>
+    </div>
   </div>
-  <a href="{{ path('app_admin_coachs') }}" class="btn btn-secondary">
-    <i class="ti ti-arrow-left"></i> Retour à la liste
-  </a>
-</div>
 
-{# Mini-card récap #}
-<div style="max-width:800px;margin:0 auto 32px;">
-<div style="display:flex;gap:20px;align-items:center;padding:20px;
-            background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);">
   {% set coachPhoto = coach.photoSrc %}
-  {% if coachPhoto %}
-    <img src="{{ coachPhoto }}"
-         alt="{{ coach.nomComplet }}"
-         style="width:60px;height:60px;border-radius:50%;object-fit:cover;border:2px solid var(--gold-dim);flex-shrink:0;">
-  {% else %}
-    <div style="width:60px;height:60px;border-radius:50%;
-                background:linear-gradient(135deg,rgba(200,169,81,.2),rgba(200,169,81,.05));
-                border:1px solid var(--gold-dim);display:flex;align-items:center;justify-content:center;
-                font-family:var(--font-display);font-size:22px;font-weight:700;color:var(--gold);flex-shrink:0;">
-      {%- set words = coach.nomComplet|split(' ') -%}
-      {{- words[0]|first|upper -}}{%- if words|length > 1 -%}{{- words[1]|first|upper -}}{%- endif -%}
-    </div>
-  {% endif %}
-  <div style="flex:1;">
-    <div style="font-family:var(--font-display);font-weight:700;font-size:18px;color:var(--white);">{{ coach.nomComplet }}</div>
-    <div style="font-size:14px;color:var(--text-soft);">{{ coach.user.email }}</div>
-    <div style="font-size:13px;color:var(--text-dim);margin-top:4px;">
-      <i class="ti ti-calendar"></i> Membre depuis {{ coach.user.createdAt|date('d/m/Y') }}
-      &nbsp;·&nbsp;
-      <i class="ti ti-list-check"></i> {{ coach.bookings|length }} réservation{% if coach.bookings|length > 1 %}s{% endif %}
+
+  {# Mini-card récap #}
+  <div class="admin-user-mini-card">
+    {% if coachPhoto %}
+      <img src="{{ coachPhoto }}" alt="{{ coach.nomComplet }}" class="admin-user-mini-avatar">
+    {% else %}
+      <div class="admin-user-mini-avatar admin-user-mini-avatar--initials">
+        {%- set words = coach.nomComplet|split(' ') -%}
+        {{- words[0]|first|upper -}}{%- if words|length > 1 -%}{{- words[1]|first|upper -}}{%- endif -%}
+      </div>
+    {% endif %}
+    <div class="admin-user-mini-body">
+      <div class="admin-user-mini-name">{{ coach.nomComplet }}</div>
+      <div class="admin-user-mini-email">{{ coach.user.email }}</div>
+      <div class="admin-user-mini-meta">
+        <span><i class="ti ti-calendar"></i> Membre depuis {{ coach.user.createdAt|date('d/m/Y') }}</span>
+        <span class="admin-user-mini-sep">·</span>
+        <span><i class="ti ti-list-check"></i> {{ coach.bookings|length }} réservation{% if coach.bookings|length > 1 %}s{% endif %}</span>
+      </div>
     </div>
   </div>
-</div>
-</div>
 
-<div style="max-width:800px;margin:0 auto;">
-  <div class="data-table-card" style="padding:32px 40px;">
+  <div class="admin-form-card">
 
     {{ form_start(form, {'attr': {'enctype': 'multipart/form-data'}}) }}
 
       {% if form.vars.submitted and not form.vars.valid %}
-        <div style="display:flex;gap:12px;align-items:flex-start;padding:14px 18px;margin-bottom:24px;
-                    background:rgba(255,80,80,.08);border:1px solid rgba(255,80,80,.4);
-                    border-radius:10px;color:#ffb3b3;">
-          <i class="ti ti-alert-circle" style="font-size:22px;color:#ff6b6b;flex-shrink:0;margin-top:2px;"></i>
-          <div style="flex:1;font-size:14px;line-height:1.6;">
-            <strong style="color:#fff;display:block;margin-bottom:4px;">Impossible d'enregistrer les modifications :</strong>
-            <ul style="margin:0;padding-left:18px;">
+        <div class="admin-form-errors">
+          <i class="ti ti-alert-circle admin-form-errors-icon"></i>
+          <div class="admin-form-errors-body">
+            <strong>Impossible d'enregistrer les modifications :</strong>
+            <ul>
               {% for error in form.vars.errors %}
                 <li>{{ error.message }}</li>
               {% endfor %}
@@ -97,7 +93,7 @@
           </button>
         </div>
         {{ form_errors(form.plainPassword) }}
-        <div style="font-size:12px;color:var(--text-dim);margin-top:6px;">
+        <div class="admin-form-hint">
           <i class="ti ti-info-circle"></i> 8 caractères minimum si modifié.
         </div>
       </div>
@@ -111,11 +107,9 @@
       <div class="form-field">
         {{ form_label(form.photoFile) }}
         {% if coachPhoto %}
-          <div style="margin-bottom:10px;display:flex;align-items:center;gap:12px;">
-            <img src="{{ coachPhoto }}"
-                 alt="Photo actuelle"
-                 style="width:80px;height:80px;border-radius:10px;object-fit:cover;border:1px solid var(--border);">
-            <span style="font-size:13px;color:var(--text-dim);">Photo actuelle — uploader une nouvelle pour la remplacer</span>
+          <div class="admin-photo-current">
+            <img src="{{ coachPhoto }}" alt="Photo actuelle" class="admin-photo-current-img">
+            <span class="admin-photo-current-label">Photo actuelle — uploader une nouvelle pour la remplacer</span>
           </div>
         {% endif %}
         {{ form_widget(form.photoFile) }}
@@ -135,7 +129,7 @@
         {{ form_errors(form.specialties) }}
       </div>
 
-      <div style="display:flex;gap:12px;margin-top:8px;">
+      <div class="admin-form-actions">
         <button type="submit" class="btn btn-primary">
           <i class="ti ti-device-floppy"></i> Enregistrer les modifications
         </button>
@@ -145,6 +139,6 @@
     {{ form_end(form) }}
 
   </div>
-</div>
 
+</div>
 {% endblock %}

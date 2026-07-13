@@ -3,75 +3,83 @@
 {% block title %}Coachs — Admin SPORT+{% endblock %}
 
 {% block admin_body %}
+<div class="admin-page">
 
-<div class="page-header">
-  <div>
-    <h1>Gestion des <span style="color:var(--gold)">Coachs</span></h1>
-    <p class="page-subtitle">{{ coaches|length }} coach{% if coaches|length > 1 %}s{% endif %} enregistré{% if coaches|length > 1 %}s{% endif %}</p>
+  <div class="admin-page-header">
+    <div class="admin-page-header-body">
+      <h1 class="admin-title">
+        <i class="ti ti-user-star"></i>
+        <span>Gestion des <span class="admin-title-accent">coachs</span></span>
+      </h1>
+      <p class="admin-subtitle">
+        {{ coaches|length }} coach{{ coaches|length > 1 ? 's' : '' }} enregistré{{ coaches|length > 1 ? 's' : '' }}.
+      </p>
+    </div>
+    <div class="admin-page-header-tools">
+      <a href="{{ path('app_admin_coach_new') }}" class="admin-btn-pill admin-btn-pill--green">
+        <i class="ti ti-plus"></i> Créer un coach
+      </a>
+    </div>
   </div>
-  <a href="{{ path('app_admin_coach_new') }}" class="btn btn-primary">
-    <i class="ti ti-plus"></i> Créer un coach
-  </a>
-</div>
 
-<div class="data-table-card">
-  <div class="data-table-header">
-    <h3>Liste des coachs</h3>
-  </div>
   {% if coaches is empty %}
-    <div class="empty-placeholder" style="padding:60px;">Aucun coach enregistré. Créez le premier profil coach.</div>
+    <div class="admin-empty">
+      <i class="ti ti-user-off"></i>
+      <div class="admin-empty-title">Aucun coach enregistré</div>
+      <div class="admin-empty-sub">Créez le premier profil coach.</div>
+    </div>
   {% else %}
-    <table>
-      <thead>
-        <tr>
-          <th>Coach</th>
-          <th>Email</th>
-          <th>Spécialités</th>
-          <th>Bio</th>
-          <th style="text-align:right;">Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for coach in coaches %}
-          <tr data-href="{{ path('app_admin_coach_show', {id: coach.id}) }}" class="row-clickable">
-            <td>
-              {% set coachPhoto = coach.photoSrc %}
-              <div class="admin-coach-cell">
-                {% if coachPhoto %}
-                  <img src="{{ coachPhoto }}"
-                       alt="{{ coach.nomComplet }}"
-                       class="admin-coach-avatar">
-                {% else %}
-                  <div class="admin-coach-avatar admin-coach-avatar-placeholder">
-                    {%- set words = coach.nomComplet|split(' ') -%}
-                    {{- words[0]|first|upper -}}{%- if words|length > 1 -%}{{- words[1]|first|upper -}}{%- endif -%}
-                  </div>
-                {% endif %}
-                <span class="admin-coach-name">{{ coach.nomComplet }}</span>
-              </div>
-            </td>
-            <td class="admin-coach-email">{{ coach.user.email }}</td>
-            <td class="cell-wrap admin-coach-specialties">{{ coach.specialtiesLabel }}</td>
-            <td class="cell-wrap admin-coach-bio">
-              {% if coach.bio %}
-                {{ coach.bio|striptags|slice(0,110) }}{% if coach.bio|length > 110 %}…{% endif %}
-              {% else %}
-                <span class="admin-empty-value">—</span>
-              {% endif %}
-            </td>
-            <td style="text-align:right;">
-              <a href="{{ path('app_admin_coach_show', {id: coach.id}) }}" class="btn btn-secondary btn-sm" style="margin-right:6px;">
-                <i class="ti ti-eye"></i> Voir
-              </a>
-              <a href="{{ path('app_admin_coach_edit', {id: coach.id}) }}" class="btn btn-ghost btn-sm">
-                <i class="ti ti-edit"></i> Modifier
-              </a>
-            </td>
+    <div class="admin-table-card">
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>Coach</th>
+            <th>Email</th>
+            <th>Spécialités</th>
+            <th>Bio</th>
+            <th class="admin-align-right">Actions</th>
           </tr>
-        {% endfor %}
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          {% for coach in coaches %}
+            <tr data-href="{{ path('app_admin_coach_show', {id: coach.id}) }}" class="row-clickable">
+              <td data-label="Coach">
+                {% set coachPhoto = coach.photoSrc %}
+                <div class="admin-coach-cell">
+                  {% if coachPhoto %}
+                    <img src="{{ coachPhoto }}" alt="{{ coach.nomComplet }}" class="admin-coach-avatar">
+                  {% else %}
+                    <div class="admin-coach-avatar admin-coach-avatar-placeholder">
+                      {%- set words = coach.nomComplet|split(' ') -%}
+                      {{- words[0]|first|upper -}}{%- if words|length > 1 -%}{{- words[1]|first|upper -}}{%- endif -%}
+                    </div>
+                  {% endif %}
+                  <span class="admin-coach-name">{{ coach.nomComplet }}</span>
+                </div>
+              </td>
+              <td data-label="Email" class="admin-coach-email admin-cell-date">{{ coach.user.email }}</td>
+              <td data-label="Spécialités" class="cell-wrap admin-coach-specialties">{{ coach.specialtiesLabel }}</td>
+              <td data-label="Bio" class="cell-wrap admin-coach-bio">
+                {% if coach.bio %}
+                  {{ coach.bio|striptags|slice(0,110) }}{% if coach.bio|length > 110 %}…{% endif %}
+                {% else %}
+                  <span class="admin-empty-value">—</span>
+                {% endif %}
+              </td>
+              <td data-label="Actions" class="admin-align-right">
+                <a href="{{ path('app_admin_coach_show', {id: coach.id}) }}" class="admin-row-action">
+                  <i class="ti ti-eye"></i> Voir
+                </a>
+                <a href="{{ path('app_admin_coach_edit', {id: coach.id}) }}" class="admin-row-action admin-row-action--secondary">
+                  <i class="ti ti-edit"></i> Modifier
+                </a>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
   {% endif %}
-</div>
 
+</div>
 {% endblock %}

@@ -1,79 +1,98 @@
 {% extends 'admin/base.html.twig' %}
 
 {% block admin_body %}
-<div class="page-header">
-  <div>
-    <h1><span style="color:var(--gold)">Offres Instagram</span></h1>
-    <p class="page-subtitle">Crée une offre SPORT+ payable par lien Stripe pour story, pub ou bio Instagram.</p>
+<div class="admin-page">
+
+  <div class="admin-page-header">
+    <div class="admin-page-header-body">
+      <h1 class="admin-title">
+        <i class="ti ti-brand-instagram"></i>
+        <span>Offres <span class="admin-title-accent">Instagram</span></span>
+      </h1>
+      <p class="admin-subtitle">Crée une offre SPORT+ payable par lien Stripe pour story, pub ou bio Instagram.</p>
+    </div>
+    <div class="admin-page-header-tools">
+      <a href="{{ path('app_admin_promo_offer_new') }}" class="admin-btn-pill admin-btn-pill--green">
+        <i class="ti ti-plus"></i> Nouvelle offre
+      </a>
+    </div>
   </div>
-  <a href="{{ path('app_admin_promo_offer_new') }}" class="btn btn-primary"><i class="ti ti-plus"></i> Nouvelle offre</a>
-</div>
 
-{# Encart "Paiements au club en attente" — n'apparaît que s'il y en a. #}
-{% if pendingOnsite is defined and pendingOnsite|length > 0 %}
-  <a href="{{ path('app_admin_promo_pending_onsite') }}"
-     style="display:flex;align-items:center;gap:14px;padding:16px 20px;margin-bottom:22px;background:linear-gradient(180deg,rgba(46,204,113,.10) 0%,rgba(46,204,113,.03) 100%);border:1px solid rgba(46,204,113,.35);border-left:3px solid var(--green);border-radius:14px;text-decoration:none;color:inherit;transition:transform .15s ease, background .15s ease;">
-    <div style="width:44px;height:44px;border-radius:12px;background:rgba(46,204,113,.20);color:var(--green);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;">
-      <i class="ti ti-cash"></i>
-    </div>
-    <div style="flex:1;min-width:0;">
-      <div style="font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--white);">
-        Paiements au club en attente
-        <span style="display:inline-flex;align-items:center;padding:2px 10px;margin-left:8px;border-radius:100px;background:rgba(46,204,113,.20);color:var(--green);font-size:12px;font-weight:800;">{{ pendingOnsite|length }}</span>
+  {# Encart "Paiements au club en attente" — n'apparaît que s'il y en a. #}
+  {% if pendingOnsite is defined and pendingOnsite|length > 0 %}
+    <a href="{{ path('app_admin_promo_pending_onsite') }}" class="admin-callout-link">
+      <div class="admin-callout-link-icon">
+        <i class="ti ti-cash"></i>
       </div>
-      <div style="font-size:13px;color:var(--text-dim);margin-top:2px;">
-        {{ pendingOnsite|length > 1 ? 'clients' : 'client' }} en attente d'encaissement espèces / CB au comptoir.
+      <div class="admin-callout-link-body">
+        <div class="admin-callout-link-title">
+          Paiements au club en attente
+          <span class="admin-callout-link-count">{{ pendingOnsite|length }}</span>
+        </div>
+        <div class="admin-callout-link-sub">
+          {{ pendingOnsite|length > 1 ? 'clients' : 'client' }} en attente d'encaissement espèces / CB au comptoir.
+        </div>
       </div>
-    </div>
-    <i class="ti ti-chevron-right" style="color:var(--green);font-size:22px;flex-shrink:0;"></i>
-  </a>
-{% endif %}
-
-<div class="data-table-card">
-  <div class="data-table-header"><h3>Liens publics</h3></div>
-  {% if offers is empty %}
-    <div class="empty-placeholder" style="padding:60px;text-align:center;">Aucune offre pour le moment.</div>
-  {% else %}
-    <table>
-      <thead>
-        <tr>
-          <th>Offre</th>
-          <th>Prix</th>
-          <th>Statut</th>
-          <th>Ventes</th>
-          <th>Lien Instagram</th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for offer in offers %}
-          {% set publicUrl = url('app_promo_offer_show', {slug: offer.slug}) %}
-          <tr>
-            <td>
-              <strong style="color:var(--white);">{{ offer.title }}</strong>
-              <div style="font-size:12px;color:var(--text-dim);">/{{ offer.slug }} · {{ offer.type }}</div>
-            </td>
-            <td style="color:var(--gold);font-weight:800;">{{ offer.priceFormatted }}</td>
-            <td>
-              <span class="status-badge {{ offer.status == 'active' ? 'confirmed' : (offer.status == 'draft' ? 'pending' : 'cancelled') }}">{{ offer.status }}</span>
-            </td>
-            <td>
-              <div style="color:var(--text-soft);font-weight:800;">{{ offer.paidPurchasesCount }}{% if offer.maxQuantity %} / {{ offer.maxQuantity }}{% endif %} vente{{ offer.paidPurchasesCount > 1 ? 's' : '' }}</div>
-              <div style="font-size:12px;color:var(--text-dim);margin-top:4px;">{{ offer.checkedInPurchasesCount }} check-in{{ offer.checkedInPurchasesCount > 1 ? 's' : '' }}</div>
-            </td>
-            <td>
-              <input value="{{ publicUrl }}" readonly onclick="this.select();navigator.clipboard && navigator.clipboard.writeText(this.value);" style="width:100%;max-width:420px;background:var(--bg-2);border:1px solid var(--border);color:var(--text-soft);border-radius:8px;padding:8px;font-size:12px;">
-            </td>
-            <td>
-              <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;">
-                <a href="{{ path('app_admin_promo_offer_edit', {id: offer.id}) }}#achats-checkins" class="btn btn-primary btn-sm"><i class="ti ti-list-check"></i> Achats</a>
-                <a href="{{ path('app_admin_promo_offer_edit', {id: offer.id}) }}" class="btn btn-secondary btn-sm"><i class="ti ti-edit"></i> Modifier</a>
-              </div>
-            </td>
-          </tr>
-        {% endfor %}
-      </tbody>
-    </table>
+      <i class="ti ti-chevron-right admin-callout-link-chevron"></i>
+    </a>
   {% endif %}
+
+  <div class="admin-table-card">
+    <div class="admin-table-header">
+      <h3>Liens publics</h3>
+    </div>
+    {% if offers is empty %}
+      <div class="admin-empty">
+        <i class="ti ti-file-off"></i>
+        <div class="admin-empty-sub">Aucune offre pour le moment.</div>
+      </div>
+    {% else %}
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>Offre</th>
+            <th>Prix</th>
+            <th>Statut</th>
+            <th>Ventes</th>
+            <th>Lien Instagram</th>
+            <th class="admin-align-right">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for offer in offers %}
+            {% set publicUrl = url('app_promo_offer_show', {slug: offer.slug}) %}
+            <tr>
+              <td data-label="Offre">
+                <strong class="admin-cell-strong">{{ offer.title }}</strong>
+                <div class="admin-cell-sub">/{{ offer.slug }} · {{ offer.type }}</div>
+              </td>
+              <td data-label="Prix" class="admin-cell-price">{{ offer.priceFormatted }}</td>
+              <td data-label="Statut">
+                <span class="status-badge {{ offer.status == 'active' ? 'confirmed' : (offer.status == 'draft' ? 'pending' : 'cancelled') }}">{{ offer.status }}</span>
+              </td>
+              <td data-label="Ventes">
+                <div class="admin-cell-strong">{{ offer.paidPurchasesCount }}{% if offer.maxQuantity %} / {{ offer.maxQuantity }}{% endif %} vente{{ offer.paidPurchasesCount > 1 ? 's' : '' }}</div>
+                <div class="admin-cell-sub">{{ offer.checkedInPurchasesCount }} check-in{{ offer.checkedInPurchasesCount > 1 ? 's' : '' }}</div>
+              </td>
+              <td data-label="Lien Instagram">
+                <input value="{{ publicUrl }}" readonly onclick="this.select();navigator.clipboard && navigator.clipboard.writeText(this.value);" class="admin-copy-input">
+              </td>
+              <td data-label="Actions" class="admin-align-right">
+                <div class="admin-cell-actions">
+                  <a href="{{ path('app_admin_promo_offer_edit', {id: offer.id}) }}#achats-checkins" class="btn btn-primary btn-sm">
+                    <i class="ti ti-list-check"></i> Achats
+                  </a>
+                  <a href="{{ path('app_admin_promo_offer_edit', {id: offer.id}) }}" class="btn btn-secondary btn-sm">
+                    <i class="ti ti-edit"></i> Modifier
+                  </a>
+                </div>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% endif %}
+  </div>
+
 </div>
 {% endblock %}

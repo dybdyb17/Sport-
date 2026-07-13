@@ -3,30 +3,33 @@
 {% block title %}Créer un coach — Admin SPORT+{% endblock %}
 
 {% block admin_body %}
+<div class="admin-page">
 
-<div class="page-header">
-  <div>
-    <h1>Nouveau <span style="color:var(--gold)">Coach</span></h1>
-    <p class="page-subtitle">Créer un nouveau profil coach</p>
+  <div class="admin-page-header">
+    <div class="admin-page-header-body">
+      <h1 class="admin-title">
+        <i class="ti ti-user-plus"></i>
+        <span>Nouveau <span class="admin-title-accent">coach</span></span>
+      </h1>
+      <p class="admin-subtitle">Créer un nouveau profil coach.</p>
+    </div>
+    <div class="admin-page-header-tools">
+      <a href="{{ path('app_admin_coachs') }}" class="admin-back-link">
+        <i class="ti ti-arrow-left"></i> Retour à la liste
+      </a>
+    </div>
   </div>
-  <a href="{{ path('app_admin_coachs') }}" class="btn btn-secondary">
-    <i class="ti ti-arrow-left"></i> Retour à la liste
-  </a>
-</div>
 
-<div style="max-width:800px;margin:0 auto;">
-  <div class="data-table-card" style="padding:32px 40px;">
+  <div class="admin-form-card">
 
     {{ form_start(form, {'attr': {'enctype': 'multipart/form-data'}}) }}
 
       {% if form.vars.submitted and not form.vars.valid %}
-        <div style="display:flex;gap:12px;align-items:flex-start;padding:14px 18px;margin-bottom:24px;
-                    background:rgba(255,80,80,.08);border:1px solid rgba(255,80,80,.4);
-                    border-radius:10px;color:#ffb3b3;">
-          <i class="ti ti-alert-circle" style="font-size:22px;color:#ff6b6b;flex-shrink:0;margin-top:2px;"></i>
-          <div style="flex:1;font-size:14px;line-height:1.6;">
-            <strong style="color:#fff;display:block;margin-bottom:4px;">Impossible d'enregistrer ce coach :</strong>
-            <ul style="margin:0;padding-left:18px;">
+        <div class="admin-form-errors">
+          <i class="ti ti-alert-circle admin-form-errors-icon"></i>
+          <div class="admin-form-errors-body">
+            <strong>Impossible d'enregistrer ce coach :</strong>
+            <ul>
               {% for error in form.vars.errors %}
                 <li>{{ error.message }}</li>
               {% endfor %}
@@ -67,7 +70,7 @@
           </button>
         </div>
         {{ form_errors(form.plainPassword) }}
-        <div style="font-size:12px;color:var(--text-dim);margin-top:6px;">
+        <div class="admin-form-hint">
           <i class="ti ti-info-circle"></i> 8 caractères minimum.
         </div>
       </div>
@@ -82,7 +85,7 @@
         {{ form_label(form.photoFile) }}
         {{ form_widget(form.photoFile) }}
         {{ form_errors(form.photoFile) }}
-        <div style="font-size:12px;color:var(--text-dim);margin-top:6px;">
+        <div class="admin-form-hint">
           <i class="ti ti-info-circle"></i> JPEG, PNG ou WebP — max 2 Mo
         </div>
       </div>
@@ -100,13 +103,13 @@
         {{ form_errors(form.specialties) }}
       </div>
 
-      <button type="submit" class="btn btn-primary btn-full" style="margin-top:8px;">
+      <button type="submit" class="btn btn-primary btn-full admin-form-submit">
         <i class="ti ti-user-plus"></i> Créer le coach
       </button>
 
     {{ form_end(form) }}
 
   </div>
-</div>
 
+</div>
 {% endblock %}

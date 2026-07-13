@@ -590,6 +590,556 @@
   }
 }
 
+/* ── Bouton "retour" flottant en haut d'une fiche détail (coachs/show,
+      conversations/show, promo_offers/pending_onsite) ─────────────────── */
+.admin-back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px 6px 8px;
+  margin-bottom: 18px;
+  background: rgba(255,255,255,.03);
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  color: var(--text-soft);
+  text-decoration: none;
+  font-size: 13px;
+  transition: background .15s, color .15s;
+}
+.admin-back-link:hover {
+  background: rgba(200,169,81,.08);
+  color: var(--gold);
+  border-color: rgba(200,169,81,.35);
+}
+.admin-back-link i { font-size: 15px; }
+
+/* ── Callout danger (accès à vie, action irréversible, etc.) ────────── */
+.admin-callout--danger {
+  background: rgba(255,107,107,.06);
+  border: 1px solid rgba(255,107,107,.30);
+  border-left: 3px solid #ff6b6b;
+}
+.admin-callout--danger i { color: #ff8a8a; }
+.admin-callout--danger strong { color: #ff8a8a; }
+
+/* ══════════════════════════════════════════════════════════════════════
+   FORMULAIRES ADMIN
+   ══════════════════════════════════════════════════════════════════════ */
+
+/* Container form centré avec padding généreux (coachs/new, coachs/edit) */
+.admin-form-card {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 32px 40px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+}
+.admin-form-card--wide {
+  max-width: 1400px;
+}
+
+/* Grille 2 colonnes pour form larges (promo_offers/form) */
+.admin-form-grid-2col {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 24px;
+}
+.admin-form-col { display: grid; gap: 18px; align-content: start; }
+@media (max-width: 1100px) {
+  .admin-form-grid-2col { grid-template-columns: 1fr; }
+}
+.admin-form-subgrid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+@media (max-width: 600px) {
+  .admin-form-subgrid-2 { grid-template-columns: 1fr; }
+}
+
+/* Bloc d'erreurs de validation en tête de form */
+.admin-form-errors {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 14px 18px;
+  margin-bottom: 24px;
+  background: rgba(255, 80, 80, .08);
+  border: 1px solid rgba(255, 80, 80, .40);
+  border-radius: 10px;
+  color: #ffb3b3;
+  font-size: 14px;
+  line-height: 1.6;
+}
+.admin-form-errors i {
+  font-size: 22px;
+  color: #ff6b6b;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.admin-form-errors strong { color: #fff; display: block; margin-bottom: 4px; }
+.admin-form-errors ul { margin: 0; padding-left: 18px; }
+.admin-form-errors-body { flex: 1; }
+
+/* Hint discret sous un input (obligation mdp, formats acceptés, etc.) */
+.admin-form-hint {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--text-dim);
+  margin-top: 6px;
+  line-height: 1.5;
+}
+.admin-form-hint i { color: var(--gold-dim, var(--gold)); font-size: 14px; flex-shrink: 0; }
+
+/* Case à cocher enrichie (toggle avec titre + description sous) */
+.admin-form-toggle {
+  padding: 14px 16px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: rgba(255,255,255,.02);
+}
+.admin-form-toggle--gold {
+  background: rgba(200,169,81,.06);
+  border-color: rgba(200,169,81,.35);
+}
+.admin-form-toggle--green {
+  background: rgba(46,204,113,.06);
+  border-color: rgba(46,204,113,.35);
+}
+.admin-form-toggle-inner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  margin: 0;
+}
+.admin-form-toggle-inner input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+.admin-form-toggle--gold .admin-form-toggle-inner input { accent-color: var(--gold); }
+.admin-form-toggle--green .admin-form-toggle-inner input { accent-color: var(--green); }
+.admin-form-toggle-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--white);
+}
+.admin-form-toggle--gold .admin-form-toggle-title { color: var(--gold); }
+.admin-form-toggle--green .admin-form-toggle-title { color: var(--green); }
+.admin-form-toggle-desc {
+  font-size: 12.5px;
+  color: var(--text-dim);
+  margin-top: 3px;
+  line-height: 1.4;
+}
+
+/* ── Input "copier-lien" (URL publique promo) ─────────────────────── */
+.admin-copy-input {
+  width: 100%;
+  max-width: 420px;
+  background: var(--bg-2, #101018);
+  border: 1px solid var(--border);
+  color: var(--text-soft);
+  border-radius: 8px;
+  padding: 8px 10px;
+  font-size: 12px;
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  cursor: text;
+}
+.admin-copy-input:focus {
+  outline: none;
+  border-color: var(--gold);
+}
+
+/* ── Mini-carte user (fiche coach édition — récap en haut) ─────────── */
+.admin-user-mini-card {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  padding: 20px;
+  max-width: 800px;
+  margin: 0 auto 32px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+}
+.admin-user-mini-avatar {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--gold-dim, var(--gold));
+  flex-shrink: 0;
+}
+.admin-user-mini-avatar--initials {
+  background: linear-gradient(135deg, rgba(200,169,81,.2), rgba(200,169,81,.05));
+  border: 1px solid var(--gold-dim, var(--gold));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--gold);
+}
+.admin-user-mini-body { flex: 1; min-width: 0; }
+.admin-user-mini-name {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 800;
+  font-size: 18px;
+  color: var(--white);
+}
+.admin-user-mini-email {
+  font-size: 14px;
+  color: var(--text-soft);
+}
+.admin-user-mini-meta {
+  font-size: 13px;
+  color: var(--text-dim);
+  margin-top: 4px;
+}
+.admin-user-mini-meta i { color: var(--gold); margin-right: 3px; }
+
+/* ── Preview photo actuelle (form édition coach) ─────────────────── */
+.admin-photo-current {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+.admin-photo-current img {
+  width: 80px;
+  height: 80px;
+  border-radius: 10px;
+  object-fit: cover;
+  border: 1px solid var(--border);
+}
+.admin-photo-current-caption {
+  font-size: 13px;
+  color: var(--text-dim);
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   CHAT (conversations/show)
+   ══════════════════════════════════════════════════════════════════════ */
+
+.admin-chat-container {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 0;
+  overflow: hidden;
+}
+.admin-chat-scroll {
+  padding: 24px;
+  max-height: 680px;
+  overflow-y: auto;
+}
+.admin-chat-message {
+  margin-bottom: 18px;
+  padding: 14px 18px;
+  border-radius: 12px;
+  border-left: 3px solid var(--border);
+  background: rgba(255,255,255,.02);
+}
+.admin-chat-message--client {
+  background: rgba(200,169,81,.06);
+  border-left-color: var(--gold);
+}
+.admin-chat-message--coach {
+  background: rgba(46,204,113,.06);
+  border-left-color: var(--green);
+}
+.admin-chat-message--flagged {
+  box-shadow: 0 0 0 1px rgba(255,80,80,.25);
+}
+.admin-chat-message-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
+}
+.admin-chat-message-head-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.admin-chat-message-author {
+  color: var(--white);
+  font-size: 14px;
+  font-weight: 700;
+}
+.admin-chat-message-role {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  padding: 2px 8px;
+  border-radius: 100px;
+  font-weight: 700;
+}
+.admin-chat-message-role--client {
+  background: rgba(200,169,81,.15);
+  color: var(--gold);
+}
+.admin-chat-message-role--coach {
+  background: rgba(46,204,113,.15);
+  color: var(--green);
+}
+.admin-chat-message-flag {
+  font-size: 11px;
+  color: #ff8a8a;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.admin-chat-message-date {
+  font-size: 12px;
+  color: var(--text-dim);
+}
+.admin-chat-message-body {
+  color: var(--text-soft);
+  font-size: 14px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+}
+
+/* Card d'en-tête de conversation */
+.admin-conversation-header {
+  padding: 22px 24px;
+  margin-bottom: 20px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+.admin-conversation-header-body { min-width: 0; }
+.admin-conversation-eyebrow {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 13px;
+  letter-spacing: 2px;
+  color: var(--gold);
+  text-transform: uppercase;
+}
+.admin-conversation-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 26px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--white);
+  margin: 6px 0 4px;
+}
+.admin-conversation-title-sep { color: var(--gold); margin: 0 6px; }
+.admin-conversation-meta {
+  color: var(--text-dim);
+  font-size: 13px;
+}
+.admin-conversation-search {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.admin-conversation-search input {
+  width: 200px;
+}
+
+/* Row flag indicator (conversations/index) */
+.admin-row-flagged { background: rgba(255,80,80,.04); }
+.admin-flag-mini {
+  margin-top: 4px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 10px;
+  color: #ff8a8a;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+/* ── Encart cliquable sur promo_offers/index (Paiements en attente) ── */
+.admin-callout-link {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 20px;
+  margin-bottom: 22px;
+  background: linear-gradient(180deg, rgba(46,204,113,.10) 0%, rgba(46,204,113,.03) 100%);
+  border: 1px solid rgba(46,204,113,.35);
+  border-left: 3px solid var(--green);
+  border-radius: 14px;
+  text-decoration: none;
+  color: inherit;
+  transition: transform .15s ease, background .15s ease;
+}
+.admin-callout-link:hover {
+  transform: translateX(2px);
+  background: linear-gradient(180deg, rgba(46,204,113,.14) 0%, rgba(46,204,113,.05) 100%);
+}
+.admin-callout-link-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: rgba(46,204,113,.20);
+  color: var(--green);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  flex-shrink: 0;
+}
+.admin-callout-link-body { flex: 1; min-width: 0; }
+.admin-callout-link-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--white);
+}
+.admin-callout-link-title .admin-count-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 10px;
+  margin-left: 8px;
+  border-radius: 100px;
+  background: rgba(46,204,113,.20);
+  color: var(--green);
+  font-size: 12px;
+  font-weight: 800;
+}
+.admin-callout-link-sub {
+  font-size: 13px;
+  color: var(--text-dim);
+  margin-top: 2px;
+}
+.admin-callout-link-chevron {
+  color: var(--green);
+  font-size: 22px;
+  flex-shrink: 0;
+}
+
+/* ── Card de paiement onsite en attente (promo_offers/pending_onsite) ── */
+.admin-pending-list {
+  display: grid;
+  gap: 14px;
+}
+.admin-pending-card {
+  padding: 20px 22px;
+  background: linear-gradient(180deg, rgba(46,204,113,.06) 0%, var(--bg-card) 100%);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--green);
+  border-radius: 14px;
+}
+.admin-pending-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+.admin-pending-ref {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 11px;
+  letter-spacing: 2px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+}
+.admin-pending-name {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 22px;
+  font-weight: 900;
+  color: var(--white);
+  margin-top: 2px;
+}
+.admin-pending-offer {
+  color: var(--text-dim);
+  font-size: 13.5px;
+  margin-top: 4px;
+}
+.admin-pending-amount {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 28px;
+  font-weight: 900;
+  color: var(--gold);
+  line-height: 1;
+  text-align: right;
+}
+.admin-pending-time {
+  font-size: 12px;
+  color: var(--text-dim);
+  margin-top: 4px;
+  text-align: right;
+}
+.admin-pending-contacts {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  font-size: 13.5px;
+  color: var(--text-soft);
+  margin-bottom: 14px;
+}
+.admin-pending-contacts i { color: var(--gold); margin-right: 3px; }
+.admin-pending-contacts a { color: inherit; text-decoration: none; }
+.admin-pending-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.admin-pending-actions .btn { flex: 1; min-width: 180px; justify-content: center; }
+
+/* ── Petits utilitaires ────────────────────────────────────────────── */
+.admin-color-swatch {
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  display: inline-block;
+  vertical-align: middle;
+  margin-right: 4px;
+}
+.admin-color-swatch--gold { background: var(--gold); }
+.admin-color-swatch--green { background: #7AB85A; }
+.admin-color-swatch--warn { background: #ff8a4d; }
+
+.admin-week-recap {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-top: 16px;
+  padding: 16px 0;
+  border-top: 1px solid var(--border);
+}
+.admin-week-recap-text {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 15px;
+  color: var(--text-dim);
+  flex: 1;
+  min-width: 0;
+}
+.admin-week-recap-text strong { color: var(--white); }
+.admin-week-recap-text i { color: var(--gold); }
+.admin-week-recap-total { color: var(--gold); }
+
 /* ══════════════════════════════════════════════════════════════════════
    RESPONSIVE — la table devient des cards empilées sous 900px
    Chaque <td> doit avoir un data-label="…" côté template pour afficher
@@ -644,4 +1194,495 @@
   .admin-filterbar-filters .ui-dropdown { flex: 1; min-width: 45%; }
   .admin-btn-export,
   .admin-btn-pill { width: 100%; justify-content: center; }
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   VAGUE 3 — additions communes (coachs, promo_offers, conversations,
+   calendrier). Toutes les classes utilisées par les templates de la
+   vague 3 sont regroupées ici (au-dessus tout ce qui existait avant).
+   ══════════════════════════════════════════════════════════════════════ */
+
+/* ── Titres, sous-titres, sections ─────────────────────────────── */
+.admin-title-icon--green { color: var(--green); }
+.admin-title-sub { color: var(--text-dim); font-weight: 400; }
+.admin-subtitle--tight { margin: 0; }
+.admin-section-title-sub {
+  color: var(--text-dim);
+  font-size: 13px;
+  letter-spacing: 1px;
+  font-weight: 400;
+}
+
+/* ── Empty states ───────────────────────────────────────────────── */
+.admin-empty--soft {
+  padding: 32px;
+  text-align: center;
+  color: var(--text-dim);
+  margin-bottom: 32px;
+}
+.admin-empty--soft i { font-size: 36px; opacity: .4; display: block; margin-bottom: 8px; }
+.admin-empty-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--white);
+  margin-top: 10px;
+  margin-bottom: 4px;
+}
+.admin-empty-actions { margin-top: 14px; }
+.admin-empty-value { color: var(--text-dim); }
+
+/* ── Cellules de tables — helpers ────────────────────────────── */
+.admin-cell-strong { color: var(--white); font-weight: 700; }
+.admin-cell-sub { font-size: 12px; color: var(--text-dim); margin-top: 2px; }
+.admin-cell-sub--email { overflow-wrap: anywhere; }
+.admin-cell-sub--spaced { margin-top: 4px; }
+.admin-cell-tiny { font-size: 11px; color: var(--text-dim); }
+.admin-cell-nowrap { white-space: nowrap; }
+.admin-cell-ref {
+  font-family: 'Barlow Condensed', sans-serif;
+  letter-spacing: 1.5px;
+  color: var(--gold);
+  font-weight: 700;
+}
+.admin-cell-date { color: var(--text-dim); }
+.admin-cell-offer {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  font-size: 14px;
+}
+.admin-cell-price {
+  color: var(--gold);
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+}
+.admin-cell-status { min-width: 140px; }
+.admin-cell-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+.admin-cell-lastmsg { max-width: 340px; }
+.admin-cell-lastmsg-body {
+  color: var(--text-soft);
+  font-size: 13px;
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.admin-cell-lastmsg-author { color: var(--text-dim); }
+
+/* ── Table header (sur .admin-table-card) ─────────────────────── */
+.admin-table-header {
+  padding: 16px 20px 8px;
+  border-bottom: 1px solid var(--border);
+}
+.admin-table-header h3 {
+  margin: 0;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 18px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--white);
+}
+.admin-table-card--anchor { margin-top: 28px; max-width: 1100px; scroll-margin-top: 120px; }
+
+/* ── Filters (conversations index) ────────────────────────────── */
+.admin-filters {
+  display: grid;
+  gap: 12px;
+  align-items: end;
+  margin-bottom: 22px;
+  padding: 16px 18px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+}
+.admin-filter-field { display: flex; flex-direction: column; gap: 4px; }
+.admin-filter-label { font-size: 12px; color: var(--text-dim); }
+.admin-filter-actions {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 6px;
+}
+.admin-filter-check {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--text-dim);
+}
+
+/* ── Row flagged (conversations) ──────────────────────────────── */
+.admin-row-flagged { background: rgba(255, 80, 80, .04); }
+.admin-flag-mini {
+  margin-top: 4px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 10px;
+  color: #ff8a8a;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+/* ── Form admin ───────────────────────────────────────────────── */
+.admin-form-submit { margin-top: 8px; }
+.admin-form-submit-inline { justify-self: start; }
+.admin-form-actions { display: flex; gap: 12px; margin-top: 8px; flex-wrap: wrap; }
+.admin-form-grid-2col { max-width: 1400px; display: grid; gap: 20px; }
+.admin-form-grid-2col-inner {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 24px;
+}
+@media (max-width: 1100px) {
+  .admin-form-grid-2col-inner { grid-template-columns: 1fr; }
+}
+.admin-form-errors-icon { font-size: 22px; color: #ff6b6b; flex-shrink: 0; margin-top: 2px; }
+.admin-form-errors-body { flex: 1; font-size: 14px; line-height: 1.6; }
+.admin-form-errors-body strong { color: #fff; display: block; margin-bottom: 4px; }
+.admin-form-toggle-input {
+  width: 20px;
+  height: 20px;
+  accent-color: var(--gold);
+  flex-shrink: 0;
+  margin: 3px 0 0;
+}
+.admin-form-toggle--green .admin-form-toggle-input { accent-color: var(--green); }
+.admin-form-toggle-body { flex: 1; }
+.admin-form-toggle-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+.admin-form-toggle--green .admin-form-toggle-title { color: var(--green); }
+.admin-form-toggle-desc {
+  font-size: 12.5px;
+  color: var(--text-dim);
+  margin-top: 3px;
+  line-height: 1.4;
+}
+
+/* ── Photo current (edit coach) ───────────────────────────────── */
+.admin-photo-current { margin-bottom: 10px; display: flex; align-items: center; gap: 12px; }
+.admin-photo-current-img {
+  width: 80px;
+  height: 80px;
+  border-radius: 10px;
+  object-fit: cover;
+  border: 1px solid var(--border);
+}
+.admin-photo-current-label { font-size: 13px; color: var(--text-dim); }
+
+/* ── User mini card variant : initials ───────────────────────── */
+.admin-user-mini-avatar--initials {
+  background: linear-gradient(135deg, rgba(200, 169, 81, .2), rgba(200, 169, 81, .05));
+  border: 1px solid var(--gold-dim);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--gold);
+}
+.admin-user-mini-sep { color: var(--text-dim); }
+
+/* ── Chat empty state (conversations show) ────────────────────── */
+.admin-chat-empty { color: var(--text-dim); text-align: center; padding: 32px 0; }
+
+/* ── Callout danger (pending_onsite) ──────────────────────────── */
+.admin-callout--danger {
+  margin-bottom: 14px;
+  padding: 12px 14px;
+  background: rgba(255, 107, 107, .06);
+  border: 1px solid rgba(255, 107, 107, .30);
+  border-left: 3px solid #ff6b6b;
+  border-radius: 8px;
+  font-size: 13px;
+  color: var(--text-soft);
+  line-height: 1.55;
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+.admin-callout--danger i { color: #ff8a8a; margin-top: 2px; flex-shrink: 0; }
+.admin-callout--danger strong { color: #ff8a8a; }
+
+/* ── Conversation header (show) ───────────────────────────────── */
+.admin-conversation-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 20px;
+  padding: 20px 24px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+}
+.admin-conversation-header-id { min-width: 0; }
+.admin-conversation-eyebrow {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 13px;
+  letter-spacing: 2px;
+  color: var(--gold);
+}
+.admin-conversation-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 26px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--white);
+  margin: 6px 0 4px;
+  line-height: 1.15;
+}
+.admin-conversation-title-sep { color: var(--gold); }
+.admin-conversation-meta { color: var(--text-dim); font-size: 13px; }
+.admin-conversation-search {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.admin-conversation-search .form-control { width: 200px; }
+@media (max-width: 640px) {
+  .admin-conversation-search { width: 100%; }
+  .admin-conversation-search .form-control { width: auto; flex: 1; }
+}
+
+/* ── Chat messages (conversations show) ───────────────────────── */
+.admin-chat-message {
+  margin-bottom: 18px;
+  padding: 14px 18px;
+  border-radius: var(--radius);
+  border-left: 3px solid var(--gold);
+  background: rgba(212, 175, 55, .06);
+}
+.admin-chat-message--client {
+  background: rgba(212, 175, 55, .06);
+  border-left-color: var(--gold);
+}
+.admin-chat-message--coach {
+  background: rgba(46, 204, 113, .06);
+  border-left-color: var(--green);
+}
+.admin-chat-message--flagged { box-shadow: 0 0 0 1px rgba(255, 80, 80, .25); }
+.admin-chat-message-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.admin-chat-message-author { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.admin-chat-message-author strong { color: var(--white); font-size: 14px; }
+.admin-chat-message-role {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  padding: 2px 8px;
+  border-radius: 100px;
+  background: rgba(212, 175, 55, .15);
+  color: var(--gold);
+}
+.admin-chat-message--coach .admin-chat-message-role {
+  background: rgba(46, 204, 113, .15);
+  color: var(--green);
+}
+.admin-chat-message-flag {
+  font-size: 11px;
+  color: #ff8a8a;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.admin-chat-message-date { font-size: 12px; color: var(--text-dim); }
+.admin-chat-message-body {
+  color: var(--text-soft);
+  font-size: 14px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+}
+
+/* ── Callout link (encart cliquable pending_onsite / autre) ──── */
+.admin-callout-link-count {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 10px;
+  margin-left: 8px;
+  border-radius: 100px;
+  background: rgba(46, 204, 113, .20);
+  color: var(--green);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+/* ── Pending cards (promo_offers/pending_onsite) ─────────────── */
+.admin-pending-card-id { min-width: 0; }
+.admin-pending-card-money { text-align: right; }
+.admin-pending-card-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+.admin-pending-card-ref {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 11px;
+  letter-spacing: 2px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+}
+.admin-pending-card-lifetime {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  margin-left: 6px;
+  padding: 1px 8px;
+  border-radius: 100px;
+  background: rgba(200, 169, 81, .15);
+  border: 1px solid rgba(200, 169, 81, .4);
+  color: var(--gold);
+  font-size: 10px;
+  font-weight: 800;
+}
+.admin-pending-card-lifetime i { font-size: 11px; }
+.admin-pending-card-name {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 22px;
+  font-weight: 900;
+  color: var(--white);
+  margin-top: 2px;
+}
+.admin-pending-card-offer {
+  color: var(--text-dim);
+  font-size: 13.5px;
+  margin-top: 4px;
+}
+.admin-pending-card-amount {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 28px;
+  font-weight: 900;
+  color: var(--gold);
+  line-height: 1;
+}
+.admin-pending-card-time { font-size: 12px; color: var(--text-dim); margin-top: 4px; }
+.admin-pending-card-contacts {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  font-size: 13.5px;
+  color: var(--text-soft);
+  margin-bottom: 14px;
+}
+.admin-pending-card-contacts i { color: var(--gold); }
+.admin-pending-card-contacts a { color: inherit; text-decoration: none; }
+.admin-pending-card-contacts a:hover { color: var(--gold); }
+.admin-pending-card-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.admin-pending-card-btn { flex: 1; min-width: 180px; justify-content: center; }
+
+/* ── Color swatches (legend calendrier) ──────────────────────── */
+.admin-color-swatch--gold { background: var(--gold); }
+.admin-color-swatch--green { background: #7AB85A; }
+.admin-color-swatch--warn { background: #ff8a4d; }
+
+/* ── Week recap (calendrier) ─────────────────────────────────── */
+.admin-week-recap {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-top: 16px;
+  padding: 16px 0;
+  border-top: 1px solid var(--border);
+}
+.admin-week-recap-body {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 15px;
+  color: var(--text-dim);
+  flex: 1;
+  min-width: 0;
+}
+.admin-week-recap-icon { color: var(--gold); }
+.admin-week-recap-strong { color: var(--text); }
+.admin-week-recap-revenue { color: var(--gold); }
+.admin-week-recap-btn { flex-shrink: 0; }
+
+/* ── Calendrier — headers & slot labels ───────────────────────── */
+.calendar-cell-date { font-size: 12px; font-weight: 400; opacity: .8; }
+.calendar-slot-hours { font-size: 9px; font-weight: 400; opacity: .6; }
+.slot-label--gold { color: var(--gold); }
+.slot-label--green { color: #7AB85A; }
+.slot-label--warn { color: #ff8a4d; }
+.calendar-slot-title--gold { color: var(--gold); }
+.calendar-slot-title--green { color: #7AB85A; }
+.calendar-slot-title--warn { color: #ff8a4d; }
+.calendar-day-empty {
+  color: var(--text-dim);
+  font-style: italic;
+  font-size: 14px;
+  margin: 0;
+}
+.calendar-event--mobile {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+}
+.calendar-event-meta--inline { margin-top: 0; }
+
+/* ── Callout link — sub-elements manquants ───────────────────── */
+.admin-callout-link-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: rgba(46, 204, 113, .20);
+  color: var(--green);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  flex-shrink: 0;
+}
+.admin-callout-link-body { flex: 1; min-width: 0; }
+.admin-callout-link-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--white);
+}
+.admin-callout-link-sub { font-size: 13px; color: var(--text-dim); margin-top: 2px; }
+.admin-callout-link-chevron { color: var(--green); font-size: 22px; flex-shrink: 0; }
+
+/* ── Responsive filters (conversations) ──────────────────────── */
+@media (min-width: 900px) {
+  .admin-filters {
+    grid-template-columns: 2fr 1fr 1fr auto;
+    align-items: end;
+  }
 }
