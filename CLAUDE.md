@@ -137,11 +137,19 @@ d'abonnement + accès salle), sans le remplacer.
 - Répertoire local : `/Users/dybril/Dev/sportplus-corrige`. Serveur dev sur `127.0.0.1:8001`.
 - **Pas de migrations Doctrine** → `php bin/console doctrine:schema:update --force` (start.sh
   étape 2 le fait en prod).
-- Convention dates Twig (mise à jour 20 juin) : `twig/intl-extra ^3.26` **est installé**.
+- Convention dates Twig (mise à jour 20 juin, complétée 13 juillet) :
+  `twig/intl-extra ^3.26` **est installé**.
   - `|date('d/m/Y \\à H\\hi')` pour les formats compacts du quotidien
   - `|format_datetime('none', 'none', "EEEE d MMMM y", locale='fr')` quand on veut le
     français complet et lisible (ex: « samedi 21 juin 2026 »). Les 2 premiers args
     `'none'` sont obligatoires sinon le pattern personnalisé est ignoré (déjà vécu).
+  - Pour un jour + heure ensemble en français : pattern ICU
+    `"EEEE d MMMM y 'à' H'h'mm"` (ex: « mercredi 15 juillet 2026 à 10h00 »). Les
+    lettres littérales `à` et `h` sont entourées de simples quotes ICU.
+  - ⚠️ **NE JAMAIS utiliser `|date('l ...')` ou `|date('F ...')`** : le filtre
+    `date` de Twig passe par `\DateTime::format()` qui n'est **pas sensible à la
+    locale** — le jour sort en anglais (« Wednesday » au lieu de « mercredi »),
+    pareil pour les mois. Bug vécu 13 juillet dans le mail pack activation.
   - Les deux coexistent volontairement dans le code, ne pas tout uniformiser.
 - Doctrine ORM 3.x + PHP 8.4 → `enable_native_lazy_objects: true` obligatoire.
 
