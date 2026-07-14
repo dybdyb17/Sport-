@@ -768,6 +768,60 @@ deux mails partent automatiquement :
     startAt, reason, oldRole, newRole, previous, new) et formatage (méthode
     cash/card/stripe → labels FR, montant `40.00` → `40,00 €`, dates `d/m/Y à H\hi`,
     null → « Non renseigné »).
+- **Refonte complète des CGV (14 juillet 2026)** : les anciennes CGV
+  (`templates/legal/cgv.html.twig`) décrivaient une salle traditionnelle avec
+  badges, prélèvements SEPA, résiliation 12/24 mois — soit le contrat Deciplus,
+  PAS ce que SPORT+ vend en ligne. Réécriture complète (18 articles + préambule)
+  reflétant le vrai périmètre : séances à l'unité, packs mensuels, offres promo
+  Insta, statut Fondateur -5%, distinction Deciplus (contrat séparé mentionné).
+  - **Traduction no-show** : « absence non prévenue » utilisé partout, avec
+    « (dite no-show) » à la 1ʳᵉ mention pour ne perdre personne. Art. 8 dédié :
+    30% du prix, clause pénale art. 1231-5 code civil, exception si pack/Fondateur
+    (séance décomptée, pas de double peine). Résout définitivement l'item backlog
+    « 30% à ajouter aux CGV ».
+  - **Points juridiques couverts** : rétractation 14j + exceptions L.221-28 12°
+    (prestations datées) + cas prestation commencée avec accord exprès ; packs
+    expirent 1 mois strict sauf force majeure démontrée (art. 1218 code civil) ;
+    RC pro assurée ; médiation consommation obligatoire (L.611-1) — placeholder
+    médiateur à désigner par Loïc ; RGPD renvoi politique conf ; force majeure
+    réciproque (SPORT+ ET client).
+  - **3 TODO explicites** en commentaires Twig `{# TODO Loïc #}` invisibles côté
+    public : SIRET / RCS / capital / TVA intracom (Art. 1), médiateur de la
+    consommation (Art. 16), relecture avocat spécialisé droit conso AVANT
+    publication définitive. La responsabilité juridique de LS SPORT SAS est
+    engagée par ce document — ne jamais publier une modif sans relecture pro.
+  - **Retirés de l'ancien fichier** (hors sujet) : badge caution 25€, prélèvements
+    SEPA / résiliation 12-24 mois / caution après 3 impayés, contrat 16-18 ans,
+    coupon d'invitation. Tout ça reste vrai pour l'abo salle Deciplus mais n'a
+    pas sa place dans les CGV du site SPORT+ coaching en ligne.
+- **Restyle admin vague 3 finale (13 juillet 2026)** : 10 templates admin restants
+  refondus pour aligner sur la DA Night Performance et les vagues 1 & 2 —
+  `coachs/{index,show,new,edit}`, `promo_offers/{index,form,pending_onsite}`,
+  `conversations/{index,show}`, `calendar`. Zéro contrôleur/route/logique métier
+  touché.
+  - **Extension `admin-common.css`** : +357 lignes (1197 → 1554), toujours UNE
+    source de vérité (pas de fichier par-page). Nouvelles classes réutilisables :
+    `.admin-back-link`, `.admin-callout--danger`, `.admin-form-card`,
+    `.admin-form-grid-2col` (grid 2 col ≥ 1100px, single sous), `.admin-form-col`,
+    `.admin-form-subgrid-2`, `.admin-form-errors` (+ icon/body), `.admin-form-hint`,
+    `.admin-form-toggle--gold/--green` (+ input/body/title/desc pour les
+    checkboxes stylisés BlackCard / paiement club), `.admin-copy-input`
+    (Instagram URL), `.admin-user-mini-card` (récap top edit), `.admin-photo-current`,
+    `.admin-chat-container/scroll/message--client/--coach/--flagged` (conversations
+    show), `.admin-conversation-header/eyebrow/title/meta/search`,
+    `.admin-row-flagged` + `.admin-flag-mini` (conversations index),
+    `.admin-callout-link` (encart cliquable pending_onsite),
+    `.admin-pending-list/card` (cards par purchase),
+    `.admin-color-swatch--gold/--green/--warn` (legend calendrier),
+    `.admin-week-recap`, `.calendar-slot-title--<slot>`, `.slot-label--<slot>`.
+  - **ui-dropdown préservé** dans `promo_offers/form` (type + status), `chip-group`
+    spécialités coach préservé.
+  - Deux `style=` dynamiques restent sur `coachs/show` (width `{{ pct }}%` progress
+    bars) — légitimes, aucun autre `style=` inline dans les 10 pages.
+- **Restyle admin vague 2 (9 juillet 2026)** : le dashboard admin (`admin/dashboard.html.twig`)
+  aligné sur les composants de vague 1 (`.admin-page`, `.admin-page-header`, etc.).
+  Réutilise le socle `admin-common.css`. Deux `style=` dynamiques légitimes
+  restent (widths progress bars, comme dashboard).
 - **Restyle admin vague 1 (9 juillet 2026)** : 5 pages-listes (`bookings/index`,
   `users/index`, `subscriptions/list`, `founding/list`, `audit/index`) unifiées sur
   le langage visuel de la page Paiements. **UNE source de vérité** CSS commune
@@ -957,9 +1011,12 @@ En local `.env` reste `MAILER_DSN=null://null` ; `.env.local` utilise Mailtrap (
 ## ⏳ Backlog / en attente
 
 - **Côté Loïc/infra** : clé API Resend + variables Railway + cron J-1 ; SIREN/SIRET de LS SPORT
-  SAS pour finaliser le légal ; activer « VAD = Oui » sur les prestations Deciplus iframe ;
-  uploader les vraies photos coachs (système prêt) ; valider email ICANN ; **taux frais no-show
-  30 % à ajouter aux CGV écrites** (le code applique déjà, il manque la mention légale).
+  SAS + n° RCS + capital + n° TVA intracom (à renseigner dans les 3 placeholders `{# TODO Loïc #}`
+  des CGV art. 1) ; activer « VAD = Oui » sur les prestations Deciplus iframe ;
+  uploader les vraies photos coachs (système prêt) ; valider email ICANN ; **désigner un
+  médiateur de la consommation** (obligation légale L.611-1, placeholder dans CGV art. 16) ;
+  **relecture des CGV par un avocat** spécialisé droit conso avant publication définitive
+  (la SAS engage sa responsabilité juridique sur ce document).
 - **✅ Modale mobile formules `/tarifs` — résolue (8 juillet)** : bug historique où le
   header restait visible au-dessus de la modale sur téléphone réel, la page derrière
   scrollait sous, la croix était cachée. Cause identifiée = la modale était prisonnière
@@ -980,7 +1037,6 @@ En local `.env` reste `MAILER_DSN=null://null` ; `.env.local` utilise Mailtrap (
      `min/max-height: 100dvh`, `border-radius: 0`, `align-items: stretch` sur
      `.formule-modal` pour vraie page pleine. Safe-area préservée en interne
      (`padding-top` visual + `padding-bottom` info).
-- **Code à faire** : aligner les pages légales sur `sportplus-13.com` (au lieu de `.fr`).
 - **Idées non implémentées** : app mobile (à faire APRÈS les mails — finir un chantier avant
   d'en ouvrir un autre) ; Lighthouse 95+ (Caddy/Nginx, configs prêtes) ; détection d'anomalies
   admin auto (ex : 20 paiements cash/7j = alerte) ; badge fiabilité client ; témoignages,
